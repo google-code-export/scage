@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false">
+    <file url="file://$PROJECT_DIR$/options.txt" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/scagetest/ScageTest.scala" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/scagetest/objects/Tr0yka.scala" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/su/msk/dunno/scage/handlers/AI.scala" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/su/msk/dunno/scage/handlers/Physics.scala" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/su/msk/dunno/scage/handlers/Renderer.scala" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/su/msk/dunno/scage/handlers/eventmanager/KeyListener.scala" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/su/msk/dunno/scage/main/Engine.scala" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/su/msk/dunno/scage/objects/DynaBall.scala" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/su/msk/dunno/scage/objects/DynaBox.scala" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/su/msk/dunno/scage/objects/GameMap.scala" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/su/msk/dunno/scage/objects/StaticLine.scala" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/su/msk/dunno/scage/prototypes/Drawable.scala" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/su/msk/dunno/scage/prototypes/Physical.scala" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/su/msk/dunno/scage/prototypes/THandler.scala" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/su/msk/dunno/scage/support/Vec.scala" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/su/msk/dunno/scage/support/messages/Message.scala" charset="UTF-8" />
+  </component>
+</project>
+

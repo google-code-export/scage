@@ -1,0 +1,14 @@
+name = Scagetest
+version = 0.0.1
+
+width = 640
+height = 480
+
+game_width = 640
+game_height = 480
+
+framerate = 100
+auto_scaling = yes
+
+dt = 5
+gravity = -5

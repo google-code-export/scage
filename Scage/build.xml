@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<project name="Scage">
+    <property file="build.properties" />
+	<path id="classpath">
+		<fileset dir="lib" includes="**/*.jar"/>
+	</path>
+
+    <macrodef name="init">
+        <sequential>
+            <taskdef resource="scala/tools/ant/antlib.xml" classpathref="classpath" />
+            <delete file="${project.name}-${project.version}-${os.type}.zip" />
+            <delete dir="${project.name}-${project.version}-${os.type}" />
+            <mkdir dir="${project.name}-${project.version}-${os.type}" />
+            </sequential>
+    </macrodef>
+
+	<target name="compile">
+        <init/>
+		<mkdir dir="${project.name}-${project.version}-${os.type}/bin" />
+		<scalac srcdir="src"
+		        destdir="${project.name}-${project.version}-${os.type}/bin"
+		   	    classpathref="classpath" />
+        <javac srcdir="src"
+		       destdir="${project.name}-${project.version}-${os.type}/bin"
+			   classpathref="classpath"
+			   includeantruntime="false" />
+	</target>
+
+    <target name="dir" depends="compile">
+		<jar destfile="${project.name}-${project.version}-${os.type}/${project.name}.jar"
+             filesetmanifest="mergewithoutmain">
+			<manifest>
+				<attribute name="Main-Class" value="${entry.point}"/>
+				<attribute name="Class-Path" value="."/>
+			</manifest>
+            <fileset dir="${project.name}-${project.version}-${os.type}/bin"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/scala/scala-compiler.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/scala/scala-library.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/phys2d-060408.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/slick-util.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/lwjgl/jar/jinput.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/lwjgl/jar/lwjgl_util.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/lwjgl/jar/lwjgl.jar"/>
+		</jar>
+        <delete dir="${project.name}-${project.version}-${os.type}/bin" />
+		<copy file="options.txt" tofile="${project.name}-${project.version}-${os.type}/options.txt" />
+        <mkdir dir="${project.name}-${project.version}-${os.type}/native" />
+        <copy toDir="${project.name}-${project.version}-${os.type}/native">
+			<fileset dir="lib/lwjgl/native/${os.type}" />
+		</copy>
+        <mkdir dir="${project.name}-${project.version}-${os.type}/img" />
+        <copy toDir="${project.name}-${project.version}-${os.type}/img">
+			<fileset dir="img" />
+		</copy>
+        <copy file="run.bat" tofile="${project.name}-${project.version}-${os.type}/run.bat" />
+		<copy file="run.sh" tofile="${project.name}-${project.version}-${os.type}/run.sh" />
+	</target>
+
+    <target name="zip" depends="dir">
+        <zip destfile="${project.name}-${project.version}-${os.type}.zip"
+             basedir="${project.name}-${project.version}-${os.type}" />
+		<delete dir="${project.name}-${project.version}-${os.type}" />
+    </target>
+
+    <target  name="src">
+        <delete file="${project.name}-${project.version}-src.zip" />
+        <zip destfile="${project.name}-${project.version}-src.zip" basedir=""
+             excludes=".idea/**, out/**, .svn/**, *.zip, Scage.iml" />
+    </target>
+</project>

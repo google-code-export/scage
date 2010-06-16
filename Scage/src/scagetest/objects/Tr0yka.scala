@@ -1,4 +1,4 @@
-package su.msk.dunno.scage.objects
+package scagetest.objects
 
 import su.msk.dunno.scage.handlers.Renderer
 import org.lwjgl.opengl.GL11
@@ -6,6 +6,7 @@ import su.msk.dunno.scage.handlers.eventmanager.EventManager
 import org.lwjgl.input.Keyboard
 import org.newdawn.slick.opengl.Texture
 import su.msk.dunno.scage.support.{Color, Vec}
+import su.msk.dunno.scage.objects.DynaBall
 
 class Tr0yka(init_coord:Vec) extends DynaBall(init_coord:Vec, 30) {
   private val TR0YKA = Renderer.nextDisplayListKey

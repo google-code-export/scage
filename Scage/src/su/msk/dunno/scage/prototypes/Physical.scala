@@ -3,7 +3,7 @@ package su.msk.dunno.scage.prototypes
 import net.phys2d.raw.Body
 import net.phys2d.math.Vector2f
 import su.msk.dunno.scage.support.Vec
-trait Physical extends Drawable {
+trait Physical {
   val body:Body
 
   def addForce(force:Vec) = {

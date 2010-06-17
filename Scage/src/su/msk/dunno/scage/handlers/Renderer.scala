@@ -7,12 +7,12 @@ import org.lwjgl.util.glu.GLU
 import su.msk.dunno.scage.support.{Vec, Color}
 import org.newdawn.slick.opengl.{TextureLoader, Texture}
 import java.io.{FileInputStream, InputStream}
-import su.msk.dunno.scage.prototypes.{Physical, THandler}
-import su.msk.dunno.scage.objects.StaticBall
+import su.msk.dunno.scage.prototypes.{THandler}
 import org.lwjgl.input.Keyboard
-import su.msk.dunno.scage.support.messages.Message
-
 object Renderer extends THandler {
+  private var render_list:List[() => Unit] = List[() => Unit]()
+  def addRender(render: () => Unit) = {render_list = render :: render_list}
+
   val CIRCLE = 1
   private var next_displaylist_key = 2
   def nextDisplayListKey() = {
@@ -24,9 +24,9 @@ object Renderer extends THandler {
   val width = Engine.getIntProperty("width");
   val height = Engine.getIntProperty("height");
   val center = Vec(width/2, height/2)
-  private var central_object:Physical = new StaticBall(center)
-  def setCentral(obj:Physical) = {
-    central_object = obj
+  private var central_object = () => (Vec(width/2, height/2), Vec(0,0))
+  def setCentral(coord_and_velocity: () => (Vec, Vec)) = {
+    central_object = coord_and_velocity
   }
 
   Display.setDisplayMode(new DisplayMode(width, height));
@@ -63,7 +63,6 @@ object Renderer extends THandler {
   def addInterfaceElement(renderFunc: () => Unit) = {
     interface = renderFunc :: interface
   }
-  addInterfaceElement(() => if(Engine.onPause)Message.print("PAUSE", Vec(width/2-20, height/2+60)))  
 
   val auto_scaling = Engine.getBooleanProperty("auto_scaling")
   private var scale:Float = 2
@@ -75,15 +74,15 @@ object Renderer extends THandler {
       GL11.glPushMatrix
 
       if(auto_scaling && EventManager.last_key != Keyboard.KEY_ADD && EventManager.last_key != Keyboard.KEY_SUBTRACT) {
-        val factor = -3.0f/2000*central_object.velocity.norma2 + 2
+        val factor = -3.0f/2000*central_object()._2.norma2 + 2
         if(factor > scale+0.1f && scale < 2)scale += 0.01f
         else if(factor < scale-0.1f && scale > 0.5f)scale -=0.01f
       }
 
-      val coord = center - central_object.coord*scale
+      val coord = center - central_object()._1*scale
       GL11.glTranslatef(coord.x, coord.y, 0.0f)
       GL11.glScalef(scale, scale, 1)
-      Engine.getObjects.foreach(o => o.render)
+      render_list.foreach(render => render())
       GL11.glPopMatrix
 
       interface.foreach(renderFunc => renderFunc())

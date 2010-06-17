@@ -3,10 +3,8 @@ package su.msk.dunno.scage.main
 import java.util.Properties
 import java.io.FileInputStream
 import su.msk.dunno.scage.handlers.eventmanager.EventManager
-import su.msk.dunno.scage.prototypes.{Physical, THandler}
+import su.msk.dunno.scage.prototypes.{THandler}
 import su.msk.dunno.scage.handlers.{AI, Physics, Idler, Renderer}
-import org.lwjgl.input.Keyboard
-
 object Engine {
   private val properties:Properties = {
     if(properties == null) {
@@ -21,11 +19,6 @@ object Engine {
   def getFloatProperty(key:String):Float = java.lang.Float.valueOf(properties.getProperty(key)).floatValue
   def getBooleanProperty(key:String):Boolean = properties.getProperty(key).equalsIgnoreCase("yes")
 
-  private var objects = List[Physical]()
-  def getObjects() = objects
-  def addObject(o:Physical) = {objects = o :: objects}
-  def addObjects(lo:List[Physical]) = {objects = lo ::: objects}
-
   private var handlers = List[THandler]()
   def getHandlers() = handlers
   def setDefaultHandlers() = {handlers = EventManager :: Physics :: AI :: Renderer :: Idler :: Nil}
@@ -33,8 +26,7 @@ object Engine {
   def addHandlers(h:List[THandler]) = {handlers = h ::: handlers}
 
   var onPause:Boolean = false
-  EventManager.addKeyListener(Keyboard.KEY_P,() => onPause = !onPause)
-
+  def switchPause() = onPause = !onPause
   private var isRunning = true
   def start() = {
     isRunning = true
@@ -55,7 +47,7 @@ object Engine {
     }
   }
 
-  def run():Unit = {
+  private def run():Unit = {
     if(!isRunning) handlers.foreach(h => h.exitSequence)
     else {
       handlers.foreach(h => h.actionSequence)

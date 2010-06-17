@@ -1,12 +1,12 @@
 package scagetest.objects
 
-import su.msk.dunno.scage.handlers.Renderer
 import org.lwjgl.opengl.GL11
 import su.msk.dunno.scage.handlers.eventmanager.EventManager
 import org.lwjgl.input.Keyboard
 import org.newdawn.slick.opengl.Texture
 import su.msk.dunno.scage.support.{Color, Vec}
 import su.msk.dunno.scage.objects.DynaBall
+import su.msk.dunno.scage.handlers.{Renderer}
 
 class Tr0yka(init_coord:Vec) extends DynaBall(init_coord:Vec, 30) {
   private val TR0YKA = Renderer.nextDisplayListKey
@@ -39,11 +39,8 @@ class Tr0yka(init_coord:Vec) extends DynaBall(init_coord:Vec, 30) {
   })
 
   private var next_frame:Float = 0
-  override def render() = {
-   /* Renderer.setColor(Color.BLACK)
-    Renderer.drawCircle(coord, 15)
-    Renderer.drawLine(coord, coord+velocity)*/
 
+  override protected def render() = {
     GL11.glPushMatrix();
 		GL11.glTranslatef(coord.x, coord.y, 0.0f);
 
@@ -67,5 +64,6 @@ class Tr0yka(init_coord:Vec) extends DynaBall(init_coord:Vec, 30) {
     else GL11.glCallList(TR0YKA)
 
     GL11.glPopMatrix()
+    //Message.print(Tracer.point(coord), coord)
   }
 }

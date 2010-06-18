@@ -29,6 +29,7 @@ object ScageTest {
     }
 
     // objects on level
+    new DynaBall(Vec(360,400), 15).addForce(Vec(100,0))
     new Tr0yka(Vec(300,400)){
       Renderer.addInterfaceElement(() => Message.print("touching: "+(if(isTouching)"true" else "false"), 20, 420))
       Renderer.addInterfaceElement(() => Message.print("speed: "+velocity.norma2, 20, 400))
@@ -36,7 +37,6 @@ object ScageTest {
       addForce(Vec(-100,0))
       Renderer.setCentral(() => (coord, velocity))
     }
-    new DynaBall(Vec(360,400), 15).addForce(Vec(100,0))
 
     // game interface
     Renderer.addInterfaceElement(() => Message.print("fps: "+Engine.fps, 20, 460))

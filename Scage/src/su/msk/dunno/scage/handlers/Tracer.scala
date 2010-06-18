@@ -42,7 +42,7 @@ object Tracer extends THandler {
       val old_p = obj._1
       val new_p = point(obj._2())
       if(old_p._1 != new_p._1 || old_p._2 != new_p._2) {
-        //coord_matrix(old_p._1)(old_p._2) = coord_matrix(old_p._1)(old_p._2).filterNot(coord => coord.equals(obj._2))
+        coord_matrix(old_p._1)(old_p._2) = coord_matrix(old_p._1)(old_p._2).filterNot(coord => coord.equals(obj._2))
         coord_matrix(new_p._1)(new_p._2) = obj._2 :: coord_matrix(new_p._1)(new_p._2)
       }
       (new_p, obj._2)

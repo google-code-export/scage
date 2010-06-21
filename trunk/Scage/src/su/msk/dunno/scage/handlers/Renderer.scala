@@ -24,9 +24,9 @@ object Renderer extends THandler {
   val width = Engine.getIntProperty("width");
   val height = Engine.getIntProperty("height");
   val center = Vec(width/2, height/2)
-  private var central_object = () => (Vec(width/2, height/2), Vec(0,0))
-  def setCentral(coord_and_velocity: () => (Vec, Vec)) = {
-    central_object = coord_and_velocity
+  private var central_coord = () => Vec(width/2, height/2)
+  def setCentral(coord: () => Vec) = {
+    central_coord = coord
   }
 
   Display.setDisplayMode(new DisplayMode(width, height));
@@ -64,22 +64,21 @@ object Renderer extends THandler {
     interface = renderFunc :: interface
   }
 
-  val auto_scaling = Engine.getBooleanProperty("auto_scaling")
-  private var scale:Float = 2
-  EventManager.addKeyListener(Keyboard.KEY_ADD, 10, () => if(scale < 2)scale += 0.01f)
-  EventManager.addKeyListener(Keyboard.KEY_SUBTRACT, 10, () => if(scale > 0.5f)scale -= 0.01f)
+  var scale:Float = 2
+  private var scaleFunc:(Float) => Float = (Float) => 2
+  private var isSetScaleFunc = false
+  def setScaleFunc(func: (Float) => Float) = {
+	  scaleFunc = func
+	  isSetScaleFunc = true
+  }
+  
   override def actionSequence() = {
     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
 		GL11.glLoadIdentity();
       GL11.glPushMatrix
 
-      if(auto_scaling && EventManager.last_key != Keyboard.KEY_ADD && EventManager.last_key != Keyboard.KEY_SUBTRACT) {
-        val factor = -3.0f/2000*central_object()._2.norma2 + 2
-        if(factor > scale+0.1f && scale < 2)scale += 0.01f
-        else if(factor < scale-0.1f && scale > 0.5f)scale -=0.01f
-      }
-
-      val coord = center - central_object()._1*scale
+      if(isSetScaleFunc && !Engine.onPause)scale = scaleFunc(scale)
+      val coord = center - central_coord()*scale
       GL11.glTranslatef(coord.x, coord.y, 0.0f)
       GL11.glScalef(scale, scale, 1)
       render_list.foreach(render => render())

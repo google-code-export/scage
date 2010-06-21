@@ -16,11 +16,5 @@ object Physics extends THandler {
 
   def addBody(b:Body) = if(!world.getBodies.contains(b))world.add(b)
 
-  override def initSequence() = {
-    new StaticLine(Vec(0,0), Vec(Renderer.width,0))
-    new StaticLine(Vec(Renderer.width,0), Vec(Renderer.width,Renderer.height))
-    new StaticLine(Vec(Renderer.width,Renderer.height), Vec(0,Renderer.height))
-    new StaticLine(Vec(0,Renderer.height), Vec(0,0))
-  }
   override def actionSequence() = if(!Engine.onPause)for(i <- 1 to dt)world.step()
 }

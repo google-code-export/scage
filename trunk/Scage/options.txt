@@ -11,7 +11,7 @@ N_x = 16
 N_y = 12
 
 framerate = 100
-auto_scaling = yes
+auto_scaling = no
 
 dt = 5
 gravity = -5

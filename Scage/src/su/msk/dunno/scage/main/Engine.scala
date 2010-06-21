@@ -27,6 +27,7 @@ object Engine {
 
   var onPause:Boolean = false
   def switchPause() = onPause = !onPause
+  
   private var isRunning = true
   def start() = {
     isRunning = true

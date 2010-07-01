@@ -1,6 +1,6 @@
 package su.msk.dunno.scage.handlers
 
-import eventmanager.EventManager
+import renderer.TextureBorder
 import su.msk.dunno.scage.main.Engine
 import org.lwjgl.opengl.{DisplayMode, Display, GL11}
 import org.lwjgl.util.glu.GLU
@@ -8,7 +8,6 @@ import su.msk.dunno.scage.support.{Vec, Color}
 import org.newdawn.slick.opengl.{TextureLoader, Texture}
 import java.io.{FileInputStream, InputStream}
 import su.msk.dunno.scage.prototypes.{THandler}
-import org.lwjgl.input.Keyboard
 object Renderer extends THandler {
   private var render_list:List[() => Unit] = List[() => Unit]()
   def addRender(render: () => Unit) = {render_list = render :: render_list}
@@ -19,6 +18,14 @@ object Renderer extends THandler {
     val next_key = next_displaylist_key
     next_displaylist_key += 1
     next_key
+  }
+
+  var scale:Float = 2
+  private var scaleFunc:(Float) => Float = (Float) => 2
+  private var isSetScaleFunc = false
+  def setScaleFunc(func: (Float) => Float) = {
+	  scaleFunc = func
+	  isSetScaleFunc = true
   }
 
   val width = Engine.getIntProperty("width");
@@ -64,14 +71,6 @@ object Renderer extends THandler {
     interface = renderFunc :: interface
   }
 
-  var scale:Float = 2
-  private var scaleFunc:(Float) => Float = (Float) => 2
-  private var isSetScaleFunc = false
-  def setScaleFunc(func: (Float) => Float) = {
-	  scaleFunc = func
-	  isSetScaleFunc = true
-  }
-  
   override def actionSequence() = {
     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
 		GL11.glLoadIdentity();
@@ -87,6 +86,7 @@ object Renderer extends THandler {
       interface.foreach(renderFunc => renderFunc())
     Display.update();
   }
+  override def exitSequence() = Display.destroy();
 
   def setColor(c:Color) = GL11.glColor3f(c.getRed, c.getGreen, c.getBlue)
   def drawLine(v1:Vec, v2:Vec) = {
@@ -107,10 +107,7 @@ object Renderer extends THandler {
     GL11.glEnable(GL11.GL_TEXTURE_2D);
   }
 
-  override def exitSequence() = Display.destroy();
-
   def getTexture(format:String, in:InputStream):Texture = TextureLoader.getTexture(format, in)
-
   def getTexture(filename:String):Texture = {
     val format:String = filename.substring(filename.length-3)
     getTexture(format, new FileInputStream(filename))
@@ -138,7 +135,6 @@ object Renderer extends THandler {
 		GL11.glEnd();
 		GL11.glEndList();
 	}
-
   def createList(list_name:Int, filename:String, game_width:Float, game_height:Float, start_x:Float, start_y:Float, real_width:Float, real_height:Float):Unit = {
     val format:String = filename.substring(filename.length-3)
     createList(list_name, getTexture(filename), game_width, game_height, start_x, start_y, real_width, real_height)

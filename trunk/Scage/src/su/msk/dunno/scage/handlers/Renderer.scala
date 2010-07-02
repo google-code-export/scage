@@ -1,6 +1,5 @@
 package su.msk.dunno.scage.handlers
 
-import renderer.TextureBorder
 import su.msk.dunno.scage.main.Engine
 import org.lwjgl.opengl.{DisplayMode, Display, GL11}
 import org.lwjgl.util.glu.GLU

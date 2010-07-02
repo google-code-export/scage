@@ -7,7 +7,8 @@ import su.msk.dunno.scage.handlers.eventmanager.EventManager
 import su.msk.dunno.scage.objects.{StaticBox, DynaBall, StaticLine}
 import su.msk.dunno.scage.support.{Vec}
 import org.lwjgl.input.Keyboard
-import su.msk.dunno.scage.handlers.{Tracer, AI, Renderer}
+import su.msk.dunno.scage.handlers.{AI, Renderer}
+import su.msk.dunno.scage.handlers.tracer.{Tracer, Trace, State}
 
 object ScageTest {
   def main(args:Array[String]):Unit = {
@@ -34,7 +35,25 @@ object ScageTest {
     }
     
     // objects on level
-    new DynaBall(Vec(360,400), 15).addForce(Vec(100,0))
+    new DynaBall(Vec(360,400), 15){
+    	val trace = new Trace {
+    		def getCoord = coord()
+    		def getState = new State("name", "DynaBall")
+    		def changeState(s:State) = {}
+    	}
+    	Tracer.addTrace(trace)
+    	
+    	private var wasPushed = false;
+    	AI.registerAI(() => {
+    		Tracer.getNeighbours(coord(), (-2 to 2)).foreach(trace => {
+    			if(trace.getState.contains("push")) {
+    				addForce((coord - trace.getCoord).n * 1000)
+    				wasPushed = true
+    			}
+    			else wasPushed = false
+    		})
+    	})
+    }.addForce(Vec(100,0))
     val tr0yka = new Tr0yka(Vec(300,400)){
       Renderer.addInterfaceElement(() => Message.print("touching: "+(if(isTouching)"true" else "false"), 20, 420))
       Renderer.addInterfaceElement(() => Message.print("speed: "+velocity.norma2, 20, 400))

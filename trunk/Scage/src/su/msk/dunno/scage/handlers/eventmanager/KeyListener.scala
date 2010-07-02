@@ -11,6 +11,7 @@ case class KeyListener(
            repeatTime:Long,
            onKeyDown: () => Unit) = this(key, repeatTime, onKeyDown, () => {})
   def this(key:Int, onKeyDown: () => Unit) = this(key,0,onKeyDown,() => {})
+  def this(key:Int, onKeyDown: () => Unit, onKeyUp: () => Unit) = this(key,0,onKeyDown,onKeyUp)
 
   val isRepeatable = repeatTime > 0
 

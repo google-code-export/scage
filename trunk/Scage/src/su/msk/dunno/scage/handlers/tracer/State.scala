@@ -33,4 +33,6 @@ class State() {
     else if(args(key).getFloat != 0)args(key).getFloat.toString
     else ""
   }
+  
+  def contains(key:String):Boolean = args.contains(key)
 }

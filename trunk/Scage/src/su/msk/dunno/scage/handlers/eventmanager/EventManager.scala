@@ -13,7 +13,10 @@ object EventManager extends THandler {
   def addKeyListener(key:Int, repeatTime:Long, onKeyDown: () => Unit) = {
     to_add = new KeyListener(key, repeatTime, onKeyDown) :: to_add
   }
-    def addListeners(ll:List[TListener]) = {
+  def addKeyListener(key:Int, onKeyDown: () => Unit, onKeyUp: () => Unit) = {
+	to_add = new KeyListener(key, onKeyDown, onKeyUp) :: to_add
+  }
+  def addListeners(ll:List[TListener]) = {
     to_add = ll ::: to_add
   }
 

@@ -10,11 +10,11 @@ import su.msk.dunno.scage.support.messages.TrueTypeFont
 import su.msk.dunno.scage.handlers.{Physics, Renderer}
 import su.msk.dunno.scage.prototypes.Physical
 
-class DynaBox(val init_coord:Vec, width:Float, height:Float) extends Physical {
+class DynaBox(val leftup_coord:Vec, width:Float, height:Float) extends Physical {
   val box = new Box(width, height)
   val body = new Body(box, 1)
-  body.setPosition(init_coord.x, init_coord.y)
-  body.setRotation((Random.nextFloat() * 2 * Math.Pi).toFloat);
+  body.setPosition(leftup_coord.x+width/2, leftup_coord.y-height/2)
+  //body.setRotation((Random.nextFloat() * 2 * Math.Pi).toFloat);
   Physics.addBody(body)
 
   Renderer.addRender(() => render())
@@ -22,10 +22,9 @@ class DynaBox(val init_coord:Vec, width:Float, height:Float) extends Physical {
     val verts:Array[Vector2f] = box.getPoints(body.getPosition(), body.getRotation());
     Renderer.setColor(Color.BLACK)
     GL11.glDisable(GL11.GL_TEXTURE_2D);
-      GL11.glBegin(GL11.GL_POLYGON);
+    	GL11.glBegin(GL11.GL_LINE_LOOP);
         verts.foreach(v => GL11.glVertex2f(v.getX, v.getY))
       GL11.glEnd();
     GL11.glEnable(GL11.GL_TEXTURE_2D);
-    TrueTypeFont.instance.drawString(body.getVelocity.getX+": "+body.getVelocity.getY,body.getPosition.getX,body.getPosition.getY)
   }
 }

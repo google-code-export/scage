@@ -43,16 +43,22 @@ class Tr0yka(init_coord:Vec) extends DynaBall(init_coord:Vec, 30) {
     else if(last_key != Keyboard.KEY_RIGHT) addForce(Vec(1500,0))
     last_key = Keyboard.KEY_RIGHT
   })
-  
-  private var isPush = false
-  EventManager.addKeyListener(Keyboard.KEY_RCONTROL,() => {isPush = true}, () => {isPush = false})
+
+  EventManager.addKeyListener(Keyboard.KEY_Z, () => {
+    Tracer.getNeighbours(coord, -1 to 1).foreach(trace => {
+      //if("Box".equals(trace.getState.getString("name"))) {
+        val state = new State("pull", coord)
+        trace.changeState(state)
+      //}
+    })
+  })
+
   val trace = new Trace {
-	def getCoord = coord()
+	  def getCoord = coord()
     def getState = {
-		val state = new State("name", "Tr0yka")
-		if(isPush)state.put("push")
-		state
-	}
+		  val state = new State("name", "Tr0yka")
+		  state
+	  }
     def changeState(s:State) = {}
   }
   Tracer.addTrace(trace)
@@ -85,6 +91,9 @@ class Tr0yka(init_coord:Vec) extends DynaBall(init_coord:Vec, 30) {
     else GL11.glCallList(TR0YKA)
 
     GL11.glPopMatrix()
-    //Message.print(Tracer.point(coord), coord)
+
+    Renderer.setColor(Color.BLACK)
+    Renderer.drawCircle(coord, 30)
+    Renderer.drawLine(coord, coord+velocity)
   }
 }

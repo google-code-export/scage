@@ -6,6 +6,9 @@ import su.msk.dunno.scage.support.{Vec, Color}
 import su.msk.dunno.scage.handlers.Renderer
 
 object Tracer extends THandler {
+  val game_width = Engine.getIntProperty("game_width")
+  val game_height = Engine.getIntProperty("game_height")
+
   val N_x = Engine.getIntProperty("N_x")
   val N_y = Engine.getIntProperty("N_y")
 
@@ -24,7 +27,7 @@ object Tracer extends THandler {
       object_points = (point(t.getCoord), t) :: object_points
   }
 
-  def point(v:Vec):(Int, Int) = ((v.x/Renderer.width*N_x).toInt, (v.y/Renderer.height*N_y).toInt)
+  def point(v:Vec):(Int, Int) = ((v.x/game_width*N_x).toInt, (v.y/game_height*N_y).toInt)
   
   def getNeighbours(v:Vec, r:Range):List[Trace] = {
     val p = point(v)

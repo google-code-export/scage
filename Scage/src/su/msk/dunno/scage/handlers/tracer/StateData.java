@@ -1,5 +1,7 @@
 package su.msk.dunno.scage.handlers.tracer;
 
+import su.msk.dunno.scage.support.Vec;
+
 public class StateData 
 {
 	private int int_num;
@@ -46,4 +48,19 @@ public class StateData
 		message = s;
 		return this;
 	}
+
+    private Vec vec;
+    public StateData(Vec v)
+    {
+        vec = v;
+    }
+    public Vec getVec()
+    {
+        return vec;
+    }
+    public StateData setVec(Vec v)
+    {
+        vec = v;
+        return this;
+    }
 }

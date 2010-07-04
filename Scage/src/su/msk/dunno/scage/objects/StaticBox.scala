@@ -8,10 +8,10 @@ import su.msk.dunno.scage.support.{Color, Vec}
 import org.lwjgl.opengl.GL11
 import su.msk.dunno.scage.handlers.{Physics, Renderer}
 
-class StaticBox(init_coord:Vec, width:Float, height:Float) extends Physical {
+class StaticBox(leftup_coord:Vec, width:Float, height:Float) extends Physical {
   val box = new Box(width, height)
   val body = new StaticBody("staticBox", box)
-  body.setPosition(init_coord.x, init_coord.y)
+  body.setPosition(leftup_coord.x+width/2, leftup_coord.y-height/2)
   Physics.addBody(body)
 
   Renderer.addRender(() => {

@@ -11,10 +11,7 @@ import su.msk.dunno.scage.handlers.Renderer
 import scagetest.handlers.SageTracer
 
 object Sage {
-	def main(args:Array[String]):Unit = {
-		println("hello")
-	}
-  /*def main(args:Array[String]):Unit = {
+  def main(args:Array[String]):Unit = {
     Engine.setDefaultHandlers
     Engine.addHandler(SageTracer)
 
@@ -90,5 +87,5 @@ object Sage {
     EventManager.addKeyListener(Keyboard.KEY_SUBTRACT, 10, () => if(Renderer.scale > 0.5f)Renderer.scale -= 0.01f)
 
     Engine.start
-  }*/
+  }
 }

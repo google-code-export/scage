@@ -3,7 +3,8 @@ package su.msk.dunno.scage.objects
 import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.scage.handlers.AI
 
-class Platform(val leftup_start:Vec, val leftup_end:Vec, val speed:Int) extends StaticBox(leftup_start, 140, 10) {
+class Platform(val leftup_start:Vec, val leftup_end:Vec, val speed:Int) 
+extends StaticBox(leftup_start, 140, 10) {
 	def this(leftup_start:Vec, leftup_end:Vec) = this(leftup_start, leftup_end, 1)
 	
 	val step = (leftup_end - leftup_start).n

@@ -1,4 +1,4 @@
-package su.msk.dunno.scage.handlers.tracer
+package scagetest.handlers
 
 import collection.mutable.HashMap
 import su.msk.dunno.scage.support.Vec

@@ -9,6 +9,7 @@ import su.msk.dunno.scage.support.{Vec}
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.handlers.{AI, Renderer}
 import scagetest.handlers.{SageTracer, State}
+import su.msk.dunno.scage.handlers.tracer.Trace
 
 object ScageTest {
   def main(args:Array[String]):Unit = {
@@ -45,7 +46,7 @@ object ScageTest {
     	
     	private var wasPushed = false;
     	AI.registerAI(() => {
-    		Tracer.getNeighbours(coord(), (-2 to 2)).foreach(trace => {
+    		SageTracer.getNeighbours(coord(), (-2 to 2)).foreach(trace => {
     			if(trace.getState.contains("push")) {
     				addForce((coord - trace.getCoord).n * 1000)
     				wasPushed = true

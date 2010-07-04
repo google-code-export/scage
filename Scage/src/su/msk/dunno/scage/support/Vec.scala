@@ -1,6 +1,6 @@
 package su.msk.dunno.scage.support
 
-import net.phys2d.math.{ROVector2f}
+import net.phys2d.math.ROVector2f
 
 case class Vec(val x:Float, val y:Float) {
   def this(v:ROVector2f) = this(v.getX, v.getY)

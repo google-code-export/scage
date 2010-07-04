@@ -7,20 +7,18 @@ import org.newdawn.slick.opengl.Texture
 import su.msk.dunno.scage.main.Engine
 import su.msk.dunno.scage.support.{Color, Vec}
 import su.msk.dunno.scage.objects.DynaBall
-import su.msk.dunno.scage.handlers.{Renderer}
+import su.msk.dunno.scage.handlers.Renderer
 import su.msk.dunno.scage.handlers.tracer.{Tracer, Trace, State}
 
 class Tr0yka(init_coord:Vec) extends DynaBall(init_coord:Vec, 30) {
 	
 	// loading main image
-  private val TR0YKA = Renderer.nextDisplayListKey
-  Renderer.createList(TR0YKA, "img/stay2.png", 24, 30, 0, 0, 160, 200)
+  private val TR0YKA = Renderer.createList("img/stay2.png", 24, 30, 0, 0, 160, 200)
 
   // loading images for animation
   private val ANIMATION:Array[Int] = {
     def nextFrame(arr:List[Int], texture:Texture):List[Int] = {
-      val next_key = Renderer.nextDisplayListKey
-      Renderer.createList(next_key, texture, 24, 30, 160*(arr.length), 0, 160, 200)
+      val next_key = Renderer.createList(texture, 24, 30, 160*(arr.length), 0, 160, 200)
       val new_arr = next_key :: arr
       if(new_arr.length == 6)new_arr
       else nextFrame(next_key :: arr, texture)
@@ -31,8 +29,8 @@ class Tr0yka(init_coord:Vec) extends DynaBall(init_coord:Vec, 30) {
   // controls
   private var last_key:Int = 0
   //EventManager.addKeyListener(Keyboard.KEY_S,() => {last_key = Keyboard.KEY_S; if(isTouching)addForce(Vec(body.getForce))})
-  EventManager.addKeyListener(Keyboard.KEY_SPACE,() => {last_key = Keyboard.KEY_SPACE; if(isTouching)addForce(Vec(0,3500))})
-  EventManager.addKeyListener(Keyboard.KEY_UP,() => {last_key = Keyboard.KEY_UP; if(isTouching)addForce(Vec(0,3500))})
+  EventManager.addKeyListener(Keyboard.KEY_SPACE,() => {last_key = Keyboard.KEY_SPACE; if(velocity.y == 0)addForce(Vec(0,3500))})
+  EventManager.addKeyListener(Keyboard.KEY_UP,() => {last_key = Keyboard.KEY_UP; addForce(Vec(0,3500))})	// for test purposes only!!!!
   EventManager.addKeyListener(Keyboard.KEY_LEFT,100,() => {
     if(isTouching && velocity.norma2 < 500)addForce(Vec(-2000,0))
     else if(last_key != Keyboard.KEY_LEFT) addForce(Vec(-1500,0))
@@ -67,7 +65,7 @@ class Tr0yka(init_coord:Vec) extends DynaBall(init_coord:Vec, 30) {
   private var next_frame:Float = 0
   override protected def render() = {
     GL11.glPushMatrix();
-		GL11.glTranslatef(coord.x, coord.y, 0.0f);
+	GL11.glTranslatef(coord.x, coord.y, 0.0f);
 
     Renderer.setColor(Color.WHITE)
     last_key match {

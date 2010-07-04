@@ -1,5 +1,6 @@
 package su.msk.dunno.scage.objects
 
+import su.msk.dunno.scage.main.Engine
 import net.phys2d.raw.shapes.Line
 import net.phys2d.math.Vector2f
 import org.lwjgl.opengl.GL11

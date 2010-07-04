@@ -1,7 +1,6 @@
 package scagetest
 
 import objects.{Box, Tr0yka}
-import su.msk.dunno.scage.handlers.tracer.Tracer
 import su.msk.dunno.scage.main.Engine
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.support.Vec
@@ -9,19 +8,23 @@ import su.msk.dunno.scage.support.messages.Message
 import su.msk.dunno.scage.objects.{StaticLine, StaticBox, StaticPolygon, Platform}
 import su.msk.dunno.scage.handlers.eventmanager.EventManager
 import su.msk.dunno.scage.handlers.Renderer
+import scagetest.handlers.SageTracer
 
 object Sage {
-  def main(args:Array[String]):Unit = {
+	def main(args:Array[String]):Unit = {
+		println("hello")
+	}
+  /*def main(args:Array[String]):Unit = {
     Engine.setDefaultHandlers
-    Engine.addHandler(Tracer)
+    Engine.addHandler(SageTracer)
 
     // our level
     val game_width = Engine.getIntProperty("game_width")
     val game_height = Engine.getIntProperty("game_height")
     new StaticLine(Vec(0,0), Vec(game_width,0))
-    new StaticLine(Vec(game_width,0), Vec(game_width,game_width))
-    new StaticLine(Vec(game_width,game_width), Vec(0,game_width))
-    new StaticLine(Vec(0,game_width), Vec(0,0))
+    new StaticLine(Vec(game_width,0), Vec(game_width,game_height))
+    new StaticLine(Vec(game_width,game_height), Vec(0,game_height))
+    new StaticLine(Vec(0,game_height), Vec(0,0))
 
     new StaticBox(Vec(0, 240), 60, 240)
     new StaticBox(Vec(400, 80), 200, 80)
@@ -42,16 +45,16 @@ object Sage {
     						Vec(1850, 50), 
     						Vec(2000, 50), 
     						Vec(2000, 190), 
-    						Vec(2100, 190), 
-    						Vec(2100, 0)))
-    new Platform(Vec(2120, 80), Vec(2120, 430))
+    						Vec(2170, 190), 
+    						Vec(2170, 0)))
+    new Platform(Vec(2270, 80), Vec(2270, 430))
     
     new StaticPolygon(Array(Vec(1800, 350), 
     						Vec(2000, 350), 
     						Vec(2000, 500), 
-    						Vec(2040, 500), 
-    						Vec(2100, 420), 
-    						Vec(2100, 330), 
+    						Vec(2100, 500), 
+    						Vec(2250, 420), 
+    						Vec(2250, 330), 
     						Vec(1800, 330)))
 
     // objects on level
@@ -62,8 +65,9 @@ object Sage {
     //  game interface
     Renderer.setCentral(tr0yka.coord)
     Renderer.addInterfaceElement(() => Message.print("coord: "+tr0yka.coord, 20, Renderer.height-20))
-    Renderer.addInterfaceElement(() => Message.print("fps: "+Engine.fps, 20, Renderer.height-35))
-    Renderer.addInterfaceElement(() => Message.print("scale: "+Renderer.scale, 20, Renderer.height-50))
+    Renderer.addInterfaceElement(() => Message.print("velocity: "+tr0yka.velocity, 20, Renderer.height-35))
+    Renderer.addInterfaceElement(() => Message.print("fps: "+Engine.fps, 20, Renderer.height-50))
+    Renderer.addInterfaceElement(() => Message.print("scale: "+Renderer.scale, 20, Renderer.height-65))
 
     // game pause
     EventManager.addKeyListener(Keyboard.KEY_P,() => Engine.switchPause)
@@ -86,5 +90,5 @@ object Sage {
     EventManager.addKeyListener(Keyboard.KEY_SUBTRACT, 10, () => if(Renderer.scale > 0.5f)Renderer.scale -= 0.01f)
 
     Engine.start
-  }
+  }*/
 }

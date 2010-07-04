@@ -1,9 +1,10 @@
 package su.msk.dunno.scage.objects
 
+import su.msk.dunno.scage.main.Engine
 import net.phys2d.raw.Body
 import org.lwjgl.opengl.GL11
 import net.phys2d.raw.shapes.Box
-import net.phys2d.math.{Vector2f}
+import net.phys2d.math.Vector2f
 import util.Random
 import su.msk.dunno.scage.support.{Color, Vec}
 import su.msk.dunno.scage.support.messages.TrueTypeFont
@@ -14,7 +15,6 @@ class DynaBox(val leftup_coord:Vec, width:Float, height:Float) extends Physical 
   val box = new Box(width, height)
   val body = new Body(box, 1)
   body.setPosition(leftup_coord.x+width/2, leftup_coord.y-height/2)
-  //body.setRotation((Random.nextFloat() * 2 * Math.Pi).toFloat);
   Physics.addBody(body)
 
   Renderer.addRender(() => render())

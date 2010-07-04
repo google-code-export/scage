@@ -8,7 +8,8 @@ import su.msk.dunno.scage.main.Engine
 import su.msk.dunno.scage.support.{Color, Vec}
 import su.msk.dunno.scage.objects.DynaBall
 import su.msk.dunno.scage.handlers.Renderer
-import su.msk.dunno.scage.handlers.tracer.{Tracer, Trace, State}
+import su.msk.dunno.scage.handlers.tracer.{Tracer, Trace}
+import scagetest.handlers.{SageTracer, State}
 
 class Tr0yka(init_coord:Vec) extends DynaBall(init_coord:Vec, 30) {
 	
@@ -43,7 +44,7 @@ class Tr0yka(init_coord:Vec) extends DynaBall(init_coord:Vec, 30) {
   })
 
   EventManager.addKeyListener(Keyboard.KEY_Z, () => {
-    Tracer.getNeighbours(coord, -1 to 1).foreach(trace => {
+  SageTracer.getNeighbours(coord, -1 to 1).foreach(trace => {
       //if("Box".equals(trace.getState.getString("name"))) {
         val state = new State("pull", coord)
         trace.changeState(state)
@@ -51,15 +52,15 @@ class Tr0yka(init_coord:Vec) extends DynaBall(init_coord:Vec, 30) {
     })
   })
 
-  val trace = new Trace {
+  val trace = new Trace[State] {
 	  def getCoord = coord()
-    def getState = {
+	  def getState = {
 		  val state = new State("name", "Tr0yka")
 		  state
 	  }
-    def changeState(s:State) = {}
+	  def changeState(s:State) = {}
   }
-  Tracer.addTrace(trace)
+  SageTracer.addTrace(trace)
 
   // render function
   private var next_frame:Float = 0

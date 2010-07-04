@@ -13,13 +13,13 @@ object Renderer extends THandler {
 
   val CIRCLE = 1
   private var next_displaylist_key = 2
-  def nextDisplayListKey() = {
+  private def nextDisplayListKey() = {
     val next_key = next_displaylist_key
     next_displaylist_key += 1
     next_key
   }
 
-  var scale:Float = 2
+  var scale:Float = 0.9f
   private var scaleFunc:(Float) => Float = (Float) => 2
   private var isSetScaleFunc = false
   def setScaleFunc(func: (Float) => Float) = {
@@ -112,13 +112,15 @@ object Renderer extends THandler {
     getTexture(format, new FileInputStream(filename))
   }
 
-  def createList(list_name:Int, texture:Texture, game_width:Float, game_height:Float, start_x:Float, start_y:Float, real_width:Float, real_height:Float):Unit = {
+  def createList(texture:Texture, game_width:Float, game_height:Float, start_x:Float, start_y:Float, real_width:Float, real_height:Float):Int = {
+	  	val list_name = nextDisplayListKey()
+	  	
 		val t_width:Float = texture.getImageWidth
 		val t_height:Float = texture.getImageHeight
 
 		GL11.glNewList(list_name, GL11.GL_COMPILE);
 		//texture.bind
-    GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture.getTextureID)
+	  	GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture.getTextureID)
 		GL11.glBegin(GL11.GL_QUADS);
 			GL11.glTexCoord2f(start_x/t_width, start_y/t_height);
 	    GL11.glVertex2f(-game_width, game_height);
@@ -133,9 +135,10 @@ object Renderer extends THandler {
 			GL11.glVertex2f(-game_width, -game_height);
 		GL11.glEnd();
 		GL11.glEndList();
+		
+		list_name
 	}
-  def createList(list_name:Int, filename:String, game_width:Float, game_height:Float, start_x:Float, start_y:Float, real_width:Float, real_height:Float):Unit = {
-    val format:String = filename.substring(filename.length-3)
-    createList(list_name, getTexture(filename), game_width, game_height, start_x, start_y, real_width, real_height)
+  def createList(filename:String, game_width:Float, game_height:Float, start_x:Float, start_y:Float, real_width:Float, real_height:Float):Int = {
+    createList(getTexture(filename), game_width, game_height, start_x, start_y, real_width, real_height)
   }
 }

@@ -4,7 +4,7 @@ version = 0.0.1
 width = 640
 height = 480
 
-game_width = 10000
+game_width = 2400
 game_height = 10000
 
 N_x = 16
@@ -13,6 +13,6 @@ N_y = 12
 framerate = 100
 auto_scaling = no
 
-dt = 5
+dt = 7
 gravity = -5
 friction = 10

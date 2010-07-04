@@ -6,7 +6,7 @@ import su.msk.dunno.scage.main.Engine
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.scage.support.messages.Message
-import su.msk.dunno.scage.objects.{StaticLine, StaticBox}
+import su.msk.dunno.scage.objects.{StaticLine, StaticBox, StaticPolygon, Platform}
 import su.msk.dunno.scage.handlers.eventmanager.EventManager
 import su.msk.dunno.scage.handlers.Renderer
 
@@ -29,6 +29,30 @@ object Sage {
 
     new Box(Vec(600, 40))
     new StaticBox(Vec(1000, 120), 60, 120)
+    
+    new StaticPolygon(Array(Vec(1500, 140), 
+    						Vec(1560, 140), 
+    						Vec(1560, 80), 
+    						Vec(1620, 80), 
+    						Vec(1620, 0), 
+    						Vec(1500, 0)))
+    new StaticBox(Vec(1000, 350), 620, 20)
+    
+    new StaticPolygon(Array(Vec(1800, 0), 
+    						Vec(1850, 50), 
+    						Vec(2000, 50), 
+    						Vec(2000, 190), 
+    						Vec(2100, 190), 
+    						Vec(2100, 0)))
+    new Platform(Vec(2120, 80), Vec(2120, 430))
+    
+    new StaticPolygon(Array(Vec(1800, 350), 
+    						Vec(2000, 350), 
+    						Vec(2000, 500), 
+    						Vec(2040, 500), 
+    						Vec(2100, 420), 
+    						Vec(2100, 330), 
+    						Vec(1800, 330)))
 
     // objects on level
     val tr0yka = new Tr0yka(Vec(20,270)) {
@@ -39,6 +63,7 @@ object Sage {
     Renderer.setCentral(tr0yka.coord)
     Renderer.addInterfaceElement(() => Message.print("coord: "+tr0yka.coord, 20, Renderer.height-20))
     Renderer.addInterfaceElement(() => Message.print("fps: "+Engine.fps, 20, Renderer.height-35))
+    Renderer.addInterfaceElement(() => Message.print("scale: "+Renderer.scale, 20, Renderer.height-50))
 
     // game pause
     EventManager.addKeyListener(Keyboard.KEY_P,() => Engine.switchPause)

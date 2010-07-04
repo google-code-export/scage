@@ -10,7 +10,7 @@ import su.msk.dunno.scage.handlers.{Physics, Renderer}
 
 class StaticBox(leftup_coord:Vec, width:Float, height:Float) extends Physical {
   val box = new Box(width, height)
-  val body = new StaticBody("staticBox", box)
+  val body = new StaticBody("StaticBox", box)
   body.setPosition(leftup_coord.x+width/2, leftup_coord.y-height/2)
   Physics.addBody(body)
 

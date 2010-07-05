@@ -5,7 +5,7 @@ import su.msk.dunno.scage.main.Engine
 import su.msk.dunno.scage.support.{Vec, Color}
 import su.msk.dunno.scage.handlers.Renderer
 
-class Tracer[S] extends THandler {
+class Tracer[S <: State] extends THandler {
   val game_width = Engine.getIntProperty("game_width")
   val game_height = Engine.getIntProperty("game_height")
 

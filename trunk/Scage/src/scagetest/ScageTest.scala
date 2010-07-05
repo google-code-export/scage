@@ -8,13 +8,12 @@ import su.msk.dunno.scage.objects.{StaticBox, DynaBall, StaticLine}
 import su.msk.dunno.scage.support.{Vec}
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.handlers.{AI, Renderer}
-import scagetest.handlers.{SageTracer, State}
-import su.msk.dunno.scage.handlers.tracer.Trace
+import su.msk.dunno.scage.handlers.tracer.{StandardTracer, State, Trace}
 
 object ScageTest {
   def main(args:Array[String]):Unit = {
     Engine.setDefaultHandlers
-    Engine.addHandler(SageTracer)
+    Engine.addHandler(StandardTracer)
 
     // our level
     new StaticLine(Vec(0,0), Vec(Renderer.width,0))
@@ -42,11 +41,11 @@ object ScageTest {
     		def getState = new State("name", "DynaBall")
     		def changeState(s:State) = {}
     	}
-    	SageTracer.addTrace(trace)
+    	StandardTracer.addTrace(trace)
     	
     	private var wasPushed = false;
     	AI.registerAI(() => {
-    		SageTracer.getNeighbours(coord(), (-2 to 2)).foreach(trace => {
+    		StandardTracer.getNeighbours(coord(), (-2 to 2)).foreach(trace => {
     			if(trace.getState.contains("push")) {
     				addForce((coord - trace.getCoord).n * 1000)
     				wasPushed = true
@@ -58,7 +57,7 @@ object ScageTest {
     val tr0yka = new Tr0yka(Vec(300,400)){
       Renderer.addInterfaceElement(() => Message.print("touching: "+(if(isTouching)"true" else "false"), 20, 420))
       Renderer.addInterfaceElement(() => Message.print("speed: "+velocity.norma2, 20, 400))
-      Renderer.addInterfaceElement(() => Message.print("neighbours: "+SageTracer.getNeighbours(coord(), (-2 to 2)).size, 20, 380))
+      Renderer.addInterfaceElement(() => Message.print("neighbours: "+StandardTracer.getNeighbours(coord(), (-2 to 2)).size, 20, 380))
       addForce(Vec(-100,0))
       Renderer.setCentral(coord)
     }

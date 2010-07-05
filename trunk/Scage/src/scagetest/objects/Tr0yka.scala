@@ -30,7 +30,7 @@ class Tr0yka(init_coord:Vec) extends DynaBall(init_coord:Vec, 30) {
   // controls
   private var last_key:Int = 0
   //EventManager.addKeyListener(Keyboard.KEY_S,() => {last_key = Keyboard.KEY_S; if(isTouching)addForce(Vec(body.getForce))})
-  EventManager.addKeyListener(Keyboard.KEY_SPACE,() => {last_key = Keyboard.KEY_SPACE; if(velocity.y == 0)addForce(Vec(0,3500))})
+  EventManager.addKeyListener(Keyboard.KEY_SPACE,() => {last_key = Keyboard.KEY_SPACE; if(Math.abs(velocity.y) < 0.5f)addForce(Vec(0,3500))})
   EventManager.addKeyListener(Keyboard.KEY_UP,() => {last_key = Keyboard.KEY_UP; addForce(Vec(0,3500))})	// for test purposes only!!!!
   EventManager.addKeyListener(Keyboard.KEY_LEFT,100,() => {
     if(isTouching && velocity.norma2 < 500)addForce(Vec(-2000,0))

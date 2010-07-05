@@ -8,12 +8,12 @@ import su.msk.dunno.scage.support.messages.Message
 import su.msk.dunno.scage.objects.{StaticLine, StaticBox, StaticPolygon, Platform}
 import su.msk.dunno.scage.handlers.eventmanager.EventManager
 import su.msk.dunno.scage.handlers.Renderer
-import scagetest.handlers.SageTracer
+import su.msk.dunno.scage.handlers.tracer.StandardTracer
 
 object Sage {
   def main(args:Array[String]):Unit = {
     Engine.setDefaultHandlers
-    Engine.addHandler(SageTracer)
+    Engine.addHandler(StandardTracer)
 
     // our level
     val game_width = Engine.getIntProperty("game_width")

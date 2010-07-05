@@ -1,4 +1,4 @@
-package scagetest.handlers;
+package su.msk.dunno.scage.handlers.tracer;
 
 import su.msk.dunno.scage.support.Vec;
 

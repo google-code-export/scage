@@ -38,21 +38,36 @@ object Sage {
     						Vec(1500, 0)))
     new StaticBox(Vec(1000, 350), 620, 20)
     
-    new StaticPolygon(Array(Vec(1800, 0), 
-    						Vec(1850, 50), 
-    						Vec(2000, 50), 
-    						Vec(2000, 190), 
-    						Vec(2170, 190), 
-    						Vec(2170, 0)))
-    new Platform(Vec(2270, 80), Vec(2270, 430))
+    new StaticPolygon(Array(Vec(2300, 0), 
+    						Vec(2350, 50), 
+    						Vec(2500, 50), 
+    						Vec(2500, 190), 
+    						Vec(2670, 190), 
+    						Vec(2670, 0)))
+    new Platform(Vec(2770, 80), Vec(2770, 430))
     
-    new StaticPolygon(Array(Vec(1800, 350), 
-    						Vec(2000, 350), 
-    						Vec(2000, 500), 
-    						Vec(2100, 500), 
-    						Vec(2250, 420), 
-    						Vec(2250, 330), 
-    						Vec(1800, 330)))
+    new StaticPolygon(Array(Vec(2300, 350), 
+    						Vec(2500, 350), 
+    						Vec(2500, 500), 
+    						Vec(2600, 500), 
+    						Vec(2750, 420), 
+    						Vec(2750, 330), 
+    						Vec(2300, 330)))
+    new Platform(Vec(2320, 430), Vec(2320, 780))
+    
+    new StaticPolygon(Array(Vec(2500, 780), 
+    						Vec(2650, 900), 
+    						Vec(2750, 900), 
+    						Vec(2750, 780)))
+    new Platform(Vec(2770, 880), Vec(2770, 1260))
+    
+    new StaticPolygon(Array(Vec(2300, 1350), 
+    						Vec(2500, 1350), 
+    						Vec(2600, 1250), 
+    						Vec(2750, 1250), 
+    						Vec(2750, 1210), 
+    						Vec(2300, 1210)))
+    
 
     // objects on level
     val tr0yka = new Tr0yka(Vec(20,270)) {

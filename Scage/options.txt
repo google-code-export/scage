@@ -4,8 +4,8 @@ version = 0.0.1
 width = 640
 height = 480
 
-game_width = 2430
-game_height = 10000
+game_width = 2990
+game_height = 1500
 
 N_x = 16
 N_y = 12

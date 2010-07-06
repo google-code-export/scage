@@ -3,7 +3,7 @@ package scagetest
 import scagetest.objects.Tr0yka
 import su.msk.dunno.scage.main.Engine
 import su.msk.dunno.scage.support.messages.Message
-import su.msk.dunno.scage.handlers.eventmanager.EventManager
+import su.msk.dunno.scage.handlers.controller.Controller
 import su.msk.dunno.scage.objects.{StaticBox, DynaBall, StaticLine}
 import su.msk.dunno.scage.support.{Vec}
 import org.lwjgl.input.Keyboard
@@ -64,16 +64,16 @@ object ScageTest {
 
     // game interface
     Renderer.addInterfaceElement(() => Message.print("fps: "+Engine.fps, 20, 460))
-    Renderer.addInterfaceElement(() => Message.print("last key: "+EventManager.last_key, 20, 440))
+    Renderer.addInterfaceElement(() => Message.print("last key: "+Controller.last_key, 20, 440))
 
-    EventManager.addKeyListener(Keyboard.KEY_P,() => Engine.switchPause)
+    Controller.addKeyListener(Keyboard.KEY_P,() => Engine.switchPause)
     Renderer.addInterfaceElement(() => if(Engine.onPause)Message.print("PAUSE", Renderer.width/2-20, Renderer.height/2+60))
     
     // scaling
     val auto_scaling = Engine.getBooleanProperty("auto_scaling")
     if(auto_scaling) {
     	Renderer.setScaleFunc((scale) => {
-    		if(EventManager.last_key  != Keyboard.KEY_ADD && EventManager.last_key != Keyboard.KEY_SUBTRACT) {
+    		if(Controller.last_key  != Keyboard.KEY_ADD && Controller.last_key != Keyboard.KEY_SUBTRACT) {
     			val factor = -3.0f/2000*tr0yka.velocity.norma2 + 2
     			if(factor > scale+0.1f && scale < 2)scale + 0.01f
     			else if(factor < scale-0.1f && scale > 0.5f)scale - 0.01f
@@ -82,8 +82,8 @@ object ScageTest {
     		else scale
     	})
     }
-    EventManager.addKeyListener(Keyboard.KEY_ADD, 10, () => if(Renderer.scale < 2)Renderer.scale += 0.01f)
-    EventManager.addKeyListener(Keyboard.KEY_SUBTRACT, 10, () => if(Renderer.scale > 0.5f)Renderer.scale -= 0.01f)
+    Controller.addKeyListener(Keyboard.KEY_ADD, 10, () => if(Renderer.scale < 2)Renderer.scale += 0.01f)
+    Controller.addKeyListener(Keyboard.KEY_SUBTRACT, 10, () => if(Renderer.scale > 0.5f)Renderer.scale -= 0.01f)
 
     Engine.start
   }

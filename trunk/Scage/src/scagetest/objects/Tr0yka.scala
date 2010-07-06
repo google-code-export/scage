@@ -1,7 +1,7 @@
 package scagetest.objects
 
 import org.lwjgl.opengl.GL11
-import su.msk.dunno.scage.handlers.eventmanager.EventManager
+import su.msk.dunno.scage.handlers.controller.Controller
 import org.lwjgl.input.Keyboard
 import org.newdawn.slick.opengl.Texture
 import su.msk.dunno.scage.main.Engine
@@ -29,20 +29,20 @@ class Tr0yka(init_coord:Vec) extends DynaBall(init_coord:Vec, 30) {
   // controls
   private var last_key:Int = 0
   //EventManager.addKeyListener(Keyboard.KEY_S,() => {last_key = Keyboard.KEY_S; if(isTouching)addForce(Vec(body.getForce))})
-  EventManager.addKeyListener(Keyboard.KEY_SPACE,() => {last_key = Keyboard.KEY_SPACE; if(Math.abs(velocity.y) < 0.5f)addForce(Vec(0,3500))})
-  EventManager.addKeyListener(Keyboard.KEY_UP,() => {last_key = Keyboard.KEY_UP; addForce(Vec(0,3500))})	// for test purposes only!!!!
-  EventManager.addKeyListener(Keyboard.KEY_LEFT,100,() => {
+  Controller.addKeyListener(Keyboard.KEY_SPACE,() => {last_key = Keyboard.KEY_SPACE; if(Math.abs(velocity.y) < 0.5f)addForce(Vec(0,3500))})
+  Controller.addKeyListener(Keyboard.KEY_UP,() => {last_key = Keyboard.KEY_UP; addForce(Vec(0,3500))})	// for test purposes only!!!!
+  Controller.addKeyListener(Keyboard.KEY_LEFT,100,() => {
     if(isTouching && velocity.norma2 < 500)addForce(Vec(-2000,0))
     else if(last_key != Keyboard.KEY_LEFT) addForce(Vec(-1500,0))
     last_key = Keyboard.KEY_LEFT
   })
-  EventManager.addKeyListener(Keyboard.KEY_RIGHT,100,() => {
+  Controller.addKeyListener(Keyboard.KEY_RIGHT,100,() => {
     if(isTouching && velocity.norma2 < 500)addForce(Vec(2000,0))
     else if(last_key != Keyboard.KEY_RIGHT) addForce(Vec(1500,0))
     last_key = Keyboard.KEY_RIGHT
   })
 
-  EventManager.addKeyListener(Keyboard.KEY_Z, () => {
+  Controller.addKeyListener(Keyboard.KEY_Z, () => {
   StandardTracer.getNeighbours(coord, -1 to 1).foreach(trace => {
       //if("Box".equals(trace.getState.getString("name"))) {
         val state = new State("pull", coord)

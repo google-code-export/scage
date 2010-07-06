@@ -1,4 +1,4 @@
-package su.msk.dunno.scage.handlers.eventmanager
+package su.msk.dunno.scage.handlers.controller
 
 trait TListener {
   protected var wasPressed:Boolean = false

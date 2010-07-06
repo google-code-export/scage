@@ -6,7 +6,7 @@ import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.scage.support.messages.Message
 import su.msk.dunno.scage.objects.{StaticLine, StaticBox, StaticPolygon, Platform}
-import su.msk.dunno.scage.handlers.eventmanager.EventManager
+import su.msk.dunno.scage.handlers.controller.Controller
 import su.msk.dunno.scage.handlers.Renderer
 import su.msk.dunno.scage.handlers.tracer.StandardTracer
 
@@ -82,14 +82,14 @@ object Sage {
     Renderer.addInterfaceElement(() => Message.print("scale: "+Renderer.scale, 20, Renderer.height-65))
 
     // game pause
-    EventManager.addKeyListener(Keyboard.KEY_P,() => Engine.switchPause)
+    Controller.addKeyListener(Keyboard.KEY_P,() => Engine.switchPause)
     Renderer.addInterfaceElement(() => if(Engine.onPause)Message.print("PAUSE", Renderer.width/2-20, Renderer.height/2+60))
 
     // scaling
     val auto_scaling = Engine.getBooleanProperty("auto_scaling")
     if(auto_scaling) {
     	Renderer.setScaleFunc((scale) => {
-    		if(EventManager.last_key  != Keyboard.KEY_ADD && EventManager.last_key != Keyboard.KEY_SUBTRACT) {
+    		if(Controller.last_key  != Keyboard.KEY_ADD && Controller.last_key != Keyboard.KEY_SUBTRACT) {
     			val factor = -3.0f/2000*tr0yka.velocity.norma2 + 2
     			if(factor > scale+0.1f && scale < 2)scale + 0.01f
     			else if(factor < scale-0.1f && scale > 0.5f)scale - 0.01f
@@ -98,8 +98,8 @@ object Sage {
     		else scale
     	})
     }
-    EventManager.addKeyListener(Keyboard.KEY_ADD, 10, () => if(Renderer.scale < 2)Renderer.scale += 0.01f)
-    EventManager.addKeyListener(Keyboard.KEY_SUBTRACT, 10, () => if(Renderer.scale > 0.5f)Renderer.scale -= 0.01f)
+    Controller.addKeyListener(Keyboard.KEY_ADD, 10, () => if(Renderer.scale < 2)Renderer.scale += 0.01f)
+    Controller.addKeyListener(Keyboard.KEY_SUBTRACT, 10, () => if(Renderer.scale > 0.5f)Renderer.scale -= 0.01f)
 
     Engine.start
   }

@@ -1,9 +1,10 @@
-package su.msk.dunno.scage.handlers.eventmanager
+package su.msk.dunno.scage.handlers.controller
 
 import su.msk.dunno.scage.prototypes.THandler
 import org.lwjgl.opengl.Display
 import su.msk.dunno.scage.main.Engine
-object EventManager extends THandler {
+
+object Controller extends THandler {
   var listeners = List[TListener]()
 
   var to_add = List[TListener]()

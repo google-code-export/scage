@@ -2,9 +2,10 @@ package su.msk.dunno.scage.main
 
 import java.util.Properties
 import java.io.FileInputStream
-import su.msk.dunno.scage.handlers.eventmanager.EventManager
+import su.msk.dunno.scage.handlers.controller.Controller
 import su.msk.dunno.scage.prototypes.{THandler}
 import su.msk.dunno.scage.handlers.{AI, Physics, Idler, Renderer}
+
 object Engine {
   private val properties:Properties = {
     if(properties == null) {
@@ -21,7 +22,7 @@ object Engine {
 
   private var handlers = List[THandler]()
   def getHandlers() = handlers
-  def setDefaultHandlers() = {handlers = EventManager :: Physics :: AI :: Renderer :: Idler :: Nil}
+  def setDefaultHandlers() = {handlers = Controller :: Physics :: AI :: Renderer :: Idler :: Nil}
   def addHandler(h:THandler) = {handlers = h :: handlers}
   def addHandlers(h:List[THandler]) = {handlers = h ::: handlers}
 

@@ -1,6 +1,10 @@
 package su.msk.dunno.scage.prototypes
 
-trait THandler {
+import su.msk.dunno.scage.main.Engine
+
+abstract class THandler {
+  Engine.addHandler(this)
+  	
   def initSequence():Unit = {}
   def actionSequence():Unit = {}
   def exitSequence():Unit = {}

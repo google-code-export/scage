@@ -22,6 +22,6 @@ extends StaticBox(leftup_start, 140, 10) {
     	val vec = new Vec(body.getPosition)+step*dir*speed
     	if(start_condition(vec))dir = 1
     	else if(end_condition(vec))dir = -1
-    	body.setPosition(vec.x, vec.y)
+    	body.move(vec.x, vec.y)
     })
 }

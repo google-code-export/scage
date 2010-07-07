@@ -19,8 +19,8 @@ object Renderer extends THandler {
     next_key
   }
 
-  var scale:Float = 0.9f
-  private var scaleFunc:(Float) => Float = (Float) => 2
+  var scale:Float = 1.0f
+  private var scaleFunc:(Float) => Float = (Float) => 1
   private var isSetScaleFunc = false
   def setScaleFunc(func: (Float) => Float) = {
 	  scaleFunc = func
@@ -69,6 +69,18 @@ object Renderer extends THandler {
   def addInterfaceElement(renderFunc: () => Unit) = {
     interface = renderFunc :: interface
   }
+  
+  private var msek = System.currentTimeMillis
+  private var frames:Int = 0
+  var fps:Int = 0
+  def countFPS() = {
+    frames += 1
+    if(System.currentTimeMillis - msek >= 1000) {
+      fps = frames
+      frames = 0
+      msek = System.currentTimeMillis
+    }
+  }
 
   override def actionSequence() = {
 	if(Display.isCloseRequested())Engine.stop
@@ -85,6 +97,7 @@ object Renderer extends THandler {
 
       interface.foreach(renderFunc => renderFunc())
     Display.update();
+    countFPS
   }
   override def exitSequence() = Display.destroy();
 
@@ -116,24 +129,24 @@ object Renderer extends THandler {
   def createList(texture:Texture, game_width:Float, game_height:Float, start_x:Float, start_y:Float, real_width:Float, real_height:Float):Int = {
 	  	val list_name = nextDisplayListKey()
 	  	
-		val t_width:Float = texture.getImageWidth
-		val t_height:Float = texture.getImageHeight
+		val t_width:Float = texture.getTextureWidth
+		val t_height:Float = texture.getTextureHeight
 
 		GL11.glNewList(list_name, GL11.GL_COMPILE);
 		//texture.bind
 	  	GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture.getTextureID)
 		GL11.glBegin(GL11.GL_QUADS);
 			GL11.glTexCoord2f(start_x/t_width, start_y/t_height);
-	    GL11.glVertex2f(-game_width, game_height);
+	    GL11.glVertex2f(-game_width/2, game_height/2);
 
 			GL11.glTexCoord2f((start_x+real_width)/t_width, start_y/t_height);
-			GL11.glVertex2f(game_width, game_height);
+			GL11.glVertex2f(game_width/2, game_height/2);
 
 			GL11.glTexCoord2f((start_x+real_width)/t_width, (start_y+real_height)/t_height);
-			GL11.glVertex2f(game_width, -game_height);
+			GL11.glVertex2f(game_width/2, -game_height/2);
 
 	    GL11.glTexCoord2f(start_x/t_width, (start_y+real_height)/t_height);
-			GL11.glVertex2f(-game_width, -game_height);
+			GL11.glVertex2f(-game_width/2, -game_height/2);
 		GL11.glEnd();
 		GL11.glEndList();
 		

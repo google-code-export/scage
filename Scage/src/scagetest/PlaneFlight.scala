@@ -10,7 +10,7 @@ import su.msk.dunno.scage.support.messages.Message
 
 object PlaneFlight {
   def main(args: Array[String]): Unit = {
-	 def delta = 10
+	 val delta = 10
 	 val PLANE = Renderer.createList("img/plane.png", 60, 60, 0, 0, 122, 121)
      var rotation = 0.0f
      var x:Float = 400;

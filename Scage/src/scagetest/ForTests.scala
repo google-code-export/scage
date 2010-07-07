@@ -1,4 +1,9 @@
-package test
+package scagetest
+
+import su.msk.dunno.scage.main.Engine
+import su.msk.dunno.scage.support.messages.Message
+import su.msk.dunno.scage.handlers.Renderer
+import su.msk.dunno.scage.handlers.controller.Controller
 
 object ForTests {
   class MyInt(val mi:Int) {
@@ -15,14 +20,6 @@ object ForTests {
 
   def mywhile(condition: => Boolean)(p: => Unit):Unit = {
     if(condition){p; mywhile(condition)(p)}
-  }
-
-  def main(args:Array[String]):Unit = {
-    var i = 0
-    mywhile(i < 5) {
-      println("hello")
-      i += 1
-    }
   }
 
   def root(x:Double):Double = {
@@ -54,5 +51,10 @@ object ForTests {
       }
     }
     finder_(List[Double](), a, b)
+  }
+  
+  def main(args:Array[String]):Unit = {
+     Renderer.addInterfaceElement(() => Message.print("Hello world!", 320, 240))
+     Engine.start
   }
 }

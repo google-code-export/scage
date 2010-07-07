@@ -71,6 +71,7 @@ object Renderer extends THandler {
   }
 
   override def actionSequence() = {
+	if(Display.isCloseRequested())Engine.stop
     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
 		GL11.glLoadIdentity();
       GL11.glPushMatrix

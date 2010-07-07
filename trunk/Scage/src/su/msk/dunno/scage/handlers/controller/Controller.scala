@@ -28,7 +28,6 @@ object Controller extends THandler {
 
   var last_key:Int = 0
   override def actionSequence():Unit = {
-    if(Display.isCloseRequested())Engine.stop
     if(to_add.length > 0) {
       listeners = to_add ::: listeners
       to_add = List[TListener]()

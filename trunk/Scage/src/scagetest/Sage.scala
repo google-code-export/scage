@@ -77,7 +77,7 @@ object Sage {
     Renderer.setCentral(tr0yka.coord)
     Renderer.addInterfaceElement(() => Message.print("coord: "+tr0yka.coord, 20, Renderer.height-20))
     Renderer.addInterfaceElement(() => Message.print("velocity: "+tr0yka.velocity+" norma="+tr0yka.velocity.norma, 20, Renderer.height-35))
-    Renderer.addInterfaceElement(() => Message.print("fps: "+Engine.fps, 20, Renderer.height-50))
+    Renderer.addInterfaceElement(() => Message.print("fps: "+Renderer.fps, 20, Renderer.height-50))
     Renderer.addInterfaceElement(() => Message.print("scale: "+Renderer.scale, 20, Renderer.height-65))
     Renderer.addInterfaceElement(() => Message.print("handlers: "+Engine.getHandlers.size, 20, Renderer.height-80))
 

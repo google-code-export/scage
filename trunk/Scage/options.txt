@@ -1,8 +1,8 @@
 name = Sage
 version = 0.0.1
 
-width = 640
-height = 480
+width = 800
+height = 600
 
 game_width = 2990
 game_height = 1500

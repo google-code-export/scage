@@ -15,7 +15,7 @@ class Box(leftup_coord:Vec) extends DynaBox(leftup_coord, 50, 50) {
   }
   StandardTracer.addTrace(trace)
   
-  private val BOX = Renderer.createList("img/Crate.png", 25, 25, 0, 0, 256, 256)
+  private val BOX = Renderer.createList("img/Crate.png", 50, 50, 0, 0, 256, 256)
   override protected def render() = {
 	  GL11.glPushMatrix();
 	  GL11.glTranslatef(coord.x, coord.y, 0.0f);

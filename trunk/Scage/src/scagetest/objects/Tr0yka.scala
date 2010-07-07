@@ -13,12 +13,12 @@ import su.msk.dunno.scage.handlers.tracer.{StandardTracer, State, Tracer, Trace}
 class Tr0yka(init_coord:Vec) extends DynaBall(init_coord:Vec, 30) {
 	
 	// loading main image
-  private val TR0YKA = Renderer.createList("img/stay2.png", 24, 30, 0, 0, 160, 200)
+  private val TR0YKA = Renderer.createList("img/stay2.png", 48, 60, 0, 0, 160, 200)
 
   // loading images for animation
   private val ANIMATION:Array[Int] = {
     def nextFrame(arr:List[Int], texture:Texture):List[Int] = {
-      val next_key = Renderer.createList(texture, 24, 30, 160*(arr.length), 0, 160, 200)
+      val next_key = Renderer.createList(texture, 48, 60, 160*(arr.length), 0, 160, 200)
       val new_arr = next_key :: arr
       if(new_arr.length == 6)new_arr
       else nextFrame(next_key :: arr, texture)

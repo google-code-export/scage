@@ -63,7 +63,7 @@ object ScageTest {
     }
 
     // game interface
-    Renderer.addInterfaceElement(() => Message.print("fps: "+Engine.fps, 20, 460))
+    Renderer.addInterfaceElement(() => Message.print("fps: "+Renderer.fps, 20, 460))
     Renderer.addInterfaceElement(() => Message.print("last key: "+Controller.last_key, 20, 440))
 
     Controller.addKeyListener(Keyboard.KEY_P,() => Engine.switchPause)

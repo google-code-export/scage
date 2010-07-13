@@ -1,13 +1,10 @@
 package su.msk.dunno.scage.objects
 
-import su.msk.dunno.scage.main.Engine
 import net.phys2d.raw.Body
 import org.lwjgl.opengl.GL11
 import net.phys2d.raw.shapes.Box
 import net.phys2d.math.Vector2f
-import util.Random
 import su.msk.dunno.scage.support.{Color, Vec}
-import su.msk.dunno.scage.support.messages.TrueTypeFont
 import su.msk.dunno.scage.handlers.{Physics, Renderer}
 import su.msk.dunno.scage.prototypes.Physical
 

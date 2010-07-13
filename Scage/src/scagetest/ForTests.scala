@@ -1,10 +1,5 @@
 package scagetest
 
-import su.msk.dunno.scage.main.Engine
-import su.msk.dunno.scage.support.messages.Message
-import su.msk.dunno.scage.handlers.Renderer
-import su.msk.dunno.scage.handlers.controller.Controller
-
 object ForTests {
   class MyInt(val mi:Int) {
     val plus:(Int) => Int = (i:Int) => mi + i
@@ -54,7 +49,6 @@ object ForTests {
   }
   
   def main(args:Array[String]):Unit = {
-     Renderer.addInterfaceElement(() => Message.print("Hello world!", 320, 240))
-     Engine.start
+    println((1 to 100).filter(x => (x%2) != 0))
   }
 }

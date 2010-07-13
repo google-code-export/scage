@@ -4,8 +4,7 @@ import org.lwjgl.opengl.GL11
 import su.msk.dunno.scage.objects.DynaBox
 import su.msk.dunno.scage.support.{Vec, Color}
 import su.msk.dunno.scage.handlers.Renderer
-import net.phys2d.math.Vector2f
-import su.msk.dunno.scage.handlers.tracer.{StandardTracer, State, Tracer, Trace}
+import su.msk.dunno.scage.handlers.tracer.{StandardTracer, State, Trace}
 
 class Box(leftup_coord:Vec) extends DynaBox(leftup_coord, 50, 50) {
   val trace = new Trace[State] {

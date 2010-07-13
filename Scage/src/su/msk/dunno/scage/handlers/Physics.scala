@@ -3,8 +3,6 @@ package su.msk.dunno.scage.handlers
 import net.phys2d.raw.strategies.QuadSpaceStrategy
 import net.phys2d.math.Vector2f
 import su.msk.dunno.scage.main.Engine
-import su.msk.dunno.scage.support.Vec
-import su.msk.dunno.scage.objects.StaticLine
 import net.phys2d.raw.{Body, World}
 import su.msk.dunno.scage.prototypes.{THandler}
 

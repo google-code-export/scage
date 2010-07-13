@@ -8,7 +8,7 @@ import su.msk.dunno.scage.main.Engine
 import su.msk.dunno.scage.support.{Color, Vec}
 import su.msk.dunno.scage.objects.DynaBall
 import su.msk.dunno.scage.handlers.Renderer
-import su.msk.dunno.scage.handlers.tracer.{StandardTracer, State, Tracer, Trace}
+import su.msk.dunno.scage.handlers.tracer.{StandardTracer, State, Trace}
 
 class Tr0yka(init_coord:Vec) extends DynaBall(init_coord:Vec, 30) {
 	

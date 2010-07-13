@@ -7,9 +7,10 @@ import su.msk.dunno.scage.support.{Vec, Color}
 import org.newdawn.slick.opengl.{TextureLoader, Texture}
 import java.io.{FileInputStream, InputStream}
 import su.msk.dunno.scage.prototypes.{THandler}
+
 object Renderer extends THandler {
   private var render_list:List[() => Unit] = List[() => Unit]()
-  def addRender(render: () => Unit) = {render_list = render :: render_list}
+  def addRender(render: () => Unit) = {render_list = render_list ::: List(render)}
 
   val CIRCLE = 1
   private var next_displaylist_key = 2

@@ -1,9 +1,6 @@
 package su.msk.dunno.scage.handlers.controller
 
 import su.msk.dunno.scage.prototypes.THandler
-import org.lwjgl.opengl.Display
-import su.msk.dunno.scage.main.Engine
-
 object Controller extends THandler {
   var listeners = List[TListener]()
 

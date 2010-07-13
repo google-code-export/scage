@@ -1,6 +1,5 @@
 package su.msk.dunno.scage.objects
 
-import su.msk.dunno.scage.main.Engine
 import su.msk.dunno.scage.prototypes.Physical
 import net.phys2d.raw.StaticBody
 import net.phys2d.raw.shapes.Box

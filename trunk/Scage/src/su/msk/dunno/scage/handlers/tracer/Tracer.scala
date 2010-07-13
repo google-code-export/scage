@@ -2,9 +2,7 @@ package su.msk.dunno.scage.handlers.tracer
 
 import su.msk.dunno.scage.prototypes.THandler
 import su.msk.dunno.scage.main.Engine
-import su.msk.dunno.scage.support.{Vec, Color}
-import su.msk.dunno.scage.handlers.Renderer
-
+import su.msk.dunno.scage.support.{Vec}
 class Tracer[S <: State] extends THandler {
   val game_width = Engine.getIntProperty("game_width")
   val game_height = Engine.getIntProperty("game_height")
@@ -68,5 +66,11 @@ class Tracer[S <: State] extends THandler {
       }
       (new_p, obj._2)
     })
+  }
+
+  def getNewCoord(coord:Vec) = {
+    val x = if(coord.x >= game_width) {coord.x - game_width} else if(coord.x <= 0) {coord.x + game_width} else coord.x
+    val y = if(coord.y >= game_height) {coord.y - game_height} else if(coord.y <= 0) {coord.y + game_height} else coord.y
+    Vec(x, y)
   }
 }

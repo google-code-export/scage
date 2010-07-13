@@ -8,7 +8,6 @@ import su.msk.dunno.scage.support.messages.Message
 import su.msk.dunno.scage.objects.{StaticLine, StaticBox, StaticPolygon, Platform}
 import su.msk.dunno.scage.handlers.controller.Controller
 import su.msk.dunno.scage.handlers.Renderer
-import su.msk.dunno.scage.handlers.tracer.StandardTracer
 
 object Sage {
   def main(args:Array[String]):Unit = {

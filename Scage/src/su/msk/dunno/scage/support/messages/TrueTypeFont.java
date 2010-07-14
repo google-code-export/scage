@@ -21,7 +21,7 @@ import java.util.Map;
 
 
 /**
- * A TrueType font implementation originally for Slick, edited for Bobjob's Engine
+ * A TrueType font implementation originally for Slick, edited for Bobjob's Scage
  *
  * @original author James Chambers (Jimmy)
  * @original author Jeremy Adams (elias4444)

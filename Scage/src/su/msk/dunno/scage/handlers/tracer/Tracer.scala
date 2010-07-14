@@ -1,14 +1,14 @@
 package su.msk.dunno.scage.handlers.tracer
 
 import su.msk.dunno.scage.prototypes.THandler
-import su.msk.dunno.scage.main.Engine
+import su.msk.dunno.scage.main.Scage
 import su.msk.dunno.scage.support.{Vec}
 class Tracer[S <: State] extends THandler {
-  val game_width = Engine.getIntProperty("game_width")
-  val game_height = Engine.getIntProperty("game_height")
+  val game_width = Scage.getIntProperty("game_width")
+  val game_height = Scage.getIntProperty("game_height")
 
-  val N_x = Engine.getIntProperty("N_x")
-  val N_y = Engine.getIntProperty("N_y")
+  val N_x = Scage.getIntProperty("N_x")
+  val N_y = Scage.getIntProperty("N_y")
 
   private var object_points:List[((Int, Int), Trace[S])] = List[((Int, Int), Trace[S])]()
   private var coord_matrix = Array.ofDim[List[Trace[S]]](N_x, N_y)

@@ -5,10 +5,10 @@ import java.io.FileInputStream
 import su.msk.dunno.scage.handlers.controller.Controller
 import su.msk.dunno.scage.prototypes.{THandler}
 import su.msk.dunno.scage.handlers.{AI, Physics, Idler, Renderer}
-import org.apache.log4j.Logger;
+import org.apache.log4j.Logger
 
-object Engine {
-  private val log = Logger.getLogger(Engine.getClass);
+object Scage {
+  private val log = Logger.getLogger(Scage.getClass);
   log.debug("starting scage...")
   
   private val properties:Properties = {

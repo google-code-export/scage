@@ -1,6 +1,6 @@
 package su.msk.dunno.scage.handlers
 
-import su.msk.dunno.scage.main.Engine
+import su.msk.dunno.scage.main.Scage
 import org.lwjgl.opengl.{DisplayMode, Display, GL11}
 import org.lwjgl.util.glu.GLU
 import su.msk.dunno.scage.support.{Vec, Color}
@@ -28,8 +28,8 @@ object Renderer extends THandler {
 	  isSetScaleFunc = true
   }
 
-  val width = Engine.getIntProperty("width");
-  val height = Engine.getIntProperty("height");
+  val width = Scage.getIntProperty("width");
+  val height = Scage.getIntProperty("height");
   val center = Vec(width/2, height/2)
   private var central_coord = () => Vec(width/2, height/2)
   def setCentral(coord: () => Vec) = {
@@ -37,7 +37,7 @@ object Renderer extends THandler {
   }
 
   Display.setDisplayMode(new DisplayMode(width, height));
-  Display.setTitle(Engine.getProperty("name")+" - "+Engine.getProperty("version"));
+  Display.setTitle(Scage.getProperty("name")+" - "+Scage.getProperty("version"));
   Display.setVSyncEnabled(true);
   Display.create();
 
@@ -84,12 +84,12 @@ object Renderer extends THandler {
   }
 
   override def actionSequence() = {
-	if(Display.isCloseRequested())Engine.stop
+	if(Display.isCloseRequested())Scage.stop
     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
 		GL11.glLoadIdentity();
       GL11.glPushMatrix
 
-      if(isSetScaleFunc && !Engine.onPause)scale = scaleFunc(scale)
+      if(isSetScaleFunc && !Scage.onPause)scale = scaleFunc(scale)
       val coord = center - central_coord()*scale
       GL11.glTranslatef(coord.x, coord.y, 0.0f)
       GL11.glScalef(scale, scale, 1)

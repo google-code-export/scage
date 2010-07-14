@@ -1,7 +1,7 @@
 package scagetest
 
 import scagetest.objects.Tr0yka
-import su.msk.dunno.scage.main.Engine
+import su.msk.dunno.scage.main.Scage
 import su.msk.dunno.scage.support.messages.Message
 import su.msk.dunno.scage.handlers.controller.Controller
 import su.msk.dunno.scage.objects.{StaticBox, DynaBall, StaticLine}
@@ -12,8 +12,8 @@ import su.msk.dunno.scage.handlers.tracer.{StandardTracer, State, Trace}
 
 object ScageTest {
   def main(args:Array[String]):Unit = {
-    Engine.setDefaultHandlers
-    Engine.addHandler(StandardTracer)
+    Scage.setDefaultHandlers
+    Scage.addHandler(StandardTracer)
 
     // our level
     new StaticLine(Vec(0,0), Vec(Renderer.width,0))
@@ -66,11 +66,11 @@ object ScageTest {
     Renderer.addInterfaceElement(() => Message.print("fps: "+Renderer.fps, 20, 460))
     Renderer.addInterfaceElement(() => Message.print("last key: "+Controller.last_key, 20, 440))
 
-    Controller.addKeyListener(Keyboard.KEY_P,() => Engine.switchPause)
-    Renderer.addInterfaceElement(() => if(Engine.onPause)Message.print("PAUSE", Renderer.width/2-20, Renderer.height/2+60))
+    Controller.addKeyListener(Keyboard.KEY_P,() => Scage.switchPause)
+    Renderer.addInterfaceElement(() => if(Scage.onPause)Message.print("PAUSE", Renderer.width/2-20, Renderer.height/2+60))
     
     // scaling
-    val auto_scaling = Engine.getBooleanProperty("auto_scaling")
+    val auto_scaling = Scage.getBooleanProperty("auto_scaling")
     if(auto_scaling) {
     	Renderer.setScaleFunc((scale) => {
     		if(Controller.last_key  != Keyboard.KEY_ADD && Controller.last_key != Keyboard.KEY_SUBTRACT) {
@@ -85,6 +85,6 @@ object ScageTest {
     Controller.addKeyListener(Keyboard.KEY_ADD, 10, () => if(Renderer.scale < 2)Renderer.scale += 0.01f)
     Controller.addKeyListener(Keyboard.KEY_SUBTRACT, 10, () => if(Renderer.scale > 0.5f)Renderer.scale -= 0.01f)
 
-    Engine.start
+    Scage.start
   }
 }

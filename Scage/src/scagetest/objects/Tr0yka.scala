@@ -4,7 +4,7 @@ import org.lwjgl.opengl.GL11
 import su.msk.dunno.scage.handlers.controller.Controller
 import org.lwjgl.input.Keyboard
 import org.newdawn.slick.opengl.Texture
-import su.msk.dunno.scage.main.Engine
+import su.msk.dunno.scage.main.Scage
 import su.msk.dunno.scage.support.{Color, Vec}
 import su.msk.dunno.scage.objects.DynaBall
 import su.msk.dunno.scage.handlers.Renderer
@@ -81,7 +81,7 @@ class Tr0yka(init_coord:Vec) extends DynaBall(init_coord:Vec, 30) {
     val vel = velocity.norma2
     if(isTouching && vel > 10){
       GL11.glCallList(ANIMATION(next_frame.toInt));
-      if(!Engine.onPause) {
+      if(!Scage.onPause) {
     	  next_frame += vel/2000
     	  if(next_frame >= 6)next_frame = 0
       }

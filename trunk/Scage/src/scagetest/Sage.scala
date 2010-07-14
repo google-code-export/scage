@@ -1,7 +1,7 @@
 package scagetest
 
 import objects.{Box, Tr0yka}
-import su.msk.dunno.scage.main.Engine
+import su.msk.dunno.scage.main.Scage
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.scage.support.messages.Message
@@ -11,11 +11,11 @@ import su.msk.dunno.scage.handlers.Renderer
 
 object Sage {
   def main(args:Array[String]):Unit = {
-    Engine.setDefaultHandlers
+    Scage.setDefaultHandlers
 
     // our level
-    val game_width = Engine.getIntProperty("game_width")
-    val game_height = Engine.getIntProperty("game_height")
+    val game_width = Scage.getIntProperty("game_width")
+    val game_height = Scage.getIntProperty("game_height")
     new StaticLine(Vec(0,0), Vec(game_width,0))
     new StaticLine(Vec(game_width,0), Vec(game_width,game_height))
     new StaticLine(Vec(game_width,game_height), Vec(0,game_height))
@@ -78,14 +78,14 @@ object Sage {
     Renderer.addInterfaceElement(() => Message.print("velocity: "+tr0yka.velocity+" norma="+tr0yka.velocity.norma, 20, Renderer.height-35))
     Renderer.addInterfaceElement(() => Message.print("fps: "+Renderer.fps, 20, Renderer.height-50))
     Renderer.addInterfaceElement(() => Message.print("scale: "+Renderer.scale, 20, Renderer.height-65))
-    Renderer.addInterfaceElement(() => Message.print("handlers: "+Engine.getHandlers.size, 20, Renderer.height-80))
+    Renderer.addInterfaceElement(() => Message.print("handlers: "+Scage.getHandlers.size, 20, Renderer.height-80))
 
     // game pause
-    Controller.addKeyListener(Keyboard.KEY_P,() => Engine.switchPause)
-    Renderer.addInterfaceElement(() => if(Engine.onPause)Message.print("PAUSE", Renderer.width/2-20, Renderer.height/2+60))
+    Controller.addKeyListener(Keyboard.KEY_P,() => Scage.switchPause)
+    Renderer.addInterfaceElement(() => if(Scage.onPause)Message.print("PAUSE", Renderer.width/2-20, Renderer.height/2+60))
 
     // scaling
-    val auto_scaling = Engine.getBooleanProperty("auto_scaling")
+    val auto_scaling = Scage.getBooleanProperty("auto_scaling")
     if(auto_scaling) {
     	Renderer.setScaleFunc((scale) => {
     		if(Controller.last_key  != Keyboard.KEY_ADD && Controller.last_key != Keyboard.KEY_SUBTRACT) {
@@ -100,6 +100,6 @@ object Sage {
     Controller.addKeyListener(Keyboard.KEY_ADD, 10, () => if(Renderer.scale < 2)Renderer.scale += 0.01f)
     Controller.addKeyListener(Keyboard.KEY_SUBTRACT, 10, () => if(Renderer.scale > 0.5f)Renderer.scale -= 0.01f)
 
-    Engine.start
+    Scage.start
   }
 }

@@ -36,9 +36,13 @@ class OurPlane(init_coord:Vec) {
   Controller.addKeyListener(Keyboard.KEY_W, 10, () => if(delta < 15)delta += 0.5f)
   Controller.addKeyListener(Keyboard.KEY_1, 10, () => Renderer.scale -= (if(Renderer.scale <= 1.0f)0 else 0.1f))
   Controller.addKeyListener(Keyboard.KEY_2, 10, () => Renderer.scale += (if(Renderer.scale >= 5.0f)0 else 0.1f))
-  Controller.addKeyListener(Keyboard.KEY_SPACE, 100, () => {
-    val b = new Bullet(coord + step, step);
+
+  // shooting
+  var dir = 1
+  Controller.addKeyListener(Keyboard.KEY_SPACE, 1500, () => {
+    val b = new Bullet("player", coord + step.n.rotate(Math.Pi/2 * dir)*10, step, rotation);
     bullet_coord = () => b.coord
+    dir *= -1
   })
 
   // interactions

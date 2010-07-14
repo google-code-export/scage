@@ -11,16 +11,12 @@ import su.msk.dunno.scage.handlers.{AI, Renderer}
 class OurPlane(init_coord:Vec) {
   def this(x:Float, y:Float) = this(Vec(x, y))
 
-  var delta = 5.0f
-  var rotation = 0.0f
-  var coord = init_coord
-  def step = Vec(-0.4f*delta*Math.sin(Math.toRadians(rotation)).toFloat,
-                 0.4f*delta*Math.cos(Math.toRadians(rotation)).toFloat)
-
-  var bullet_coord:() => Vec = () => Vec(0,0)
-  Renderer.addInterfaceElement(() => Message.print(bullet_coord(), 20, Renderer.height-40, Color.YELLOW))
-
-  var health = 100
+  private var delta = 5.0f
+  private var rotation = 0.0f
+  private var coord = init_coord
+  private def step = Vec(-0.4f*delta*Math.sin(Math.toRadians(rotation)).toFloat,
+                         0.4f*delta*Math.cos(Math.toRadians(rotation)).toFloat)
+  private var health = 100
   Renderer.addInterfaceElement(() => Message.print("HP: "+health, 20, Renderer.height-60, Color.YELLOW))
 
   Renderer.addInterfaceElement(() => Message.print(StandardTracer.point(coord), 20, Renderer.height-80, Color.YELLOW))
@@ -31,17 +27,16 @@ class OurPlane(init_coord:Vec) {
   })
 
   // controls
-  Controller.addKeyListener(Keyboard.KEY_A, 10, () => rotation -= 0.2f*delta)
-  Controller.addKeyListener(Keyboard.KEY_D, 10, () => rotation += 0.2f*delta)
-  Controller.addKeyListener(Keyboard.KEY_W, 10, () => if(delta < 15)delta += 0.5f)
-  Controller.addKeyListener(Keyboard.KEY_1, 10, () => Renderer.scale -= (if(Renderer.scale <= 1.0f)0 else 0.1f))
-  Controller.addKeyListener(Keyboard.KEY_2, 10, () => Renderer.scale += (if(Renderer.scale >= 5.0f)0 else 0.1f))
+  Controller.addKeyListener(Keyboard.KEY_LEFT, 10, () => rotation -= 0.2f*delta)
+  Controller.addKeyListener(Keyboard.KEY_RIGHT, 10, () => rotation += 0.2f*delta)
+  Controller.addKeyListener(Keyboard.KEY_UP, 10, () => if(delta < 15)delta += 0.5f)
+  Controller.addKeyListener(Keyboard.KEY_SUBTRACT, 10, () => Renderer.scale -= (if(Renderer.scale <= 1.0f)0 else 0.1f))
+  Controller.addKeyListener(Keyboard.KEY_ADD, 10, () => Renderer.scale += (if(Renderer.scale >= 5.0f)0 else 0.1f))
 
   // shooting
-  var dir = 1
+  private var dir = 1
   Controller.addKeyListener(Keyboard.KEY_SPACE, 1500, () => {
-    val b = new Bullet("player", coord + step.n.rotate(Math.Pi/2 * dir)*10, step, rotation);
-    bullet_coord = () => b.coord
+    new Bullet("player", coord + step.n.rotate(Math.Pi/2 * dir)*10, step, rotation);
     dir *= -1
   })
 
@@ -53,7 +48,7 @@ class OurPlane(init_coord:Vec) {
   })
 
   // render
-  val PLANE = Renderer.createList("img/plane.png", 60, 60, 0, 0, 122, 121)
+  private val PLANE = Renderer.createList("img/plane.png", 60, 60, 0, 0, 122, 121)
   Renderer.addRender(() => {
      GL11.glPushMatrix();
      GL11.glTranslatef(coord.x, coord.y, 0.0f);

@@ -8,8 +8,20 @@ import org.lwjgl.opengl.GL11
 import su.msk.dunno.scage.support.{Vec, Color}
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.handlers.controller.Controller
+import org.newdawn.slick.opengl.Texture
 
 object PlaneFlight {
+  // common images
+  val ROCKET_ANIMATION:Array[Int] = {
+    def nextFrame(arr:List[Int], texture:Texture):List[Int] = {
+      val next_key = Renderer.createList(texture, 10, 29, 14*(arr.length), 0, 14, 44)
+      val new_arr = next_key :: arr
+      if(new_arr.length == 3)new_arr
+      else nextFrame(next_key :: arr, texture)
+    }
+    nextFrame(List[Int](), Renderer.getTexture("img/rocket_animation.png")).toArray
+  }
+
   def main(args: Array[String]): Unit = {
     // background
     val LAND = Renderer.createList("img/land.png", 800, 600, 0, 0, 800, 600)

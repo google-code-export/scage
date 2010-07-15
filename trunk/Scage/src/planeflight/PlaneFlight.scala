@@ -1,6 +1,6 @@
 package planeflight
 
-import objects.OurPlane
+import objects.{EnemyPlane, OurPlane}
 import su.msk.dunno.scage.support.messages.Message
 import su.msk.dunno.scage.main.Scage
 import su.msk.dunno.scage.handlers.{Idler, Renderer}
@@ -9,6 +9,7 @@ import su.msk.dunno.scage.support.{Vec, Color}
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.handlers.controller.Controller
 import org.newdawn.slick.opengl.Texture
+import su.msk.dunno.scage.handlers.tracer.StandardTracer
 
 object PlaneFlight {
   // common images
@@ -20,6 +21,15 @@ object PlaneFlight {
       else nextFrame(next_key :: arr, texture)
     }
     nextFrame(List[Int](), Renderer.getTexture("img/rocket_animation.png")).toArray
+  }
+  val EXPLOSION_ANIMATION:Array[Int] = {
+    def nextFrame(arr:List[Int], texture:Texture):List[Int] = {
+      val next_key = Renderer.createList(texture, 36, 35, 72*(arr.length), 0, 72, 69)
+      val new_arr = arr ::: List(next_key)
+      if(new_arr.length == 3)new_arr
+      else nextFrame(next_key :: arr, texture)
+    }
+    nextFrame(List[Int](), Renderer.getTexture("img/explosion_animation.png")).toArray
   }
 
   def main(args: Array[String]): Unit = {
@@ -52,7 +62,13 @@ object PlaneFlight {
     })
 
     // objects
-    new OurPlane(400, 300)
+    new EnemyPlane(100, 200)
+    val player = new OurPlane(400, 300)
+    Renderer.setCentral(() => if(Renderer.scale == 1)Vec(Renderer.width/2, Renderer.height/2) else player.coord)
+
+    // interface
+    Renderer.addInterfaceElement(() => Message.print("HP: "+player.health, 20, Renderer.height-60, Color.YELLOW))
+    Renderer.addInterfaceElement(() => Message.print(StandardTracer.point(player.coord), 20, Renderer.height-80, Color.YELLOW))
 
     // game pause
     Controller.addKeyListener(Keyboard.KEY_P,() => Scage.switchPause)

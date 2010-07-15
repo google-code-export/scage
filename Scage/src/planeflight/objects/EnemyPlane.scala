@@ -21,6 +21,7 @@ class EnemyPlane(init_coord:Vec) {
 
   // ai
   protected var plane_side = 1
+  private var shoot_cooldown = 0
   protected def ai() = {
     AI.registerAI(() => {
       if(alive_condition) {
@@ -29,14 +30,17 @@ class EnemyPlane(init_coord:Vec) {
           if(plane.getState.getInt("health") > 0) {
             val planes_angle = (plane.getCoord - coord) rad step
             val planes_side = Math.signum((plane.getCoord - coord) * step)
-            println(planes_angle)
             if(planes_angle < Math.Pi/12) {
-              new Rocket("enemy", coord + step.n.rotate(Math.Pi/2 * plane_side)*10, step, rotation);
-              plane_side *= -1
+              if(shoot_cooldown == 0) {
+                new Rocket("enemy", coord + step.n.rotate(Math.Pi/2 * plane_side)*10, step, rotation);
+                shoot_cooldown = 10
+                plane_side *= -1
+              }
             }
             else rotation += 0.2f*delta*planes_side
           }
         })
+        if(shoot_cooldown > 0)shoot_cooldown -= 1
       }
     })
   }; ai

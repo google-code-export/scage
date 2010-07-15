@@ -69,8 +69,8 @@ class Tracer[S <: State] extends THandler {
   }
 
   def getNewCoord(coord:Vec) = {
-    val x = if(coord.x >= game_width) {coord.x - game_width} else if(coord.x <= 0) {coord.x + game_width} else coord.x
-    val y = if(coord.y >= game_height) {coord.y - game_height} else if(coord.y <= 0) {coord.y + game_height} else coord.y
+    val x = if(coord.x >= game_width) {coord.x - game_width} else if(coord.x < 0) {coord.x + game_width} else coord.x
+    val y = if(coord.y >= game_height) {coord.y - game_height} else if(coord.y < 0) {coord.y + game_height} else coord.y
     Vec(x, y)
   }
 }

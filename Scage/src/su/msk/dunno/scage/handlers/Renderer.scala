@@ -91,7 +91,7 @@ object Renderer extends THandler {
 
       if(isSetScaleFunc && !Scage.onPause)scale = scaleFunc(scale)
       val coord = center - central_coord()*scale
-      GL11.glTranslatef(coord.x, coord.y, 0.0f)
+      GL11.glTranslatef(coord.x , coord.y, 0.0f)
       GL11.glScalef(scale, scale, 1)
       render_list.foreach(render => render())
       GL11.glPopMatrix

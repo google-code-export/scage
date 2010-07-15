@@ -10,7 +10,7 @@ class State() {
   def put(key:String) = {args += key -> null}
 
   def this(key:String, int_num:Int) = {this(); args += key -> new StateData(int_num)}
-  def put(key:String, int_num:Int) = {args += key -> new StateData(int_num)}
+  def put(key:String, int_num:Int):State = {args += key -> new StateData(int_num); this}
   def getInt(key:String) = {
     if(!args.contains(key))0
     else if(args(key).int != 0)args(key).int
@@ -19,7 +19,7 @@ class State() {
   }
 
   def this(key:String, float_num:Float) = {this(); args += key -> new StateData(float_num)}
-  def put(key:String, float_num:Float) = {args += key -> new StateData(float_num)}
+  def put(key:String, float_num:Float):State = {args += key -> new StateData(float_num); this}
   def getFloat(key:String) = {
     if(!args.contains(key))0
     else if(args(key).float != 0)args(key).float
@@ -28,7 +28,7 @@ class State() {
   }
 
   def this(key:String, message:String) = {this(); args += key -> new StateData(message)}
-  def put(key:String, message:String) = {args += key -> new StateData(message)}
+  def put(key:String, message:String):State = {args += key -> new StateData(message); this}
   def getString(key:String) = {
     if(!args.contains(key))""
     else if(args(key).string != null)args(key).string
@@ -38,7 +38,7 @@ class State() {
   }
 
   def this(key:String, vec:Vec) = {this(); args += key -> new StateData(vec)}
-  def put(key:String, vec:Vec) = {args += key -> new StateData(vec)}
+  def put(key:String, vec:Vec):State = {args += key -> new StateData(vec); this}
   def getVec(key:String) = {
     if(!args.contains(key))Vec(0,0)
     else if(args(key).vec != null)args(key).vec

@@ -47,6 +47,8 @@ object ForTests {
     }
     finder_(List[Double](), a, b)
   }
+
+  //def testFunc(ai: (Boolean) => (Unit) => Unit)
   
   def main(args:Array[String]):Unit = {
     println((1 to 100).filter(x => (x%2) != 0))

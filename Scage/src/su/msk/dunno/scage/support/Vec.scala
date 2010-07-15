@@ -30,7 +30,8 @@ case class Vec(val x:Float, val y:Float) {
   def ==(v:Vec) = x == v.x && y == v.y
   def !=(v:Vec) = null == v || x != v.x || y != v.y
 
-  def ang(v:Vec) = (180/Math.Pi*Math.acos(n * v.n)).toFloat
+  def deg(v:Vec) = (180/Math.Pi*Math.acos(n * v.n)).toFloat
+  def rad(v:Vec) = (Math.acos(n * v.n)).toFloat
   def rotate(ang:Double) = Vec((x * Math.cos(ang) - y * Math.sin(ang)).toFloat,
                                (x * Math.sin(ang) + y * Math.cos(ang)).toFloat)
 

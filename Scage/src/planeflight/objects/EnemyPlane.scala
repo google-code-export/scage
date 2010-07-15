@@ -17,13 +17,26 @@ class EnemyPlane(init_coord:Vec) {
   protected def step = Vec(-0.4f*delta*Math.sin(Math.toRadians(rotation)).toFloat,
                            0.4f*delta*Math.cos(Math.toRadians(rotation)).toFloat)
   var health = 100
+  protected def alive_condition = health > 0
 
   // ai
+  protected var plane_side = 1
   protected def ai() = {
     AI.registerAI(() => {
-      if(health > 0) {
-        rotation += 0.2f*delta
+      if(alive_condition) {
         coord = StandardTracer.getNewCoord(coord + step)
+        StandardTracer.getNeighbours(coord, -8 to 8).foreach(plane => {
+          if(plane.getState.getInt("health") > 0) {
+            val planes_angle = (plane.getCoord - coord) rad step
+            val planes_side = Math.signum((plane.getCoord - coord) * step)
+            println(planes_angle)
+            if(planes_angle < Math.Pi/12) {
+              new Rocket("enemy", coord + step.n.rotate(Math.Pi/2 * plane_side)*10, step, rotation);
+              plane_side *= -1
+            }
+            else rotation += 0.2f*delta*planes_side
+          }
+        })
       }
     })
   }; ai
@@ -32,25 +45,31 @@ class EnemyPlane(init_coord:Vec) {
   protected def tracer() {
     StandardTracer.addTrace(new Trace[State] {
       def getCoord = coord
-      def getState() = new State("name", "enemy")
+      def getState() = new State("name", "enemy").put("health", health)
       def changeState(s:State) = if(s.contains("damage")) health -= s.getInt("damage")
     })
   }; tracer
 
   // render
-  protected val PLANE = Renderer.createList("img/plane2.png", 60, 60, 0, 0, 122, 121)
+  protected val PLANE = PlaneFlight.ENEMY_PLANE
   private var next_frame:Float = 0
   Renderer.addRender(() => {
-     GL11.glPushMatrix();
-     GL11.glTranslatef(coord.x, coord.y, 0.0f);
-     GL11.glRotatef(rotation, 0.0f, 0.0f, 1.0f)
-     Renderer.setColor(Color.WHITE)
-     if(health > 0) GL11.glCallList(PLANE)
-     else {
+     if(alive_condition) {
+        GL11.glPushMatrix();
+        GL11.glTranslatef(coord.x, coord.y, 0.0f);
+        GL11.glRotatef(rotation, 0.0f, 0.0f, 1.0f)
+        Renderer.setColor(Color.WHITE)
+        GL11.glCallList(PLANE)
+        GL11.glPopMatrix()
+     }
+     else if(next_frame < 3) {
+        GL11.glPushMatrix();
+        GL11.glTranslatef(coord.x, coord.y, 0.0f);
+        GL11.glRotatef(rotation, 0.0f, 0.0f, 1.0f)
+        Renderer.setColor(Color.WHITE)
         GL11.glCallList(PlaneFlight.EXPLOSION_ANIMATION(next_frame.toInt));
         if(!Scage.onPause) next_frame += 0.1f
-        if(next_frame >= 3)next_frame = 0
+        GL11.glPopMatrix()
      }
-     GL11.glPopMatrix()
   })
 }

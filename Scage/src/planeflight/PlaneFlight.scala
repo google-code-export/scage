@@ -3,13 +3,13 @@ package planeflight
 import objects.{EnemyPlane, OurPlane}
 import su.msk.dunno.scage.support.messages.Message
 import su.msk.dunno.scage.main.Scage
-import su.msk.dunno.scage.handlers.{Idler, Renderer}
 import org.lwjgl.opengl.GL11
 import su.msk.dunno.scage.support.{Vec, Color}
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.handlers.controller.Controller
 import org.newdawn.slick.opengl.Texture
 import su.msk.dunno.scage.handlers.tracer.StandardTracer
+import su.msk.dunno.scage.handlers.{AI, Idler, Renderer}
 
 object PlaneFlight {
   // common images
@@ -31,6 +31,8 @@ object PlaneFlight {
     }
     nextFrame(List[Int](), Renderer.getTexture("img/explosion_animation.png")).toArray
   }
+  val PLAYER_PLANE = Renderer.createList("img/plane.png", 60, 60, 0, 0, 122, 121)
+  val ENEMY_PLANE = Renderer.createList("img/plane2.png", 60, 60, 0, 0, 122, 121)
 
   def main(args: Array[String]): Unit = {
     // background
@@ -62,13 +64,28 @@ object PlaneFlight {
     })
 
     // objects
-    new EnemyPlane(100, 200)
-    val player = new OurPlane(400, 300)
+    var enemy = new EnemyPlane(100, 200)
+    var player = new OurPlane(400, 300)
     Renderer.setCentral(() => if(Renderer.scale == 1)Vec(Renderer.width/2, Renderer.height/2) else player.coord)
 
     // interface
     Renderer.addInterfaceElement(() => Message.print("HP: "+player.health, 20, Renderer.height-60, Color.YELLOW))
     Renderer.addInterfaceElement(() => Message.print(StandardTracer.point(player.coord), 20, Renderer.height-80, Color.YELLOW))
+
+    // highscore
+    var player_victories = 0
+    var enemy_victories = 0
+    AI.registerAI(() => {
+      if(enemy.health <= 0) {
+          player_victories += 1
+          enemy = new EnemyPlane(100, 200)
+      }
+      if(player.health <= 0) {
+        enemy_victories += 1
+        player = new OurPlane(400, 300)
+      }
+    })
+    Renderer.addInterfaceElement(() => Message.print(player_victories+" : "+enemy_victories, Renderer.width/2-20, Renderer.height-60, Color.YELLOW))
 
     // game pause
     Controller.addKeyListener(Keyboard.KEY_P,() => Scage.switchPause)

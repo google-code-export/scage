@@ -18,9 +18,11 @@ class Rocket(private val shooter:String, init_coord:Vec, dir:Vec, private val ro
     if(fuel > 5) {
       coord = StandardTracer.getNewCoord(coord + direction*velocity)
       StandardTracer.getNeighbours(coord, -1 to 1).foreach(plane => {
-        if(coord.dist2(plane.getCoord) < 60*60 && !shooter.equals(plane.getState.getString("name"))) {
-          plane.changeState(new State("damage", 10))
-          fuel = 5
+        if(coord.dist2(plane.getCoord) < 60*60 &&
+           !shooter.equals(plane.getState.getString("name")) &&
+           plane.getState.getInt("health") > 0) {
+              plane.changeState(new State("damage", 10))
+              fuel = 5
         }
       })
     }

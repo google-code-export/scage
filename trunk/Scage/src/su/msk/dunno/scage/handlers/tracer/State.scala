@@ -6,8 +6,8 @@ import su.msk.dunno.scage.support.Vec
 class State() {
   private val args:HashMap[String, StateData] = new HashMap[String, StateData]()
 
-  def this(key:String) = {this(); args += key -> null}
-  def put(key:String) = {args += key -> null}
+  def this(key:String) = {this(); args += key -> new StateData()}
+  def put(key:String) = {args += key -> new StateData()}
 
   def this(key:String, int_num:Int) = {this(); args += key -> new StateData(int_num)}
   def put(key:String, int_num:Int):State = {args += key -> new StateData(int_num); this}
@@ -41,8 +41,14 @@ class State() {
   def put(key:String, vec:Vec):State = {args += key -> new StateData(vec); this}
   def getVec(key:String) = {
     if(!args.contains(key))Vec(0,0)
-    else if(args(key).vec != null)args(key).vec
-    else Vec(0,0)
+    else args(key).vec
+  }
+
+  def this(key:String, b:Boolean) = {this(); args += key -> new StateData(b)}
+  def put(key:String, b:Boolean):State = {args += key -> new StateData(b); this}
+  def getBool(key:String) = {
+    if(!args.contains(key))false
+    else args(key).bool
   }
   
   def contains(key:String):Boolean = args.contains(key)
@@ -67,5 +73,10 @@ class State() {
 	  def this(v:Vec) = {this(); this.v = v;}
 	  def vec() = v
 	  def vec_(v:Vec) = {this.v = v}
+
+    private var b = false
+    def this(b:Boolean) = {this(); this.b = b;}
+    def bool() = b
+    def bool_(b:Boolean) = {this.b = b}
   }
 }

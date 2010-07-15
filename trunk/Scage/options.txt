@@ -1,4 +1,4 @@
-name = Sage
+name = Korovans
 version = 0.0.1
 
 width = 800

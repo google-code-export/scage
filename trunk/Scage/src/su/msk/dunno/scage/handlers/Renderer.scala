@@ -156,4 +156,18 @@ object Renderer extends THandler {
   def createList(filename:String, game_width:Float, game_height:Float, start_x:Float, start_y:Float, real_width:Float, real_height:Float):Int = {
     createList(getTexture(filename), game_width, game_height, start_x, start_y, real_width, real_height)
   }
+
+  def createAnimation(filename:String, game_width:Float, game_height:Float, real_width:Float, real_height:Float, num_frames:Int):Array[Int] = {
+    val texture = Renderer.getTexture(filename)
+    val columns:Int = (texture.getImageWidth/real_width).toInt
+    def nextFrame(arr:List[Int], texture:Texture):List[Int] = {
+      val x = real_width*(arr.length - arr.length/columns*columns)
+      val y = real_height*(arr.length/columns)
+      val next_key = Renderer.createList(texture, game_width, game_height, x, y, real_width, real_height)
+      val new_arr = arr ::: List(next_key)
+      if(new_arr.length == num_frames)new_arr
+      else nextFrame(new_arr, texture)
+    }
+    nextFrame(List[Int](), texture).toArray
+  }
 }

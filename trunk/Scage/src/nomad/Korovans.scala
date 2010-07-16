@@ -14,15 +14,7 @@ object Korovans {
   // common images
   val KOROVAN = Renderer.createList("img/korovan.png", 57, 30, 0, 0, 114, 61)
   val ROBBED_KOROVAN = Renderer.createList("img/robbed_korovan.png", 57, 30, 0, 0, 114, 61)
-  val NOMAD_ANIMATION:Array[Int] = {
-    def nextFrame(arr:List[Int], texture:Texture):List[Int] = {
-      val next_key = Renderer.createList(texture, 24, 37, 24*(arr.length), 0, 24, 37)
-      val new_arr = next_key :: arr
-      if(new_arr.length == 2)new_arr
-      else nextFrame(next_key :: arr, texture)
-    }
-    nextFrame(List[Int](), Renderer.getTexture("img/nomad_animation.png")).toArray
-  }
+  val NOMAD_ANIMATION = Renderer.createAnimation("img/nomad_animation.png", 24, 37, 24, 37, 2)
 
   var num_robbed = 0
   var num_passed = 0

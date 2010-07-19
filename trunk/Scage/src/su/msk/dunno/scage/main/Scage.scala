@@ -39,6 +39,7 @@ object Scage {
   private var isRunning = true
   def start() = {
 	log.debug("starting game...")
+    Idler
     isRunning = true
     handlers.foreach(h => h.initSequence)
     run()

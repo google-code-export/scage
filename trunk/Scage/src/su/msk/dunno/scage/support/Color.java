@@ -137,4 +137,9 @@ public class Color
 	{
 		return color_array[2];
 	}
+
+    public static Color getRandomColor()
+    {
+        return new Color((float)Math.random(), (float)Math.random(), (float)Math.random());
+    }
 }

@@ -15,6 +15,10 @@ N_y = 12
 framerate = 100
 auto_scaling = no
 
-dt = 7
 gravity = -5
 friction = 0
+
+G = 100
+dt = 1
+mass = 1
+num_bodies = 100

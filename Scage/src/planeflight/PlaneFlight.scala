@@ -4,14 +4,14 @@ import objects.{EnemyPlane, OurPlane}
 import su.msk.dunno.scage.support.messages.Message
 import su.msk.dunno.scage.main.Scage
 import org.lwjgl.opengl.GL11
-import su.msk.dunno.scage.support.{Vec, Color}
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.handlers.controller.Controller
 import org.newdawn.slick.opengl.Texture
 import su.msk.dunno.scage.handlers.tracer.StandardTracer
 import su.msk.dunno.scage.handlers.{AI, Idler, Renderer}
+import su.msk.dunno.scage.support.{Colors, Vec}
 
-object PlaneFlight {
+object PlaneFlight extends Colors {
   // common images
   val ROCKET_ANIMATION:Array[Int] = {
     def nextFrame(arr:List[Int], texture:Texture):List[Int] = {
@@ -39,7 +39,7 @@ object PlaneFlight {
     val LAND = Renderer.createList("img/land.png", 800, 600, 0, 0, 800, 600)
     Renderer.addRender(() => {
       GL11.glPushMatrix();
-      Renderer.setColor(Color.WHITE)
+      Renderer.setColor(WHITE)
 
       GL11.glTranslatef(Renderer.width/2, Renderer.height/2, 0.0f);
       GL11.glCallList(LAND)
@@ -69,8 +69,8 @@ object PlaneFlight {
     Renderer.setCentral(() => if(Renderer.scale == 1)Vec(Renderer.width/2, Renderer.height/2) else player.coord)
 
     // interface
-    Renderer.addInterfaceElement(() => Message.print("HP: "+player.health, 20, Renderer.height-60, Color.YELLOW))
-    Renderer.addInterfaceElement(() => Message.print(StandardTracer.point(player.coord), 20, Renderer.height-80, Color.YELLOW))
+    Renderer.addInterfaceElement(() => Message.print("HP: "+player.health, 20, Renderer.height-60, YELLOW))
+    Renderer.addInterfaceElement(() => Message.print(StandardTracer.point(player.coord), 20, Renderer.height-80, YELLOW))
 
     // highscore
     var player_victories = 0
@@ -85,14 +85,14 @@ object PlaneFlight {
         player = new OurPlane(400, 300)
       }
     })
-    Renderer.addInterfaceElement(() => Message.print(player_victories+" : "+enemy_victories, Renderer.width/2-20, Renderer.height-60, Color.YELLOW))
+    Renderer.addInterfaceElement(() => Message.print(player_victories+" : "+enemy_victories, Renderer.width/2-20, Renderer.height-60, YELLOW))
 
     // game pause
     Controller.addKeyListener(Keyboard.KEY_P,() => Scage.switchPause)
-    Renderer.addInterfaceElement(() => if(Scage.onPause)Message.print("PAUSE", Renderer.width/2-20, Renderer.height/2+60, Color.WHITE))
+    Renderer.addInterfaceElement(() => if(Scage.onPause)Message.print("PAUSE", Renderer.width/2-20, Renderer.height/2+60, WHITE))
 
     // fps
-    Renderer.addInterfaceElement(() => Message.print("fps: "+Renderer.fps, 20, Renderer.height-20, Color.YELLOW))
+    Renderer.addInterfaceElement(() => Message.print("fps: "+Renderer.fps, 20, Renderer.height-20, YELLOW))
     
     Idler
     Scage.start

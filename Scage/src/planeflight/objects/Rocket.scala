@@ -2,12 +2,12 @@ package planeflight.objects
 
 import su.msk.dunno.scage.handlers.tracer.{State, StandardTracer}
 import su.msk.dunno.scage.handlers.{Renderer, AI}
-import su.msk.dunno.scage.support.{Color, Vec}
 import org.lwjgl.opengl.GL11
 import planeflight.PlaneFlight
 import su.msk.dunno.scage.main.Scage
+import su.msk.dunno.scage.support.{Colors, Vec}
 
-class Rocket(private val shooter:String, init_coord:Vec, dir:Vec, private val rotation:Float) {
+class Rocket(private val shooter:String, init_coord:Vec, dir:Vec, private val rotation:Float) extends Colors {
   private var fuel = 60
   private val velocity = 10
   private val direction = dir.n
@@ -33,7 +33,7 @@ class Rocket(private val shooter:String, init_coord:Vec, dir:Vec, private val ro
   Renderer.addRender(() => {
     if(fuel > 0) {
       GL11.glPushMatrix();
-      Renderer.setColor(Color.WHITE)
+      Renderer.setColor(WHITE)
 
       GL11.glTranslatef(coord.x, coord.y, 0.0f);
       GL11.glRotatef(rotation, 0.0f, 0.0f, 1.0f)

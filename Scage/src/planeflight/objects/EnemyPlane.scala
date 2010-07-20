@@ -2,12 +2,12 @@ package planeflight.objects
 
 import su.msk.dunno.scage.handlers.tracer.{State, Trace, StandardTracer}
 import su.msk.dunno.scage.main.Scage
-import su.msk.dunno.scage.support.{Color, Vec}
 import planeflight.PlaneFlight
 import org.lwjgl.opengl.GL11
 import su.msk.dunno.scage.handlers.{AI, Renderer}
+import su.msk.dunno.scage.support.{Colors, Vec}
 
-class EnemyPlane(init_coord:Vec) {
+class EnemyPlane(init_coord:Vec) extends Colors {
   def this(x:Float, y:Float) = this(Vec(x, y))
 
   // parameters
@@ -62,7 +62,7 @@ class EnemyPlane(init_coord:Vec) {
         GL11.glPushMatrix();
         GL11.glTranslatef(coord.x, coord.y, 0.0f);
         GL11.glRotatef(rotation, 0.0f, 0.0f, 1.0f)
-        Renderer.setColor(Color.WHITE)
+        Renderer.setColor(WHITE)
         GL11.glCallList(PLANE)
         GL11.glPopMatrix()
      }
@@ -70,7 +70,7 @@ class EnemyPlane(init_coord:Vec) {
         GL11.glPushMatrix();
         GL11.glTranslatef(coord.x, coord.y, 0.0f);
         GL11.glRotatef(rotation, 0.0f, 0.0f, 1.0f)
-        Renderer.setColor(Color.WHITE)
+        Renderer.setColor(WHITE)
         GL11.glCallList(PlaneFlight.EXPLOSION_ANIMATION(next_frame.toInt));
         if(!Scage.onPause) next_frame += 0.1f
         GL11.glPopMatrix()

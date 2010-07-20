@@ -5,7 +5,7 @@ import su.msk.dunno.scage.handlers.controller.Controller
 import org.lwjgl.input.Keyboard
 import org.newdawn.slick.opengl.Texture
 import su.msk.dunno.scage.main.Scage
-import su.msk.dunno.scage.support.{Color, Vec}
+import su.msk.dunno.scage.support.{Vec}
 import su.msk.dunno.scage.objects.DynaBall
 import su.msk.dunno.scage.handlers.Renderer
 import su.msk.dunno.scage.handlers.tracer.{StandardTracer, State, Trace}
@@ -67,7 +67,7 @@ class Tr0yka(init_coord:Vec) extends DynaBall(init_coord:Vec, 30) {
     GL11.glPushMatrix();
 	GL11.glTranslatef(coord.x, coord.y, 0.0f);
 
-    Renderer.setColor(Color.WHITE)
+    Renderer.setColor(WHITE)
     last_key match {
       case Keyboard.KEY_LEFT => GL11.glScalef(1,1,1)
       case Keyboard.KEY_RIGHT => GL11.glScalef(-1,1,1)
@@ -90,7 +90,7 @@ class Tr0yka(init_coord:Vec) extends DynaBall(init_coord:Vec, 30) {
 
     GL11.glPopMatrix()
 
-    Renderer.setColor(Color.BLACK)
+    Renderer.setColor(BLACK)
     Renderer.drawCircle(coord, 30)
     Renderer.drawLine(coord, coord+velocity)
   }

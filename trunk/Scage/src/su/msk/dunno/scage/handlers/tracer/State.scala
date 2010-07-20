@@ -53,30 +53,25 @@ class State() {
   
   def contains(key:String):Boolean = args.contains(key)
   
-  private[State] class StateData {
+  private[State] class StateData() {
 	  private var i = 0
 	  def this(i:Int) = {this(); this.i = i;}
 	  def int() = i
-	  def int_(i:Int) = {this.i = i}
 	
 	  private var f = 0.0f
 	  def this(f:Float) = {this(); this.f = f;}
 	  def float() = f
-	  def float_(f:Float) = {this.f = f}
 	
 	  private var s = ""
 	  def this(s:String) = {this(); this.s = s;}
 	  def string() = s
-	  def string_(s:String) = {this.s = s}
 	
 	  private var v = Vec(0,0)
 	  def this(v:Vec) = {this(); this.v = v;}
 	  def vec() = v
-	  def vec_(v:Vec) = {this.v = v}
 
     private var b = false
     def this(b:Boolean) = {this(); this.b = b;}
     def bool() = b
-    def bool_(b:Boolean) = {this.b = b}
   }
 }

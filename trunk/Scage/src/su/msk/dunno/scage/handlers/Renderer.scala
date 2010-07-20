@@ -3,10 +3,10 @@ package su.msk.dunno.scage.handlers
 import su.msk.dunno.scage.main.Scage
 import org.lwjgl.opengl.{DisplayMode, Display, GL11}
 import org.lwjgl.util.glu.GLU
-import su.msk.dunno.scage.support.{Vec, Color}
 import org.newdawn.slick.opengl.{TextureLoader, Texture}
 import java.io.{FileInputStream, InputStream}
 import su.msk.dunno.scage.prototypes.{THandler}
+import su.msk.dunno.scage.support.{Color, Vec}
 
 object Renderer extends THandler {
   private var render_list:List[() => Unit] = List[() => Unit]()
@@ -102,9 +102,9 @@ object Renderer extends THandler {
   }
   override def exitSequence() = Display.destroy();
 
-  def setBackground(c:Color) = GL11.glClearColor(c.getRed, c.getGreen, c.getBlue, 0)
+  def setBackground(c:Color) = GL11.glClearColor(c.red, c.green, c.blue, 0)
 
-  def setColor(c:Color) = GL11.glColor3f(c.getRed, c.getGreen, c.getBlue)
+  def setColor(c:Color) = GL11.glColor3f(c.red, c.green, c.blue)
   def drawLine(v1:Vec, v2:Vec) = {
     GL11.glDisable(GL11.GL_TEXTURE_2D);
     	GL11.glBegin(GL11.GL_LINES);

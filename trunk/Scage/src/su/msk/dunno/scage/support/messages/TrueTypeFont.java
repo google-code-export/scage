@@ -307,7 +307,7 @@ public class TrueTypeFont
 	public void drawString(String whatchars, float x, float y, su.msk.dunno.scage.support.Color c)
 	{
 		GL11.glPushMatrix();
-		GL11.glColor3f(c.getRed(), c.getGreen(), c.getBlue());
+		GL11.glColor3f(c.red(), c.green(), c.blue());
 		this.drawString(x, y, whatchars, 1.0f, 1.0f);
 		GL11.glPopMatrix();
 	}

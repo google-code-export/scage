@@ -19,15 +19,15 @@
 			<mkdir dir="${project.name}-${project.version}-${os.type}/lib" />
 			<copy toDir="${project.name}-${project.version}-${os.type}/lib">
 				<fileset dir="lib/logging" />
-			    <fileset dir="lib/scala" />
 			</copy>
+            <copy toDir="${project.name}-${project.version}-${os.type}/lib" file="lib/scala/scala-library.jar" />
 			<copy toDir="${project.name}-${project.version}-${os.type}/lib" file="lib/lwjgl/jar/jinput.jar" />
 			<copy toDir="${project.name}-${project.version}-${os.type}/lib" file="lib/lwjgl/jar/lwjgl.jar" />
 			<copy toDir="${project.name}-${project.version}-${os.type}/lib" file="lib/lwjgl/jar/lwjgl_util.jar" />
 			<copy toDir="${project.name}-${project.version}-${os.type}/lib" file="lib/phys2d-060408.jar" />
 			<copy toDir="${project.name}-${project.version}-${os.type}/lib" file="lib/slick-util.jar" />
 			<echo file="${project.name}-${project.version}-${os.type}/run.bat" 
-				message="java -Djava.library.path=native -cp lib/commons-logging-1.1.1.jar;lib/jinput.jar;lib/log4j-1.2.15.jar;lib/lwjgl.jar;lib/lwjgl_util.jar;lib/phys2d-060408.jar;lib/scala-compiler.jar;lib/scala-library.jar;lib/slick-util.jar;lib/${project.name}-${project.version}.jar ${entrypoint}"
+				message="java -Djava.library.path=native -cp lib/commons-logging-1.1.1.jar;lib/jinput.jar;lib/log4j-1.2.15.jar;lib/lwjgl.jar;lib/lwjgl_util.jar;lib/phys2d-060408.jar;lib/scala-library.jar;lib/slick-util.jar;lib/${project.name}-${project.version}.jar ${entrypoint}"
 			/>
 			<copy toDir="${project.name}-${project.version}-${os.type}/lib" file="src/log4j.properties" />
 		</sequential>

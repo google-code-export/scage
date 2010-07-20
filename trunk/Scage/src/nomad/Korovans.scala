@@ -5,12 +5,11 @@ import su.msk.dunno.scage.support.messages.Message
 import su.msk.dunno.scage.main.Scage
 import su.msk.dunno.scage.handlers.controller.Controller
 import org.lwjgl.input.Keyboard
-import org.newdawn.slick.opengl.Texture
-import su.msk.dunno.scage.support.{Vec, Color}
 import su.msk.dunno.scage.handlers.{AI, Idler, Renderer}
 import su.msk.dunno.scage.handlers.tracer.{State, Trace, StandardTracer}
+import su.msk.dunno.scage.support.{ScageLibrary, Colors, Vec}
 
-object Korovans {
+object Korovans extends ScageLibrary {
   // common images
   val KOROVAN = Renderer.createList("img/korovan.png", 57, 30, 0, 0, 114, 61)
   val ROBBED_KOROVAN = Renderer.createList("img/robbed_korovan.png", 57, 30, 0, 0, 114, 61)
@@ -25,9 +24,9 @@ object Korovans {
     val DESERT = Renderer.createList("img/desert.png", 800, 600, 0, 0, 400, 400)
     Renderer.addRender(() => {
       GL11.glPushMatrix();
-      Renderer.setColor(Color.WHITE)
+      Renderer.setColor(WHITE)
 
-      GL11.glTranslatef(Renderer.width/2, Renderer.height/2, 0.0f);
+      GL11.glTranslatef(width/2, height/2, 0.0f);
       GL11.glCallList(DESERT)
 
       GL11.glPopMatrix()
@@ -38,8 +37,8 @@ object Korovans {
     AI.registerAI(() => {
       if(num_passed < 10) {
         if(korovan_period <= 0) {
-          val x = if(Math.random > 0.5) Renderer.width-10 else 10
-          val y = (Math.random*Renderer.height).toInt
+          val x = if(Math.random > 0.5) width-10 else 10
+          val y = (Math.random*height).toInt
           new Korovan(Vec(x, y))
           korovan_period = Math.max(50, 200 - game_speed.toInt*20)
         }
@@ -48,11 +47,11 @@ object Korovans {
     })
 
     // player
-    val nomad = new Nomad(Vec(Renderer.width/2, Renderer.height/2))
+    val nomad = new Nomad(Vec(width/2, height/2))
 
     // game pause
     Controller.addKeyListener(Keyboard.KEY_P,() => Scage.switchPause)
-    Renderer.addInterfaceElement(() => if(Scage.onPause)Message.print("PAUSE", Renderer.width/2-20, Renderer.height/2+60))
+    Renderer.addInterfaceElement(() => if(onPause)Message.print("PAUSE", width/2-20, height/2+60))
 
     // game interface
     Renderer.addInterfaceElement(() => Message.print("fps: "+Renderer.fps, Renderer.width-80, Renderer.height-20))
@@ -70,11 +69,11 @@ object Korovans {
     private var was_passed = false
 
     // ai
-    private val direction = if(Renderer.width - coord.x > coord.x) 1 else -1
+    private val direction = if(width - coord.x > coord.x) 1 else -1
     AI.registerAI(() => {
       if(!was_passed){
         val new_coord = coord + Vec(direction, 0)*Korovans.game_speed
-        if(new_coord.x >= Renderer.width || new_coord.x < 0) {
+        if(new_coord.x >= width || new_coord.x < 0) {
           was_passed = true
           Korovans.num_passed += 1
         }
@@ -96,19 +95,19 @@ object Korovans {
           GL11.glPushMatrix();
           GL11.glTranslatef(coord.x, coord.y, 0.0f);
           GL11.glScalef(direction, 1, 1)
-          Renderer.setColor(Color.WHITE)
+          Renderer.setColor(WHITE)
           GL11.glCallList(KOROVAN)
           GL11.glPopMatrix()
        }
        else if(was_robbed && show_robbed > 0) {
-          Message.print("Robbed!", coord.x-40, coord.y+20, Color.RED)
+          Message.print("Robbed!", coord.x-40, coord.y+20, RED)
           GL11.glPushMatrix();
           GL11.glTranslatef(coord.x, coord.y, 0.0f);
           GL11.glScalef(direction, 1, 1)
-          Renderer.setColor(Color.WHITE)
+          Renderer.setColor(WHITE)
           GL11.glCallList(ROBBED_KOROVAN)
           GL11.glPopMatrix()
-          if(!Scage.onPause)show_robbed -= 1
+          if(!onPause)show_robbed -= 1
        }
     })
   }
@@ -158,7 +157,7 @@ object Korovans {
       GL11.glPushMatrix();
       GL11.glTranslatef(coord.x, coord.y, 0.0f);
        GL11.glScalef(dir, 1, 1)
-      Renderer.setColor(Color.WHITE)
+      Renderer.setColor(WHITE)
       GL11.glCallList(NOMAD_ANIMATION(next_frame.toInt));
       if(!Scage.onPause && is_moving) next_frame += 0.1f
       if(next_frame >= 2)next_frame = 0

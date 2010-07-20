@@ -1,16 +1,19 @@
-name = Korovans
-version = 0.0.1
+name = Universe
+version = 
 
 width = 800
 height = 600
 
 # game_width = 2990
 # game_height = 1500
-game_width = 800
-game_height = 600
+# game_width = 800
+# game_height = 600
 
-N_x = 16
-N_y = 12
+game_width = 10000
+game_height = 10000
+
+N_x = 200
+N_y = 200
 
 framerate = 100
 auto_scaling = no
@@ -18,7 +21,8 @@ auto_scaling = no
 gravity = -5
 friction = 0
 
-G = 100
-dt = 1
+G = 5
+dt = 0.1
 mass = 1
 num_bodies = 100
+radius = 1

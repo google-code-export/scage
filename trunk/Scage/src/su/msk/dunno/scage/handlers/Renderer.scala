@@ -102,6 +102,8 @@ object Renderer extends THandler {
   }
   override def exitSequence() = Display.destroy();
 
+  def setBackground(c:Color) = GL11.glClearColor(c.getRed, c.getGreen, c.getBlue, 0)
+
   def setColor(c:Color) = GL11.glColor3f(c.getRed, c.getGreen, c.getBlue)
   def drawLine(v1:Vec, v2:Vec) = {
     GL11.glDisable(GL11.GL_TEXTURE_2D);

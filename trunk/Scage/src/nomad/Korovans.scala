@@ -7,7 +7,7 @@ import su.msk.dunno.scage.handlers.controller.Controller
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.handlers.{AI, Idler, Renderer}
 import su.msk.dunno.scage.handlers.tracer.{State, Trace, StandardTracer}
-import su.msk.dunno.scage.support.{ScageLibrary, Colors, Vec}
+import su.msk.dunno.scage.support.{ScageLibrary, Vec}
 
 object Korovans extends ScageLibrary {
   // common images

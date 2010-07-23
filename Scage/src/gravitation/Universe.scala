@@ -19,7 +19,7 @@ object Universe extends ScageLibrary with Gravitation {
   def getRandomPos(center:Vec) = Vec((Math.random*width + (center.x - width/2)).toFloat, (Math.random*height + (center.y - height/2)).toFloat)
   def getRandomVel = Vec((Math.random*2-1).toFloat, (Math.random*2-1).toFloat).n * (Math.random*10).toFloat
 
-  val space_ship = new SpaceShip(Vec(game_width/2-1000, game_height/2-1000), Vec(0,0), 1, 1)
+  val space_ship = new SpaceShip(Vec(game_width/2-300, game_height/2-200), Vec(0,0), 1, 1)
   var bodies = {
     def addBody(acc:List[MaterialPoint], center:Vec, num:Int):List[MaterialPoint] = {
       if(num > 0) {
@@ -78,4 +78,6 @@ object Universe extends ScageLibrary with Gravitation {
 
   // consumption (nonelastic collision)
   AI.registerAI(() => bodies = calculateCollisions(bodies))
+
+  def main(args:Array[String]):Unit = Scage.start
 }

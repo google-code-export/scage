@@ -30,6 +30,7 @@ object Renderer extends THandler {
 
   val width = Scage.getIntProperty("width");
   val height = Scage.getIntProperty("height");
+  
   val center = Vec(width/2, height/2)
   private var central_coord = () => Vec(width/2, height/2)
   def setCentral(coord: () => Vec) = {

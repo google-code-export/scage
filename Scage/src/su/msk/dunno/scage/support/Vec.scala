@@ -32,8 +32,10 @@ case class Vec(val x:Float, val y:Float) {
 
   def deg(v:Vec) = (180/Math.Pi*Math.acos(n * v.n)).toFloat
   def rad(v:Vec) = (Math.acos(n * v.n)).toFloat
-  def rotate(ang:Double) = Vec((x * Math.cos(ang) - y * Math.sin(ang)).toFloat,
-                               (x * Math.sin(ang) + y * Math.cos(ang)).toFloat)
+  def rotateRad(ang:Double) = Vec((x * Math.cos(ang) - y * Math.sin(ang)).toFloat,
+                                  (x * Math.sin(ang) + y * Math.cos(ang)).toFloat)
+  def rotate(ang:Double) = rotateRad(ang)
+  def rotateDeg(ang:Double) = rotateRad(ang/180*Math.Pi)
 
   def ::(o:Vec) = o :: List[Vec](this)
 

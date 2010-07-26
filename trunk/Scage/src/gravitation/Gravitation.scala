@@ -6,7 +6,7 @@ import su.msk.dunno.scage.handlers.tracer.{State, StandardTracer}
 
 trait Gravitation {
   // gravitation force
-  def calculateAcceleration(m_points:List[MaterialPoint], point:MaterialPoint) = {
+  def gravitationAcceleration(m_points:List[MaterialPoint] = Universe.bodies, point:MaterialPoint) = {
     m_points.filter(body => !body.consumed && body != point && body.coord.dist(point.coord) > body.radius+point.radius).foldLeft(Vec(0,0))((acceleration, body) => {
         val vec = body.coord - point.coord
         val norma = vec.norma
@@ -14,7 +14,7 @@ trait Gravitation {
     })
   }
   def calculateStep(m_points:List[MaterialPoint] = Universe.bodies, point:MaterialPoint) = {
-    val new_velocity = point.velocity+calculateAcceleration(m_points, point)*Universe.dt
+    val new_velocity = point.velocity + gravitationAcceleration(m_points, point)*Universe.dt
     val new_coord = StandardTracer.getNewCoord(point.coord + new_velocity*Universe.dt)
     (new_velocity, new_coord)
   }

@@ -5,6 +5,7 @@ import su.msk.dunno.scage.handlers.{AI, Renderer}
 import su.msk.dunno.scage.handlers.tracer.{Trace, State, StandardTracer}
 import su.msk.dunno.scage.support.messages.Message
 import gravitation.{Universe, Gravitation}
+import org.lwjgl.opengl.GL11
 
 class Planet(init_coord:Vec, init_velocity:Vec, override val mass:Float, override val radius:Int)
 extends MaterialPoint(init_coord, init_velocity, mass, radius) with Gravitation {
@@ -23,10 +24,14 @@ extends MaterialPoint(init_coord, init_velocity, mass, radius) with Gravitation 
     }
     AI.registerAI(ai)
 
+  private val PLANET = Renderer.createList("img/planet1.png", 10, 10, 0, 0, 350, 350)
   def render() = {
     if(!consumed) {
-      Renderer.setColor(color)
-      Renderer.drawCircle(coord, 3)
+      GL11.glPushMatrix();
+        Renderer.setColor(WHITE)
+        GL11.glTranslatef(coord.x, coord.y, 0.0f);
+        GL11.glCallList(PLANET)
+      GL11.glPopMatrix()
       Renderer.drawLine(coord, coord+velocity)
       if(Universe.show_mass) {
         Message.print(mass, coord, color)

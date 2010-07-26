@@ -51,6 +51,14 @@ object ForTests {
   //def testFunc(ai: (Boolean) => (Unit) => Unit)
   
   def main(args:Array[String]):Unit = {
-    println((1 to 100).filter(x => (x%2) != 0))
+    def no_tco(n:BigInt):BigInt = if(n == 0) 1 else n*no_tco(n-1)
+
+    def tco(n:Int) = {
+      def tco_(answer:BigInt, n:BigInt):BigInt = if(n == 0) answer else tco_(answer*n, n-1)
+      tco_(1, n)
+    }
+
+    println(no_tco(10000))  // Exception in thread "main" java.lang.StackOverflowError
+    println(tco(10000))     // 284625968091705451890641321211986889014805...
   }
 }

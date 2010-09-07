@@ -27,7 +27,6 @@ class Controller(screen:Screen) extends Handler(screen:Screen) {
     to_remove = new KeyListener(key, repeatTime, onKeyDown) :: to_remove
   }
 
-  var last_key:Int = 0
   override def actionSequence():Unit = {
     if(to_add.length > 0) {
       listeners = to_add ::: listeners

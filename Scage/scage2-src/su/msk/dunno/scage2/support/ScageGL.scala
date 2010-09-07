@@ -4,7 +4,6 @@ import org.lwjgl.util.glu.GLU
 import org.lwjgl.opengl.{DisplayMode, Display, GL11}
 import java.io.{InputStream, FileInputStream}
 import org.newdawn.slick.opengl.{TextureLoader, Texture}
-import su.msk.dunno.scage2.prototypes.Handler
 
 object ScageGL {
   val CIRCLE = 1

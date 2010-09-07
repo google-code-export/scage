@@ -1,11 +1,8 @@
 package su.msk.dunno.scage2.handlers
 
-import org.lwjgl.opengl.{DisplayMode, Display, GL11}
-import org.lwjgl.util.glu.GLU
-import org.newdawn.slick.opengl.{TextureLoader, Texture}
-import java.io.{FileInputStream, InputStream}
-import su.msk.dunno.scage2.prototypes.{Screen, Handler}
-import su.msk.dunno.scage2.support.{ScageGL, ScageProperties, Color, Vec}
+import org.lwjgl.opengl.{Display, GL11}
+import su.msk.dunno.scage2.support.{ScageGL, Color, Vec}
+import su.msk.dunno.scage2.prototypes.{Handler, Screen}
 
 class Renderer(screen:Screen) extends Handler(screen) {
   private var render_list:List[() => Unit] = List[() => Unit]()

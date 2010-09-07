@@ -4,7 +4,7 @@ import org.lwjgl.opengl.{Display, GL11}
 import su.msk.dunno.scage2.support.{ScageGL, Color, Vec}
 import su.msk.dunno.scage2.prototypes.{Handler, Screen}
 
-class Renderer(screen:Screen) extends Handler(screen) {
+class Renderer(screen:Screen) extends Handler(screen:Screen) {
   private var render_list:List[() => Unit] = List[() => Unit]()
   def addRender(render: () => Unit) = {render_list = render_list ::: List(render)}
 

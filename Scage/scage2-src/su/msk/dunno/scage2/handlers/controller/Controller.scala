@@ -2,7 +2,7 @@ package su.msk.dunno.scage2.handlers.controller
 
 import su.msk.dunno.scage2.prototypes.{Screen, Handler}
 
-class Controller(screen:Screen) extends Handler(screen) {
+class Controller(screen:Screen) extends Handler(screen:Screen) {
   var listeners = List[Listener]()
 
   var to_add = List[Listener]()

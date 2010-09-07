@@ -41,12 +41,12 @@ class Renderer(screen:Screen) extends Handler(screen:Screen) {
 
   override def initSequence():Unit = ScageGL.init_gl
   override def actionSequence() = {
-	if(Display.isCloseRequested())screen.stop
+	if(Display.isCloseRequested()) Screen.stopApp
     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
 		GL11.glLoadIdentity();
       GL11.glPushMatrix
 
-      if(isSetScaleFunc && !screen.onPause)scale = scaleFunc(scale)
+      if(isSetScaleFunc && !screen.onPause) scale = scaleFunc(scale)
       val coord = center - central_coord()*scale
       GL11.glTranslatef(coord.x , coord.y, 0.0f)
       GL11.glScalef(scale, scale, 1)

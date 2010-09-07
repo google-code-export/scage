@@ -4,6 +4,11 @@ import org.apache.log4j.Logger
 import su.msk.dunno.scage2.handlers.controller.Controller
 import su.msk.dunno.scage2.handlers.{Idler, Renderer}
 
+object Screen {
+  private var isAllStop = false
+  def stopApp = isAllStop = true
+}
+
 class Screen(val name:String, val isMain:Boolean) {
   def this(name:String) = this(name, false)
 
@@ -34,7 +39,7 @@ class Screen(val name:String, val isMain:Boolean) {
   def stop() = {isRunning = false}
 
   private def run():Unit = {
-    if(isRunning) {
+    if(isRunning && !isAllStop) {
       handlers.foreach(h => h.actionSequence)
         run
     }

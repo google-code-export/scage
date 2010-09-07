@@ -39,7 +39,7 @@ class Screen(val name:String, val isMain:Boolean) {
   def stop() = {isRunning = false}
 
   private def run():Unit = {
-    if(isRunning && !isAllStop) {
+    if(isRunning && !Screen.isAllStop) {
       handlers.foreach(h => h.actionSequence)
         run
     }

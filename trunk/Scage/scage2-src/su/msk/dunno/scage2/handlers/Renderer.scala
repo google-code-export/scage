@@ -39,7 +39,7 @@ class Renderer(screen:Screen) extends Handler(screen:Screen) {
     }
   }
 
-  override def initSequence():Unit = ScageGL.init_gl
+  ScageGL.init_gl
   override def actionSequence() = {
 	if(Display.isCloseRequested()) Screen.stopApp
     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
@@ -60,6 +60,5 @@ class Renderer(screen:Screen) extends Handler(screen:Screen) {
   override def exitSequence() = if(screen.isMain) Display.destroy();
 
   def setBackground(c:Color) = GL11.glClearColor(c.red, c.green, c.blue, 0)
-
   def setColor(c:Color) = GL11.glColor3f(c.red, c.green, c.blue)
 }

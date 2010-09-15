@@ -16,10 +16,10 @@ object Scage2Test extends Colors {
       controller.addKeyListener(Keyboard.KEY_1, 2000, () => stop)
     }
 
-    val main_screen = new Screen("MainScreen", true) {
+    val main_screen = new Screen("MainScreeen", true) {
       renderer.addInterfaceElement(() => {
         renderer.setBackground(GREEN)
-        Message.print("First Screen", 400, 350)
+        Message.print("First Screeen", 400, 350)
       })
       controller.addKeyListener(Keyboard.KEY_1, 2000, () => second_screen.start)
     }

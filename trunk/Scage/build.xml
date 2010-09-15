@@ -27,30 +27,56 @@
 			<copy toDir="${project.name}-${project.version}-${os.type}/lib" file="lib/phys2d-060408.jar" />
 			<copy toDir="${project.name}-${project.version}-${os.type}/lib" file="lib/slick-util.jar" />
 			<echo file="${project.name}-${project.version}-${os.type}/run.bat" 
-				message="java -Djava.library.path=native -cp lib/commons-logging-1.1.1.jar;lib/jinput.jar;lib/log4j-1.2.15.jar;lib/lwjgl.jar;lib/lwjgl_util.jar;lib/phys2d-060408.jar;lib/scala-library.jar;lib/slick-util.jar;lib/${project.name}-${project.version}.jar ${entrypoint}"
+				message="java -Djava.library.path=native -cp lib/commons-logging-1.1.1.jar;lib/jinput.jar;lib/log4j-1.2.15.jar;lib/lwjgl.jar;lib/lwjgl_util.jar;lib/phys2d-060408.jar;lib/scala-library.jar;lib/slick-util.jar;lib/scage-${scage.version}.jar;lib/${project.name}-${project.version}.jar ${project.entrypoint}"
 			/>
-			<copy toDir="${project.name}-${project.version}-${os.type}/lib" file="src/log4j.properties" />
+			<copy toDir="${project.name}-${project.version}-${os.type}/lib" file="${project.src}/log4j.properties" />
 		</sequential>
 	</macrodef>
 
-	<target name="compile">
+    <target name="compile-scage">
         <init/>
-		<mkdir dir="${project.name}-${project.version}-${os.type}/bin" />
-		<scalac srcdir="src"
-		        destdir="${project.name}-${project.version}-${os.type}/bin"
+        <copy-libraries/>
+		<mkdir dir="${project.name}-${project.version}-${os.type}/scage-bin" />
+		<scalac srcdir="scage-src"
+		        destdir="${project.name}-${project.version}-${os.type}/scage-bin"
 		   	    classpathref="classpath" />
-        <javac srcdir="src"
-		       destdir="${project.name}-${project.version}-${os.type}/bin"
+        <javac srcdir="scage-src"
+		       destdir="${project.name}-${project.version}-${os.type}/scage-bin"
 			   classpathref="classpath"
+			   includeantruntime="false" />
+        <scalac srcdir="scage2-src"
+		        destdir="${project.name}-${project.version}-${os.type}/scage-bin"
+		   	    classpathref="classpath" />
+        <javac srcdir="scage2-src"
+		       destdir="${project.name}-${project.version}-${os.type}/scage-bin"
+			   classpathref="classpath"
+			   includeantruntime="false" />
+        <jar destfile="${project.name}-${project.version}-${os.type}/lib/scage-${scage.version}.jar"
+             filesetmanifest="mergewithoutmain">
+            <fileset dir="${project.name}-${project.version}-${os.type}/scage-bin"/>
+		</jar>
+        <delete dir="${project.name}-${project.version}-${os.type}/scage-bin" />
+    </target>
+
+	<target name="compile" depends="compile-scage">
+    <path id="classpath-project">
+		<fileset dir="${project.name}-${project.version}-${os.type}/lib" includes="**/*.jar"/>
+	</path>
+		<mkdir dir="${project.name}-${project.version}-${os.type}/bin" />
+		<scalac srcdir="${project.src}"
+		        destdir="${project.name}-${project.version}-${os.type}/bin"
+		   	    classpathref="classpath-project" />
+        <javac srcdir="${project.src}"
+		       destdir="${project.name}-${project.version}-${os.type}/bin"
+			   classpathref="classpath-project"
 			   includeantruntime="false" />
 	</target>
 
     <target name="dir" depends="compile">
-    	<copy-libraries/>
 		<jar destfile="${project.name}-${project.version}-${os.type}/lib/${project.name}-${project.version}.jar"
              filesetmanifest="mergewithoutmain">
 			<manifest>
-				<attribute name="Main-Class" value="${entrypoint}"/>
+				<attribute name="Main-Class" value="${project.entrypoint}"/>
 				<attribute name="Class-Path" value="."/>
 			</manifest>
             <fileset dir="${project.name}-${project.version}-${os.type}/bin"/>

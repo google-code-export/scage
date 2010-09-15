@@ -145,18 +145,6 @@ class Renderer(screen:Screen) extends Handler(screen:Screen) {
     interface = renderFunc :: interface
   }
   
-  private var msek = System.currentTimeMillis
-  private var frames:Int = 0
-  var fps:Int = 0
-  def countFPS() = {
-    frames += 1
-    if(System.currentTimeMillis - msek >= 1000) {
-      fps = frames
-      frames = 0
-      msek = System.currentTimeMillis
-    }
-  }
-
   override def actionSequence() = {
 	if(Display.isCloseRequested()) Screen.stopApp
     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
@@ -172,7 +160,6 @@ class Renderer(screen:Screen) extends Handler(screen:Screen) {
 
       interface.foreach(renderFunc => renderFunc())
     Display.update();
-    countFPS
   }
   override def exitSequence() = if(screen.isMain) Display.destroy();
 

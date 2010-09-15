@@ -21,7 +21,7 @@ class Controller(screen:Screen) extends Handler(screen:Screen) {
   def addListeners(ll:List[Listener]) = {
     to_add = ll ::: to_add
   }
-
+  
   var to_remove = List[Listener]()
   def removeKeyListener(key:Int, repeatTime:Long, onKeyDown: () => Unit) = {
     to_remove = new KeyListener(key, repeatTime, onKeyDown) :: to_remove

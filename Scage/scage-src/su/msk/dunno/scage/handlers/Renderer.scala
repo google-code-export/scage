@@ -90,7 +90,7 @@ object Renderer extends THandler {
 		GL11.glLoadIdentity();
       GL11.glPushMatrix
 
-      if(isSetScaleFunc && !Scage.onPause)scale = scaleFunc(scale)
+      if(isSetScaleFunc && !Scage.on_pause)scale = scaleFunc(scale)
       val coord = center - central_coord()*scale
       GL11.glTranslatef(coord.x , coord.y, 0.0f)
       GL11.glScalef(scale, scale, 1)

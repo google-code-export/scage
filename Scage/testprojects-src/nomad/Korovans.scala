@@ -51,7 +51,7 @@ object Korovans extends ScageLibrary {
 
     // game pause
     Controller.addKeyListener(Keyboard.KEY_P,() => Scage.switchPause)
-    Renderer.addInterfaceElement(() => if(onPause)Message.print("PAUSE", width/2-20, height/2+60))
+    Renderer.addInterfaceElement(() => if(on_pause)Message.print("PAUSE", width/2-20, height/2+60))
 
     // game interface
     Renderer.addInterfaceElement(() => Message.print("fps: "+Renderer.fps, Renderer.width-80, Renderer.height-20))
@@ -107,7 +107,7 @@ object Korovans extends ScageLibrary {
           Renderer.setColor(WHITE)
           GL11.glCallList(ROBBED_KOROVAN)
           GL11.glPopMatrix()
-          if(!onPause)show_robbed -= 1
+          if(!on_pause)show_robbed -= 1
        }
     })
   }
@@ -159,7 +159,7 @@ object Korovans extends ScageLibrary {
        GL11.glScalef(dir, 1, 1)
       Renderer.setColor(WHITE)
       GL11.glCallList(NOMAD_ANIMATION(next_frame.toInt));
-      if(!Scage.onPause && is_moving) next_frame += 0.1f
+      if(!Scage.on_pause && is_moving) next_frame += 0.1f
       if(next_frame >= 2)next_frame = 0
       GL11.glPopMatrix()
     })

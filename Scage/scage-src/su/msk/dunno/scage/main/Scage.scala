@@ -54,8 +54,8 @@ object Scage {
   }
   def addHandlers(h:List[THandler]) = {handlers = h ::: handlers}
 
-  var onPause:Boolean = false
-  def switchPause() = onPause = !onPause
+  var on_pause:Boolean = false
+  def switchPause() = on_pause = !on_pause
   
   private var isRunning = true
   def start() = {

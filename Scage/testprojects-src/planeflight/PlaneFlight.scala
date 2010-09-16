@@ -89,7 +89,7 @@ object PlaneFlight extends Colors {
 
     // game pause
     Controller.addKeyListener(Keyboard.KEY_P,() => Scage.switchPause)
-    Renderer.addInterfaceElement(() => if(Scage.onPause)Message.print("PAUSE", Renderer.width/2-20, Renderer.height/2+60, WHITE))
+    Renderer.addInterfaceElement(() => if(Scage.on_pause)Message.print("PAUSE", Renderer.width/2-20, Renderer.height/2+60, WHITE))
 
     // fps
     Renderer.addInterfaceElement(() => Message.print("fps: "+Renderer.fps, 20, Renderer.height-20, YELLOW))

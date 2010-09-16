@@ -32,3 +32,6 @@ dt = 0.1
 mass = 1
 num_bodies = 100
 radius = 1
+
+server = 127.0.0.1
+port = 9800

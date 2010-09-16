@@ -88,7 +88,7 @@ class Rocket(private val shooter:String, init_coord:Vec, dir:Vec, private val ro
       if(fuel > 5)GL11.glCallList(PlaneFlight.ROCKET_ANIMATION(next_frame.toInt));
       else GL11.glCallList(PlaneFlight.EXPLOSION_ANIMATION(0));
 
-      if(!Scage.onPause) next_frame += 0.1f
+      if(!Scage.on_pause) next_frame += 0.1f
       if(next_frame >= 3)next_frame = 0
       GL11.glPopMatrix()
     }

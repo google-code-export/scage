@@ -86,7 +86,7 @@ object Universe extends ScageLibrary with Gravitation {
     Scage.switchPause
     t.init
   })
-  Renderer.addInterfaceElement(() => if(onPause)Message.print("PAUSE", width/2-20, height/2+60, WHITE))
+  Renderer.addInterfaceElement(() => if(on_pause)Message.print("PAUSE", width/2-20, height/2+60, WHITE))
 
   // consumption (nonelastic collision)
   AI.registerAI(() => bodies = calculateCollisions(bodies))

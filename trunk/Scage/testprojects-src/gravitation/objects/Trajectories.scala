@@ -25,7 +25,7 @@ class Trajectories extends Gravitation with ScageLibrary {
     }
 
     Renderer.addRender(() => {
-      if(onPause) {
+      if(on_pause) {
         calculateTrajectories()
         Renderer.setColor(GREEN)
         GL11.glDisable(GL11.GL_TEXTURE_2D);

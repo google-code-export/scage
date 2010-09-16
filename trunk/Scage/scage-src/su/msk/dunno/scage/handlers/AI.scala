@@ -8,6 +8,6 @@ object AI extends THandler {
   def registerAI(ai: () => Unit) = {ai_list = ai :: ai_list}
 
   override def actionSequence() = {
-    if(!Scage.onPause)ai_list.foreach(ai => ai())
+    if(!Scage.on_pause)ai_list.foreach(ai => ai())
   }
 }

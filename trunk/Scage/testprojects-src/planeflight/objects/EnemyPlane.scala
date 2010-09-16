@@ -72,7 +72,7 @@ class EnemyPlane(init_coord:Vec) extends Colors {
         GL11.glRotatef(rotation, 0.0f, 0.0f, 1.0f)
         Renderer.setColor(WHITE)
         GL11.glCallList(PlaneFlight.EXPLOSION_ANIMATION(next_frame.toInt));
-        if(!Scage.onPause) next_frame += 0.1f
+        if(!Scage.on_pause) next_frame += 0.1f
         GL11.glPopMatrix()
      }
   })

@@ -67,7 +67,7 @@ object ScageTest {
     Renderer.addInterfaceElement(() => Message.print("last key: "+Controller.last_key, 20, 440))
 
     Controller.addKeyListener(Keyboard.KEY_P,() => Scage.switchPause)
-    Renderer.addInterfaceElement(() => if(Scage.onPause)Message.print("PAUSE", Renderer.width/2-20, Renderer.height/2+60))
+    Renderer.addInterfaceElement(() => if(Scage.on_pause)Message.print("PAUSE", Renderer.width/2-20, Renderer.height/2+60))
     
     // scaling
     val auto_scaling = Scage.getBooleanProperty("auto_scaling")

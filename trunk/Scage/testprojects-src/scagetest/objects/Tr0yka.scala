@@ -81,7 +81,7 @@ class Tr0yka(init_coord:Vec) extends DynaBall(init_coord:Vec, 30) {
     val vel = velocity.norma2
     if(isTouching && vel > 10){
       GL11.glCallList(ANIMATION(next_frame.toInt));
-      if(!Scage.onPause) {
+      if(!Scage.on_pause) {
     	  next_frame += vel/2000
     	  if(next_frame >= 6)next_frame = 0
       }

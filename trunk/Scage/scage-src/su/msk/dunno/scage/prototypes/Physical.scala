@@ -9,7 +9,7 @@ trait Physical {
   val body:Body
 
   def addForce(force:Vec) = {
-	if(!Scage.onPause) {
+	if(!Scage.on_pause) {
 		body.setIsResting(false)
 		body.addForce(new Vector2f(force.x, force.y))
 	}

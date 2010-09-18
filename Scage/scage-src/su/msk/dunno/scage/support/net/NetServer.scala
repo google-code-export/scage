@@ -17,16 +17,25 @@ object NetServer {
   private var client_handlers:List[ClientHandler] = Nil
   def clients = client_handlers
 
-  private var is_send_data = false
-  def send = is_send_data = true
-  def send(data:String) = {
+  private var is_sending_data = false
+  def send = is_sending_data = true
+  def send(data:JSONObject):Unit = {
+    while(is_sending_data) Thread.sleep(10)
     sd = data
-    is_send_data = true
+    is_sending_data = true
+  }
+  def send(data:String):Unit = {
+    val json = new JSONObject
+    json.put("data", data)
+    send(json)
   }
 
-  private var sd:String = ""
-  def serverData:String = sd
-  def serverData_= (new_sd:String):Unit = sd = new_sd
+  private var sd:JSONObject = new JSONObject
+  def serverData:JSONObject = sd
+  def eraseServerData = {
+    while(is_sending_data) Thread.sleep(10)
+    sd = new JSONObject
+  }
 
   new Thread(new Runnable { // awaiting new connections
     def run():Unit = {
@@ -34,7 +43,7 @@ object NetServer {
       while(client_handlers.length < max_clients) {
         log.debug("listening at port "+port+", "+client_handlers.length+" client(s) connected")
         val socket = server_socket.accept
-        client_handlers = new ClientHandler(socket) :: client_handlers
+        client_handlers = client_handlers ::: List(new ClientHandler(socket))
         log.debug("established connection with "+socket.getInetAddress.getHostAddress)
       }
       server_socket.close
@@ -44,11 +53,11 @@ object NetServer {
   new Thread(new Runnable { // send data to clients
     def run():Unit = {
       while(true) {
-        if(is_send_data) {
+        if(is_sending_data) {
           clients.foreach(handler => handler.send)
-          is_send_data = false
+          is_sending_data = false
         }
-        Thread.sleep(500/Idler.framerate)
+        Thread.sleep(10)
       }
     }
   }).start
@@ -58,9 +67,9 @@ object NetServer {
     val out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream))
     val in = new Scanner(new InputStreamReader(socket.getInputStream))
 
-    private var cd:String = ""
+    private var cd:JSONObject = new JSONObject
     def clientData = cd
-    def eraseClientData = cd = ""
+    def eraseClientData = cd = new JSONObject
 
     def send = {
       out.println(sd)
@@ -70,8 +79,14 @@ object NetServer {
     new Thread(new Runnable { // receive data from client
       def run():Unit = {
         while(true) {
-          if(in.hasNextLine) cd = in.nextLine
-          Thread.sleep(500/Idler.framerate)
+          if(in.hasNextLine) {
+            val message = in.nextLine
+            cd = try{new JSONObject(message)}
+            catch {
+              case e:JSONException => cd.put("raw", message)
+            }
+          }
+          Thread.sleep(10)
         }
       }
     }).start

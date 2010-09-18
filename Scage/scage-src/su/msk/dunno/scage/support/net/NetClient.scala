@@ -31,29 +31,38 @@ object NetClient {
   val out:PrintWriter = if(is_connected) new PrintWriter(new OutputStreamWriter(socket.getOutputStream)) else null
   val in:Scanner = if(is_connected) new Scanner(new InputStreamReader(socket.getInputStream)) else null
 
-  private var is_send_data = false
-  def send = is_send_data = true
-  def send(data:String) = {
+  private var is_sending_data = false
+  def send = is_sending_data = true
+  def send(data:JSONObject):Unit = {
+    while(is_sending_data) Thread.sleep(10)
     cd = data
-    is_send_data = true
+    is_sending_data = true
+  }
+  def send(data:String):Unit = {
+    val json = new JSONObject
+    json.put("data", data)
+    send(json)
   }
 
-  private var sd:String = ""
-  def serverData:String = sd
+  private var sd:JSONObject = new JSONObject
+  def serverData:JSONObject = sd
 
-  private var cd:String = ""
+  private var cd:JSONObject = new JSONObject
   def clientData = cd
-  def clientData_= (new_cd:String):Unit = cd = new_cd
+  def eraseClientData = {
+    while(is_sending_data) Thread.sleep(10)
+    cd = new JSONObject
+  }
 
   new Thread(new Runnable { // send data to server
     def run():Unit = {
       while(is_connected) {
-        if(is_send_data) {
+        if(is_sending_data) {
           out.println(cd)
           out.flush
-          is_send_data = false
+          is_sending_data = false
         }
-        Thread.sleep(500/Idler.framerate)
+        Thread.sleep(10)
       }
     }
   }).start
@@ -61,8 +70,14 @@ object NetClient {
   new Thread(new Runnable { // receive data from server
     def run():Unit = {
       while(is_connected) {
-        if(in.hasNextLine) sd = in.nextLine
-        Thread.sleep(500/Idler.framerate)
+        if(in.hasNextLine) {
+          val message = in.nextLine
+          sd = try{new JSONObject(message)}
+          catch {
+            case e:JSONException => sd.put("raw", message)
+          }
+        }
+        Thread.sleep(10)
       }
     }
   }).start

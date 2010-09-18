@@ -7,12 +7,16 @@ import su.msk.dunno.scage.handlers.AI
 object ChatServer extends Application with ScageLibrary {
   AI.registerAI(() => {
     NetServer.clients.foreach(client => {
-      if(!"".equals(client.clientData)) {
+      if(client.clientData.length != 0) {
         println(client.clientData)
-        NetServer.send(client.clientData)
+        NetServer.serverData.put(client.name, client.clientData)
         client.eraseClientData
       }
     })
+    if(NetServer.serverData.length != 0) {
+      NetServer.send
+      NetServer.eraseServerData
+    }
   })
 
   start

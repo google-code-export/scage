@@ -5,13 +5,13 @@ import org.lwjgl.input.Keyboard
 case class KeyListener(
         protected val key:Int,
         protected val repeatTime:Long,
-        onKeyDown: () => Unit,
-        onKeyUp: () => Unit) extends TListener {
+        onKeyDown: () => Any,
+        onKeyUp: () => Any) extends TListener {
   def this(key:Int,
            repeatTime:Long,
-           onKeyDown: () => Unit) = this(key, repeatTime, onKeyDown, () => {})
-  def this(key:Int, onKeyDown: () => Unit) = this(key,0,onKeyDown,() => {})
-  def this(key:Int, onKeyDown: () => Unit, onKeyUp: () => Unit) = this(key,0,onKeyDown,onKeyUp)
+           onKeyDown: () => Any) = this(key, repeatTime, onKeyDown, () => {})
+  def this(key:Int, onKeyDown: () => Any) = this(key,0,onKeyDown,() => {})
+  def this(key:Int, onKeyDown: () => Any, onKeyUp: () => Any) = this(key,0,onKeyDown,onKeyUp)
 
   val isRepeatable = repeatTime > 0
 

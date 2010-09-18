@@ -5,16 +5,16 @@ object Controller extends THandler {
   var listeners = List[TListener]()
 
   var to_add = List[TListener]()
-  def addKeyListener(key:Int, onKeyDown: () => Unit) = {
+  def addKeyListener(key:Int, onKeyDown: () => Any) = {
     to_add = new KeyListener(key, onKeyDown) :: to_add
   }
-  def addKeyListener(key:Int, repeatTime:Long, onKeyDown: () => Unit) = {
+  def addKeyListener(key:Int, repeatTime:Long, onKeyDown: () => Any) = {
     to_add = new KeyListener(key, repeatTime, onKeyDown) :: to_add
   }
-  def addKeyListener(key:Int, onKeyDown: () => Unit, onKeyUp: () => Unit) = {
+  def addKeyListener(key:Int, onKeyDown: () => Any, onKeyUp: () => Any) = {
 	  to_add = new KeyListener(key, onKeyDown, onKeyUp) :: to_add
   }
-  def addKeyListener(key:Int, repeatTime:Long, onKeyDown: () => Unit, onKeyUp: () => Unit) = {
+  def addKeyListener(key:Int, repeatTime:Long, onKeyDown: () => Any, onKeyUp: () => Any) = {
 	  to_add = new KeyListener(key, repeatTime, onKeyDown, onKeyUp) :: to_add
   }
   def addListeners(ll:List[TListener]) = {
@@ -22,7 +22,7 @@ object Controller extends THandler {
   }
 
   var to_remove = List[TListener]()
-  def removeKeyListener(key:Int, repeatTime:Long, onKeyDown: () => Unit) = {
+  def removeKeyListener(key:Int, repeatTime:Long, onKeyDown: () => Any) = {
     to_remove = new KeyListener(key, repeatTime, onKeyDown) :: to_remove
   }
 

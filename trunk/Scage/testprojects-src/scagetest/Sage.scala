@@ -78,7 +78,7 @@ object Sage {
     Renderer.addInterfaceElement(() => Message.print("velocity: "+tr0yka.velocity+" norma="+tr0yka.velocity.norma, 20, Renderer.height-35))
     Renderer.addInterfaceElement(() => Message.print("fps: "+Renderer.fps, 20, Renderer.height-50))
     Renderer.addInterfaceElement(() => Message.print("scale: "+Renderer.scale, 20, Renderer.height-65))
-    Renderer.addInterfaceElement(() => Message.print("handlers: "+Scage.getHandlers.size, 20, Renderer.height-80))
+    Renderer.addInterfaceElement(() => Message.print("clients: "+Scage.getHandlers.size, 20, Renderer.height-80))
 
     // game pause
     Controller.addKeyListener(Keyboard.KEY_P,() => Scage.switchPause)

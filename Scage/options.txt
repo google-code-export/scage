@@ -35,3 +35,4 @@ radius = 1
 
 server = 127.0.0.1
 port = 9800
+max_clients = 1

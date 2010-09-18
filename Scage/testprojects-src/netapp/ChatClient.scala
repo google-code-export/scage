@@ -5,6 +5,6 @@ import su.msk.dunno.scage.handlers.AI
 import su.msk.dunno.scage.support.ScageLibrary
 
 object ChatClient extends Application with ScageLibrary {
-  AI.registerAI(() => NetClient.clientData.put("Greeting", "Hello Worldddd!"))
+  AI.registerAI(() => NetClient.send("test2"))
   start
 }

@@ -4,6 +4,7 @@ import su.msk.dunno.scage.main.Scage
 import java.net.{ServerSocket}
 import org.json.{JSONObject}
 import org.apache.log4j.Logger
+
 object NetServer {
   private val log = Logger.getLogger(this.getClass)
 
@@ -32,7 +33,7 @@ object NetServer {
   new Thread(new Runnable { // awaiting new connections
     def run():Unit = {
       val server_socket = new ServerSocket(port)
-      while(client_handlers.length < max_clients) {
+      while(client_handlers.length < max_clients && Scage.isRunning) {
         log.debug("listening at port "+port+", "+client_handlers.length+" client(s) are connected")
         val socket = server_socket.accept
         client_handlers = client_handlers ::: List(new ClientHandler(next_client, socket))
@@ -43,16 +44,26 @@ object NetServer {
     }
   }).start
 
-  private var is_connection_check = false
+
+  val check_timeout = Scage.getIntProperty("check_timeout")
+  private val is_connection_check = check_timeout > 0
   new Thread(new Runnable { // send data to clients
     def run():Unit = {
-      while(true) {
+      while(Scage.isRunning) {
+        if(is_connection_check) {
+          val dead_clients = client_handlers.filter(client => !client.isAlive)
+          dead_clients.foreach(client => client.disconnect)
+          client_handlers = client_handlers.filter(client => !dead_clients.contains(client))
+        }
+
         if(is_sending_data) {
+          if(is_connection_check) sd.put("ping", "")
           clients.foreach(handler => handler.send(sd))
           is_sending_data = false
         }
         Thread.sleep(10)
       }
+      clients.foreach(handler => handler.disconnect)
     }
   }).start
 }

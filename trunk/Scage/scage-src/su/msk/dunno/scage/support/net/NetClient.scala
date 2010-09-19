@@ -14,16 +14,16 @@ object NetClient {
 
   var is_connected = false
   log.debug("start connecting to server "+server+" at port "+port)
-  val socket:Socket = try {
-    is_connected = true
-    log.debug("connected")
-    new Socket(server, port)    
-  }
+  val socket:Socket = try {new Socket(server, port)}
   catch {
     case e:java.io.IOException => {
       log.debug("failed to connect to server "+server+" at port "+port);
       null
     }
+  }
+  if(socket != null) {
+    is_connected = true
+    log.debug("connected")
   }
   val out:PrintWriter = if(is_connected) new PrintWriter(new OutputStreamWriter(socket.getOutputStream)) else null
   val in:Scanner = if(is_connected) new Scanner(new InputStreamReader(socket.getInputStream)) else null
@@ -53,20 +53,23 @@ object NetClient {
 
   new Thread(new Runnable { // send data to server
     def run():Unit = {
-      while(is_connected) {
+      while(is_connected && Scage.isRunning) {
         if(is_sending_data) {
+          if(sd.has("ping")) cd.put("pong", System.currentTimeMillis)
           out.println(cd)
           out.flush
           is_sending_data = false
         }
         Thread.sleep(10)
       }
+      is_sending_data = false
+      socket.close
     }
   }).start
 
   new Thread(new Runnable { // receive data from server
     def run():Unit = {
-      while(is_connected) {
+      while(is_connected && Scage.isRunning) {
         if(in.hasNextLine) {
           val message = in.nextLine
           sd = try{new JSONObject(message)}

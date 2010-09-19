@@ -55,7 +55,6 @@ object NetClient {
     def run():Unit = {
       while(is_connected && Scage.isRunning) {
         if(is_sending_data) {
-          if(sd.has("ping")) cd.put("pong", System.currentTimeMillis)
           out.println(cd)
           out.flush
           is_sending_data = false

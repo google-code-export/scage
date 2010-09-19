@@ -44,26 +44,18 @@ object NetServer {
     }
   }).start
 
-
-  val check_timeout = Scage.getIntProperty("check_timeout")
-  private val is_connection_check = check_timeout > 0
   new Thread(new Runnable { // send data to clients
     def run():Unit = {
       while(Scage.isRunning) {
-        if(is_connection_check) {
-          val dead_clients = client_handlers.filter(client => !client.isAlive)
-          dead_clients.foreach(client => client.disconnect)
-          client_handlers = client_handlers.filter(client => !dead_clients.contains(client))
-        }
-
+        client_handlers.filter(client => !client.isOnline).foreach(client => client.disconnect)
+        client_handlers = client_handlers.filter(client => client.isOnline)
         if(is_sending_data) {
-          if(is_connection_check) sd.put("ping", "")
-          clients.foreach(handler => handler.send(sd))
+          client_handlers.foreach(client => client.send(sd))
           is_sending_data = false
         }
         Thread.sleep(10)
       }
-      clients.foreach(handler => handler.disconnect)
+      client_handlers.foreach(client => client.disconnect)
     }
   }).start
 }

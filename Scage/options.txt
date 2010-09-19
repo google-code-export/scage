@@ -36,5 +36,4 @@ radius = 1
 server = 127.0.0.1
 port = 9800
 max_clients = 20
-connection_check = yes
-check_timeout = 5
+check_timeout = 1000

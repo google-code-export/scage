@@ -1,14 +1,9 @@
-package su.msk.dunno.scage.handlers.net
+package su.msk.dunno.scage.support.net
 
-import su.msk.dunno.scage.prototypes.THandler
 import su.msk.dunno.scage.main.Scage
-import java.net.{Socket, ServerSocket}
-import java.io._
-import java.util.Scanner
-import org.json.{JSONException, JSONObject}
+import java.net.{ServerSocket}
+import org.json.{JSONObject}
 import org.apache.log4j.Logger
-import su.msk.dunno.scage.handlers.Idler
-
 object NetServer {
   private val log = Logger.getLogger(this.getClass)
 
@@ -22,13 +17,9 @@ object NetServer {
   def send(data:JSONObject):Unit = {
     while(is_sending_data) Thread.sleep(10)
     sd = data
-    is_sending_data = true
+    send
   }
-  def send(data:String):Unit = {
-    val json = new JSONObject
-    json.put("data", data)
-    send(json)
-  }
+  def send(data:String):Unit = send(new JSONObject().put("data", data))
 
   private var sd:JSONObject = new JSONObject
   def serverData:JSONObject = sd
@@ -37,58 +28,31 @@ object NetServer {
     sd = new JSONObject
   }
 
+  private var next_client = 0
   new Thread(new Runnable { // awaiting new connections
     def run():Unit = {
       val server_socket = new ServerSocket(port)
       while(client_handlers.length < max_clients) {
-        log.debug("listening at port "+port+", "+client_handlers.length+" client(s) connected")
+        log.debug("listening at port "+port+", "+client_handlers.length+" client(s) are connected")
         val socket = server_socket.accept
-        client_handlers = client_handlers ::: List(new ClientHandler(socket))
+        client_handlers = client_handlers ::: List(new ClientHandler(next_client, socket))
         log.debug("established connection with "+socket.getInetAddress.getHostAddress)
+        next_client += 1
       }
       server_socket.close
     }
   }).start
 
+  private var is_connection_check = false
   new Thread(new Runnable { // send data to clients
     def run():Unit = {
       while(true) {
         if(is_sending_data) {
-          clients.foreach(handler => handler.send)
+          clients.foreach(handler => handler.send(sd))
           is_sending_data = false
         }
         Thread.sleep(10)
       }
     }
   }).start
-
-  class ClientHandler(socket:Socket) {
-    val name:String = client_handlers.length+""
-    val out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream))
-    val in = new Scanner(new InputStreamReader(socket.getInputStream))
-
-    private var cd:JSONObject = new JSONObject
-    def clientData = cd
-    def eraseClientData = cd = new JSONObject
-
-    def send = {
-      out.println(sd)
-      out.flush
-    }
-
-    new Thread(new Runnable { // receive data from client
-      def run():Unit = {
-        while(true) {
-          if(in.hasNextLine) {
-            val message = in.nextLine
-            cd = try{new JSONObject(message)}
-            catch {
-              case e:JSONException => cd.put("raw", message)
-            }
-          }
-          Thread.sleep(10)
-        }
-      }
-    }).start
-  }
 }

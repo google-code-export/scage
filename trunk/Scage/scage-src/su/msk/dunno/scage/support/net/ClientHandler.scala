@@ -27,15 +27,17 @@ class ClientHandler(val name:Int, val socket:Socket) {
     log.debug(name+" was disconnected")
   }
 
-  private val start_time = System.currentTimeMillis
-  def isAlive = (cd.has("pong") && (System.currentTimeMillis - cd.getLong("pong")) < NetServer.check_timeout*1000) ||
-                (System.currentTimeMillis - start_time < check_timeout*1000)
+  private val check_timeout = Scage.getIntProperty("check_timeout")
+  private var last_answer_time = System.currentTimeMillis
+  def isOnline = check_timeout == 0 || System.currentTimeMillis - last_answer_time < check_timeout
 
   new Thread(new Runnable { // receive data from client
     def run():Unit = {
-      while(Scage.isRunning) { 
+      while(Scage.isRunning) {
         if(in.hasNextLine) {
+          last_answer_time = System.currentTimeMillis
           val message = in.nextLine
+          println(message)
           cd = try{new JSONObject(message)}
           catch {
             case e:JSONException => cd.put("raw", message)

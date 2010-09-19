@@ -1,7 +1,7 @@
 package netflight.server
 
 import su.msk.dunno.scage.handlers.AI
-import su.msk.dunno.scage.handlers.net.NetServer
+import su.msk.dunno.scage.support.net.NetServer
 import su.msk.dunno.scage.support.{ScageLibrary, Vec}
 
 object ServerFlight extends Application with ScageLibrary {
@@ -21,6 +21,6 @@ object ServerFlight extends Application with ScageLibrary {
       NetServer.eraseServerData
     }
   })
-
+  
   start
 }

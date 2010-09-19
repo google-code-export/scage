@@ -57,24 +57,22 @@ object Scage {
   var on_pause:Boolean = false
   def switchPause() = on_pause = !on_pause
   
-  private var isRunning = true
+  private var is_running = true
+  def isRunning = is_running
   def start() = {
     Idler
-    isRunning = true
+    is_running = true
     handlers.foreach(h => h.initSequence)
     run()
   }
-  def stop() = {isRunning = false}
+  def stop() = {is_running = false}
 
   private def run():Unit = {
-    if(isRunning) {
+    while(is_running) {
       handlers.foreach(h => h.actionSequence)
-        run
     }
-    else {
-      handlers.foreach(h => h.exitSequence)
-      log.debug("app was stopped")
-    }
+    handlers.foreach(h => h.exitSequence)
+    log.debug("app was stopped")
   }
 
   def main(args:Array[String]):Unit = {

@@ -19,8 +19,9 @@ class ServerSidePlane(name:String, init_coord:Vec, inputs:() => JSONObject) {
     if(inputs().has("up")) if(delta < 15) delta += 0.5f
 
     coord = StandardTracer.getNewCoord(coord + step)
-    NetServer.serverData.put(name, new JSONObject().put("x", coord.x.toInt)
-                                                   .put("y", coord.y.toInt)
+    if(delta > 5) delta -= 0.1f
+    NetServer.serverData.put(name, new JSONObject().put("x", coord.x)
+                                                   .put("y", coord.y)
                                                    .put("rotation", rotation))
   }
 }

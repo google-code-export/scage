@@ -1,12 +1,12 @@
 package netflight.client
 
-import su.msk.dunno.scage.handlers.net.NetClient
+import su.msk.dunno.scage.support.net.NetClient
 import su.msk.dunno.scage.handlers.controller.Controller
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.handlers.{Renderer, AI}
-import org.json.JSONObject
 import org.lwjgl.opengl.GL11
-import su.msk.dunno.scage.support.{ScageLibrary, Colors, Vec}
+import su.msk.dunno.scage.support.{ScageLibrary, Vec}
+import su.msk.dunno.scage.support.messages.Message
 
 object ClientFlight extends Application with ScageLibrary {
   AI.registerAI(() => {
@@ -34,6 +34,7 @@ object ClientFlight extends Application with ScageLibrary {
         Renderer.setColor(WHITE)
         GL11.glCallList(PLANE_IMAGE)
         GL11.glPopMatrix()
+        Message.print(i, coord)
       }
     }
   })

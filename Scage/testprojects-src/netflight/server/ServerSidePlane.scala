@@ -3,7 +3,7 @@ package netflight.server
 import org.json.JSONObject
 import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.scage.handlers.tracer.StandardTracer
-import su.msk.dunno.scage.handlers.net.{NetServer}
+import su.msk.dunno.scage.support.net.{NetServer}
 
 class ServerSidePlane(name:String, init_coord:Vec, inputs:() => JSONObject) {
    // parameters
@@ -16,10 +16,11 @@ class ServerSidePlane(name:String, init_coord:Vec, inputs:() => JSONObject) {
   def processInputs = {
     if(inputs().has("left")) rotation -= 0.2f*delta
     if(inputs().has("right")) rotation += 0.2f*delta
-    if(inputs().has("up")) if(delta < 15)delta += 0.5f
+    if(inputs().has("up")) if(delta < 15) delta += 0.5f
 
     coord = StandardTracer.getNewCoord(coord + step)
-    val data = new JSONObject().put("x", coord.x.toInt).put("y", coord.y.toInt).put("rotation", rotation)
-    NetServer.serverData.put(name, data)
+    NetServer.serverData.put(name, new JSONObject().put("x", coord.x.toInt)
+                                                   .put("y", coord.y.toInt)
+                                                   .put("rotation", rotation))
   }
 }

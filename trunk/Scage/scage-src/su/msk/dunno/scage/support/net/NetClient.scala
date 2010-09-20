@@ -12,7 +12,8 @@ object NetClient {
   val server = Scage.getProperty("server")
   val port = Scage.getIntProperty("port")
 
-  var is_connected = false
+  private var is_connected = false
+  def isConnected = is_connected
   log.debug("start connecting to server "+server+" at port "+port)
   val socket:Socket = try {new Socket(server, port)}
   catch {
@@ -51,33 +52,35 @@ object NetClient {
     cd = new JSONObject
   }
 
-  new Thread(new Runnable { // send data to server
-    def run():Unit = {
-      while(is_connected && Scage.isRunning) {
-        if(is_sending_data) {
-          out.println(cd)
-          out.flush
-          is_sending_data = false
-        }
-        Thread.sleep(10)
-      }
-      is_sending_data = false
-      socket.close
-    }
-  }).start
-
-  new Thread(new Runnable { // receive data from server
-    def run():Unit = {
-      while(is_connected && Scage.isRunning) {
-        if(in.hasNextLine) {
-          val message = in.nextLine
-          sd = try{new JSONObject(message)}
-          catch {
-            case e:JSONException => sd.put("raw", message)
+  if(is_connected) {
+    new Thread(new Runnable { // send data to server
+      def run():Unit = {
+        while(Scage.isRunning) {
+          if(is_sending_data) {
+            out.println(cd)
+            out.flush
+            is_sending_data = false
           }
+          Thread.sleep(10)
         }
-        Thread.sleep(10)
+        is_sending_data = false
+        socket.close
       }
-    }
-  }).start
+    }).start
+
+    new Thread(new Runnable { // receive data from server
+      def run():Unit = {
+        while(Scage.isRunning) {
+          if(in.hasNextLine) {
+            val message = in.nextLine
+            sd = try{new JSONObject(message)}
+            catch {
+              case e:JSONException => sd.put("raw", message)
+            }
+          }
+          Thread.sleep(10)
+        }
+      }
+    }).start
+  }
 }

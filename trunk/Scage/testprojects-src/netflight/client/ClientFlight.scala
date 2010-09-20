@@ -22,9 +22,10 @@ object ClientFlight extends Application with ScageLibrary {
   val PLANE_IMAGE = Renderer.createList("img/plane.png", 60, 60, 0, 0, 122, 121)
   Renderer.addRender(() => {
     if(NetClient.serverData.length != 0) {
-      val num_players = NetClient.serverData.getInt("num_players")
-      for(i <- 1 to num_players) {
-        val plane = NetClient.serverData.getJSONObject(i+"")
+      val players = NetClient.serverData.names
+      for(i <- 0 to players.length-1) {
+        val plane_name = players.getString(i)
+        val plane = NetClient.serverData.getJSONObject(plane_name)
         val coord = Vec(plane.getInt("x"), plane.getInt("y"))
         val rotation = plane.getDouble("rotation").toFloat
 
@@ -34,10 +35,10 @@ object ClientFlight extends Application with ScageLibrary {
         Renderer.setColor(WHITE)
         GL11.glCallList(PLANE_IMAGE)
         GL11.glPopMatrix()
-        Message.print(i, coord)
+        Message.print(plane_name, coord)
       }
     }
   })
 
-  start
+  if(NetClient.isConnected) start
 }

@@ -5,8 +5,9 @@ import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.scage.handlers.tracer.StandardTracer
 import su.msk.dunno.scage.support.net.{ClientHandler, NetServer}
 
-class ServerSidePlane(val name:String, init_coord:Vec, val client:ClientHandler) {
+class ServerSidePlane(raw_name:Any, init_coord:Vec, val client:ClientHandler) {
    // parameters
+  val name = raw_name.toString 
   protected var delta = 5.0f
   protected var rotation = 0.0f
   var coord = init_coord

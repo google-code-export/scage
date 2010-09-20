@@ -7,7 +7,7 @@ import java.io.{InputStreamReader, OutputStreamWriter, PrintWriter}
 import su.msk.dunno.scage.main.Scage
 import org.apache.log4j.Logger
 
-class ClientHandler(val name:Int, val socket:Socket) {
+class ClientHandler(val id:Int, val socket:Socket) {
   private val log = Logger.getLogger(this.getClass)
 
   private val out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream))
@@ -24,7 +24,7 @@ class ClientHandler(val name:Int, val socket:Socket) {
 
   def disconnect = {
     socket.close
-    log.debug(name+" was disconnected")
+    log.debug("client #"+id+" was disconnected")
   }
 
   private val check_timeout = Scage.getIntProperty("check_timeout")
@@ -37,7 +37,6 @@ class ClientHandler(val name:Int, val socket:Socket) {
         if(in.hasNextLine) {
           last_answer_time = System.currentTimeMillis
           val message = in.nextLine
-          println(message)
           cd = try{new JSONObject(message)}
           catch {
             case e:JSONException => cd.put("raw", message)

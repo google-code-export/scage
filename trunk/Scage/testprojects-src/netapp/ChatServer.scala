@@ -9,7 +9,7 @@ object ChatServer extends Application with ScageLibrary {
     NetServer.clients.foreach(client => {
       if(client.clientData.length != 0) {
         println(client.clientData)
-        NetServer.serverData.put(client.name+"", client.clientData)
+        NetServer.serverData.put(client.id+"", client.clientData)
         client.eraseClientData
       }
     })

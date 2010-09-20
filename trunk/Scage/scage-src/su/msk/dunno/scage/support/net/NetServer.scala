@@ -12,6 +12,15 @@ object NetServer {
   val max_clients = Scage.getIntProperty("max_clients")
   private var client_handlers:List[ClientHandler] = Nil
   def clients = client_handlers
+  def numClients = client_handlers.length
+  def lastConnected = client_handlers.head
+
+  private var has_new_connection = false
+  def hasNewConnection = {
+    val has_new = has_new_connection
+    has_new_connection = false
+    has_new
+  }
 
   private var is_sending_data = false
   def send = is_sending_data = true
@@ -36,8 +45,9 @@ object NetServer {
       while(client_handlers.length < max_clients && Scage.isRunning) {
         log.debug("listening at port "+port+", "+client_handlers.length+" client(s) are connected")
         val socket = server_socket.accept
-        client_handlers = client_handlers ::: List(new ClientHandler(next_client, socket))
+        client_handlers = new ClientHandler(next_client, socket) :: client_handlers
         log.debug("established connection with "+socket.getInetAddress.getHostAddress)
+        has_new_connection = true
         next_client += 1
       }
       server_socket.close

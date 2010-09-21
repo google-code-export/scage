@@ -1,4 +1,4 @@
-package su.msk.dunno.scage.support.net
+package su.msk.dunno.scage.handlers.net
 
 import su.msk.dunno.scage.main.Scage
 import java.net.Socket
@@ -43,11 +43,19 @@ object NetClient extends THandler {
   }
 
   private var sd:JSONObject = new JSONObject
-  def serverData:JSONObject = sd
+  def serverData:JSONObject = {
+    has_new_data = false
+    sd
+  }
+
+  private var has_new_data = false
+  def hasNewData = has_new_data
 
   private var cd:JSONObject = new JSONObject
   def clientData = cd
   def eraseClientData = cd = new JSONObject
+  def addData(key:Any, data:Any) = cd.put(key.toString, data)
+  def addData(key:Any) = cd.put(key.toString, "")
 
   if(is_connected) {
     new Thread(new Runnable { // receive data from server
@@ -59,6 +67,7 @@ object NetClient extends THandler {
             catch {
               case e:JSONException => sd.put("raw", message)
             }
+            if(sd.length > 0) has_new_data = true
           }
           Thread.sleep(10)
         }

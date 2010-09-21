@@ -1,15 +1,14 @@
 package netapp
 
 import su.msk.dunno.scage.support.ScageLibrary
-import su.msk.dunno.scage.support.net.NetServer
+import su.msk.dunno.scage.handlers.net.NetServer
 import su.msk.dunno.scage.handlers.AI
 object ChatServer extends Application with ScageLibrary {
   /*AI.registerAI(() => {
     NetServer.clients.foreach(client => {
-      if(client.clientData.length != 0) {
-        println(client.clientData)
-        NetServer.serverData.put(client.id+"", client.clientData)
-        client.eraseClientData
+      if(client.hasNewData) {
+        val data = client.clientData
+        NetServer.addData(client.id, data)
       }
     })
     if(NetServer.serverData.length != 0) {
@@ -24,7 +23,7 @@ object ChatServer extends Application with ScageLibrary {
     if(NetServer.numClients > 0) {
       if(System.currentTimeMillis - start_time  < 10000) {
         NetServer.eraseServerData
-        NetServer.serverData.put("count", count)
+        NetServer.addData("count", count)
         NetServer.send        
         count += 1
       }

@@ -3,7 +3,6 @@ package scage2test
 import su.msk.dunno.scage2.prototypes.Screen
 import su.msk.dunno.scage2.support.messages.Message
 import org.lwjgl.input.Keyboard
-import su.msk.dunno.scage2.handlers.controller.{KeyListener}
 import su.msk.dunno.scage2.support.Colors
 
 object Scage2Test extends Colors {

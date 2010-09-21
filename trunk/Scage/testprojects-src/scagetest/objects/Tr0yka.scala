@@ -5,7 +5,7 @@ import su.msk.dunno.scage.handlers.controller.Controller
 import org.lwjgl.input.Keyboard
 import org.newdawn.slick.opengl.Texture
 import su.msk.dunno.scage.main.Scage
-import su.msk.dunno.scage.support.{Vec}
+import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.scage.objects.DynaBall
 import su.msk.dunno.scage.handlers.Renderer
 import su.msk.dunno.scage.handlers.tracer.{StandardTracer, State, Trace}

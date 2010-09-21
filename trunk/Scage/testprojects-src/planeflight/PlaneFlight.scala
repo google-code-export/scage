@@ -9,9 +9,9 @@ import su.msk.dunno.scage.handlers.controller.Controller
 import org.newdawn.slick.opengl.Texture
 import su.msk.dunno.scage.handlers.tracer.StandardTracer
 import su.msk.dunno.scage.handlers.{AI, Idler, Renderer}
-import su.msk.dunno.scage.support.{Colors, Vec}
+import su.msk.dunno.scage.support.{ScageLibrary, Vec}
 
-object PlaneFlight extends Colors {
+object PlaneFlight extends ScageLibrary {
   // common images
   val ROCKET_ANIMATION:Array[Int] = {
     def nextFrame(arr:List[Int], texture:Texture):List[Int] = {
@@ -92,7 +92,7 @@ object PlaneFlight extends Colors {
     Renderer.addInterfaceElement(() => if(Scage.on_pause)Message.print("PAUSE", Renderer.width/2-20, Renderer.height/2+60, WHITE))
 
     // fps
-    Renderer.addInterfaceElement(() => Message.print("fps: "+Renderer.fps, 20, Renderer.height-20, YELLOW))
+    Renderer.addInterfaceElement(() => Message.print("fps: "+fps, 20, Renderer.height-20, YELLOW))
     
     Idler
     Scage.start

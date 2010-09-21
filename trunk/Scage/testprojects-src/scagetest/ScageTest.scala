@@ -5,12 +5,12 @@ import su.msk.dunno.scage.main.Scage
 import su.msk.dunno.scage.support.messages.Message
 import su.msk.dunno.scage.handlers.controller.Controller
 import su.msk.dunno.scage.objects.{StaticBox, DynaBall, StaticLine}
-import su.msk.dunno.scage.support.{Vec}
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.handlers.{AI, Renderer}
 import su.msk.dunno.scage.handlers.tracer.{StandardTracer, State, Trace}
+import su.msk.dunno.scage.support.{ScageLibrary, Vec}
 
-object ScageTest {
+object ScageTest extends ScageLibrary {
   def main(args:Array[String]):Unit = {
     Scage.setDefaultHandlers
     Scage.addHandler(StandardTracer)
@@ -63,7 +63,7 @@ object ScageTest {
     }
 
     // game interface
-    Renderer.addInterfaceElement(() => Message.print("fps: "+Renderer.fps, 20, 460))
+    Renderer.addInterfaceElement(() => Message.print("fps: "+fps, 20, 460))
     Renderer.addInterfaceElement(() => Message.print("last key: "+Controller.last_key, 20, 440))
 
     Controller.addKeyListener(Keyboard.KEY_P,() => Scage.switchPause)

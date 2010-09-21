@@ -2,7 +2,7 @@ package su.msk.dunno.scage.objects
 
 import su.msk.dunno.scage.prototypes.Physical
 import net.phys2d.raw.shapes.Circle
-import net.phys2d.raw.{StaticBody}
+import net.phys2d.raw.StaticBody
 import su.msk.dunno.scage.handlers.{Physics, Renderer}
 import su.msk.dunno.scage.support.{Colors, Vec}
 

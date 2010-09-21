@@ -14,14 +14,21 @@ class ServerSidePlane(raw_name:Any, init_coord:Vec, val client:ClientHandler) {
   protected def step = Vec(-0.4f*delta*Math.sin(Math.toRadians(rotation)).toFloat,
                            0.4f*delta*Math.cos(Math.toRadians(rotation)).toFloat)
 
+  private var plane_side = 1
   def processInputs = {
-    if(client.clientData.has("left")) rotation -= 0.2f*delta
-    if(client.clientData.has("right")) rotation += 0.2f*delta
-    if(client.clientData.has("up")) if(delta < 15) delta += 0.5f
+    val client_data = client.clientData
+    if(client_data.has("left")) rotation -= 0.2f*delta
+    if(client_data.has("right")) rotation += 0.2f*delta
+    if(client_data.has("up")) if(delta < 15) delta += 0.5f
+    if(client_data.has("space")) {
+      new ServerSideRocket(name, coord + step.n.rotate(Math.Pi/2 * plane_side)*10, step, rotation);
+      plane_side *= -1
+    }
 
     coord = StandardTracer.getNewCoord(coord + step)
     if(delta > 5) delta -= 0.1f
-    NetServer.serverData.put(name, new JSONObject().put("x", coord.x)
+    NetServer.serverData.put(name, new JSONObject().put("type", "plane")
+                                                   .put("x", coord.x)
                                                    .put("y", coord.y)
                                                    .put("rotation", rotation))
   }

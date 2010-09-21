@@ -2,7 +2,7 @@ package scagetest.objects
 
 import org.lwjgl.opengl.GL11
 import su.msk.dunno.scage.objects.DynaBox
-import su.msk.dunno.scage.support.{Vec}
+import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.scage.handlers.Renderer
 import su.msk.dunno.scage.handlers.tracer.{StandardTracer, State, Trace}
 

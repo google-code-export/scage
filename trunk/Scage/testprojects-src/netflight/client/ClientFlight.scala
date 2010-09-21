@@ -7,7 +7,6 @@ import su.msk.dunno.scage.handlers.{Renderer, AI}
 import org.lwjgl.opengl.GL11
 import su.msk.dunno.scage.support.{ScageLibrary, Vec}
 import su.msk.dunno.scage.support.messages.Message
-
 object ClientFlight extends Application with ScageLibrary {
   AI.registerAI(() => {
     NetClient.send
@@ -18,6 +17,7 @@ object ClientFlight extends Application with ScageLibrary {
   Controller.addKeyListener(Keyboard.KEY_LEFT, 10, () => NetClient.clientData.put("left", ""))
   Controller.addKeyListener(Keyboard.KEY_RIGHT, 10, () => NetClient.clientData.put("right", ""))
   Controller.addKeyListener(Keyboard.KEY_UP, 10, () => NetClient.clientData.put("up", ""))
+  Controller.addKeyListener(Keyboard.KEY_SPACE, 10, () => NetClient.clientData.put("space", ""))
 
   // background
   val LAND = Renderer.createList("img/land.png", 800, 600, 0, 0, 800, 600)
@@ -48,26 +48,33 @@ object ClientFlight extends Application with ScageLibrary {
     })
 
   // fps
-  Renderer.addInterfaceElement(() => Message.print("fps: "+Renderer.fps, 20, Renderer.height-20, YELLOW))
+  Renderer.addInterfaceElement(() => Message.print("fps: "+fps, 20, Renderer.height-20, YELLOW))
 
-  // planes
+  // game objects
   val PLANE_IMAGE = Renderer.createList("img/plane.png", 60, 60, 0, 0, 122, 121)
+  val ROCKET_ANIMATION = Renderer.createAnimation("img/rocket_animation.png", 10, 29, 14, 44, 3)
+  val EXPLOSION_ANIMATION = Renderer.createAnimation("img/explosion_animation.png", 36, 35, 72, 69, 3)
   Renderer.addRender(() => {
-    if(NetClient.serverData.length != 0) {
-      val players = NetClient.serverData.names
-      for(i <- 0 to players.length-1) {
-        val plane_name = players.getString(i)
-        val plane = NetClient.serverData.getJSONObject(plane_name)
-        val coord = Vec(plane.getInt("x"), plane.getInt("y"))
-        val rotation = plane.getDouble("rotation").toFloat
-
+    val server_data = NetClient.serverData
+    if(server_data.length != 0) {
+      val game_objects = server_data.names
+      for(i <- 0 to game_objects.length-1) {
+        val object_name = game_objects.getString(i)
+        val game_object = server_data.getJSONObject(object_name)
+        val object_type = game_object.getString("type")
+        val coord = Vec(game_object.getInt("x"), game_object.getInt("y"))
         GL11.glPushMatrix();
         GL11.glTranslatef(coord.x, coord.y, 0.0f);
-        GL11.glRotatef(rotation, 0.0f, 0.0f, 1.0f)
         Renderer.setColor(WHITE)
-        GL11.glCallList(PLANE_IMAGE)
+        if("plane".equals(object_type) || "rocket".equals(object_type))
+          GL11.glRotatef(game_object.getDouble("rotation").toFloat, 0.0f, 0.0f, 1.0f)
+        object_type match {
+          case "plane" => GL11.glCallList(PLANE_IMAGE)
+          case "rocket" => GL11.glCallList(ROCKET_ANIMATION(0))
+          //case "explosion" => GL11.glCallList(EXPLOSION_ANIMATION(0))
+          case _ =>
+        }
         GL11.glPopMatrix()
-        Message.print(plane_name, coord)
       }
     }
   })

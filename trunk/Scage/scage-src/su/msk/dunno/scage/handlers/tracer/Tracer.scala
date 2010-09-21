@@ -2,7 +2,7 @@ package su.msk.dunno.scage.handlers.tracer
 
 import su.msk.dunno.scage.prototypes.THandler
 import su.msk.dunno.scage.main.Scage
-import su.msk.dunno.scage.support.{Vec}
+import su.msk.dunno.scage.support.Vec
 class Tracer[S <: State] extends THandler {
   val game_width = Scage.getIntProperty("game_width")
   val game_height = Scage.getIntProperty("game_height")

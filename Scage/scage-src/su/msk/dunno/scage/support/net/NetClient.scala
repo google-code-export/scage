@@ -32,7 +32,7 @@ object NetClient {
   private var is_sending_data = false
   def send = is_sending_data = true
   def send(data:JSONObject):Unit = {
-    while(is_sending_data) Thread.sleep(10)
+    while(is_connected && is_sending_data) Thread.sleep(10)
     cd = data
     is_sending_data = true
   }
@@ -48,7 +48,7 @@ object NetClient {
   private var cd:JSONObject = new JSONObject
   def clientData = cd
   def eraseClientData = {
-    while(is_sending_data) Thread.sleep(10)
+    while(is_connected && is_sending_data) Thread.sleep(10)
     cd = new JSONObject
   }
 

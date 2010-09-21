@@ -19,6 +19,38 @@ object ClientFlight extends Application with ScageLibrary {
   Controller.addKeyListener(Keyboard.KEY_RIGHT, 10, () => NetClient.clientData.put("right", ""))
   Controller.addKeyListener(Keyboard.KEY_UP, 10, () => NetClient.clientData.put("up", ""))
 
+  // background
+  val LAND = Renderer.createList("img/land.png", 800, 600, 0, 0, 800, 600)
+    Renderer.addRender(() => {
+      GL11.glPushMatrix();
+      Renderer.setColor(WHITE)
+
+      GL11.glTranslatef(Renderer.width/2, Renderer.height/2, 0.0f);
+      GL11.glCallList(LAND)
+      GL11.glTranslatef(Renderer.width, 0, 0.0f);
+      GL11.glCallList(LAND)
+      GL11.glTranslatef(0, Renderer.height, 0.0f);
+      GL11.glCallList(LAND)
+      GL11.glTranslatef(-Renderer.width, 0, 0.0f);
+      GL11.glCallList(LAND)
+      GL11.glTranslatef(-Renderer.width, 0, 0.0f);
+      GL11.glCallList(LAND)
+      GL11.glTranslatef(0, -Renderer.height, 0.0f);
+      GL11.glCallList(LAND)
+      GL11.glTranslatef(0, -Renderer.height, 0.0f);
+      GL11.glCallList(LAND)
+      GL11.glTranslatef(Renderer.width, 0, 0.0f);
+      GL11.glCallList(LAND)
+      GL11.glTranslatef(Renderer.width, 0, 0.0f);
+      GL11.glCallList(LAND)
+
+      GL11.glPopMatrix()
+    })
+
+  // fps
+  Renderer.addInterfaceElement(() => Message.print("fps: "+Renderer.fps, 20, Renderer.height-20, YELLOW))
+
+  // planes
   val PLANE_IMAGE = Renderer.createList("img/plane.png", 60, 60, 0, 0, 122, 121)
   Renderer.addRender(() => {
     if(NetClient.serverData.length != 0) {

@@ -12,6 +12,7 @@ object NetServer {
   val max_clients = Scage.getIntProperty("max_clients")
   private var client_handlers:List[ClientHandler] = Nil
   def clients = client_handlers
+  def client(num:Int) = client_handlers(num)
   def numClients = client_handlers.length
   def lastConnected = client_handlers.head
 

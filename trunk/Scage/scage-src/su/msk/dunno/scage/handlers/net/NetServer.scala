@@ -1,4 +1,4 @@
-package su.msk.dunno.scage.support.net
+package su.msk.dunno.scage.handlers.net
 
 import su.msk.dunno.scage.main.Scage
 import java.net.ServerSocket
@@ -21,11 +21,7 @@ object NetServer extends THandler {
     has_new
   }
 
-  def send = {
-    client_handlers.filter(client => !client.isOnline).foreach(client => client.disconnect)
-    client_handlers = client_handlers.filter(client => client.isOnline)
-    client_handlers.foreach(client => client.send(sd))
-  }
+  def send = client_handlers.foreach(client => client.send(sd))
   def send(data:JSONObject):Unit = {
     sd = data
     send
@@ -35,6 +31,8 @@ object NetServer extends THandler {
   private var sd:JSONObject = new JSONObject
   def serverData:JSONObject = sd
   def eraseServerData = sd = new JSONObject
+  def addData(key:Any, data:Any) = sd.put(key.toString, data)
+  def addData(key:Any) = sd.put(key.toString, "")
 
   private var next_client = 0
   new Thread(new Runnable { // awaiting new connections
@@ -54,6 +52,11 @@ object NetServer extends THandler {
       server_socket.close
     }
   }).start
+
+  override def actionSequence = {
+    client_handlers.filter(client => !client.isOnline).foreach(client => client.disconnect)
+    client_handlers = client_handlers.filter(client => client.isOnline)
+  }
 
   override def exitSequence = {
     if(client_handlers.length > 0) log.debug("disconnecting all clients...")

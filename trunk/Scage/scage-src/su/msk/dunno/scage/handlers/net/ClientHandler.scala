@@ -1,4 +1,4 @@
-package su.msk.dunno.scage.support.net
+package su.msk.dunno.scage.handlers.net
 
 import java.net.Socket
 import java.util.Scanner
@@ -14,8 +14,14 @@ class ClientHandler(val id:Int, val socket:Socket) {
   private val in = new Scanner(new InputStreamReader(socket.getInputStream))
 
   private var cd:JSONObject = new JSONObject
-  def clientData = cd
+  def clientData = {
+    has_new_data = false
+    cd
+  }
   def eraseClientData = cd = new JSONObject
+
+  private var has_new_data = false
+  def hasNewData = has_new_data
 
   def send(data:JSONObject) = {
     out.println(data)
@@ -41,6 +47,7 @@ class ClientHandler(val id:Int, val socket:Socket) {
           catch {
             case e:JSONException => cd.put("raw", message)
           }
+          if(cd.length > 0) has_new_data = true
         }
         Thread.sleep(10)
        }

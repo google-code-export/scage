@@ -2,7 +2,7 @@ package su.msk.dunno.scage.main
 
 import java.util.Properties
 import su.msk.dunno.scage.handlers.controller.Controller
-import su.msk.dunno.scage.prototypes.{THandler}
+import su.msk.dunno.scage.prototypes.THandler
 import su.msk.dunno.scage.handlers.{AI, Physics, Idler, Renderer}
 import org.apache.log4j.Logger
 import java.io.{FileNotFoundException, FileInputStream}
@@ -73,6 +73,7 @@ object Scage {
     }
     handlers.foreach(h => h.exitSequence)
     log.debug("app was stopped")
+    System.exit(0)
   }
 
   def main(args:Array[String]):Unit = {

@@ -3,13 +3,13 @@ package scagetest
 import objects.{Box, Tr0yka}
 import su.msk.dunno.scage.main.Scage
 import org.lwjgl.input.Keyboard
-import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.scage.support.messages.Message
 import su.msk.dunno.scage.objects.{StaticLine, StaticBox, StaticPolygon, Platform}
 import su.msk.dunno.scage.handlers.controller.Controller
 import su.msk.dunno.scage.handlers.Renderer
+import su.msk.dunno.scage.support.{ScageLibrary, Vec}
 
-object Sage {
+object Sage extends ScageLibrary {
   def main(args:Array[String]):Unit = {
     Scage.setDefaultHandlers
 
@@ -76,7 +76,7 @@ object Sage {
     Renderer.setCentral(tr0yka.coord)
     Renderer.addInterfaceElement(() => Message.print("coord: "+tr0yka.coord, 20, Renderer.height-20))
     Renderer.addInterfaceElement(() => Message.print("velocity: "+tr0yka.velocity+" norma="+tr0yka.velocity.norma, 20, Renderer.height-35))
-    Renderer.addInterfaceElement(() => Message.print("fps: "+Renderer.fps, 20, Renderer.height-50))
+    Renderer.addInterfaceElement(() => Message.print("fps: "+fps, 20, Renderer.height-50))
     Renderer.addInterfaceElement(() => Message.print("scale: "+Renderer.scale, 20, Renderer.height-65))
     Renderer.addInterfaceElement(() => Message.print("clients: "+Scage.getHandlers.size, 20, Renderer.height-80))
 

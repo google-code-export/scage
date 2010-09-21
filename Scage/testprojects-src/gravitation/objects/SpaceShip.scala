@@ -5,7 +5,7 @@ import su.msk.dunno.scage.handlers.controller.Controller
 import org.lwjgl.input.Keyboard
 import gravitation.{Universe, Gravitation}
 import su.msk.dunno.scage.handlers.tracer.StandardTracer
-import su.msk.dunno.scage.handlers.{Renderer}
+import su.msk.dunno.scage.handlers.Renderer
 import su.msk.dunno.scage.support.messages.Message
 import org.lwjgl.opengl.GL11
 

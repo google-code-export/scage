@@ -5,7 +5,7 @@ import org.lwjgl.opengl.{DisplayMode, Display, GL11}
 import org.lwjgl.util.glu.GLU
 import org.newdawn.slick.opengl.{TextureLoader, Texture}
 import java.io.{FileInputStream, InputStream}
-import su.msk.dunno.scage.prototypes.{THandler}
+import su.msk.dunno.scage.prototypes.THandler
 import su.msk.dunno.scage.support.{Color, Vec}
 
 object Renderer extends THandler {
@@ -71,18 +71,6 @@ object Renderer extends THandler {
   def addInterfaceElement(renderFunc: () => Unit) = {
     interface = renderFunc :: interface
   }
-  
-  private var msek = System.currentTimeMillis
-  private var frames:Int = 0
-  var fps:Int = 0
-  def countFPS() = {
-    frames += 1
-    if(System.currentTimeMillis - msek >= 1000) {
-      fps = frames
-      frames = 0
-      msek = System.currentTimeMillis
-    }
-  }
 
   override def actionSequence() = {
 	if(Display.isCloseRequested()) Scage.stop
@@ -99,7 +87,6 @@ object Renderer extends THandler {
 
       interface.foreach(renderFunc => renderFunc())
     Display.update();
-    countFPS
   }
   override def exitSequence() = Display.destroy();
 

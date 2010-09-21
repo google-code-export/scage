@@ -54,7 +54,7 @@ object Korovans extends ScageLibrary {
     Renderer.addInterfaceElement(() => if(on_pause)Message.print("PAUSE", width/2-20, height/2+60))
 
     // game interface
-    Renderer.addInterfaceElement(() => Message.print("fps: "+Renderer.fps, Renderer.width-80, Renderer.height-20))
+    Renderer.addInterfaceElement(() => Message.print("fps: "+fps, Renderer.width-80, Renderer.height-20))
     Renderer.addInterfaceElement(() => Message.print("Korovans robbed: "+num_robbed, 1, Renderer.height-20))
     Renderer.addInterfaceElement(() => Message.print("Korovans passed: "+num_passed, 1, Renderer.height-35))
     Renderer.addInterfaceElement(() => if(num_passed >= 10)Message.print("Game Over. HighScore: "+num_robbed, Renderer.width/2-100, Renderer.height/2+75))

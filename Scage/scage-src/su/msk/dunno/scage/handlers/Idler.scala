@@ -6,5 +6,20 @@ import su.msk.dunno.scage.main.Scage
 object Idler extends THandler {
   val framerate:Int = Scage.getIntProperty("framerate");
 
-  override def actionSequence() = Thread.sleep(1000/framerate)
+  private var msek = System.currentTimeMillis
+  private var frames:Int = 0
+  var fps:Int = 0
+  def countFPS() = {
+    frames += 1
+    if(System.currentTimeMillis - msek >= 1000) {
+      fps = frames
+      frames = 0
+      msek = System.currentTimeMillis
+    }
+  }
+
+  override def actionSequence() = {
+    countFPS
+    Thread.sleep(1000/framerate)
+  }
 }

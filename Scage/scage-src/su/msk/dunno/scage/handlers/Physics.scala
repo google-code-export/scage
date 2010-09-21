@@ -4,7 +4,7 @@ import _root_.net.phys2d.math.Vector2f
 import _root_.net.phys2d.raw.{Body, World}
 import _root_.net.phys2d.raw.strategies.QuadSpaceStrategy
 import su.msk.dunno.scage.main.Scage
-import su.msk.dunno.scage.prototypes.{THandler}
+import su.msk.dunno.scage.prototypes.THandler
 
 object Physics extends THandler {
   val dt = Scage.getIntProperty("dt")

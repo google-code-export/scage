@@ -9,7 +9,7 @@ trait ScageLibrary extends Colors {
   lazy val height = Renderer.height
   def scale = Renderer.scale
   def scale_= (value:Float):Unit = Renderer.scale = value
-  def fps = Renderer.fps
+  def fps = Idler.fps
 
   lazy val game_width = StandardTracer.game_width
   lazy val game_height = StandardTracer.game_height

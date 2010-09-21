@@ -1,13 +1,11 @@
 package su.msk.dunno.scage.support.net
 
 import su.msk.dunno.scage.main.Scage
-import java.net.{ServerSocket}
-import org.json.{JSONObject}
-import org.apache.log4j.Logger
+import java.net.ServerSocket
+import org.json.JSONObject
+import su.msk.dunno.scage.prototypes.THandler
 
-object NetServer {
-  private val log = Logger.getLogger(this.getClass)
-
+object NetServer extends THandler {
   val port = Scage.getIntProperty("port")
   val max_clients = Scage.getIntProperty("max_clients")
   private var client_handlers:List[ClientHandler] = Nil
@@ -23,50 +21,43 @@ object NetServer {
     has_new
   }
 
-  private var is_sending_data = false
-  def send = is_sending_data = true
+  def send = {
+    client_handlers.filter(client => !client.isOnline).foreach(client => client.disconnect)
+    client_handlers = client_handlers.filter(client => client.isOnline)
+    client_handlers.foreach(client => client.send(sd))
+  }
   def send(data:JSONObject):Unit = {
-    while(is_sending_data) Thread.sleep(10)
     sd = data
     send
   }
-  def send(data:String):Unit = send(new JSONObject().put("data", data))
+  def send(data:String):Unit = send(new JSONObject().put("raw", data))
 
   private var sd:JSONObject = new JSONObject
   def serverData:JSONObject = sd
-  def eraseServerData = {
-    while(is_sending_data) Thread.sleep(10)
-    sd = new JSONObject
-  }
+  def eraseServerData = sd = new JSONObject
 
   private var next_client = 0
   new Thread(new Runnable { // awaiting new connections
     def run():Unit = {
       val server_socket = new ServerSocket(port)
-      while(client_handlers.length < max_clients && Scage.isRunning) {
-        log.debug("listening at port "+port+", "+client_handlers.length+" client(s) are connected")
-        val socket = server_socket.accept
-        client_handlers = new ClientHandler(next_client, socket) :: client_handlers
-        log.debug("established connection with "+socket.getInetAddress.getHostAddress)
-        has_new_connection = true
-        next_client += 1
+      while(Scage.isRunning) {
+        if(client_handlers.length < max_clients) {
+          log.debug("listening at port "+port+", "+client_handlers.length+"/"+max_clients+" client(s) are connected")
+          val socket = server_socket.accept
+          client_handlers = new ClientHandler(next_client, socket) :: client_handlers
+          log.debug("established connection with "+socket.getInetAddress.getHostAddress)
+          has_new_connection = true
+          next_client += 1
+        }
+        else Thread.sleep(1000)
       }
       server_socket.close
     }
   }).start
 
-  new Thread(new Runnable { // send data to clients
-    def run():Unit = {
-      while(Scage.isRunning) {
-        client_handlers.filter(client => !client.isOnline).foreach(client => client.disconnect)
-        client_handlers = client_handlers.filter(client => client.isOnline)
-        if(is_sending_data) {
-          client_handlers.foreach(client => client.send(sd))
-          is_sending_data = false
-        }
-        Thread.sleep(10)
-      }
-      client_handlers.foreach(client => client.disconnect)
-    }
-  }).start
+  override def exitSequence = {
+    if(client_handlers.length > 0) log.debug("disconnecting all clients...")
+    client_handlers.foreach(client => client.send(new JSONObject().put("quit", "")))
+    client_handlers.foreach(client => client.disconnect)
+  }
 }

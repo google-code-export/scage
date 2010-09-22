@@ -39,7 +39,7 @@ object NetServer extends THandler {
     def run():Unit = {
       val server_socket = new ServerSocket(port)
       while(Scage.isRunning) {
-        if(client_handlers.length < max_clients) {
+        if(max_clients == 0 || client_handlers.length < max_clients) {
           log.debug("listening at port "+port+", "+client_handlers.length+"/"+max_clients+" client(s) are connected")
           val socket = server_socket.accept
           client_handlers = new ClientHandler(next_client, socket) :: client_handlers

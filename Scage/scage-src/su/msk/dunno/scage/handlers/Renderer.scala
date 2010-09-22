@@ -38,7 +38,7 @@ object Renderer extends THandler {
   }
 
   Display.setDisplayMode(new DisplayMode(width, height));
-  Display.setTitle(Scage.getProperty("name")+" - "+Scage.getProperty("version"));
+  Display.setTitle(Scage.getStringProperty("name")+" - "+Scage.getStringProperty("version"));
   Display.setVSyncEnabled(true);
   Display.create();
 

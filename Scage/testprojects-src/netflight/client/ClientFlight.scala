@@ -10,14 +10,14 @@ import su.msk.dunno.scage.support.messages.Message
 object ClientFlight extends Application with ScageLibrary {
   AI.registerAI(() => {
     NetClient.send
-    NetClient.eraseClientData
+    NetClient.eraseOutgoingData
   })
 
   // controls
-  Controller.addKeyListener(Keyboard.KEY_LEFT, 10, () => NetClient.addData("left"))
-  Controller.addKeyListener(Keyboard.KEY_RIGHT, 10, () => NetClient.addData("right"))
-  Controller.addKeyListener(Keyboard.KEY_UP, 10, () => NetClient.addData("up"))
-  Controller.addKeyListener(Keyboard.KEY_SPACE, 10, () => NetClient.addData("space"))
+  Controller.addKeyListener(Keyboard.KEY_LEFT, 10, () => NetClient.addOutgoingData("left"))
+  Controller.addKeyListener(Keyboard.KEY_RIGHT, 10, () => NetClient.addOutgoingData("right"))
+  Controller.addKeyListener(Keyboard.KEY_UP, 10, () => NetClient.addOutgoingData("up"))
+  Controller.addKeyListener(Keyboard.KEY_SPACE, 10, () => NetClient.addOutgoingData("space"))
 
   // background
   val LAND = Renderer.createList("img/land.png", 800, 600, 0, 0, 800, 600)
@@ -56,7 +56,7 @@ object ClientFlight extends Application with ScageLibrary {
   val EXPLOSION_ANIMATION = Renderer.createAnimation("img/explosion_animation.png", 36, 35, 72, 69, 3)
   Renderer.addRender(() => {
     if(NetClient.hasNewData) {
-      val server_data = NetClient.serverData
+      val server_data = NetClient.incomingData
       val game_objects = server_data.names
       for(i <- 0 to game_objects.length-1) {
         val object_name = game_objects.getString(i)

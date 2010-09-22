@@ -21,14 +21,14 @@ object NetServer extends THandler {
     has_new
   }
 
-  def send = client_handlers.foreach(client => client.send(sd))
+  def send = client_handlers.foreach(client => client.send(sd)) // data sending methods
   def send(data:JSONObject):Unit = {
     sd = data
     send
   }
   def send(data:String):Unit = send(new JSONObject().put("raw", data))
 
-  private var sd:JSONObject = new JSONObject
+  private var sd:JSONObject = new JSONObject  // outgoing data
   def hasOutgoingData = sd.length != 0
   def eraseOutgoingData = sd = new JSONObject
   def addOutgoingData(key:Any, data:Any) = sd.put(key.toString, data)
@@ -53,12 +53,12 @@ object NetServer extends THandler {
     }
   }).start
 
-  override def actionSequence = {
+  override def actionSequence = { // check clients being online
     client_handlers.filter(client => !client.isOnline).foreach(client => client.disconnect)
     client_handlers = client_handlers.filter(client => client.isOnline)
   }
 
-  override def exitSequence = {
+  override def exitSequence = { // sending quit message and disconnecting
     if(client_handlers.length > 0) log.debug("disconnecting all clients...")
     client_handlers.foreach(client => client.send(new JSONObject().put("quit", "")))
     client_handlers.foreach(client => client.disconnect)

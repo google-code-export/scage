@@ -79,5 +79,5 @@ object ClientFlight extends Application with ScageLibrary {
     }
   })
 
-  if(NetClient.isConnected) start
+  start
 }

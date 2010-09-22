@@ -8,7 +8,7 @@ import org.json.{JSONException, JSONObject}
 import su.msk.dunno.scage.prototypes.THandler
 
 object NetClient extends THandler {  
-  val server_url = Scage.getProperty("server")
+  val server_url = Scage.getStringProperty("server")
   val port = Scage.getIntProperty("port")
 
   private var is_connected = false
@@ -29,10 +29,10 @@ object NetClient extends THandler {
       out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream))
       in = new Scanner(new InputStreamReader(socket.getInputStream))
       is_connected = true
+      last_answer_time = System.currentTimeMillis
       log.debug("connected")
     }
   }
-  connect
 
   def send = {
     if(is_connected) {
@@ -59,12 +59,16 @@ object NetClient extends THandler {
   def outgoingData = cd
   def eraseOutgoingData = cd = new JSONObject
   def addOutgoingData(key:Any, data:Any) = cd.put(key.toString, data)
-  def addOutgoingData(key:Any) = cd.put(key.toString, "")
+  def addOutgoingData(key:Any) = cd.put(key.toString, "")  
 
-  if(is_connected) {
-    new Thread(new Runnable { // receive data from server
-      def run():Unit = {
-        while(Scage.isRunning) {
+  private val check_timeout = Scage.getIntProperty("check_timeout")
+  private var last_answer_time = System.currentTimeMillis
+  def isServerOnline = check_timeout == 0 || System.currentTimeMillis - last_answer_time < check_timeout
+
+  new Thread(new Runnable { // receive data from server
+    def run():Unit = {
+      while(Scage.isRunning) {
+        if(is_connected) {
           if(in.hasNextLine) {
             last_answer_time = System.currentTimeMillis
             val message = in.nextLine
@@ -74,31 +78,28 @@ object NetClient extends THandler {
             }
             if(sd.length > 0) has_new_data = true
           }
-          Thread.sleep(10)
         }
+        Thread.sleep(10)
       }
-    }).start
-  }
+    }
+  }).start
 
-  private val check_timeout = Scage.getIntProperty("check_timeout")
-  private var last_answer_time = System.currentTimeMillis
-  def isServerOnline = check_timeout == 0 || System.currentTimeMillis - last_answer_time < check_timeout
-  new Thread(new Runnable {
+  new Thread(new Runnable { // connection checker
     def run():Unit = {
       while(Scage.isRunning) {
         if(!isServerOnline) {
           if(is_connected) disconnect
           connect
-          Thread.sleep(1000)
         }
+        Thread.sleep(1000)
       }
     }
   }).start
 
-  override def exitSequence = disconnect
+  override def exitSequence = if(is_connected) disconnect
 
   def disconnect = {
-    socket.close
+    if(socket != null) socket.close
     is_connected = false
     log.debug("disconnected from server "+server_url+":"+port)
   }

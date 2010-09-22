@@ -24,7 +24,7 @@ object Scage {
     }
     else properties
   }
-  def getProperty(key:String):String = {
+  def getStringProperty(key:String):String = {
     val s = properties.getProperty(key)
     log.debug("read property "+key+": "+s)
     s
@@ -46,8 +46,8 @@ object Scage {
   }
 
   private var handlers = List[THandler]()
-  def getHandlers() = handlers
-  def setDefaultHandlers() = {Controller; Physics; AI; Renderer; Idler;}
+  def getHandlers = handlers
+  def setDefaultHandlers = {Controller; Physics; AI; Renderer; Idler;}
   def addHandler(h:THandler) = {
 	  handlers = h :: handlers
 	  log.debug("loaded handler "+h.getClass.getName)
@@ -59,15 +59,14 @@ object Scage {
   
   private var is_running = true
   def isRunning = is_running
-  def start() = {
+  def start = {
     Idler
-    is_running = true
     handlers.foreach(h => h.initSequence)
-    run()
+    run
   }
-  def stop() = {is_running = false}
+  def stop = is_running = false
 
-  private def run():Unit = {
+  private def run = {
     while(is_running) {
       handlers.foreach(h => h.actionSequence)
     }
@@ -77,7 +76,7 @@ object Scage {
   }
 
   def main(args:Array[String]):Unit = {
-    val app_classname = getProperty("app")
+    val app_classname = getStringProperty("app")
     log.debug("starting app "+app_classname)
     Class.forName(app_classname).getField("MODULE$").get(null)
     start

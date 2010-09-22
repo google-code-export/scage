@@ -29,10 +29,10 @@ object NetServer extends THandler {
   def send(data:String):Unit = send(new JSONObject().put("raw", data))
 
   private var sd:JSONObject = new JSONObject
-  def serverData:JSONObject = sd
-  def eraseServerData = sd = new JSONObject
-  def addData(key:Any, data:Any) = sd.put(key.toString, data)
-  def addData(key:Any) = sd.put(key.toString, "")
+  def hasOutgoingData = sd.length != 0
+  def eraseOutgoingData = sd = new JSONObject
+  def addOutgoingData(key:Any, data:Any) = sd.put(key.toString, data)
+  def addOutgoingData(key:Any) = sd.put(key.toString, "")
 
   private var next_client = 0
   new Thread(new Runnable { // awaiting new connections

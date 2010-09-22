@@ -14,14 +14,13 @@ class ClientHandler(val id:Int, val socket:Socket) {
   private val in = new Scanner(new InputStreamReader(socket.getInputStream))
 
   private var cd:JSONObject = new JSONObject
-  def clientData = {
+  def incomingData = {
     has_new_data = false
     cd
   }
-  def eraseClientData = cd = new JSONObject
 
   private var has_new_data = false
-  def hasNewData = has_new_data
+  def hasNewIncomingData = has_new_data
 
   def send(data:JSONObject) = {
     out.println(data)

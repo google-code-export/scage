@@ -13,7 +13,7 @@ object ServerFlight extends Application with ScageLibrary {
       next_plane += 1
     }
     NetServer.send
-    NetServer.eraseServerData
+    NetServer.eraseOutgoingData
   })
   
   start

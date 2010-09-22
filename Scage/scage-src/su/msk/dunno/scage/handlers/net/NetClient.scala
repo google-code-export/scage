@@ -29,8 +29,10 @@ object NetClient extends THandler {
   val in:Scanner = if(is_connected) new Scanner(new InputStreamReader(socket.getInputStream)) else null
 
   def send = {
-    out.println(cd)
-    out.flush
+    if(is_connected) {
+      out.println(cd)
+      out.flush      
+    }
   }
   def send(data:JSONObject):Unit = {
     cd = data
@@ -75,8 +77,11 @@ object NetClient extends THandler {
     }).start
   }
 
-  override def exitSequence = {
+  override def exitSequence = disconnect
+
+  def disconnect = {
     socket.close
+    is_connected = false
     log.debug("disconnected from server "+server_url+":"+port)
   }
 }

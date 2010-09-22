@@ -26,8 +26,12 @@
 			<copy toDir="${project.name}-${project.version}-${os.type}/lib" file="lib/lwjgl/jar/lwjgl_util.jar" />
 			<copy toDir="${project.name}-${project.version}-${os.type}/lib" file="lib/phys2d-060408.jar" />
 			<copy toDir="${project.name}-${project.version}-${os.type}/lib" file="lib/slick-util.jar" />
+            <copy toDir="${project.name}-${project.version}-${os.type}/lib" file="lib/json.jar" />
 			<echo file="${project.name}-${project.version}-${os.type}/run.bat" 
-				message="java -Djava.library.path=native -cp lib/commons-logging-1.1.1.jar;lib/jinput.jar;lib/log4j-1.2.15.jar;lib/lwjgl.jar;lib/lwjgl_util.jar;lib/phys2d-060408.jar;lib/scala-library.jar;lib/slick-util.jar;lib/scage-${scage.version}.jar;lib/${project.name}-${project.version}.jar ${project.entrypoint}"
+				message="java -Djava.library.path=native -cp lib/commons-logging-1.1.1.jar;lib/jinput.jar;lib/log4j-1.2.15.jar;lib/lwjgl.jar;lib/lwjgl_util.jar;lib/phys2d-060408.jar;lib/scala-library.jar;lib/slick-util.jar;lib/json.jar;lib/scage-${scage.version}.jar;lib/${project.name}-${project.version}.jar ${project.entrypoint}"
+			/>
+            <echo file="${project.name}-${project.version}-${os.type}/run.sh"
+				message="#!bin/bash\njava -Djava.library.path=native -cp lib/commons-logging-1.1.1.jar;lib/jinput.jar;lib/log4j-1.2.15.jar;lib/lwjgl.jar;lib/lwjgl_util.jar;lib/phys2d-060408.jar;lib/scala-library.jar;lib/slick-util.jar;lib/json.jar;lib/scage-${scage.version}.jar;lib/${project.name}-${project.version}.jar ${project.entrypoint}"
 			/>
 			<copy toDir="${project.name}-${project.version}-${os.type}/lib" file="${project.src}/log4j.properties" />
 		</sequential>

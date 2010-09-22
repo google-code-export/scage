@@ -19,7 +19,7 @@ class ServerSidePlane(val name:String, init_coord:Vec, val client:ClientHandler)
   private var plane_side = 1
   private var shoot_cooldown = 0
   private def processInputs = {
-    val client_data = client.clientData
+    val client_data = client.incomingData
     if(client_data.has("left")) rotation -= 0.2f*delta
     if(client_data.has("right")) rotation += 0.2f*delta
     if(client_data.has("up")) if(delta < 15) delta += 0.5f
@@ -32,7 +32,7 @@ class ServerSidePlane(val name:String, init_coord:Vec, val client:ClientHandler)
     if(delta > 5) delta -= 0.1f
     if(shoot_cooldown > 0)shoot_cooldown -= 1
     
-    NetServer.addData(name, new JSONObject().put("type", "plane")
+    NetServer.addOutgoingData(name, new JSONObject().put("type", "plane")
                                             .put("x", coord.x)
                                             .put("y", coord.y)
                                             .put("rotation", rotation))

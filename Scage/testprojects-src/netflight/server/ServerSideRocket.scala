@@ -16,12 +16,12 @@ class ServerSideRocket(private val shooter:String, init_coord:Vec, dir:Vec, priv
   AI.registerAI(() => {
     if(fuel > 5) {
       coord = StandardTracer.getNewCoord(coord + direction*velocity)
-      NetServer.serverData.put("rocket"+System.nanoTime, new JSONObject().put("type", "rocket")
-                                                     .put("x", coord.x)
-                                                     .put("y", coord.y)
-                                                     .put("rotation", rotation))
+      NetServer.addOutgoingData("rocket"+System.nanoTime, new JSONObject().put("type", "rocket")
+                                                                          .put("x", coord.x)
+                                                                          .put("y", coord.y)
+                                                                          .put("rotation", rotation))
     }
-    else if(fuel > 0) NetServer.addData("explosion"+System.nanoTime, new JSONObject().put("type", "explosion")
+    else if(fuel > 0) NetServer.addOutgoingData("explosion"+System.nanoTime, new JSONObject().put("type", "explosion")
                                                                                      .put("x", coord.x)
                                                                                      .put("y", coord.y))
     if(fuel > 0) fuel -= 1

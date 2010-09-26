@@ -5,10 +5,10 @@ import org.lwjgl.opengl.{DisplayMode, Display, GL11}
 import org.lwjgl.util.glu.GLU
 import org.newdawn.slick.opengl.{TextureLoader, Texture}
 import java.io.{FileInputStream, InputStream}
-import su.msk.dunno.scage.prototypes.THandler
-import su.msk.dunno.scage.support.{Color, Vec}
+import su.msk.dunno.scage.prototypes.Handler
+import su.msk.dunno.scage.support.{ScageProperties, Color, Vec}
 
-object Renderer extends THandler {
+object Renderer extends Handler {
   private var render_list:List[() => Unit] = List[() => Unit]()
   def addRender(render: () => Unit) = {render_list = render_list ::: List(render)}
 
@@ -28,8 +28,8 @@ object Renderer extends THandler {
 	  isSetScaleFunc = true
   }
 
-  val width = Scage.getIntProperty("width");
-  val height = Scage.getIntProperty("height");
+  val width = ScageProperties.intProperty("width", 800);
+  val height = ScageProperties.intProperty("height", 600);
   
   val center = Vec(width/2, height/2)
   private var central_coord = () => Vec(width/2, height/2)
@@ -38,7 +38,7 @@ object Renderer extends THandler {
   }
 
   Display.setDisplayMode(new DisplayMode(width, height));
-  Display.setTitle(Scage.getStringProperty("name")+" - "+Scage.getStringProperty("version"));
+  Display.setTitle(ScageProperties.stringProperty("name", "Scage")+" - "+ScageProperties.stringProperty("version"));
   Display.setVSyncEnabled(true);
   Display.create();
 

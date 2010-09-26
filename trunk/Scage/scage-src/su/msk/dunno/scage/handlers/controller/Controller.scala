@@ -1,7 +1,7 @@
 package su.msk.dunno.scage.handlers.controller
 
-import su.msk.dunno.scage.prototypes.THandler
-object Controller extends THandler {
+import su.msk.dunno.scage.prototypes.Handler
+object Controller extends Handler {
   var listeners = List[TListener]()
 
   var to_add = List[TListener]()

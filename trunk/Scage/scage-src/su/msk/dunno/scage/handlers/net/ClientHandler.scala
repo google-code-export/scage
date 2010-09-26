@@ -1,17 +1,17 @@
 package su.msk.dunno.scage.handlers.net
 
-import java.net.Socket
-import java.util.Scanner
 import org.json.{JSONException, JSONObject}
-import java.io.{InputStreamReader, OutputStreamWriter, PrintWriter}
 import su.msk.dunno.scage.main.Scage
 import org.apache.log4j.Logger
+import java.io.{BufferedReader, InputStreamReader, OutputStreamWriter, PrintWriter}
+import su.msk.dunno.scage.support.ScageProperties
+import java.net.{SocketException, Socket}
 
 class ClientHandler(val id:Int, val socket:Socket) {
   private val log = Logger.getLogger(this.getClass)
 
   private val out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream))
-  private val in = new Scanner(new InputStreamReader(socket.getInputStream))
+  private val in = new BufferedReader(new InputStreamReader(socket.getInputStream))
 
   private var cd:JSONObject = new JSONObject
   def incomingData = {
@@ -32,16 +32,19 @@ class ClientHandler(val id:Int, val socket:Socket) {
     log.debug("client #"+id+" was disconnected")
   }
 
-  private val check_timeout = Scage.getIntProperty("check_timeout")
+  private val check_timeout = ScageProperties.intProperty("check_timeout", 0)
   private var last_answer_time = System.currentTimeMillis
   def isOnline = check_timeout == 0 || System.currentTimeMillis - last_answer_time < check_timeout
 
   new Thread(new Runnable { // receive data from client
     def run():Unit = {
       while(Scage.isRunning) {
-        if(in.hasNextLine) {
+        if(in.ready) {
           last_answer_time = System.currentTimeMillis
-          val message = in.nextLine
+          val message = try{in.readLine}
+          catch {
+            case e:SocketException => return
+          }
           cd = try{new JSONObject(message)}
           catch {
             case e:JSONException => cd.put("raw", message)

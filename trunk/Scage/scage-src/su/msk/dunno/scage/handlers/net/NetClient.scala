@@ -1,21 +1,21 @@
 package su.msk.dunno.scage.handlers.net
 
 import su.msk.dunno.scage.main.Scage
-import java.net.Socket
-import java.util.Scanner
-import java.io.{InputStreamReader, OutputStreamWriter, PrintWriter}
 import org.json.{JSONException, JSONObject}
-import su.msk.dunno.scage.prototypes.THandler
+import su.msk.dunno.scage.prototypes.Handler
+import java.io.{BufferedReader, InputStreamReader, OutputStreamWriter, PrintWriter}
+import su.msk.dunno.scage.support.ScageProperties
+import java.net.{SocketException, Socket}
 
-object NetClient extends THandler {  
-  val server_url = Scage.getStringProperty("server")
-  val port = Scage.getIntProperty("port")
+object NetClient extends Handler {
+  val server_url =  ScageProperties.stringProperty("server", "127.0.0.1")
+  val port =  ScageProperties.intProperty("port", 9800)
 
   private var is_connected = false
   def isConnected = is_connected
   private var socket:Socket = null
   private var out:PrintWriter = null
-  private var in:Scanner = null
+  private var in:BufferedReader = null
   def connect = {
     log.debug("start connecting to server "+server_url+" at port "+port)
     socket = try {new Socket(server_url, port)}
@@ -27,7 +27,7 @@ object NetClient extends THandler {
     }
     if(socket != null) {
       out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream))
-      in = new Scanner(new InputStreamReader(socket.getInputStream))
+      in = new BufferedReader(new InputStreamReader(socket.getInputStream))
       is_connected = true
       last_answer_time = System.currentTimeMillis
       log.debug("connected")
@@ -53,7 +53,7 @@ object NetClient extends THandler {
   }
 
   private var has_new_data = false
-  def hasNewData = has_new_data
+  def hasNewIncomingData = has_new_data
 
   private var cd:JSONObject = new JSONObject
   def outgoingData = cd
@@ -61,40 +61,46 @@ object NetClient extends THandler {
   def addOutgoingData(key:Any, data:Any) = cd.put(key.toString, data)
   def addOutgoingData(key:Any) = cd.put(key.toString, "")  
 
-  private val check_timeout = Scage.getIntProperty("check_timeout")
+  private val check_timeout =  ScageProperties.intProperty("check_timeout")
   private var last_answer_time = System.currentTimeMillis
   def isServerOnline = check_timeout == 0 || System.currentTimeMillis - last_answer_time < check_timeout
 
-  new Thread(new Runnable { // receive data from server
-    def run():Unit = {
-      while(Scage.isRunning) {
-        if(is_connected) {
-          if(in.hasNextLine) {
-            last_answer_time = System.currentTimeMillis
-            val message = in.nextLine
-            sd = try{new JSONObject(message)}
-            catch {
-              case e:JSONException => sd.put("raw", message)
+  override def initSequence = {
+    new Thread(new Runnable { // receive data from server
+      def run():Unit = {
+        while(Scage.isRunning) {
+          if(is_connected) {
+            if(in.ready) {
+              last_answer_time = System.currentTimeMillis
+              val message = try{in.readLine}
+              catch {
+                case e:SocketException => return
+              }
+              sd = try{new JSONObject(message)}
+              catch {
+                case e:JSONException => sd.put("raw", message)
+              }
+              if(sd.length > 0) has_new_data = true
             }
-            if(sd.length > 0) has_new_data = true
           }
+          Thread.sleep(10)
         }
-        Thread.sleep(10)
       }
-    }
-  }).start
+    }).start
 
-  new Thread(new Runnable { // connection checker
-    def run():Unit = {
-      while(Scage.isRunning) {
-        if(!isServerOnline) {
-          if(is_connected) disconnect
-          connect
+    new Thread(new Runnable { // connection checker
+      def run():Unit = {
+        while(Scage.isRunning) {
+          if(!isServerOnline) {
+            if(is_connected) disconnect
+            connect
+          }
+          Thread.sleep(1000)
         }
-        Thread.sleep(1000)
       }
-    }
-  }).start
+    }).start
+  }
+
 
   override def exitSequence = if(is_connected) disconnect
 

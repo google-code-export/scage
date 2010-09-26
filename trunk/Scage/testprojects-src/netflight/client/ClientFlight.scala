@@ -55,7 +55,7 @@ object ClientFlight extends Application with ScageLibrary {
   val ROCKET_ANIMATION = Renderer.createAnimation("img/rocket_animation.png", 10, 29, 14, 44, 3)
   val EXPLOSION_ANIMATION = Renderer.createAnimation("img/explosion_animation.png", 36, 35, 72, 69, 3)
   Renderer.addRender(() => {
-    if(NetClient.hasNewData) {
+    if(NetClient.hasNewIncomingData) {
       val server_data = NetClient.incomingData
       val game_objects = server_data.names
       for(i <- 0 to game_objects.length-1) {
@@ -67,7 +67,7 @@ object ClientFlight extends Application with ScageLibrary {
         GL11.glTranslatef(coord.x, coord.y, 0.0f);
         Renderer.setColor(WHITE)
         if("plane".equals(object_type) || "rocket".equals(object_type))
-          GL11.glRotatef(game_object.getDouble("rotation").toFloat, 0.0f, 0.0f, 1.0f)
+          GL11.glRotatef(game_object.getInt("rotation"), 0.0f, 0.0f, 1.0f)
         object_type match {
           case "plane" => GL11.glCallList(PLANE_IMAGE)
           case "rocket" => GL11.glCallList(ROCKET_ANIMATION(0))

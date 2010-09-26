@@ -6,14 +6,14 @@ import su.msk.dunno.scage.handlers.{AI, Renderer}
 import su.msk.dunno.scage.handlers.controller.Controller
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.support.messages.Message
-import su.msk.dunno.scage.support.{ScageLibrary, Vec}
 import org.lwjgl.opengl.GL11
+import su.msk.dunno.scage.support.{ScageProperties, ScageLibrary, Vec}
 
 object Universe extends ScageLibrary with Gravitation {
-  val G = Scage.getFloatProperty("G")
-  val dt = Scage.getFloatProperty("dt")
-  private val mass = Scage.getFloatProperty("mass")
-  private val num_bodies = Scage.getIntProperty("num_bodies")
+  val G = ScageProperties.floatProperty("G")
+  val dt = ScageProperties.floatProperty("dt")
+  private val mass = ScageProperties.floatProperty("mass")
+  private val num_bodies = ScageProperties.intProperty("num_bodies")
 
   // background
   private val SPACE = Renderer.createList("img/deep-space.png", 800, 600, 0, 0, 1024, 768)

@@ -34,8 +34,8 @@ num_bodies = 100
 radius = 1
 
 #server = 172.16.1.47
-#server = 127.0.0.1
-server = 10.129.109.88
+server = 127.0.0.1
+#server = 10.129.109.88
 port = 9800
 max_clients = 20
 check_timeout = 2000

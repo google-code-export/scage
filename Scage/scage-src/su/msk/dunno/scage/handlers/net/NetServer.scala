@@ -3,11 +3,12 @@ package su.msk.dunno.scage.handlers.net
 import su.msk.dunno.scage.main.Scage
 import java.net.ServerSocket
 import org.json.JSONObject
-import su.msk.dunno.scage.prototypes.THandler
+import su.msk.dunno.scage.prototypes.Handler
+import su.msk.dunno.scage.support.ScageProperties
 
-object NetServer extends THandler {
-  val port = Scage.getIntProperty("port")
-  val max_clients = Scage.getIntProperty("max_clients")
+object NetServer extends Handler {
+  val port = ScageProperties.intProperty("port", 9800)
+  val max_clients = ScageProperties.intProperty("max_clients", 0)
   private var client_handlers:List[ClientHandler] = Nil
   def clients = client_handlers
   def client(num:Int) = client_handlers(num)
@@ -40,7 +41,7 @@ object NetServer extends THandler {
       val server_socket = new ServerSocket(port)
       while(Scage.isRunning) {
         if(max_clients == 0 || client_handlers.length < max_clients) {
-          log.debug("listening at port "+port+", "+client_handlers.length+"/"+max_clients+" client(s) are connected")
+          log.debug("listening port "+port+", "+client_handlers.length+"/"+max_clients+" client(s) are connected")
           val socket = server_socket.accept
           client_handlers = new ClientHandler(next_client, socket) :: client_handlers
           log.debug("established connection with "+socket.getInetAddress.getHostAddress)

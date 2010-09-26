@@ -8,7 +8,7 @@ import su.msk.dunno.scage.objects.{StaticBox, DynaBall, StaticLine}
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.handlers.{AI, Renderer}
 import su.msk.dunno.scage.handlers.tracer.{StandardTracer, State, Trace}
-import su.msk.dunno.scage.support.{ScageLibrary, Vec}
+import su.msk.dunno.scage.support.{ScageProperties, ScageLibrary, Vec}
 
 object ScageTest extends ScageLibrary {
   def main(args:Array[String]):Unit = {
@@ -70,7 +70,7 @@ object ScageTest extends ScageLibrary {
     Renderer.addInterfaceElement(() => if(Scage.on_pause)Message.print("PAUSE", Renderer.width/2-20, Renderer.height/2+60))
     
     // scaling
-    val auto_scaling = Scage.getBooleanProperty("auto_scaling")
+    val auto_scaling = ScageProperties.booleanProperty("auto_scaling")
     if(auto_scaling) {
     	Renderer.setScaleFunc((scale) => {
     		if(Controller.last_key  != Keyboard.KEY_ADD && Controller.last_key != Keyboard.KEY_SUBTRACT) {

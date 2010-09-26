@@ -33,8 +33,8 @@ class ServerSidePlane(val name:String, init_coord:Vec, val client:ClientHandler)
     if(shoot_cooldown > 0)shoot_cooldown -= 1
     
     NetServer.addOutgoingData(name, new JSONObject().put("type", "plane")
-                                            .put("x", coord.x)
-                                            .put("y", coord.y)
-                                            .put("rotation", rotation))
+                                            .put("x", coord.x.toInt)
+                                            .put("y", coord.y.toInt)
+                                            .put("rotation", rotation.toInt))
   }
 }

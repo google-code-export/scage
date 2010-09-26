@@ -3,7 +3,7 @@ package su.msk.dunno.scage.prototypes
 import su.msk.dunno.scage.main.Scage
 import org.apache.log4j.Logger
 
-abstract class THandler {
+abstract class Handler {
   protected val log = Logger.getLogger(this.getClass)
 
   Scage.addHandler(this)
@@ -12,5 +12,7 @@ abstract class THandler {
   def actionSequence():Unit = {}
   def exitSequence():Unit = {}
 
-  def ::(o:THandler) = o :: List[THandler](this)
+  if(Scage.isRunning) initSequence
+
+  def ::(o:Handler) = o :: List[Handler](this)
 }

@@ -1,10 +1,10 @@
 package su.msk.dunno.scage.handlers
 
-import su.msk.dunno.scage.prototypes.THandler
-import su.msk.dunno.scage.main.Scage
+import su.msk.dunno.scage.prototypes.Handler
+import su.msk.dunno.scage.support.ScageProperties
 
-object Idler extends THandler {
-  val framerate:Int = Scage.getIntProperty("framerate");
+object Idler extends Handler {
+  val framerate:Int = ScageProperties.intProperty("framerate");
 
   private var msek = System.currentTimeMillis
   private var frames:Int = 0

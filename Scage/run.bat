@@ -1,1 +1,0 @@
-java -Djava.library.path=native -jar scage.jar

@@ -8,104 +8,105 @@
     <macrodef name="init">
         <sequential>
             <taskdef resource="scala/tools/ant/antlib.xml" classpathref="classpath" />
-            <delete file="${project.name}-${project.version}-${os.type}.zip" />
-            <delete dir="${project.name}-${project.version}-${os.type}" />
-            <mkdir dir="${project.name}-${project.version}-${os.type}" />
+            <delete file="builds/${project.name}-${project.version}-${os.type}.zip" />
+            <delete dir="builds/${project.name}-${project.version}-${os.type}" />
+            <mkdir dir="builds/${project.name}-${project.version}-${os.type}" />
             </sequential>
     </macrodef>
 	
 	<macrodef name="copy-libraries">
 		<sequential>
-			<mkdir dir="${project.name}-${project.version}-${os.type}/lib" />
-			<copy toDir="${project.name}-${project.version}-${os.type}/lib">
+			<mkdir dir="builds/${project.name}-${project.version}-${os.type}/lib" />
+			<copy toDir="builds/${project.name}-${project.version}-${os.type}/lib">
 				<fileset dir="lib/logging" />
 			</copy>
-            <copy toDir="${project.name}-${project.version}-${os.type}/lib" file="lib/scala/scala-library.jar" />
-			<copy toDir="${project.name}-${project.version}-${os.type}/lib" file="lib/lwjgl/jar/jinput.jar" />
-			<copy toDir="${project.name}-${project.version}-${os.type}/lib" file="lib/lwjgl/jar/lwjgl.jar" />
-			<copy toDir="${project.name}-${project.version}-${os.type}/lib" file="lib/lwjgl/jar/lwjgl_util.jar" />
-			<copy toDir="${project.name}-${project.version}-${os.type}/lib" file="lib/phys2d-060408.jar" />
-			<copy toDir="${project.name}-${project.version}-${os.type}/lib" file="lib/slick-util.jar" />
-            <copy toDir="${project.name}-${project.version}-${os.type}/lib" file="lib/json.jar" />
-			<echo file="${project.name}-${project.version}-${os.type}/run.bat" 
-				message="java -Djava.library.path=native -cp lib/commons-logging-1.1.1.jar;lib/jinput.jar;lib/log4j-1.2.15.jar;lib/lwjgl.jar;lib/lwjgl_util.jar;lib/phys2d-060408.jar;lib/scala-library.jar;lib/slick-util.jar;lib/json.jar;lib/scage-${scage.version}.jar;lib/${project.name}-${project.version}.jar ${project.entrypoint}"
-			/>
-            <echo file="${project.name}-${project.version}-${os.type}/run.sh">#!/bin/bash
+            <copy toDir="builds/${project.name}-${project.version}-${os.type}/lib" file="lib/scala/scala-library.jar" />
+			<copy toDir="builds/${project.name}-${project.version}-${os.type}/lib" file="lib/lwjgl/jar/jinput.jar" />
+			<copy toDir="builds/${project.name}-${project.version}-${os.type}/lib" file="lib/lwjgl/jar/lwjgl.jar" />
+			<copy toDir="builds/${project.name}-${project.version}-${os.type}/lib" file="lib/lwjgl/jar/lwjgl_util.jar" />
+			<copy toDir="builds/${project.name}-${project.version}-${os.type}/lib" file="lib/phys2d-060408.jar" />
+			<copy toDir="builds/${project.name}-${project.version}-${os.type}/lib" file="lib/slick-util.jar" />
+            <copy toDir="builds/${project.name}-${project.version}-${os.type}/lib" file="lib/json.jar" />
+            <echo file="builds/${project.name}-${project.version}-${os.type}/run.bat"
+                message="java -Djava.library.path=native -cp lib/commons-logging-1.1.1.jar;lib/jinput.jar;lib/log4j-1.2.15.jar;lib/lwjgl.jar;lib/lwjgl_util.jar;lib/phys2d-060408.jar;lib/scala-library.jar;lib/slick-util.jar;lib/json.jar;lib/scage-${scage.version}.jar;lib/${project.name}-${project.version}.jar ${project.entrypoint}"
+            />
+            <echo file="builds/${project.name}-${project.version}-${os.type}/run.sh">#!/bin/bash
                 java -Djava.library.path=native -DLWJGL_DISABLE_XRANDR=true -cp lib/commons-logging-1.1.1.jar:lib/jinput.jar:lib/log4j-1.2.15.jar:lib/lwjgl.jar:lib/lwjgl_util.jar:lib/phys2d-060408.jar:lib/scala-library.jar:lib/slick-util.jar:lib/json.jar:lib/scage-${scage.version}.jar:lib/${project.name}-${project.version}.jar ${project.entrypoint}
-			</echo>
-			<copy toDir="${project.name}-${project.version}-${os.type}/lib" file="${project.src}/log4j.properties" />
+            </echo>
+            <chmod file="builds/${project.name}-${project.version}-${os.type}/run.sh" perm="ugo+rx"/>
+			<copy toDir="builds/${project.name}-${project.version}-${os.type}/lib" file="${project.src}/log4j.properties" />
 		</sequential>
 	</macrodef>
 
     <target name="compile-scage">
         <init/>
         <copy-libraries/>
-		<mkdir dir="${project.name}-${project.version}-${os.type}/scage-bin" />
+		<mkdir dir="builds/${project.name}-${project.version}-${os.type}/scage-bin" />
 		<scalac srcdir="scage-src"
-		        destdir="${project.name}-${project.version}-${os.type}/scage-bin"
+		        destdir="builds/${project.name}-${project.version}-${os.type}/scage-bin"
 		   	    classpathref="classpath" />
         <javac srcdir="scage-src"
-		       destdir="${project.name}-${project.version}-${os.type}/scage-bin"
+		       destdir="builds/${project.name}-${project.version}-${os.type}/scage-bin"
 			   classpathref="classpath"
 			   includeantruntime="false" />
         <scalac srcdir="scage2-src"
-		        destdir="${project.name}-${project.version}-${os.type}/scage-bin"
+		        destdir="builds/${project.name}-${project.version}-${os.type}/scage-bin"
 		   	    classpathref="classpath" />
         <javac srcdir="scage2-src"
-		       destdir="${project.name}-${project.version}-${os.type}/scage-bin"
+		       destdir="builds/${project.name}-${project.version}-${os.type}/scage-bin"
 			   classpathref="classpath"
 			   includeantruntime="false" />
-        <jar destfile="${project.name}-${project.version}-${os.type}/lib/scage-${scage.version}.jar"
+        <jar destfile="builds/${project.name}-${project.version}-${os.type}/lib/scage-${scage.version}.jar"
              filesetmanifest="mergewithoutmain">
-            <fileset dir="${project.name}-${project.version}-${os.type}/scage-bin"/>
+            <fileset dir="builds/${project.name}-${project.version}-${os.type}/scage-bin"/>
 		</jar>
-        <delete dir="${project.name}-${project.version}-${os.type}/scage-bin" />
+        <delete dir="builds/${project.name}-${project.version}-${os.type}/scage-bin" />
     </target>
 
 	<target name="compile" depends="compile-scage">
     <path id="classpath-project">
-		<fileset dir="${project.name}-${project.version}-${os.type}/lib" includes="**/*.jar"/>
+		<fileset dir="builds/${project.name}-${project.version}-${os.type}/lib" includes="**/*.jar"/>
 	</path>
-		<mkdir dir="${project.name}-${project.version}-${os.type}/bin" />
+		<mkdir dir="builds/${project.name}-${project.version}-${os.type}/bin" />
 		<scalac srcdir="${project.src}"
-		        destdir="${project.name}-${project.version}-${os.type}/bin"
+		        destdir="builds/${project.name}-${project.version}-${os.type}/bin"
 		   	    classpathref="classpath-project" />
         <javac srcdir="${project.src}"
-		       destdir="${project.name}-${project.version}-${os.type}/bin"
+		       destdir="builds/${project.name}-${project.version}-${os.type}/bin"
 			   classpathref="classpath-project"
 			   includeantruntime="false" />
 	</target>
 
     <target name="dir" depends="compile">
-		<jar destfile="${project.name}-${project.version}-${os.type}/lib/${project.name}-${project.version}.jar"
+		<jar destfile="builds/${project.name}-${project.version}-${os.type}/lib/${project.name}-${project.version}.jar"
              filesetmanifest="mergewithoutmain">
 			<manifest>
 				<attribute name="Main-Class" value="${project.entrypoint}"/>
 				<attribute name="Class-Path" value="."/>
 			</manifest>
-            <fileset dir="${project.name}-${project.version}-${os.type}/bin"/>
+            <fileset dir="builds/${project.name}-${project.version}-${os.type}/bin"/>
 		</jar>
-        <delete dir="${project.name}-${project.version}-${os.type}/bin" />
-		<copy file="options.txt" tofile="${project.name}-${project.version}-${os.type}/options.txt" />
-        <mkdir dir="${project.name}-${project.version}-${os.type}/native" />
-        <copy toDir="${project.name}-${project.version}-${os.type}/native">
+        <delete dir="builds/${project.name}-${project.version}-${os.type}/bin" />
+		<copy file="options.txt" tofile="builds/${project.name}-${project.version}-${os.type}/options.txt" />
+        <mkdir dir="builds/${project.name}-${project.version}-${os.type}/native" />
+        <copy toDir="builds/${project.name}-${project.version}-${os.type}/native">
 			<fileset dir="lib/lwjgl/native/${os.type}" />
 		</copy>
-        <mkdir dir="${project.name}-${project.version}-${os.type}/img" />
-        <copy toDir="${project.name}-${project.version}-${os.type}/img">
+        <mkdir dir="builds/${project.name}-${project.version}-${os.type}/img" />
+        <copy toDir="builds/${project.name}-${project.version}-${os.type}/img">
 			<fileset dir="img" />
 		</copy>
 	</target>
 
     <target name="zip" depends="dir">
-        <zip destfile="${project.name}-${project.version}-${os.type}.zip"
-             basedir="${project.name}-${project.version}-${os.type}" />
-		<delete dir="${project.name}-${project.version}-${os.type}" />
+        <zip destfile="builds/${project.name}-${project.version}-${os.type}.zip"
+             basedir="builds/${project.name}-${project.version}-${os.type}" />
+		<delete dir="builds/${project.name}-${project.version}-${os.type}" />
     </target>
 
     <target  name="src">
-        <delete file="${project.name}-${project.version}-src.zip" />
-        <zip destfile="${project.name}-${project.version}-src.zip" basedir=""
-             excludes=".idea/**, out/**, .svn/**, *.zip, Scage.iml" />
+        <delete file="builds/${project.name}-${project.version}-src.zip" />
+        <zip destfile="builds/${project.name}-${project.version}-src.zip" basedir=""
+             excludes=".idea/**, out/**, .svn/**, *.zip, *.iml" />
     </target>
 </project>

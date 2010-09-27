@@ -29,6 +29,10 @@ object ScageProperties {
       p
     }
   }
+  private def defaultValue[A](key:String, default:A) = {
+    log.debug("default value for "+key+" is "+default)
+    default
+  }
 
   def stringProperty(key:String):String = stringProperty(key, "")
   def stringProperty(key:String, default:String):String = {
@@ -37,7 +41,7 @@ object ScageProperties {
       log.debug("read property "+key+": "+s)
       s
     }
-    else default
+    else defaultValue[String](key, default)
   }
 
   def intProperty(key:String):Int = intProperty(key, 0)
@@ -45,18 +49,18 @@ object ScageProperties {
     val p = getProperty(key)
     if(p != null) {
       try {
-        var i = Integer.valueOf(p).intValue
+        val i = Integer.valueOf(p).intValue
         log.debug("read property "+key+": "+i)
         i
       }
       catch {
         case e:NumberFormatException => {
           log.debug("property "+key+" is not integer: "+p)
-          default
+          defaultValue[Int](key, default)
         }
       }
     }
-    else default
+    else defaultValue[Int](key, default)
   }
 
   def floatProperty(key:String):Float = floatProperty(key, 0)
@@ -64,24 +68,24 @@ object ScageProperties {
     val p = getProperty(key)
     if(p != null) {
       try {
-        var f = java.lang.Float.valueOf(p).floatValue
+        val f = java.lang.Float.valueOf(p).floatValue
         log.debug("read property "+key+": "+f)
         f
       }
       catch {
         case e:NumberFormatException => {
           log.debug("property "+key+" is not float: "+p)
-          default
+          defaultValue[Float](key, default)
         }
       }
     }
-    else default
+    else defaultValue[Float](key, default)
   }
   
   def booleanProperty(key:String):Boolean = booleanProperty(key, false)
   def booleanProperty(key:String, default:Boolean):Boolean = {
     val s = stringProperty(key)
     if(!"".equals(s)) s.equalsIgnoreCase("yes") || s.equalsIgnoreCase("1") || s.equalsIgnoreCase("true")
-    else default
+    else defaultValue[Boolean](key, default)
   }
 }

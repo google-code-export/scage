@@ -25,7 +25,7 @@ class EnemyPlane(init_coord:Vec) extends Colors {
   protected def ai() = {
     AI.registerAI(() => {
       if(alive_condition) {
-        coord = StandardTracer.getNewCoord(coord + step)
+        coord = StandardTracer.checkEdges(coord + step)
         StandardTracer.getNeighbours(coord, -8 to 8).foreach(plane => {
           if(plane.getState.getInt("health") > 0) {
             val planes_angle = (plane.getCoord - coord) rad step

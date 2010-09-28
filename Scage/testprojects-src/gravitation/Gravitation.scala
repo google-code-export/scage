@@ -15,7 +15,7 @@ trait Gravitation {
   }
   def calculateStep(m_points:List[MaterialPoint] = Universe.bodies, point:MaterialPoint) = {
     val new_velocity = point.velocity + gravitationAcceleration(m_points, point)*Universe.dt
-    val new_coord = StandardTracer.getNewCoord(point.coord + new_velocity*Universe.dt)
+    val new_coord = StandardTracer.checkEdges(point.coord + new_velocity*Universe.dt)
     (new_velocity, new_coord)
   }
 

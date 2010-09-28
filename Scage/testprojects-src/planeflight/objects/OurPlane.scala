@@ -14,7 +14,7 @@ class OurPlane(init_coord:Vec) extends EnemyPlane(init_coord:Vec) {
   override protected def ai() = {
     AI.registerAI(() => {
       if(alive_condition) {
-        coord = StandardTracer.getNewCoord(coord + step)
+        coord = StandardTracer.checkEdges(coord + step)
         if(delta > 5) delta -= 0.1f
       }
     })

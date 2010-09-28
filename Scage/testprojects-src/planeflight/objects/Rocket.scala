@@ -16,7 +16,7 @@ class Rocket(private val shooter:String, init_coord:Vec, dir:Vec, private val ro
 
   AI.registerAI(() => {
     if(fuel > 5) {
-      coord = StandardTracer.getNewCoord(coord + direction*velocity)
+      coord = StandardTracer.checkEdges(coord + direction*velocity)
       StandardTracer.getNeighbours(coord, -1 to 1).foreach(plane => {
         if(coord.dist2(plane.getCoord) < 60*60 &&
            !shooter.equals(plane.getState.getString("name")) &&

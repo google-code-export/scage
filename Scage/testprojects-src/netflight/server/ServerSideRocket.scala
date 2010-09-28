@@ -15,7 +15,7 @@ class ServerSideRocket(private val shooter:String, init_coord:Vec, dir:Vec, priv
 
   AI.registerAI(() => {
     if(fuel > 5) {
-      coord = StandardTracer.getNewCoord(coord + direction*velocity)
+      coord = StandardTracer.checkEdges(coord + direction*velocity)
       NetServer.addOutgoingData("rocket"+System.nanoTime, new JSONObject().put("type", "rocket")
                                                                           .put("x", coord.x.toInt)
                                                                           .put("y", coord.y.toInt)

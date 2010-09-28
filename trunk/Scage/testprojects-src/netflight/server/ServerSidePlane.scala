@@ -28,7 +28,7 @@ class ServerSidePlane(val name:String, init_coord:Vec, val client:ClientHandler)
       plane_side *= -1
       shoot_cooldown = 10
     }
-    coord = StandardTracer.getNewCoord(coord + step)
+    coord = StandardTracer.checkEdges(coord + step)
     if(delta > 5) delta -= 0.1f
     if(shoot_cooldown > 0)shoot_cooldown -= 1
     

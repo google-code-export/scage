@@ -12,14 +12,22 @@ height = 600
 #game_height = 10000
 #game_width = 2990
 #game_height = 1500
-game_width = 800
-game_height = 600
+#game_width = 800
+#game_height = 600
+
+show_grid = yes
+
+game_from_x = 100
+game_to_x = 300
+
+game_from_y = 100
+game_to_y = 300
 
 #N_x = 200
 #N_y = 200
 
-N_x = 32
-N_y = 24
+N_x = 5
+N_y = 5
 
 framerate = 100
 auto_scaling = no

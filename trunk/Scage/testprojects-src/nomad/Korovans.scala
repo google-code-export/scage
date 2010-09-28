@@ -77,7 +77,7 @@ object Korovans extends ScageLibrary {
           was_passed = true
           Korovans.num_passed += 1
         }
-        if(!was_robbed) coord = StandardTracer.getNewCoord(new_coord)
+        if(!was_robbed) coord = StandardTracer.checkEdges(new_coord)
       }
     })
 
@@ -119,23 +119,23 @@ object Korovans extends ScageLibrary {
     private var is_moving = false
     private var dir = 1
     Controller.addKeyListener(Keyboard.KEY_UP, 10, () => {
-      coord = StandardTracer.getNewCoord(coord + Vec(0, 1.5f)*Korovans.game_speed)
+      coord = StandardTracer.checkEdges(coord + Vec(0, 1.5f)*Korovans.game_speed)
       is_moving = true
     },
     () => is_moving = false)
     Controller.addKeyListener(Keyboard.KEY_DOWN, 10, () => {
-      coord = StandardTracer.getNewCoord(coord + Vec(0, -1.5f)*Korovans.game_speed)
+      coord = StandardTracer.checkEdges(coord + Vec(0, -1.5f)*Korovans.game_speed)
       is_moving = true
     },
     () => is_moving = false)
     Controller.addKeyListener(Keyboard.KEY_RIGHT, 10, () => {
-      coord = StandardTracer.getNewCoord(coord + Vec(1.5f, 0)*Korovans.game_speed)
+      coord = StandardTracer.checkEdges(coord + Vec(1.5f, 0)*Korovans.game_speed)
       dir = 1
       is_moving = true
     },
     () => is_moving = false)
     Controller.addKeyListener(Keyboard.KEY_LEFT, 10, () => {
-      coord = StandardTracer.getNewCoord(coord + Vec(-1.5f, 0)*Korovans.game_speed)
+      coord = StandardTracer.checkEdges(coord + Vec(-1.5f, 0)*Korovans.game_speed)
       dir = -1
       is_moving = true
     },

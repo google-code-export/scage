@@ -1,8 +1,8 @@
 package su.msk.dunno.scage.support
 
-import su.msk.dunno.scage.handlers.tracer.StandardTracer
 import su.msk.dunno.scage.main.Scage
 import su.msk.dunno.scage.handlers.{Idler, Renderer}
+import su.msk.dunno.scage.handlers.tracer.{Tracer, StandardTracer}
 
 trait ScageLibrary extends Colors {
   lazy val width = Renderer.width
@@ -17,6 +17,11 @@ trait ScageLibrary extends Colors {
   lazy val framerate = Idler.framerate
 
   def on_pause = Scage.on_pause
+  def switchPause = Scage.switchPause
   def start = Scage.start
   def stop = Scage.stop
+
+  implicit def vec2tracervec(old_coord:Vec) = new Vec(old_coord) {
+    def ->(new_coord:Vec) = StandardTracer.updateLocation(old_coord, new_coord)
+  }
 }

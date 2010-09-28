@@ -32,7 +32,7 @@ extends Planet(init_coord, init_velocity, 1, 1) with Gravitation {
   override def ai() = {
     if(!consumed) {
       velocity += (gravitationAcceleration(point = this) + direction*acceleration)*Universe.dt
-      coord = StandardTracer.getNewCoord(coord + velocity*Universe.dt)
+      coord = StandardTracer.checkEdges(coord + velocity*Universe.dt)
     }
   }
 

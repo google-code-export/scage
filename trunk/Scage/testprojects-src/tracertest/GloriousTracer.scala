@@ -14,6 +14,7 @@ object GloriousTracer extends Application with ScageLibrary {
     Renderer.drawCircle(coord, 5)
   })
   Renderer.addInterfaceElement(() => Message.print(point(coord), 20, height-30))
+  Renderer.addInterfaceElement(() => Message.print("fps: "+fps, 20, height-45))
 
   val trace = StandardTracer.addTrace(new Trace[State] {
     def getCoord = coord
@@ -21,42 +22,33 @@ object GloriousTracer extends Application with ScageLibrary {
     def changeState(s:State) = {}
   })
 
-  Controller.addKeyListener(Keyboard.KEY_UP, 10, () => coord -> (coord + Vec(0, 1)) in trace)
-  Controller.addKeyListener(Keyboard.KEY_DOWN, 10, () => coord -> (coord - Vec(0, 1)) in trace)
-  Controller.addKeyListener(Keyboard.KEY_RIGHT, 10, () => coord -> (coord + Vec(1, 0)) in trace)
-  Controller.addKeyListener(Keyboard.KEY_LEFT, 10, () => coord -> (coord - Vec(1, 0)) in trace)
+  Controller.addKeyListener(Keyboard.KEY_UP, 10, () => (coord in trace) --> (coord + Vec(0, 1), -1 to 1, 11))
+  Controller.addKeyListener(Keyboard.KEY_DOWN, 10, () => (coord in trace) --> (coord - Vec(0, 1), -1 to 1, 11))
+  Controller.addKeyListener(Keyboard.KEY_RIGHT, 10, () => (coord in trace) --> (coord + Vec(1, 0), -1 to 1, 11))
+  Controller.addKeyListener(Keyboard.KEY_LEFT, 10, () => (coord in trace) --> (coord - Vec(1, 0), -1 to 1, 11))
 
-  for(i <- 1 to 5) new Stranger
+  for(i <- 1 to 20) new Stranger
 
   start
 }
 
 class Stranger extends ScageLibrary {
-  private var coord = Vec((100 + scala.math.random*200).toFloat, (100 + scala.math.random*200).toFloat)
-  println(coord)
-  private var dir = Vec(scala.math.random.toFloat, scala.math.random.toFloat).n
-  println(dir)
-  private var steps = (scala.math.random*50).toInt
-  println(steps)
+  private var coord = Vec((100 + math.random*200).toFloat, (100 + math.random*200).toFloat)
+
+  val trace = StandardTracer.addTrace(new Trace[State] {
+    def getCoord = coord
+    def getState() = new State("name", "stranger")
+    def changeState(s:State) = {}
+  })
+
   AI.registerAI(() => {
-    if(steps > 0) {
-      if(!StandardTracer.hasCollisions(coord + dir, -1 to 1, 5)) coord -> (coord + dir) in trace
-      steps -= 1
-    }
-    else {
-      dir = Vec(scala.math.random.toFloat, scala.math.random.toFloat).n
-      steps = (scala.math.random*50).toInt
+    if((coord in trace) ? (-1 to 1, 10)) {
+      coord = Vec((100 + math.random*200).toFloat, (100 + math.random*200).toFloat)
     }
   })
 
   Renderer.addRender(() => {
     Renderer.setColor(BLACK)
     Renderer.drawCircle(coord, 5)
-  })
-
-  val trace = StandardTracer.addTrace(new Trace[State] {
-    def getCoord = coord
-    def getState() = new State("name", "stranger")
-    def changeState(s:State) = {}
   })
 }

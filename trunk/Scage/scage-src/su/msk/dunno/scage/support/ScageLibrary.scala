@@ -2,7 +2,7 @@ package su.msk.dunno.scage.support
 
 import su.msk.dunno.scage.main.Scage
 import su.msk.dunno.scage.handlers.{Idler, Renderer}
-import tracer.{Point, Tracer, StandardTracer}
+import tracer.{Tracer, StandardTracer}
 
 trait ScageLibrary extends Colors {
   lazy val width = Renderer.width
@@ -22,16 +22,26 @@ trait ScageLibrary extends Colors {
   def stop = Scage.stop
 
   implicit def vec2tracervec(old_coord:Vec) = new Vec(old_coord) {
-    def ->(new_coord:Vec) = {
-      new ScalaObject {
-        def in(trace_id:Int) = {
-          if(Tracer.currentTracer != null) Tracer.currentTracer.updateLocation(trace_id, old_coord, new_coord)
+    def in(trace_id:Int) = new ScalaObject {
+      def ->(new_coord:Vec) = {
+        if(Tracer.currentTracer != null) Tracer.currentTracer.updateLocation(trace_id, old_coord, new_coord)  
+      }
+
+      def -->(new_coord:Vec, range:Range, dist:Float) = {
+        if(Tracer.currentTracer != null) {
+          if(!Tracer.currentTracer.hasCollisions(trace_id, new_coord, range, dist))
+            Tracer.currentTracer.updateLocation(trace_id, old_coord, new_coord)
         }
-      }      
+      }
+
+      def ?(range:Range, dist:Float) = {
+        if(Tracer.currentTracer != null) Tracer.currentTracer.hasCollisions(trace_id, old_coord, range, dist)
+        else false
+      }
     }
   }
   def point(v:Vec) = {
     if(Tracer.currentTracer != null) Tracer.currentTracer.point(v)
-    else Point(0,0)
+    else Vec(0,0)
   }
 }

@@ -6,6 +6,9 @@ case class Vec(private var _x:Float, private var _y:Float) {
   def x = _x
   def y = _y
 
+  def ix = _x.toInt
+  def iy = _y.toInt
+
   def this(v:Vec) = this(v.x, v.y)
   def this(v:ROVector2f) = this(v.getX, v.getY)
   def this(x:Double, y:Double) = this(x.toFloat, y.toFloat)

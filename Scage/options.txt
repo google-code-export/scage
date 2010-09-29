@@ -26,8 +26,8 @@ game_to_y = 300
 #N_x = 200
 #N_y = 200
 
-N_x = 5
-N_y = 5
+N_x = 20
+N_y = 20
 
 framerate = 100
 auto_scaling = no

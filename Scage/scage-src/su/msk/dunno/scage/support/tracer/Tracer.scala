@@ -1,21 +1,9 @@
-package su.msk.dunno.scage.handlers.tracer
+package su.msk.dunno.scage.support.tracer
 
-import su.msk.dunno.scage.prototypes.Handler
 import su.msk.dunno.scage.handlers.Renderer
 import su.msk.dunno.scage.support.{Colors, ScageProperties, Vec}
 
-object Tracer {
-  private var next_trace_id = 0
-  def nextTraceID = {
-    val id = next_trace_id
-    next_trace_id += 1
-    id
-  }
-}
-
-class Tracer[S <: State] extends Handler with Colors {
-  override val handler_type = "tracer"
-
+class Tracer[S <: State] extends Colors {
   val game_from_x = ScageProperties.intProperty("game_from_x")
   val game_to_x = ScageProperties.intProperty("game_to_x")
   val game_from_y = ScageProperties.intProperty("game_from_y")
@@ -41,7 +29,6 @@ class Tracer[S <: State] extends Handler with Colors {
       coord_matrix(p.x)(p.y) = t :: coord_matrix(p.x)(p.y)
       object_points = (point(t.getCoord), t) :: object_points  
     }
-    t.id
   }
 
   def point(v:Vec):Point = Point(((v.x - game_from_x)/game_width*N_x).toInt,
@@ -69,7 +56,7 @@ class Tracer[S <: State] extends Handler with Colors {
     val h_x = game_width/N_x
 	  val h_y = game_height/N_y
 	  Renderer.addRender(() => {
-	 	  Renderer.setColor(BLUE)
+	 	  Renderer.setColor(LIME_GREEN)
 	 	  for(i <- 0 to N_x) Renderer.drawLine(Vec(i*h_x + game_from_x, game_from_y), Vec(i*h_x + game_from_x, game_to_y))
 	 	  for(j <- 0 to N_y) Renderer.drawLine(Vec(game_from_x, j*h_y + game_from_y), Vec(game_to_x, j*h_y + game_from_y))
 	  })
@@ -88,22 +75,19 @@ class Tracer[S <: State] extends Handler with Colors {
   }*/
 
   def checkEdges(coord:Vec):Vec = {
-    val x = if(coord.x >= game_to_x) checkEdges(coord - Vec(game_width, 0))
-            else if(coord.x < game_from_x) checkEdges(coord + Vec(game_width, 0))
-            else coord.x
-    val y = if(coord.y >= game_to_y) checkEdges(coord - Vec(0, game_height))
-            else if(coord.y < game_from_y) checkEdges(coord + Vec(0, game_height))
-            else coord.y
+    def checkC(c:Float, from:Float, to:Float, dist:Float):Float = {
+      if(c >= to) checkC(c - dist, from, to, dist)
+      else if(c < from) checkC(c + dist, from, to, dist)
+      else c
+    }
+    val x = checkC(coord.x, game_from_x, game_to_x, game_width)
+    val y = checkC(coord.y, game_from_y, game_to_y, game_height)
     Vec(x, y)
   }
 
   def updateLocation(old_coord:Vec, new_coord:Vec) = {
-    println("old_coord: "+old_coord)
-    println("new_coord: "+new_coord)
     val new_coord_edges_affected = checkEdges(new_coord)
-    println("new_coord_edges_affected: "+new_coord_edges_affected)
-    val old_p = point(old_coord)    
-    println("old_p: "+old_p)
+    val old_p = point(old_coord)
     val new_p = point(new_coord_edges_affected)
     if(old_p != new_p) {
       coord_matrix(old_p.x)(old_p.y).find(trace => trace.getCoord == old_coord) match {

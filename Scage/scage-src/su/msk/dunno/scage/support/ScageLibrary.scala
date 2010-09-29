@@ -2,7 +2,7 @@ package su.msk.dunno.scage.support
 
 import su.msk.dunno.scage.main.Scage
 import su.msk.dunno.scage.handlers.{Idler, Renderer}
-import su.msk.dunno.scage.handlers.tracer.{Tracer, StandardTracer}
+import su.msk.dunno.scage.support.tracer.{StandardTracer}
 
 trait ScageLibrary extends Colors {
   lazy val width = Renderer.width

@@ -1,6 +1,6 @@
 package scagetest.handlers
 
-import su.msk.dunno.scage.handlers.tracer.{Tracer, State}
+import su.msk.dunno.scage.support.tracer.{Tracer, State}
 import net.phys2d.raw.Body
 import net.phys2d.raw.shapes.Box
 import collection.mutable.HashMap

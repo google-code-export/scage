@@ -2,7 +2,7 @@ package gravitation.objects
 
 import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.scage.handlers.{AI, Renderer}
-import su.msk.dunno.scage.handlers.tracer.{Trace, State, StandardTracer}
+import su.msk.dunno.scage.support.tracer.{Trace, State, StandardTracer}
 import su.msk.dunno.scage.support.messages.Message
 import gravitation.{Universe, Gravitation}
 import org.lwjgl.opengl.GL11

@@ -1,6 +1,6 @@
 package planeflight.objects
 
-import su.msk.dunno.scage.handlers.tracer.{State, Trace, StandardTracer}
+import su.msk.dunno.scage.support.tracer.{State, Trace, StandardTracer}
 import su.msk.dunno.scage.main.Scage
 import planeflight.PlaneFlight
 import org.lwjgl.opengl.GL11

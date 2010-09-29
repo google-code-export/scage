@@ -3,7 +3,7 @@ package netflight.server
 import su.msk.dunno.scage.support.Colors
 import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.scage.handlers.AI
-import su.msk.dunno.scage.handlers.tracer.StandardTracer
+import su.msk.dunno.scage.support.tracer.StandardTracer
 import su.msk.dunno.scage.handlers.net.NetServer
 import org.json.JSONObject
 

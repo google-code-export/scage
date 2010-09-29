@@ -12,8 +12,6 @@ abstract class Handler {
   def actionSequence():Unit = {}
   def exitSequence():Unit = {}
 
-  val handler_type = "default"
-
   if(Scage.isRunning) initSequence
 
   def ::(o:Handler) = o :: List[Handler](this)

@@ -1,3 +1,3 @@
-package su.msk.dunno.scage.handlers.tracer
+package su.msk.dunno.scage.support.tracer
 
 object StandardTracer extends Tracer[State] 

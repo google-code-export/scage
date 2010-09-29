@@ -7,13 +7,12 @@ import su.msk.dunno.scage.handlers.controller.Controller
 import su.msk.dunno.scage.objects.{StaticBox, DynaBall, StaticLine}
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.handlers.{AI, Renderer}
-import su.msk.dunno.scage.handlers.tracer.{StandardTracer, State, Trace}
+import su.msk.dunno.scage.support.tracer.{StandardTracer, State, Trace}
 import su.msk.dunno.scage.support.{ScageProperties, ScageLibrary, Vec}
 
 object ScageTest extends ScageLibrary {
   def main(args:Array[String]):Unit = {
     Scage.setDefaultHandlers
-    Scage.addHandler(StandardTracer)
 
     // our level
     new StaticLine(Vec(0,0), Vec(Renderer.width,0))

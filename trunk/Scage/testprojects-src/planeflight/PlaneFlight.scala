@@ -7,7 +7,7 @@ import org.lwjgl.opengl.GL11
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.handlers.controller.Controller
 import org.newdawn.slick.opengl.Texture
-import su.msk.dunno.scage.handlers.tracer.StandardTracer
+import su.msk.dunno.scage.support.tracer.StandardTracer
 import su.msk.dunno.scage.handlers.{AI, Idler, Renderer}
 import su.msk.dunno.scage.support.{ScageLibrary, Vec}
 

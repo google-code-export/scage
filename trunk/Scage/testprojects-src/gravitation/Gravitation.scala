@@ -2,7 +2,7 @@ package gravitation
 
 import objects.{Planet, MaterialPoint}
 import su.msk.dunno.scage.support.Vec
-import su.msk.dunno.scage.handlers.tracer.{State, StandardTracer}
+import su.msk.dunno.scage.support.tracer.{State, StandardTracer}
 
 trait Gravitation {
   // gravitation force

@@ -3,7 +3,21 @@ package su.msk.dunno.scage.support.tracer
 import su.msk.dunno.scage.handlers.Renderer
 import su.msk.dunno.scage.support.{Colors, ScageProperties, Vec}
 
+object Tracer {
+  private var current_tracer:Tracer[_] = null
+  def currentTracer = current_tracer
+
+  private var next_trace_id = 0
+  def nextTraceID = {
+    val next_id = next_trace_id
+    next_trace_id += 1
+    next_id
+  }
+}
+
 class Tracer[S <: State] extends Colors {
+  Tracer.current_tracer = this
+
   val game_from_x = ScageProperties.intProperty("game_from_x")
   val game_to_x = ScageProperties.intProperty("game_to_x")
   val game_from_y = ScageProperties.intProperty("game_from_y")
@@ -29,6 +43,7 @@ class Tracer[S <: State] extends Colors {
       coord_matrix(p.x)(p.y) = t :: coord_matrix(p.x)(p.y)
       object_points = (point(t.getCoord), t) :: object_points  
     }
+    t.id
   }
 
   def point(v:Vec):Point = Point(((v.x - game_from_x)/game_width*N_x).toInt,
@@ -62,18 +77,6 @@ class Tracer[S <: State] extends Colors {
 	  })
   }
 
-  /*override def actionSequence() = {
-    object_points = object_points.map(obj => {
-      val old_p = obj._1
-      val new_p = point(obj._2.getCoord)
-      if(old_p != new_p) {
-        coord_matrix(old_p.x)(old_p.y) = coord_matrix(old_p.x)(old_p.y).filter(trace => trace != obj._2)
-        coord_matrix(new_p.x)(new_p.y) = obj._2 :: coord_matrix(new_p.x)(new_p.y)
-      }
-      (new_p, obj._2)
-    })
-  }*/
-
   def checkEdges(coord:Vec):Vec = {
     def checkC(c:Float, from:Float, to:Float, dist:Float):Float = {
       if(c >= to) checkC(c - dist, from, to, dist)
@@ -85,25 +88,25 @@ class Tracer[S <: State] extends Colors {
     Vec(x, y)
   }
 
-  def updateLocation(old_coord:Vec, new_coord:Vec) = {
+  def updateLocation(trace_id:Int, old_coord:Vec, new_coord:Vec) = {
     val new_coord_edges_affected = checkEdges(new_coord)
     val old_p = point(old_coord)
     val new_p = point(new_coord_edges_affected)
     if(old_p != new_p) {
-      coord_matrix(old_p.x)(old_p.y).find(trace => trace.getCoord == old_coord) match {
+      coord_matrix(old_p.x)(old_p.y).find(trace => trace.id == trace_id) match {
         case Some(target_trace) => {
-          coord_matrix(old_p.x)(old_p.y) = coord_matrix(old_p.x)(old_p.y).filter(trace => trace.getCoord != old_coord)
+          coord_matrix(old_p.x)(old_p.y) = coord_matrix(old_p.x)(old_p.y).filter(trace => trace.id != trace_id)
           coord_matrix(new_p.x)(new_p.y) = target_trace :: coord_matrix(new_p.x)(new_p.y)
         }
         case _ =>
       }
     }
-    new_coord_edges_affected
+    old_coord is new_coord_edges_affected
   }
+}
 
-  case class Point(val x:Int, val y:Int) {
-    def ==(p:Point) = x == p.x && y == p.y
-    def !=(p:Point) = null == p || x != p.x || y != p.y
-    override def toString = x+":"+y
-  }
+case class Point(val x:Int, val y:Int) {
+  def ==(p:Point) = x == p.x && y == p.y
+  def !=(p:Point) = null == p || x != p.x || y != p.y
+  override def toString = x+":"+y
 }

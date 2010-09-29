@@ -2,7 +2,10 @@ package su.msk.dunno.scage.support
 
 import _root_.net.phys2d.math.ROVector2f
 
-case class Vec(val x:Float, val y:Float) {
+case class Vec(private var _x:Float, private var _y:Float) {
+  def x = _x
+  def y = _y
+
   def this(v:Vec) = this(v.x, v.y)
   def this(v:ROVector2f) = this(v.getX, v.getY)
   def this(x:Double, y:Double) = this(x.toFloat, y.toFloat)
@@ -39,6 +42,11 @@ case class Vec(val x:Float, val y:Float) {
   def rotateDeg(ang:Double) = rotateRad(ang/180*Math.Pi)
 
   def ::(o:Vec) = o :: List[Vec](this)
+
+  def is(v:Vec) = {
+    _x = v.x
+    _y = v.y
+  }
 
   override def toString() = x.toInt+" : "+y.toInt
 }

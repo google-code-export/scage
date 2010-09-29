@@ -103,6 +103,11 @@ class Tracer[S <: State] extends Colors {
     }
     old_coord is new_coord_edges_affected
   }
+
+  def hasCollisions(coord:Vec, range:Range, min_dist:Float) = {
+    val min_dist2 = min_dist*min_dist
+    getNeighbours(coord, range).foldLeft(false)((is_collision, neighbour) => (neighbour.getCoord dist2 coord) < min_dist2 || is_collision)
+  }
 }
 
 case class Point(val x:Int, val y:Int) {

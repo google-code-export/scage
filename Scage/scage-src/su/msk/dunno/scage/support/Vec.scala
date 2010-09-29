@@ -48,5 +48,5 @@ case class Vec(private var _x:Float, private var _y:Float) {
     _y = v.y
   }
 
-  override def toString() = x.toInt+" : "+y.toInt
+  override def toString() = x+" : "+y
 }

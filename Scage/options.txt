@@ -17,19 +17,19 @@ height = 600
 
 show_grid = yes
 
-game_from_x = 100
-game_to_x = 300
+game_from_x = 0
+game_to_x = 320
 
-game_from_y = 100
-game_to_y = 300
+game_from_y = 0
+game_to_y = 560
 
 #N_x = 200
 #N_y = 200
 
-N_x = 20
-N_y = 20
+N_x = 8
+N_y = 14
 
-framerate = 100
+framerate = 10
 auto_scaling = no
 
 gravity = -5

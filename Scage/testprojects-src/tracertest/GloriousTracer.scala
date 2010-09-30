@@ -9,6 +9,7 @@ import su.msk.dunno.scage.handlers.{AI, Renderer}
 
 object GloriousTracer extends Application with ScageLibrary {
   var coord = Vec(150,150)
+
   Renderer.addRender(() => {
     Renderer.setColor(BLACK)
     Renderer.drawCircle(coord, 5)
@@ -42,9 +43,8 @@ class Stranger extends ScageLibrary {
   })
 
   AI.registerAI(() => {
-    if((coord in trace) ? (-1 to 1, 10)) {
+    if((coord in trace) ? (-1 to 1, 10))
       coord = Vec((100 + math.random*200).toFloat, (100 + math.random*200).toFloat)
-    }
   })
 
   Renderer.addRender(() => {

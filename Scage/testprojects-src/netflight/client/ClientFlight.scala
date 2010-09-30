@@ -58,6 +58,7 @@ object ClientFlight extends Application with ScageLibrary {
     if(NetClient.hasNewIncomingData) {
       val server_data = NetClient.incomingData
       val game_objects = server_data.names
+      println(game_objects)
       for(i <- 0 to game_objects.length-1) {
         val object_name = game_objects.getString(i)
         val game_object = server_data.getJSONObject(object_name)

@@ -81,7 +81,7 @@ class Tracer[S <: State] extends Colors {
     Vec(checkC(p.x, N_x), checkC(p.y, N_y))
   }
 
-  def updateLocation(trace_id:Int, old_coord:Vec, new_coord:Vec) = {
+  def updateLocation(trace_id:Int, old_coord:Vec, new_coord:Vec):Boolean = {
     val new_coord_edges_affected = checkEdges(new_coord)
     val old_p = point(old_coord)
     val new_p = point(new_coord_edges_affected)
@@ -95,6 +95,7 @@ class Tracer[S <: State] extends Colors {
       }
     }
     old_coord is new_coord_edges_affected
+    true
   }
 
   def checkEdges(coord:Vec):Vec = {

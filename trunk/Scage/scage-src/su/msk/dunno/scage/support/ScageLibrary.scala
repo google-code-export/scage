@@ -23,18 +23,21 @@ trait ScageLibrary extends Colors {
 
   implicit def vec2tracervec(old_coord:Vec) = new Vec(old_coord) {
     def in(trace_id:Int) = new ScalaObject {
-      def ->(new_coord:Vec) = {
-        if(Tracer.currentTracer != null) Tracer.currentTracer.updateLocation(trace_id, old_coord, new_coord)  
+      def ->(new_coord:Vec):Boolean = {
+        if(Tracer.currentTracer != null) Tracer.currentTracer.updateLocation(trace_id, old_coord, new_coord)
+        else false
       }
 
-      def -->(new_coord:Vec, range:Range, dist:Float) = {
+      def -->(new_coord:Vec, range:Range, dist:Float):Boolean = {
         if(Tracer.currentTracer != null) {
           if(!Tracer.currentTracer.hasCollisions(trace_id, new_coord, range, dist))
             Tracer.currentTracer.updateLocation(trace_id, old_coord, new_coord)
+          else false
         }
+        else false
       }
 
-      def ?(range:Range, dist:Float) = {
+      def ?(range:Range, dist:Float):Boolean = {
         if(Tracer.currentTracer != null) Tracer.currentTracer.hasCollisions(trace_id, old_coord, range, dist)
         else false
       }

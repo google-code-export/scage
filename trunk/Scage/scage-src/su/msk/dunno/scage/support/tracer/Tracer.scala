@@ -2,21 +2,28 @@ package su.msk.dunno.scage.support.tracer
 
 import su.msk.dunno.scage.handlers.Renderer
 import su.msk.dunno.scage.support.{Colors, ScageProperties, Vec}
+import org.apache.log4j.Logger
 
 object Tracer {
+  private val log = Logger.getLogger(this.getClass);
+
   private var current_tracer:Tracer[_] = null
   def currentTracer = current_tracer
 
   private var next_trace_id = 0
   def nextTraceID = {
-    val next_id = next_trace_id
+    val trace_id = next_trace_id
     next_trace_id += 1
-    next_id
+    log.debug("added new trace #"+trace_id)
+    trace_id
   }
 }
 
 class Tracer[S <: State] extends Colors {
+  private val log = Logger.getLogger(this.getClass);
+
   Tracer.current_tracer = this
+  log.debug("using tracer "+this.getClass.getName)
 
   val game_from_x = ScageProperties.intProperty("game_from_x")
   val game_to_x = ScageProperties.intProperty("game_to_x")
@@ -36,9 +43,9 @@ class Tracer[S <: State] extends Colors {
     }
   }
 
+  val h_x = game_width/N_x
+	val h_y = game_height/N_y
   if(ScageProperties.booleanProperty("show_grid")) {
-    val h_x = game_width/N_x
-	  val h_y = game_height/N_y
 	  Renderer.addRender(() => {
 	 	  Renderer.setColor(LIME_GREEN)
 	 	  for(i <- 0 to N_x) Renderer.drawLine(Vec(i*h_x + game_from_x, game_from_y), Vec(i*h_x + game_from_x, game_to_y))
@@ -56,6 +63,8 @@ class Tracer[S <: State] extends Colors {
 
   def point(v:Vec):Vec = Vec(((v.x - game_from_x)/game_width*N_x).toInt,
                               ((v.y - game_from_y)/game_height*N_y).toInt)
+  def pointCenter(p:Vec):Vec = Vec(p.x*h_x + h_x/2, p.y*h_y + h_y/2)
+  def pointCenter(x:Int, y:Int):Vec = Vec(x*h_x + h_x/2, y*h_y + h_y/2)
   
   def getNeighbours(coord:Vec, range:Range):List[Trace[S]] = {
     val p = point(coord)
@@ -64,7 +73,7 @@ class Tracer[S <: State] extends Colors {
     	for(j <- range) {
         val near_point = checkPointEdges(p + Vec(i, j))
     		neighbours = coord_matrix(near_point.ix)(near_point.iy).foldLeft(List[Trace[S]]())((acc, trace) => {
-    		  if(trace.getCoord != coord) trace :: acc
+    		  if(trace.isActive && trace.getCoord != coord) trace :: acc
     			else acc
     		}) ::: neighbours
     	}

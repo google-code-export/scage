@@ -22,10 +22,10 @@ object GloriousTracer extends Application with ScageLibrary {
     def changeState(s:State) = {}
   })
 
-  Controller.addKeyListener(Keyboard.KEY_UP, 10, () => (coord in trace) --> (coord + Vec(0, 1), -1 to 1, 11))
-  Controller.addKeyListener(Keyboard.KEY_DOWN, 10, () => (coord in trace) --> (coord - Vec(0, 1), -1 to 1, 11))
-  Controller.addKeyListener(Keyboard.KEY_RIGHT, 10, () => (coord in trace) --> (coord + Vec(1, 0), -1 to 1, 11))
-  Controller.addKeyListener(Keyboard.KEY_LEFT, 10, () => (coord in trace) --> (coord - Vec(1, 0), -1 to 1, 11))
+  Controller.addKeyListener(Keyboard.KEY_UP, 10, () => (coord in trace) --> (coord + Vec(0, 1), -1 to 1, 10))
+  Controller.addKeyListener(Keyboard.KEY_DOWN, 10, () => (coord in trace) --> (coord - Vec(0, 1), -1 to 1, 10))
+  Controller.addKeyListener(Keyboard.KEY_RIGHT, 10, () => (coord in trace) --> (coord + Vec(1, 0), -1 to 1, 10))
+  Controller.addKeyListener(Keyboard.KEY_LEFT, 10, () => (coord in trace) --> (coord - Vec(1, 0), -1 to 1, 10))
 
   for(i <- 1 to 20) new Stranger
 

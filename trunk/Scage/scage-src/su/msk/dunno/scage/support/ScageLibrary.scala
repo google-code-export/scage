@@ -38,7 +38,14 @@ trait ScageLibrary extends Colors {
       }
 
       def ?(range:Range, dist:Float):Boolean = {
-        if(Tracer.currentTracer != null) Tracer.currentTracer.hasCollisions(trace_id, old_coord, range, dist, Nil)
+        if(Tracer.currentTracer != null)
+          Tracer.currentTracer.hasCollisions(trace_id, old_coord, range, dist, Nil)
+        else false
+      }
+
+      def ?(range:Range, dist:Float, excluded_traces:List[Int]):Boolean = {
+        if(Tracer.currentTracer != null)
+          Tracer.currentTracer.hasCollisions(trace_id, old_coord, range, dist, excluded_traces)
         else false
       }
     }

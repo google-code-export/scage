@@ -144,13 +144,13 @@ class Tracer[S <: State] extends Colors {
     coord.x >= game_from_x && coord.x < game_to_x && coord.y >= game_from_y && coord.y < game_to_y
   }
 
-  def hasCollisions(trace_id:Int, coord:Vec, range:Range, min_dist:Float, exclude_list:List[Int]) = {
+  def hasCollisions(trace_id:Int, coord:Vec, range:Range, min_dist:Float, excluded_traces:List[Int]) = {
     if(is_solid_edges && !onArea(coord)) true
     else {
       val coord_edges_affected = checkEdges(coord)
       val min_dist2 = min_dist*min_dist
       getNeighbours(trace_id, coord_edges_affected, range).foldLeft(false)((is_collision, neighbour) => {
-        (!exclude_list.contains(neighbour.id) && neighbour.id != trace_id && (neighbour.getCoord dist2 coord_edges_affected) < min_dist2) || is_collision
+        (!excluded_traces.contains(neighbour.id) && neighbour.id != trace_id && (neighbour.getCoord dist2 coord_edges_affected) < min_dist2) || is_collision
       })
     }
   }

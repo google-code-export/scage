@@ -8,14 +8,15 @@ import su.msk.dunno.scage.objects.{StaticLine, StaticBox, StaticPolygon, Platfor
 import su.msk.dunno.scage.handlers.controller.Controller
 import su.msk.dunno.scage.handlers.Renderer
 import su.msk.dunno.scage.support.{ScageProperties, ScageLibrary, Vec}
+import su.msk.dunno.scage.support.tracer.StandardTracer
 
 object Sage extends ScageLibrary {
   def main(args:Array[String]):Unit = {
     Scage.setDefaultHandlers
 
     // our level
-    val game_width = ScageProperties.intProperty("game_width")
-    val game_height = ScageProperties.intProperty("game_height")
+    val game_width = StandardTracer.game_width
+    val game_height = StandardTracer.game_height
     new StaticLine(Vec(0,0), Vec(game_width,0))
     new StaticLine(Vec(game_width,0), Vec(game_width,game_height))
     new StaticLine(Vec(game_width,game_height), Vec(0,game_height))

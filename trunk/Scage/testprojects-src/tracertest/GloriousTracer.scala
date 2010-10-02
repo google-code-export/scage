@@ -23,10 +23,10 @@ object GloriousTracer extends Application with ScageLibrary {
     def changeState(s:State) = {}
   })
 
-  Controller.addKeyListener(Keyboard.KEY_UP, 10, () => (coord in trace) --> (coord + Vec(0, 1), -1 to 1, 10))
-  Controller.addKeyListener(Keyboard.KEY_DOWN, 10, () => (coord in trace) --> (coord - Vec(0, 1), -1 to 1, 10))
-  Controller.addKeyListener(Keyboard.KEY_RIGHT, 10, () => (coord in trace) --> (coord + Vec(1, 0), -1 to 1, 10))
-  Controller.addKeyListener(Keyboard.KEY_LEFT, 10, () => (coord in trace) --> (coord - Vec(1, 0), -1 to 1, 10))
+  Controller.addKeyListener(Keyboard.KEY_UP, 10, () => (trace in coord) --> (coord + Vec(0, 1), -1 to 1, 10))
+  Controller.addKeyListener(Keyboard.KEY_DOWN, 10, () => (trace in coord) --> (coord - Vec(0, 1), -1 to 1, 10))
+  Controller.addKeyListener(Keyboard.KEY_RIGHT, 10, () => (trace in coord) --> (coord + Vec(1, 0), -1 to 1, 10))
+  Controller.addKeyListener(Keyboard.KEY_LEFT, 10, () => (trace in coord) --> (coord - Vec(1, 0), -1 to 1, 10))
 
   for(i <- 1 to 20) new Stranger
 
@@ -43,7 +43,7 @@ class Stranger extends ScageLibrary {
   })
 
   AI.registerAI(() => {
-    if((coord in trace) ? (-1 to 1, 10))
+    if((trace in coord) ? (-1 to 1, 10))
       coord = Vec((100 + math.random*200).toFloat, (100 + math.random*200).toFloat)
   })
 

@@ -21,8 +21,8 @@ trait ScageLibrary extends Colors {
   def start = Scage.start
   def stop = Scage.stop
 
-  implicit def vec2tracervec(old_coord:Vec) = new Vec(old_coord) {
-    def in(trace_id:Int) = new ScalaObject {
+  implicit def traceInVec(trace_id:Int) = new ScalaObject {
+    def in(old_coord:Vec) = new ScalaObject {
       def ->(new_coord:Vec):Boolean = {
         if(Tracer.currentTracer != null) Tracer.currentTracer.updateLocation(trace_id, old_coord, new_coord)
         else false

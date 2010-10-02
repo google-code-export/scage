@@ -12,7 +12,7 @@ class Point(init_coord:Vec, private val figure:Figure) extends ScageLibrary {
   val trace = StandardTracer.addTrace(new Trace[State] {
     override def isActive = is_active
     def getCoord = coord
-    def getState() = new State("name", "point")
+    def getState() = new State("figure", figure.name).put("isActive", isActive).put("isMoving", figure.isMoving)
     def changeState(s:State) = if(s.contains("disable")) is_active = false
   })
 
@@ -20,14 +20,14 @@ class Point(init_coord:Vec, private val figure:Figure) extends ScageLibrary {
   def isMoving = is_moving
 
   private val down = Vec(0, -StandardTracer.h_y)
-  def canMoveDown(excluded_traces:List[Int]) = !(((coord + down) in trace) ? (-1 to 1, StandardTracer.h_y, excluded_traces))
-  def moveDown = (coord in trace) --> (coord + down, -1 to 1, StandardTracer.h_y)
+  def canMoveDown(excluded_traces:List[Int]) = !((trace in (coord + down)) ? (-1 to 1, StandardTracer.h_y, excluded_traces))
+  def moveDown = (trace in coord) --> (coord + down, -1 to 1, StandardTracer.h_y)
 
   private val left = Vec(-StandardTracer.h_x, 0)
-  def moveLeft = (coord in trace) --> (coord + left, -1 to 1, StandardTracer.h_x)
+  def moveLeft = (trace in coord) --> (coord + left, -1 to 1, StandardTracer.h_x)
 
   private val right = Vec(StandardTracer.h_x, 0)
-  def moveRight = (coord in trace) --> (coord + right, -1 to 1, StandardTracer.h_x)
+  def moveRight = (trace in coord) --> (coord + right, -1 to 1, StandardTracer.h_x)
 
   private val BOX = Renderer.createList("img/Crate.png", StandardTracer.h_x, StandardTracer.h_y, 0, 0, 256, 256)
   Renderer.addRender(() => {

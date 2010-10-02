@@ -23,7 +23,7 @@ extends Colors with ScageLibrary {
 
   AI.registerAI(() => {
     if(fuel > 5) {
-      if(!((coord in trace) --> (coord + direction*velocity, -1 to 1, 10))) {
+      if(!((trace in coord) --> (coord + direction*velocity, -1 to 1, 10))) {
         fuel = 5
       }
       NetServer.addOutgoingData(name, new JSONObject().put("type", "rocket")

@@ -7,6 +7,8 @@ import su.msk.dunno.scage.support.tracer.StandardTracer
 import su.msk.dunno.scage.support.ScageLibrary
 
 abstract class Figure extends ScageLibrary {
+  val name:String
+
   val points:List[Point]
   private var is_moving = true
   def isMoving = is_moving
@@ -16,7 +18,8 @@ abstract class Figure extends ScageLibrary {
   }
 
   private var last_move_time = System.currentTimeMillis
-  private val move_period = 100
+  private var is_acceleration = false
+  private def move_period = if(!is_acceleration) 300 else 50
   AI.registerAI(() => {
     val is_next_move = System.currentTimeMillis - last_move_time > move_period
     if(isMoving && is_next_move) {
@@ -33,4 +36,6 @@ abstract class Figure extends ScageLibrary {
   Controller.addKeyListener(Keyboard.KEY_RIGHT, 1000, () => {
     if(isMoving) points.sortWith((p1, p2) => p1.coord.x > p2.coord.x).foreach(point => point.moveRight)
   })
+
+  Controller.addKeyListener(Keyboard.KEY_DOWN, 1000, () => is_acceleration = true, () => is_acceleration = false)
 }

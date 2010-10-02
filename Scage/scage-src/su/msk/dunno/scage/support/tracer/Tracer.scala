@@ -41,6 +41,7 @@ class Tracer[S <: State] extends Colors {
       coord_matrix(i)(j) = Nil
     }
   }
+  def matrix = coord_matrix
 
   val h_x = game_width/N_x
 	val h_y = game_height/N_y
@@ -106,9 +107,9 @@ class Tracer[S <: State] extends Colors {
     Vec(checkC(p.x, N_x), checkC(p.y, N_y))
   }
 
-  val is_solid_edges = ScageProperties.booleanProperty("solid_edges")
+  val are_solid_edges = ScageProperties.booleanProperty("solid_edges")
   def updateLocation(trace_id:Int, old_coord:Vec, new_coord:Vec):Boolean = {
-    if(is_solid_edges && !onArea(new_coord)) false
+    if(are_solid_edges && !onArea(new_coord)) false
     else {
       val new_coord_edges_affected = checkEdges(new_coord)
       val old_p = point(old_coord)
@@ -145,7 +146,7 @@ class Tracer[S <: State] extends Colors {
   }
 
   def hasCollisions(trace_id:Int, coord:Vec, range:Range, min_dist:Float, excluded_traces:List[Int]) = {
-    if(is_solid_edges && !onArea(coord)) true
+    if(are_solid_edges && !onArea(coord)) true
     else {
       val coord_edges_affected = checkEdges(coord)
       val min_dist2 = min_dist*min_dist

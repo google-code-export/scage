@@ -43,7 +43,7 @@ class ServerSidePlane(val name:String, init_coord:Vec, val client:ClientHandler)
           shoot_cooldown = 10
         }
 
-        if(!((coord in trace) --> (coord + step, -1 to 1, 10))) health = 0
+        if(!((trace in coord) --> (coord + step, -1 to 1, 10))) health = 0
 
         if(delta > 5) delta -= 0.1f
         if(shoot_cooldown > 0) shoot_cooldown -= 1
@@ -66,6 +66,6 @@ class ServerSidePlane(val name:String, init_coord:Vec, val client:ClientHandler)
     health = 100
     delta = 5.0f
     rotation = 0.0f
-    (coord in trace) -> init_coord
+    (trace in coord) -> init_coord
   }
 }

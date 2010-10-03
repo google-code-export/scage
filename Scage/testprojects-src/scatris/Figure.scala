@@ -8,33 +8,30 @@ import su.msk.dunno.scage.support.ScageLibrary
 
 abstract class Figure extends ScageLibrary {
   val name:String
-
   val points:List[Point]
-  private var is_moving = true
-  def isMoving = is_moving
+
+  private def excludedTraces = points.map(point => point.trace)
   def canMoveDown = {
-    val figure_traces = points.map(point => point.trace)
-    points.foldLeft(true)((can_move_down, point) => can_move_down && point.canMoveDown(figure_traces))
+    points.foldLeft(true)((can_move_down, point) => can_move_down && point.canMoveDown(excludedTraces))
   }
 
   private var last_move_time = System.currentTimeMillis
   private var is_acceleration = false
-  private def move_period = if(!is_acceleration) 300 else 50
+  private def movePeriod = if(!is_acceleration) 300 else 50
+  private def isNextMove = System.currentTimeMillis - last_move_time > movePeriod
   AI.registerAI(() => {
-    val is_next_move = System.currentTimeMillis - last_move_time > move_period
-    if(isMoving && is_next_move) {
-      if(!canMoveDown) is_moving = false
-      else points.sortWith((p1, p2) => p1.coord.y < p2.coord.y).foreach(point => point.moveDown)      
+    if(isNextMove) {
+      if(canMoveDown) points.sortWith((p1, p2) => p1.coord.y < p2.coord.y).foreach(point => point.moveDown)
       last_move_time = System.currentTimeMillis
     }
   })
 
   Controller.addKeyListener(Keyboard.KEY_LEFT, 1000, () => {
-    if(isMoving) points.sortWith((p1, p2) => p1.coord.x < p2.coord.x).foreach(point => point.moveLeft)
+    if(canMoveDown) points.sortWith((p1, p2) => p1.coord.x < p2.coord.x).foreach(point => point.moveLeft)
   })
 
   Controller.addKeyListener(Keyboard.KEY_RIGHT, 1000, () => {
-    if(isMoving) points.sortWith((p1, p2) => p1.coord.x > p2.coord.x).foreach(point => point.moveRight)
+    if(canMoveDown) points.sortWith((p1, p2) => p1.coord.x > p2.coord.x).foreach(point => point.moveRight)
   })
 
   Controller.addKeyListener(Keyboard.KEY_DOWN, 1000, () => is_acceleration = true, () => is_acceleration = false)

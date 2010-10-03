@@ -12,15 +12,12 @@ class Point(init_coord:Vec, private val figure:Figure) extends ScageLibrary {
   val trace = StandardTracer.addTrace(new Trace[State] {
     override def isActive = is_active
     def getCoord = coord
-    def getState() = new State("figure", figure.name).put("isActive", isActive).put("isMoving", figure.isMoving)
+    def getState() = new State("figure", figure.name).put("isActive", isActive).put("isMoving", figure.canMoveDown)
     def changeState(s:State) = if(s.contains("disable")) is_active = false
   })
 
-  private var is_moving = true
-  def isMoving = is_moving
-
   private val down = Vec(0, -StandardTracer.h_y)
-  def canMoveDown(excluded_traces:List[Int]) = !((trace in (coord + down)) ? (-1 to 1, StandardTracer.h_y, excluded_traces))
+  def canMoveDown(excluded_traces:List[Int]) = !is_active || !((trace in (coord + down)) ? (-1 to 1, StandardTracer.h_y, excluded_traces))
   def moveDown = (trace in coord) --> (coord + down, -1 to 1, StandardTracer.h_y)
 
   private val left = Vec(-StandardTracer.h_x, 0)

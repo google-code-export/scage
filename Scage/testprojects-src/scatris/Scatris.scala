@@ -2,8 +2,6 @@ package scatris
 
 import figures.Square
 import su.msk.dunno.scage.support.ScageLibrary
-import su.msk.dunno.scage.handlers.controller.Controller
-import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.support.tracer.{Trace, State, StandardTracer}
 import su.msk.dunno.scage.handlers.{Renderer, AI}
 import su.msk.dunno.scage.support.messages.Message
@@ -11,8 +9,7 @@ import su.msk.dunno.scage.support.messages.Message
 object Scatris extends Application with ScageLibrary {
   private def isRestingPoint(point:List[Trace[State]]) = point.find(trace => {
     val state = trace.getState
-    state.contains("isActive") && state.getBool("isActive") &&
-    state.contains("isMoving") && !state.getBool("isMoving")
+    state.contains("isActive") && state.getBool("isActive")
   }) match {
     case Some(trace) => true
     case None => false

@@ -43,7 +43,7 @@ object Scatris extends Application with ScageLibrary {
       }
     }
 
-    if(!f.isMoving && !isGameFinished) f = new Square(StandardTracer.pointCenter(3, 12))
+    if(!f.canMoveDown && !isGameFinished) f = new Square(StandardTracer.pointCenter(3, 12))
   })
   Renderer.addInterfaceElement(() => Message.print("score: "+score, 20, height-20))
 

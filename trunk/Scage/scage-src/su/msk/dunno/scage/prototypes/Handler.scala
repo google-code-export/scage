@@ -13,6 +13,4 @@ abstract class Handler {
   def exitSequence():Unit = {}
 
   if(Scage.isRunning) initSequence
-
-  def ::(o:Handler) = o :: List[Handler](this)
 }

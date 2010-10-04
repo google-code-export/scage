@@ -41,8 +41,14 @@ object ScageProperties {
     }
   }
 
+  private lazy val noPropertiesWarning = {
+    log.debug("warning: there is no properties file load, using default values")
+  }
   private def getProperty(key:String) = {
-    if(!is_loaded) null
+    if(!is_loaded) {
+      noPropertiesWarning
+      null
+    }
     else {
       val p = properties.getProperty(key)
       if(p == null) log.debug("failed to find property "+key)

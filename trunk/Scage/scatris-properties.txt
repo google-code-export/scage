@@ -1,0 +1,18 @@
+name = Scatris
+version = 0.1
+
+width = 500
+height = 580
+
+show_grid = yes
+
+game_from_x = 10
+game_to_x = 330
+
+game_from_y = 10
+game_to_y = 570
+
+N_x = 8
+N_y = 14
+
+solid_edges = yes

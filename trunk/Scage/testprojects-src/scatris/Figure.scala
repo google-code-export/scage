@@ -25,6 +25,31 @@ abstract class Figure extends ScageLibrary {
     addPosition(Map(), 0)
   }*/
 
+  protected def generateOrientations(positions_array:List[Vec]*):Map[Int, () => Boolean] = {
+    def addOrientation(orientations:Map[Int, () => Boolean], next:Int):Map[Int, () => Boolean] = {
+      if(next >= positions_array.length) orientations
+      else {
+        val new_orientations = orientations + (next -> (() => {
+          val canMove = (0 to points.length-1).foldLeft(true)((can_move, point_number) => {
+            val point = points(point_number)
+            val step = positions_array(next)(point_number)
+            can_move && point.canMove(excludedTraces, step)
+          })
+          if(canMove) {
+            (0 to points.length-1).foreach(point_number => {
+              val point = points(point_number)
+              val step = positions_array(next)(point_number)
+              point.move(excludedTraces, step)
+            })
+            true
+          }
+          else false
+        }))
+      }
+    }
+    addOrientation(Map(), 0)
+  }
+
   private def canMove(dir: (Point) => Boolean) = {
     points.filter(point => point.isActive) match {
       case Nil => false
@@ -40,7 +65,7 @@ abstract class Figure extends ScageLibrary {
   private def movePeriod = if(!is_acceleration) 300 else 50
   private def isNextMove = System.currentTimeMillis - last_move_time > movePeriod
 
-  private val down = Vec(0, -StandardTracer.h_y)
+  private val down = Vec(0, -h_y)
   def canMoveDown:Boolean = canMove(point => point.canMove(excludedTraces, down))
   AI.registerAI(() => {
     if(isNextMove && canMoveDown) {
@@ -49,13 +74,13 @@ abstract class Figure extends ScageLibrary {
     }
   })
 
-  private val left = Vec(-StandardTracer.h_x, 0)
+  private val left = Vec(-h_x, 0)
   private def canMoveLeft = canMove(point => point.canMove(excludedTraces, left))
   Controller.addKeyListener(Keyboard.KEY_LEFT, 100, () => {
     if(canMoveDown && canMoveLeft) points.foreach(point => point.move(excludedTraces, left))
   })
 
-  private val right = Vec(StandardTracer.h_x, 0)
+  private val right = Vec(h_x, 0)
   private def canMoveRight = canMove(point => point.canMove(excludedTraces, right))
   Controller.addKeyListener(Keyboard.KEY_RIGHT, 100, () => {
     if(canMoveDown && canMoveRight) points.foreach(point => point.move(excludedTraces, right))

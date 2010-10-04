@@ -8,19 +8,39 @@ object ScageProperties {
   private val log = Logger.getLogger(this.getClass);
 
   private def is_loaded = properties != null
-  private val properties:Properties = {
-    if(properties == null) {
-      val p:Properties = new Properties()
-      try{p.load(new FileInputStream("options.txt"))}
-      catch {
-        case ex:FileNotFoundException =>
-          log.debug("failed to load properties: options.txt not found")
-        null
-      }
+
+  private var _file = "scage-properties.txt"
+  def file = _file
+  def file_= (f:String) = {
+    _file = f
+    properties = load
+  }
+
+  private var properties:Properties = {
+    try {
+      val p = new Properties
+      p.load(new FileInputStream(file))
+      log.debug("using properties file "+file)
       p
     }
-    else properties
+    catch {
+      case ex:FileNotFoundException => null
+    }
   }
+  private def load:Properties = {
+    try {
+      val p = new Properties
+      p.load(new FileInputStream(file))
+      log.debug("loaded properties file "+file)
+      p
+    }
+    catch {
+      case ex:FileNotFoundException =>
+        log.debug("failed to load properties: file "+file+" not found")
+        null
+    }
+  }
+
   private def getProperty(key:String) = {
     if(!is_loaded) null
     else {

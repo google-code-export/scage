@@ -10,6 +10,21 @@ abstract class Figure extends ScageLibrary {
   val name:String
   val points:List[Point]
 
+  /*val positions:Map[Int, () => Boolean]
+  def generatePositions(coords_array:List[Vec]*) = {
+    def addPosition(positions:Map[Int, () => Boolean], nextPos:Int):Map[Int, () => Boolean] = {
+      if(nextPos >= coords_array.length) positions
+      else {
+        val with_new_position = positions + (nextPos -> (() => {
+          (0 to points.length-1).foreach(pos => points(pos).move(excludedTraces, coords_array(nextPos)(pos)))
+          true
+        }))
+        addPosition(with_new_position, nextPos+1)
+      }
+    }
+    addPosition(Map(), 0)
+  }*/
+
   private def canMove(dir: (Point) => Boolean) = {
     points.filter(point => point.isActive) match {
       case Nil => false
@@ -18,11 +33,11 @@ abstract class Figure extends ScageLibrary {
     }
   }
 
-  private def excludedTraces = points.map(point => point.trace)
+  protected def excludedTraces = points.map(point => point.trace)
 
   private var last_move_time = System.currentTimeMillis
   private var is_acceleration = false
-  private def movePeriod = if(!is_acceleration) 1000 else 50
+  private def movePeriod = if(!is_acceleration) 300 else 50
   private def isNextMove = System.currentTimeMillis - last_move_time > movePeriod
 
   private val down = Vec(0, -StandardTracer.h_y)

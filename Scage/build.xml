@@ -87,7 +87,7 @@
             <fileset dir="builds/${project.name}-${project.version}-${os.type}/bin"/>
 		</jar>
         <delete dir="builds/${project.name}-${project.version}-${os.type}/bin" />
-		<copy file="options.txt" tofile="builds/${project.name}-${project.version}-${os.type}/options.txt" />
+		<copy file="${project.properties}" tofile="builds/${project.name}-${project.version}-${os.type}/${project.properties}" />
         <mkdir dir="builds/${project.name}-${project.version}-${os.type}/native" />
         <copy toDir="builds/${project.name}-${project.version}-${os.type}/native">
 			<fileset dir="lib/lwjgl/native/${os.type}" />

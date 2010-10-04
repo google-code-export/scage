@@ -10,9 +10,6 @@ trait ScageLibrary extends Colors {
   def scale = Renderer.scale
   def scale_= (value:Float):Unit = Renderer.scale = value
 
-  lazy val game_width = StandardTracer.game_width
-  lazy val game_height = StandardTracer.game_height
-
   lazy val framerate = Idler.framerate
   def fps = Idler.fps
 
@@ -63,4 +60,22 @@ trait ScageLibrary extends Colors {
     if(Tracer.currentTracer != null) Tracer.currentTracer.point(v)
     else Vec(0,0)
   }
+
+  lazy val game_from_x = Tracer.currentTracer.game_from_x
+  lazy val game_to_x = Tracer.currentTracer.game_to_x
+
+  lazy val game_from_y = Tracer.currentTracer.game_from_y
+  lazy val game_to_y = Tracer.currentTracer.game_to_y
+
+  lazy val game_width = Tracer.currentTracer.game_width
+  lazy val game_height = Tracer.currentTracer.game_height
+
+  lazy val N_x = Tracer.currentTracer.N_x
+  lazy val N_y = Tracer.currentTracer.N_y
+
+  lazy val h_x = Tracer.currentTracer.h_x
+  lazy val h_y = Tracer.currentTracer.h_y
+
+  def properties = ScageProperties.file
+  def properties_=(f:String)  = ScageProperties.file = f
 }

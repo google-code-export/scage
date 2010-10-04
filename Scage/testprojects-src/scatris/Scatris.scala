@@ -1,13 +1,13 @@
 package scatris
 
-import figures.{Line, Square}
+import figures.{Square}
 import su.msk.dunno.scage.support.tracer.{Trace, State, StandardTracer}
 import su.msk.dunno.scage.handlers.{Renderer, AI}
 import su.msk.dunno.scage.support.messages.Message
 import su.msk.dunno.scage.support.{ScageProperties, ScageLibrary}
 
 object Scatris extends Application with ScageLibrary {
-  //ScageProperties.file = "options.txt"
+  properties = "scatris-properties.txt"
 
   private def isRestingPoint(point:List[Trace[State]]) = point.find(trace => {
     val state = trace.getState
@@ -30,7 +30,8 @@ object Scatris extends Application with ScageLibrary {
 
   var score = 0
   private var is_game_finished = false
-  var f:Figure = new Square(StandardTracer.pointCenter(3, 12))
+  def upperCenter = StandardTracer.pointCenter(StandardTracer.N_x/2, StandardTracer.N_y-2)
+  var f:Figure = new Square(upperCenter)
   AI.registerAI(() => {
     for(y <- 0 to StandardTracer.N_y-1) {
       if(isFullRow(y)) {
@@ -41,15 +42,15 @@ object Scatris extends Application with ScageLibrary {
 
     if(!f.canMoveDown && !is_game_finished) {
       val rand = math.random
-      /*if(rand < 0.5) f = new Square(StandardTracer.pointCenter(3, 12))
-      else */f = new Line(StandardTracer.pointCenter(3, 12))
+      /*if(rand < 0.5)*/ f = new Square(upperCenter)
+      /*else f = new Line(StandardTracer.pointCenter(3, 12))*/
       if(!f.canMoveDown) is_game_finished = true
     }
   })
   
   Renderer.addInterfaceElement(() => {
-    Message.print("score: "+score, 20, height-20)
-    if(is_game_finished) Message.print("Game Over", 20, height-35)
+    Message.print("score: "+score, 340, height-25)
+    if(is_game_finished) Message.print("Game Over", 340, height-45)
   })
 
   start

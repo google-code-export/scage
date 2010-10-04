@@ -10,7 +10,7 @@ object Scage {
   private val log = Logger.getLogger(Scage.getClass);
   log.debug("starting scage...")
   
-  private var scage_handlers = List[Handler]()
+  private var scage_handlers:List[Handler] = Nil
   def handlers = scage_handlers
   def setDefaultHandlers = {Controller; Physics; AI; Renderer; Idler;}
   def addHandler(h:Handler) = {

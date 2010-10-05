@@ -45,6 +45,7 @@ abstract class Figure extends ScageLibrary {
           }
           else false
         }))
+        addOrientation(new_orientations, next+1)
       }
     }
     addOrientation(Map(), 0)

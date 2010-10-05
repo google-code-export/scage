@@ -24,16 +24,16 @@ class Tracer[S <: State] extends Colors {
   Tracer.current_tracer = this
   log.debug("using tracer "+this.getClass.getName)
 
-  val game_from_x = ScageProperties.intProperty("game_from_x")
-  val game_to_x = ScageProperties.intProperty("game_to_x")
-  val game_from_y = ScageProperties.intProperty("game_from_y")
-  val game_to_y = ScageProperties.intProperty("game_to_y")
+  val game_from_x = ScageProperties.intProperty("game_from_x", 0)
+  val game_to_x = ScageProperties.intProperty("game_to_x", 800)
+  val game_from_y = ScageProperties.intProperty("game_from_y", 0)
+  val game_to_y = ScageProperties.intProperty("game_to_y", 600)
 
   val game_width = game_to_x - game_from_x
   val game_height = game_to_y - game_from_y
 
-  val N_x = ScageProperties.intProperty("N_x")
-  val N_y = ScageProperties.intProperty("N_y")
+  val N_x = ScageProperties.intProperty("N_x", 20)
+  val N_y = ScageProperties.intProperty("N_y", 15)
 
   private var coord_matrix = Array.ofDim[List[Trace[S]]](N_x, N_y)
   for(i <- 0 to N_x-1) {
@@ -45,7 +45,7 @@ class Tracer[S <: State] extends Colors {
 
   val h_x = game_width/N_x
 	val h_y = game_height/N_y
-  if(ScageProperties.booleanProperty("show_grid")) {
+  if(ScageProperties.booleanProperty("show_grid", true)) {
 	  Renderer.addRender(() => {
 	 	  Renderer.setColor(LIME_GREEN)
 	 	  for(i <- 0 to N_x) Renderer.drawLine(Vec(i*h_x + game_from_x, game_from_y), Vec(i*h_x + game_from_x, game_to_y))
@@ -54,8 +54,8 @@ class Tracer[S <: State] extends Colors {
   }
 
   def addTrace(t:Trace[S]) = {
-    val p = point(t.getCoord())
-    if(p.x >= 0 && p.x < N_x && p.y >= 0 && p.y < N_y/* && !coord_matrix(p._1)(p._2).contains(coord)*/) {
+    val p = if(are_solid_edges) point(t.getCoord()) else checkPointEdges(point(t.getCoord()))
+    if(isPointOnArea(p)) {
       coord_matrix(p.ix)(p.iy) = t :: coord_matrix(p.ix)(p.iy)
       log.debug("added new trace #"+t.id)
     }
@@ -109,7 +109,7 @@ class Tracer[S <: State] extends Colors {
 
   val are_solid_edges = ScageProperties.booleanProperty("solid_edges")
   def updateLocation(trace_id:Int, old_coord:Vec, new_coord:Vec):Boolean = {
-    if(are_solid_edges && !onArea(new_coord)) false
+    if(are_solid_edges && !isCoordOnArea(new_coord)) false
     else {
       val new_coord_edges_affected = checkEdges(new_coord)
       val old_p = point(old_coord)
@@ -128,7 +128,6 @@ class Tracer[S <: State] extends Colors {
     }
   }
 
-
   def checkEdges(coord:Vec):Vec = {
     def checkC(c:Float, from:Float, to:Float):Float = {
       val dist = to - from
@@ -141,12 +140,14 @@ class Tracer[S <: State] extends Colors {
     Vec(x, y)
   }
 
-  def onArea(coord:Vec) = {
+  def isCoordOnArea(coord:Vec) = {
     coord.x >= game_from_x && coord.x < game_to_x && coord.y >= game_from_y && coord.y < game_to_y
   }
 
+  def isPointOnArea(point:Vec) = point.x >= 0 && point.x < N_x && point.y >= 0 && point.y < N_y
+
   def hasCollisions(trace_id:Int, coord:Vec, range:Range, min_dist:Float, excluded_traces:List[Int]) = {
-    if(are_solid_edges && !onArea(coord)) true
+    if(are_solid_edges && !isCoordOnArea(coord)) true
     else {
       val coord_edges_affected = checkEdges(coord)
       val min_dist2 = min_dist*min_dist

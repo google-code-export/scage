@@ -8,7 +8,7 @@ import su.msk.dunno.scage.support.ScageProperties
 
 object NetServer extends Handler {
   val port = ScageProperties.intProperty("port", 9800)
-  val max_clients = ScageProperties.intProperty("max_clients", 0)
+  val max_clients = ScageProperties.intProperty("max_clients", 20)
   private var client_handlers:List[ClientHandler] = Nil
   def clients = client_handlers
   def client(num:Int) = client_handlers(num)

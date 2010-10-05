@@ -13,7 +13,7 @@ trait ScageLibrary extends Colors {
   lazy val framerate = Idler.framerate
   def fps = Idler.fps
 
-  def on_pause = Scage.on_pause
+  def onPause = Scage.on_pause
   def switchPause = Scage.switchPause
   def start = Scage.start
   def stop = Scage.stop

@@ -20,17 +20,17 @@ object Scatris extends Application with ScageLibrary {
     case None => false
   }
 
-  def isFullRow(y:Int) = {
+  private def isFullRow(y:Int) = {
     val matrix = StandardTracer.matrix
     (0 to StandardTracer.N_x-1).foldLeft(true)((is_full, x) => is_full && isRestingPoint(matrix(x)(y)))
   }
 
-  def disableRow(y:Int) = {
+  private def disableRow(y:Int) = {
     val matrix = StandardTracer.matrix
     (0 to StandardTracer.N_x-1).foreach(x => matrix(x)(y).foreach(trace => trace.changeState(new State("disable"))))
   }
 
-  def getRandomFigure = {
+  private def getRandomFigure = {
     val rand = math.random
     if(rand < 0.14) new G_Figure(upperCenter)
     else if(rand >= 0.14 && rand < 0.28) new G_Inverted_Figure(upperCenter)
@@ -41,10 +41,16 @@ object Scatris extends Application with ScageLibrary {
     else new T_Figure(upperCenter)
   }
 
-  var score = 0
+  private var score = 0
+  def gameSpeed = {
+    if(score < 100) 300
+    else if(score < 200) 200
+    else if(score < 500) 100
+    else 75 
+  }
   private var is_game_finished = false
-  def upperCenter = StandardTracer.pointCenter(N_x/2, N_y-2)
-  var figure = getRandomFigure
+  private def upperCenter = StandardTracer.pointCenter(N_x/2, N_y-2)
+  private var figure = getRandomFigure
   AI.registerAI(() => {
     for(y <- 0 to N_y-1) {
       if(isFullRow(y)) {
@@ -60,13 +66,14 @@ object Scatris extends Application with ScageLibrary {
   })
   
   Renderer.addInterfaceElement(() => {
-    Message.print("score: "+score, 20, height-25)
-    if(is_game_finished) Message.print("Game Over", 20, height-45)
+    Message.print("Score: "+score, 20, height-25)
+    Message.print("Speed: x"+(300.0f/gameSpeed), 20, height-45)
+    if(is_game_finished) Message.print("Game Over", 20, height-65)
+    if(onPause) Message.print("PAUSE", width/2-20, height/2+60)
   })
 
   // game pause
   Controller.addKeyListener(Keyboard.KEY_SPACE, () => switchPause)
-  Renderer.addInterfaceElement(() => if(on_pause)Message.print("PAUSE", width/2-20, height/2+60))
 
   start
 }

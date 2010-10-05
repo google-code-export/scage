@@ -1,6 +1,6 @@
 package scatris
 
-import figures.{Square}
+import figures.{Line, S_Figure, Square}
 import su.msk.dunno.scage.support.tracer.{Trace, State, StandardTracer}
 import su.msk.dunno.scage.handlers.{Renderer, AI}
 import su.msk.dunno.scage.support.messages.Message
@@ -42,8 +42,9 @@ object Scatris extends Application with ScageLibrary {
 
     if(!f.canMoveDown && !is_game_finished) {
       val rand = math.random
-      /*if(rand < 0.5)*/ f = new Square(upperCenter)
-      /*else f = new Line(StandardTracer.pointCenter(3, 12))*/
+      if(rand < 0.3) f = new S_Figure(upperCenter)
+      else if(rand >= 0.3 && rand < 0.6) f = new Square(upperCenter)
+      else f = new Line(upperCenter)
       if(!f.canMoveDown) is_game_finished = true
     }
   })

@@ -6,9 +6,9 @@ import scatris.{Figure, Point}
 
 class Square(init_coord:Vec) extends Figure {
   override val name = "Square"
-  override val points:List[Point] = new Point(init_coord + Vec(StandardTracer.h_x, StandardTracer.h_y), this) ::
-                                    new Point(init_coord + Vec(0, StandardTracer.h_y), this) ::
-                                    new Point(init_coord + Vec(StandardTracer.h_x, 0), this) ::
-                                    new Point(init_coord, this) ::
+  override val points:List[Point] = new Point(init_coord + Vec(0, h_y), this) ::
+                                    new Point(init_coord + Vec(-h_x, h_y), this) ::
+                                    new Point(init_coord + Vec(0, 0), this) ::
+                                    new Point(init_coord + Vec(-h_x, 0), this) ::
                                     Nil
 }

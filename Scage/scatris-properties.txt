@@ -2,7 +2,7 @@ name = Scatris
 version = 0.1
 
 width = 340
-height = 620
+height = 640
 
 show_grid = yes
 

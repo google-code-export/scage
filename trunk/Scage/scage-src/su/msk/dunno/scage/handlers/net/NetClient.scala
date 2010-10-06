@@ -17,11 +17,11 @@ object NetClient extends Handler {
   private var out:PrintWriter = null
   private var in:BufferedReader = null
   def connect = {
-    log.debug("start connecting to server "+server_url+" at port "+port)
+    log.info("start connecting to server "+server_url+" at port "+port)
     socket = try {new Socket(server_url, port)}
     catch {
       case e:java.io.IOException => {
-        log.debug("failed to connect to server "+server_url+" at port "+port);
+        log.error("failed to connect to server "+server_url+" at port "+port);
         null
       }
     }
@@ -30,7 +30,7 @@ object NetClient extends Handler {
       in = new BufferedReader(new InputStreamReader(socket.getInputStream))
       is_connected = true
       last_answer_time = System.currentTimeMillis
-      log.debug("connected")
+      log.info("connected")
     }
   }
 
@@ -107,6 +107,6 @@ object NetClient extends Handler {
   def disconnect = {
     if(socket != null) socket.close
     is_connected = false
-    log.debug("disconnected from server "+server_url+":"+port)
+    log.info("disconnected from server "+server_url+":"+port)
   }
 }

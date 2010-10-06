@@ -29,7 +29,7 @@ class ClientHandler(val id:Int, val socket:Socket) {
 
   def disconnect = {
     socket.close
-    log.debug("client #"+id+" was disconnected")
+    log.info("client #"+id+" was disconnected")
   }
 
   private val check_timeout = ScageProperties.intProperty("check_timeout", 0)

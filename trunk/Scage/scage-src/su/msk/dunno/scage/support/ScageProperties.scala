@@ -20,7 +20,7 @@ object ScageProperties {
     try {
       val p = new Properties
       p.load(new FileInputStream(file))
-      log.debug("using properties file "+file)
+      log.info("using properties file "+file)
       p
     }
     catch {
@@ -31,18 +31,18 @@ object ScageProperties {
     try {
       val p = new Properties
       p.load(new FileInputStream(file))
-      log.debug("loaded properties file "+file)
+      log.info("loaded properties file "+file)
       p
     }
     catch {
       case ex:FileNotFoundException =>
-        log.debug("failed to load properties: file "+file+" not found")
+        log.error("failed to load properties: file "+file+" not found")
         null
     }
   }
 
   private lazy val noPropertiesWarning = {
-    log.debug("warning: there is no properties file load, using default values")
+    log.error("warning: there is no properties file load, using default values")
   }
   private def getProperty(key:String) = {
     if(!is_loaded) {
@@ -51,22 +51,20 @@ object ScageProperties {
     }
     else {
       val p = properties.getProperty(key)
-      if(p == null) log.debug("failed to find property "+key)
+      if(p == null) log.error("failed to find property "+key)
+      else log.info("read property "+key+": "+p)
       p
     }
   }
   private def defaultValue[A](key:String, default:A) = {
-    log.debug("default value for "+key+" is "+default)
+    log.info("default value for "+key+" is "+default)
     default
   }
 
   def stringProperty(key:String):String = stringProperty(key, "")
   def stringProperty(key:String, default:String):String = {
     val s = getProperty(key)
-    if(s != null) {
-      log.debug("read property "+key+": "+s)
-      s
-    }
+    if(s != null) s
     else defaultValue[String](key, default)
   }
 
@@ -75,13 +73,11 @@ object ScageProperties {
     val p = getProperty(key)
     if(p != null) {
       try {
-        val i = Integer.valueOf(p).intValue
-        log.debug("read property "+key+": "+i)
-        i
+        Integer.valueOf(p).intValue
       }
       catch {
         case e:NumberFormatException => {
-          log.debug("property "+key+" is not integer: "+p)
+          log.error("property "+key+" is not integer: "+p)
           defaultValue[Int](key, default)
         }
       }
@@ -94,13 +90,11 @@ object ScageProperties {
     val p = getProperty(key)
     if(p != null) {
       try {
-        val f = java.lang.Float.valueOf(p).floatValue
-        log.debug("read property "+key+": "+f)
-        f
+        java.lang.Float.valueOf(p).floatValue
       }
       catch {
         case e:NumberFormatException => {
-          log.debug("property "+key+" is not float: "+p)
+          log.error("property "+key+" is not float: "+p)
           defaultValue[Float](key, default)
         }
       }

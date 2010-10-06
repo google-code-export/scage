@@ -13,13 +13,13 @@ class Screen(val name:String, val isMain:Boolean) {
   def this(name:String) = this(name, false)
 
   private val log = Logger.getLogger(this.getClass);
-  log.debug("starting "+name+"...")
+  log.info("starting "+name+"...")
 
   private var handlers = List[Handler]()
   def getHandlers() = handlers
   def addHandler(h:Handler) = {
 	  handlers = h :: handlers
-	  log.debug("loaded handler "+h.getClass.getName)
+	  log.info("loaded handler "+h.getClass.getName)
   }
   def addHandlers(h:List[Handler]) = {handlers = h ::: handlers}
 
@@ -45,7 +45,7 @@ class Screen(val name:String, val isMain:Boolean) {
     }
     else {
       handlers.foreach(h => h.exitSequence)
-      log.debug(name+" was stopped")
+      log.info(name+" was stopped")
     }
   }
 }

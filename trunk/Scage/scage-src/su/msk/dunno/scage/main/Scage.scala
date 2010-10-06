@@ -8,14 +8,14 @@ import su.msk.dunno.scage.support.ScageProperties
 
 object Scage {
   private val log = Logger.getLogger(Scage.getClass);
-  log.debug("starting scage...")
+  log.info("starting scage...")
   
   private var scage_handlers:List[Handler] = Nil
   def handlers = scage_handlers
   def setDefaultHandlers = {Controller; Physics; AI; Renderer; Idler;}
   def addHandler(h:Handler) = {
 	  scage_handlers = h :: scage_handlers
-	  log.debug("loaded handler "+h.getClass.getName)
+	  log.info("loaded handler "+h.getClass.getName)
   }
   def addHandlers(h:List[Handler]) = {scage_handlers = h ::: scage_handlers}
 
@@ -37,13 +37,13 @@ object Scage {
       scage_handlers.foreach(h => h.actionSequence)
     }
     scage_handlers.foreach(h => h.exitSequence)
-    log.debug("app was stopped")
+    log.info("app was stopped")
     System.exit(0)
   }
 
   def main(args:Array[String]):Unit = {
     val app_classname = ScageProperties.stringProperty("app")
-    log.debug("starting app "+app_classname)
+    log.info("starting app "+app_classname)
     Class.forName(app_classname).getField("MODULE$").get(null)
     start
   }

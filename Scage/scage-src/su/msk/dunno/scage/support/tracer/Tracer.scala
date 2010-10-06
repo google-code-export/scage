@@ -22,7 +22,7 @@ class Tracer[S <: State] extends Colors {
   private val log = Logger.getLogger(this.getClass);
 
   Tracer.current_tracer = this
-  log.debug("using tracer "+this.getClass.getName)
+  log.info("using tracer "+this.getClass.getName)
 
   val game_from_x = ScageProperties.intProperty("game_from_x", 0)
   val game_to_x = ScageProperties.intProperty("game_to_x", 800)
@@ -59,7 +59,7 @@ class Tracer[S <: State] extends Colors {
       coord_matrix(p.ix)(p.iy) = t :: coord_matrix(p.ix)(p.iy)
       log.debug("added new trace #"+t.id)
     }
-    else log.debug("failed to add trace #"+t.id+": coord "+t.getCoord+" is out of area")
+    else log.error("failed to add trace #"+t.id+": coord "+t.getCoord+" is out of area")
     t.id
   }
 

@@ -16,7 +16,7 @@ object Controller2 extends Handler {
 
   def addKey(key:Int) = {
     val listener = nextListener
-    val ks = new KeyState(listener)
+    val ks = new KeyState
     if(keys.contains(key)) keys(key) = ks :: keys(key)
     else keys += key -> List(ks)
     ks
@@ -38,7 +38,7 @@ object Controller2 extends Handler {
   }
 }
 
-class KeyState(val listener_id:Int) {
+class KeyState {
   private[handlers] var is_pressed:Boolean = false
   def isPressed = is_pressed
 

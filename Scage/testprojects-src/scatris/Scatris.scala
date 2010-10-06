@@ -66,6 +66,7 @@ object Scatris extends Application with ScageLibrary {
   })
   
   Renderer.addInterfaceElement(() => {
+    Message.print("FPS: "+fps, 200, height-25)
     Message.print("Score: "+score, 20, height-25)
     Message.print("Speed: x"+(300.0f/gameSpeed), 20, height-45)
     if(is_game_finished) Message.print("Game Over", 20, height-65)

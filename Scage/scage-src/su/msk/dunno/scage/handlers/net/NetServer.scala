@@ -41,10 +41,10 @@ object NetServer extends Handler {
       val server_socket = new ServerSocket(port)
       while(Scage.isRunning) {
         if(max_clients == 0 || client_handlers.length < max_clients) {
-          log.debug("listening port "+port+", "+client_handlers.length+"/"+max_clients+" client(s) are connected")
+          log.info("listening port "+port+", "+client_handlers.length+"/"+max_clients+" client(s) are connected")
           val socket = server_socket.accept
           client_handlers = new ClientHandler(next_client, socket) :: client_handlers
-          log.debug("established connection with "+socket.getInetAddress.getHostAddress)
+          log.info("established connection with "+socket.getInetAddress.getHostAddress)
           has_new_connection = true
           next_client += 1
         }
@@ -60,7 +60,7 @@ object NetServer extends Handler {
   }
 
   override def exitSequence = { // sending quit message and disconnecting
-    if(client_handlers.length > 0) log.debug("disconnecting all clients...")
+    if(client_handlers.length > 0) log.info("disconnecting all clients...")
     client_handlers.foreach(client => client.send(new JSONObject().put("quit", "")))
     client_handlers.foreach(client => client.disconnect)
   }

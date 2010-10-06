@@ -23,7 +23,7 @@ class OurPlane(init_coord:Vec) extends EnemyPlane(init_coord:Vec) {
   // controls
   Controller.addKeyListener(Keyboard.KEY_LEFT, 10, () => if(alive_condition) {rotation -= 0.2f*delta})
   Controller.addKeyListener(Keyboard.KEY_RIGHT, 10, () => if(alive_condition) {rotation += 0.2f*delta})
-  Controller.addKeyListener(Keyboard.KEY_UP, 10, () => if(alive_condition) {if(delta < 15)delta += 0.5f})
+  Controller.addKeyListener(Keyboard.KEY_UP, 10, () => if(alive_condition) {if(delta < 15) delta += 0.5f})
 
   // scaling
   Controller.addKeyListener(Keyboard.KEY_SUBTRACT, 10, () => if(alive_condition) {

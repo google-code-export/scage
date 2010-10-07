@@ -18,7 +18,7 @@ class Point(init_coord:Vec, private val figure:Figure) extends ScageLibrary {
   })
 
   def move(excluded_traces:List[Int], dir:Vec) = (trace in coord) --> (coord + dir, -1 to 1, dir.norma, excluded_traces)
-  def canMove(excluded_traces:List[Int], dir:Vec) = !((trace in (coord + dir)) ? (-1 to 1, dir.norma, excluded_traces))
+  def canMove(excluded_traces:List[Int], dir:Vec) = is_active && !((trace in (coord + dir)) ? (-1 to 1, dir.norma, excluded_traces))
 
   private val BOX = Renderer.createList("img/Crate.png", StandardTracer.h_x, StandardTracer.h_y, 0, 0, 256, 256)
   Renderer.addRender(() => {

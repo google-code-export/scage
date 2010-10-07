@@ -7,21 +7,28 @@ import su.msk.dunno.scage.support.{Vec, ScageLibrary}
 
 abstract class Figure extends ScageLibrary {
   val name:String
-  val points:List[Point]
+
+  protected val _points:List[Point]
+  private var was_disabled = false
+  private def points = {
+    val active_points = _points.filter(point => point.isActive)
+    if(active_points.length == 0) was_disabled = true
+    active_points
+  }
 
   protected def generateOrientations(positions_array:List[Vec]*):(Int, Map[Int, () => Boolean]) = {
     def addOrientation(orientations:Map[Int, () => Boolean], next:Int):Map[Int, () => Boolean] = {
       if(next >= positions_array.length) orientations
       else {
         val new_orientations = orientations + (next -> (() => {
-          val canMove = (0 to points.length-1).foldLeft(true)((can_move, point_number) => {
-            val point = points(point_number)
+          val canMove = (0 to _points.length-1).foldLeft(true)((can_move, point_number) => {
+            val point = _points(point_number)
             val step = positions_array(next)(point_number)
             can_move && point.canMove(excludedTraces, step)
           })
           if(canMove) {
-            (0 to points.length-1).foreach(point_number => {
-              val point = points(point_number)
+            (0 to _points.length-1).foreach(point_number => {
+              val point = _points(point_number)
               val step = positions_array(next)(point_number)
               point.move(excludedTraces, step)
             })
@@ -36,16 +43,11 @@ abstract class Figure extends ScageLibrary {
   }
 
   private def canMove(dir: (Point) => Boolean) = {
-    points.filter(point => point.isActive) match {
-      case Nil => false
-      case active_points =>
-        active_points.foldLeft(true)((can_move, point) => can_move && dir(point))
-    }
+    val active_points = points
+    active_points.length > 0 && active_points.foldLeft(true)((can_move, point) => can_move && dir(point))
   }
 
-  private def haveDisabledPoints = {
-    points.foldLeft(false)((have_disabled_points, point) => have_disabled_points || !point.isActive)
-  }
+  private def haveDisabledPoints = points.length < _points.length
 
   protected def excludedTraces = points.map(point => point.trace)
 
@@ -56,14 +58,15 @@ abstract class Figure extends ScageLibrary {
 
   private val down = Vec(0, -h_y)
   private var was_landed = false
-  def canMoveDown:Boolean = canMove(point => point.canMove(excludedTraces, down))
+  def canMoveDown:Boolean = {
+    val can_move = canMove(point => point.canMove(excludedTraces, down))
+    if(!can_move) was_landed = true
+    can_move
+  }
   AI.registerAI(() => {
-    if(isNextMove) {
-      if(canMoveDown) points.foreach(point => point.move(excludedTraces, down))
-      else {
-        was_landed = true
-        if(haveDisabledPoints) points.foreach(point => if(point.canMove(Nil, down)) point.move(Nil, down))  
-      }
+    if(!was_disabled && isNextMove) {
+      if(!was_landed && canMoveDown) points.foreach(point => point.move(excludedTraces, down))
+      else if(haveDisabledPoints) points.foreach(point => if(point.canMove(Nil, down)) point.move(Nil, down))
       last_move_time = System.currentTimeMillis
     }
   })

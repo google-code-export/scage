@@ -1,7 +1,7 @@
 package su.msk.dunno.scage.support
 
 import _root_.net.phys2d.math.ROVector2f
-import tracer.Tracer
+import tracer.{Tracer}
 
 case class Vec(private var _x:Float, private var _y:Float) {
   def x = _x
@@ -47,7 +47,7 @@ case class Vec(private var _x:Float, private var _y:Float) {
 
   def ::(o:Vec) = o :: List[Vec](this)
 
-  def is(v:Vec) = {
+  private[scage] def is(v:Vec) = {
     _x = v.x
     _y = v.y
   }

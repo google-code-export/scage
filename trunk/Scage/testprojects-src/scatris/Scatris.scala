@@ -4,9 +4,9 @@ import figures._
 import su.msk.dunno.scage.support.tracer.{Trace, State, StandardTracer}
 import su.msk.dunno.scage.handlers.{Renderer, AI}
 import su.msk.dunno.scage.support.messages.Message
-import su.msk.dunno.scage.support.{ScageProperties, ScageLibrary}
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.handlers.controller.Controller
+import su.msk.dunno.scage.support.{Vec, ScageProperties, ScageLibrary}
 
 object Scatris extends Application with ScageLibrary {
   properties = "scatris-properties.txt"

@@ -5,6 +5,8 @@ import su.msk.dunno.scage.handlers.net.NetServer
 import su.msk.dunno.scage.support.{ScageLibrary, Vec}
 
 object ServerFlight extends Application with ScageLibrary {
+  properties = "scage-properties.txt"
+
   var next_plane = 0
 
   AI.registerAI(() => {

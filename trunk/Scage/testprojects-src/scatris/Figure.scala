@@ -47,7 +47,8 @@ abstract class Figure extends ScageLibrary {
     active_points.length > 0 && active_points.foldLeft(true)((can_move, point) => can_move && dir(point))
   }
 
-  private def haveDisabledPoints = points.length < _points.length
+  private def haveDisabledPoints =
+    _points.foldLeft(false)((have_disabled, point) => have_disabled && point.isActive)
 
   protected def excludedTraces = points.map(point => point.trace)
 
@@ -65,7 +66,7 @@ abstract class Figure extends ScageLibrary {
   }
   AI.registerAI(() => {
     if(!was_disabled && isNextMove) {
-      if(!was_landed && canMoveDown) points.foreach(point => point.move(excludedTraces, down))
+      if(canMoveDown) points.foreach(point => point.move(excludedTraces, down))
       else if(haveDisabledPoints) points.foreach(point => if(point.canMove(Nil, down)) point.move(Nil, down))
       last_move_time = System.currentTimeMillis
     }

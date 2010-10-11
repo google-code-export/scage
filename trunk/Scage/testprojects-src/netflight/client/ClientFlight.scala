@@ -8,6 +8,8 @@ import org.lwjgl.opengl.GL11
 import su.msk.dunno.scage.support.{ScageLibrary, Vec}
 import su.msk.dunno.scage.support.messages.Message
 object ClientFlight extends Application with ScageLibrary {
+  properties = "scage-properties.txt"
+
   AI.registerAI(() => {
     NetClient.send
     NetClient.eraseOutgoingData

@@ -10,10 +10,10 @@ object ScageProperties {
   private val properties:Properties = {
     if(properties == null) {
       val p:Properties = new Properties()
-      try{p.load(new FileInputStream("options.txt"))}
+      try{p.load(new FileInputStream("scage-properties.txt"))}
       catch {
         case ex:FileNotFoundException =>
-          log.error("failed to load properties: options.txt not found")
+          log.debug("failed to load properties: scage-properties.txt not found")
           System.exit(0)
       }
       p
@@ -22,22 +22,22 @@ object ScageProperties {
   }
   def get(key:String):String = {
     val s = properties.getProperty(key)
-    log.info("read property "+key+": "+s)
+    log.debug("read property "+key+": "+s)
     s
   }
   def getInt(key:String):Int = {
     val i = Integer.valueOf(properties.getProperty(key)).intValue
-    log.info("read property "+key+": "+i)
+    log.debug("read property "+key+": "+i)
     i
   }
   def getFloat(key:String):Float = {
     val f = java.lang.Float.valueOf(properties.getProperty(key)).floatValue
-    log.info("read property "+key+": "+f)
+    log.debug("read property "+key+": "+f)
     f
   }
   def getBoolean(key:String):Boolean = {
     val b = properties.getProperty(key).equalsIgnoreCase("yes")
-    log.info("read property "+key+": "+b)
+    log.debug("read property "+key+": "+b)
     b
   }
 }

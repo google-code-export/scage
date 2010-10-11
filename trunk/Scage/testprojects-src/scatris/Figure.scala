@@ -4,15 +4,21 @@ import su.msk.dunno.scage.handlers.AI
 import su.msk.dunno.scage.handlers.controller.Controller
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.support.{Vec, ScageLibrary}
+import org.apache.log4j.Logger
 
 abstract class Figure extends ScageLibrary {
+  private val log = Logger.getLogger(this.getClass)
+
   val name:String
 
   protected val _points:List[Point]
   private var was_disabled = false
-  private def points = {
-    val active_points = _points.filter(point => point.isActive)
-    if(active_points.length == 0) was_disabled = true
+  private def activePoints = {
+    val active_points = _points.filter(_.isActive)
+    if(active_points.length == 0) {
+      was_disabled = true
+      log.debug("figure "+name +" was disabled")
+    }
     active_points
   }
 
@@ -42,15 +48,14 @@ abstract class Figure extends ScageLibrary {
     (positions_array.length, addOrientation(Map(), 0))
   }
 
-  private def canMove(dir: (Point) => Boolean) = {
-    val active_points = points
-    active_points.length > 0 && active_points.foldLeft(true)((can_move, point) => can_move && dir(point))
+  private def canMove(canMovePoint: (Point) => Boolean) = {
+    val active_points = activePoints
+    active_points.length > 0 && active_points.forall(canMovePoint(_))
   }
 
-  private def haveDisabledPoints =
-    _points.foldLeft(false)((have_disabled, point) => have_disabled && point.isActive)
+  private def haveDisabledPoints = _points.exists(!_.isActive)
 
-  protected def excludedTraces = points.map(point => point.trace)
+  protected def excludedTraces = activePoints.map(point => point.trace)
 
   private var last_move_time = System.currentTimeMillis
   private var is_acceleration = false
@@ -66,8 +71,8 @@ abstract class Figure extends ScageLibrary {
   }
   AI.registerAI(() => {
     if(!was_disabled && isNextMove) {
-      if(canMoveDown) points.foreach(point => point.move(excludedTraces, down))
-      else if(haveDisabledPoints) points.foreach(point => if(point.canMove(Nil, down)) point.move(Nil, down))
+      if(canMoveDown) activePoints.foreach(point => point.move(excludedTraces, down))
+      else if(haveDisabledPoints) activePoints.foreach(point => if(point.canMove(Nil, down)) point.move(Nil, down))
       last_move_time = System.currentTimeMillis
     }
   })
@@ -75,13 +80,13 @@ abstract class Figure extends ScageLibrary {
   private val left = Vec(-h_x, 0)
   private def canMoveLeft = canMove(point => point.canMove(excludedTraces, left))
   Controller.addKeyListener(Keyboard.KEY_LEFT, 75, () => {
-    if(!onPause && !was_landed && canMoveLeft) points.foreach(point => point.move(excludedTraces, left))
+    if(!onPause && !was_landed && canMoveLeft) activePoints.foreach(point => point.move(excludedTraces, left))
   })
 
   private val right = Vec(h_x, 0)
   private def canMoveRight = canMove(point => point.canMove(excludedTraces, right))
   Controller.addKeyListener(Keyboard.KEY_RIGHT, 75, () => {
-    if(!onPause && !was_landed && canMoveRight) points.foreach(point => point.move(excludedTraces, right))
+    if(!onPause && !was_landed && canMoveRight) activePoints.foreach(point => point.move(excludedTraces, right))
   })
 
   Controller.addKeyListener(Keyboard.KEY_DOWN, 500, () => is_acceleration = true, () => is_acceleration = false)
@@ -89,12 +94,10 @@ abstract class Figure extends ScageLibrary {
   private var cur_orientation = 0
   protected val orientations:(Int, Map[Int, () => Boolean]) = (0, Map())
   Controller.addKeyListener(Keyboard.KEY_UP, 500, () => {
-    if(!onPause) {
-      if(orientations._1 > 0 && canMoveDown) {
-        if(orientations._2(cur_orientation)()) {
-          cur_orientation += 1
-          if(cur_orientation > orientations._1 - 1) cur_orientation = 0
-        }
+    if(!onPause && !was_landed && canMoveDown && orientations._1 > 0) {
+      if(orientations._2(cur_orientation)()) {
+        cur_orientation += 1
+        if(cur_orientation > orientations._1 - 1) cur_orientation = 0
       }
     }
   })

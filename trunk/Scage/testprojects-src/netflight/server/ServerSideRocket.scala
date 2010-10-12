@@ -5,9 +5,9 @@ import su.msk.dunno.scage.handlers.net.NetServer
 import org.json.JSONObject
 import su.msk.dunno.scage.support.tracer.{Trace, State, StandardTracer}
 import su.msk.dunno.scage.support.{ScageLibrary, Colors, Vec}
+import su.msk.dunno.scage.support.ScageLibrary._
 
-class ServerSideRocket(private val shooter:String, init_coord:Vec, dir:Vec, private val rotation:Float)
-extends Colors with ScageLibrary {
+class ServerSideRocket(private val shooter:String, init_coord:Vec, dir:Vec, private val rotation:Float) {
   val name = "rocket"+System.nanoTime
   private var fuel = 60
   private val velocity = 10

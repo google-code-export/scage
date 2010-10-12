@@ -6,13 +6,25 @@ object TestProject extends Application {
   //val list = List(9,8,7,6,5,4,3,2,1,0)
   //val range = 1 to 3
   //foreachpair(1 to 3)(println(_))
-  println(makeThree(1 to 3).length)
 
-  def foreachpair(range:Range)(doIt:((Any, Any)) => Unit) = {
-    range.foldLeft(List[(Int, Int)]())((pairs, number) =>
-      (range zip List().padTo(range.length, number)).toList ::: pairs)
-         .foreach(doIt(_))
+  implicit def rangeToPairs(range:Range) = {
+    new ScalaObject {
+      def foreachpair(doIt:(Int, Int) => Unit) = {
+        range.foldLeft(List[(Int, Int)]())((pairs, number) =>
+          (range zip List().padTo(range.length, number)).toList ::: pairs)
+             .foreach(pair => doIt(pair._1, pair._2))
+      }
+
+      def foreachpair(second_range:Range)(doIt:(Int, Int) => Unit) = {
+        range.foldLeft(List[(Int, Int)]())((pairs, number) =>
+          (second_range zip List().padTo(range.length, number)).toList ::: pairs)
+             .foreach(pair => doIt(pair._1, pair._2))
+      }
+    }
   }
+
+  (1 to 3).foreachpair(1 to 2) {(x, y) => println(x+":"+y)}
+
 
   def makeThree(range:Range) = {
     val two = range.foldLeft(List[(Int, Int)]())((pairs, number) => (range zip List().padTo(range.length, number)).toList ::: pairs)

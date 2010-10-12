@@ -5,8 +5,10 @@ import su.msk.dunno.scage.handlers.controller.Controller
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.support.{Vec, ScageLibrary}
 import org.apache.log4j.Logger
+import su.msk.dunno.scage.support.ScageLibrary._
+import su.msk.dunno.scage.support.tracer.{State, Trace}
 
-abstract class Figure extends ScageLibrary {
+abstract class Figure {
   private val log = Logger.getLogger(this.getClass)
 
   val name:String
@@ -30,13 +32,13 @@ abstract class Figure extends ScageLibrary {
           val canMove = (0 to _points.length-1).foldLeft(true)((can_move, point_number) => {
             val point = _points(point_number)
             val step = positions_array(next)(point_number)
-            can_move && point.canMove(excludedTraces, step)
+            can_move && point.canMove(isExcludedTrace, step)
           })
           if(canMove) {
             (0 to _points.length-1).foreach(point_number => {
               val point = _points(point_number)
               val step = positions_array(next)(point_number)
-              point.move(excludedTraces, step)
+              point.move(isExcludedTrace, step)
             })
             true
           }
@@ -55,7 +57,9 @@ abstract class Figure extends ScageLibrary {
 
   private def haveDisabledPoints = _points.exists(!_.isActive)
 
-  protected def excludedTraces = activePoints.map(point => point.trace)
+  protected def isExcludedTrace(t:Trace[State]) = {
+    activePoints.map(point => point.trace).contains(t.id) || !t.getState.getBool("isActive")
+  }
 
   private var last_move_time = System.currentTimeMillis
   private var is_acceleration = false
@@ -65,28 +69,29 @@ abstract class Figure extends ScageLibrary {
   private val down = Vec(0, -h_y)
   private var was_landed = false
   def canMoveDown:Boolean = {
-    val can_move = canMove(point => point.canMove(excludedTraces, down))
+    val can_move = canMove(point => point.canMove(isExcludedTrace, down))
     if(!can_move) was_landed = true
     can_move
   }
   AI.registerAI(() => {
     if(!was_disabled && isNextMove) {
-      if(canMoveDown) activePoints.foreach(point => point.move(excludedTraces, down))
-      else if(haveDisabledPoints) activePoints.foreach(point => if(point.canMove(Nil, down)) point.move(Nil, down))
+      if(canMoveDown) activePoints.foreach(point => point.move(isExcludedTrace, down))
+      else if(haveDisabledPoints) activePoints.foreach(point => if(point.canMove((t:Trace[_]) => true, down))
+        point.move((t:Trace[_]) => true, down))
       last_move_time = System.currentTimeMillis
     }
   })
 
   private val left = Vec(-h_x, 0)
-  private def canMoveLeft = canMove(point => point.canMove(excludedTraces, left))
+  private def canMoveLeft = canMove(point => point.canMove(isExcludedTrace, left))
   Controller.addKeyListener(Keyboard.KEY_LEFT, 75, () => {
-    if(!onPause && !was_landed && canMoveLeft) activePoints.foreach(point => point.move(excludedTraces, left))
+    if(!onPause && !was_landed && canMoveLeft) activePoints.foreach(point => point.move(isExcludedTrace, left))
   })
 
   private val right = Vec(h_x, 0)
-  private def canMoveRight = canMove(point => point.canMove(excludedTraces, right))
+  private def canMoveRight = canMove(point => point.canMove(isExcludedTrace, right))
   Controller.addKeyListener(Keyboard.KEY_RIGHT, 75, () => {
-    if(!onPause && !was_landed && canMoveRight) activePoints.foreach(point => point.move(excludedTraces, right))
+    if(!onPause && !was_landed && canMoveRight) activePoints.foreach(point => point.move(isExcludedTrace, right))
   })
 
   Controller.addKeyListener(Keyboard.KEY_DOWN, 500, () => is_acceleration = true, () => is_acceleration = false)

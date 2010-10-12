@@ -2,9 +2,25 @@ package su.msk.dunno.scage.support
 
 import su.msk.dunno.scage.main.Scage
 import su.msk.dunno.scage.handlers.{Idler, Renderer}
-import tracer.{Tracer, StandardTracer}
+import tracer.{State, Trace, Tracer, StandardTracer}
 
-trait ScageLibrary extends Colors {
+object ScageLibrary extends Colors {
+  implicit def rangeToPairs(range:Range) = {
+    new ScalaObject {
+      def foreachpair(doIt:(Int, Int) => Unit) = {
+        range.foldLeft(List[(Int, Int)]())((pairs, number) =>
+          (range zip List().padTo(range.length, number)).toList ::: pairs)
+             .foreach(pair => doIt(pair._1, pair._2))
+      }
+
+      def foreachpair(second_range:Range)(doIt:(Int, Int) => Unit) = {
+        range.foldLeft(List[(Int, Int)]())((pairs, number) =>
+          (second_range zip List().padTo(range.length, number)).toList ::: pairs)
+             .foreach(pair => doIt(pair._1, pair._2))
+      }
+    }
+  }
+
   lazy val width = Renderer.width
   lazy val height = Renderer.height
   def scale = Renderer.scale
@@ -28,16 +44,16 @@ trait ScageLibrary extends Colors {
 
       def -->(new_coord:Vec, range:Range, dist:Float):Boolean = {
         if(Tracer.currentTracer != null) {
-          if(!Tracer.currentTracer.hasCollisions(trace_id, new_coord, range, dist, Nil))
+          if(!Tracer.currentTracer.hasCollisions(trace_id, new_coord, range, dist, (t:Trace[_]) => true))
             Tracer.currentTracer.updateLocation(trace_id, old_coord, new_coord)
           else false
         }
         else false
       }
 
-      def -->(new_coord:Vec, range:Range, dist:Float, excluded_traces:List[Int]):Boolean = {
+      def -->[R <: State](new_coord:Vec, range:Range, dist:Float, condition:(Trace[R]) => Boolean):Boolean = {
         if(Tracer.currentTracer != null) {
-          if(!Tracer.currentTracer.hasCollisions(trace_id, new_coord, range, dist, excluded_traces))
+          if(!Tracer.currentTracer.hasCollisions(trace_id, new_coord, range, dist, condition))
             Tracer.currentTracer.updateLocation(trace_id, old_coord, new_coord)
           else false
         }
@@ -46,17 +62,18 @@ trait ScageLibrary extends Colors {
 
       def ?(range:Range, dist:Float):Boolean = {
         if(Tracer.currentTracer != null)
-          Tracer.currentTracer.hasCollisions(trace_id, old_coord, range, dist, Nil)
+          Tracer.currentTracer.hasCollisions(trace_id, old_coord, range, dist, (t:Trace[_]) => true)
         else false
       }
 
-      def ?(range:Range, dist:Float, excluded_traces:List[Int]):Boolean = {
+      def ?[R <: State](range:Range, dist:Float, condition:(Trace[R]) => Boolean):Boolean = {
         if(Tracer.currentTracer != null)
-          Tracer.currentTracer.hasCollisions(trace_id, old_coord, range, dist, excluded_traces)
+          Tracer.currentTracer.hasCollisions(trace_id, old_coord, range, dist, condition)
         else false
       }
     }
   }
+  
   def point(v:Vec) = {
     if(Tracer.currentTracer != null) Tracer.currentTracer.point(v)
     else Vec(0,0)

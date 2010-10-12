@@ -3,8 +3,9 @@ package functest
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.support.{Vec, ScageLibrary}
 import su.msk.dunno.scage.handlers.{Renderer, Controller2}
+import su.msk.dunno.scage.support.ScageLibrary._
 
-object Pure extends Application with ScageLibrary {
+object Pure extends Application {
   properties = "pure-properties.txt"
 
   private val up = Controller2.addKey(Keyboard.KEY_UP)

@@ -7,7 +7,9 @@ import su.msk.dunno.scage.handlers.{Renderer, AI}
 import org.lwjgl.opengl.GL11
 import su.msk.dunno.scage.support.{ScageLibrary, Vec}
 import su.msk.dunno.scage.support.messages.Message
-object ClientFlight extends Application with ScageLibrary {
+import su.msk.dunno.scage.support.ScageLibrary._
+
+object ClientFlight extends Application {
   properties = "scage-properties.txt"
 
   AI.registerAI(() => {

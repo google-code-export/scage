@@ -7,8 +7,9 @@ import su.msk.dunno.scage.handlers.Renderer
 import su.msk.dunno.scage.support.messages.Message
 import su.msk.dunno.scage.support.{Vec, ScageLibrary}
 import org.lwjgl.opengl.GL11
+import su.msk.dunno.scage.support.ScageLibrary._
 
-object Game extends ScageLibrary {
+object Game {
   // game logic
   var player_health = 100
   var mob_health = 100

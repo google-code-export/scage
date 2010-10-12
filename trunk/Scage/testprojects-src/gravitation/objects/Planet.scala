@@ -6,6 +6,7 @@ import su.msk.dunno.scage.support.tracer.{Trace, State, StandardTracer}
 import su.msk.dunno.scage.support.messages.Message
 import gravitation.{Universe, Gravitation}
 import org.lwjgl.opengl.GL11
+import su.msk.dunno.scage.support.ScageLibrary._
 
 class Planet(init_coord:Vec, init_velocity:Vec, override val mass:Float, override val radius:Int)
 extends MaterialPoint(init_coord, init_velocity, mass, radius) with Gravitation {

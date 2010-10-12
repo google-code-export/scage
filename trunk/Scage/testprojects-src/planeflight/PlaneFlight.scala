@@ -10,8 +10,9 @@ import org.newdawn.slick.opengl.Texture
 import su.msk.dunno.scage.support.tracer.StandardTracer
 import su.msk.dunno.scage.handlers.{AI, Idler, Renderer}
 import su.msk.dunno.scage.support.{ScageLibrary, Vec}
+import su.msk.dunno.scage.support.ScageLibrary._
 
-object PlaneFlight extends ScageLibrary {
+object PlaneFlight {
   // common images
   val ROCKET_ANIMATION:Array[Int] = {
     def nextFrame(arr:List[Int], texture:Texture):List[Int] = {

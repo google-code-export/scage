@@ -8,8 +8,9 @@ import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.handlers.{AI, Idler, Renderer}
 import su.msk.dunno.scage.support.tracer.{State, Trace, StandardTracer}
 import su.msk.dunno.scage.support.{ScageLibrary, Vec}
+import su.msk.dunno.scage.support.ScageLibrary._
 
-object Korovans extends ScageLibrary {
+object Korovans {
   // common images
   val KOROVAN = Renderer.createList("img/korovan.png", 57, 30, 0, 0, 114, 61)
   val ROBBED_KOROVAN = Renderer.createList("img/robbed_korovan.png", 57, 30, 0, 0, 114, 61)

@@ -8,6 +8,7 @@ import su.msk.dunno.scage.support.tracer.StandardTracer
 import su.msk.dunno.scage.handlers.Renderer
 import su.msk.dunno.scage.support.messages.Message
 import org.lwjgl.opengl.GL11
+import su.msk.dunno.scage.support.ScageLibrary._
 
 class SpaceShip(init_coord:Vec, init_velocity:Vec)
 extends Planet(init_coord, init_velocity, 1, 1) with Gravitation {

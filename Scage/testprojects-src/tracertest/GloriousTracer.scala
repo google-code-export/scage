@@ -6,8 +6,9 @@ import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.support.messages.Message
 import su.msk.dunno.scage.support.tracer.{State, Trace, StandardTracer}
 import su.msk.dunno.scage.handlers.{AI, Renderer}
+import su.msk.dunno.scage.support.ScageLibrary._
 
-object GloriousTracer extends Application with ScageLibrary {
+object GloriousTracer extends Application {
   var coord = Vec(150,150)
 
   Renderer.addRender(() => {
@@ -33,7 +34,7 @@ object GloriousTracer extends Application with ScageLibrary {
   start
 }
 
-class Stranger extends ScageLibrary {
+class Stranger {
   private var coord = Vec((100 + math.random*200).toFloat, (100 + math.random*200).toFloat)
 
   val trace = StandardTracer.addTrace(new Trace[State] {

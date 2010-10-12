@@ -7,8 +7,9 @@ import su.msk.dunno.scage.support.messages.Message
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.handlers.controller.Controller
 import su.msk.dunno.scage.support.{Vec, ScageProperties, ScageLibrary}
+import su.msk.dunno.scage.support.ScageLibrary._
 
-object Scatris extends Application with ScageLibrary {
+object Scatris extends Application {
   properties = "scatris-properties.txt"
 
   private def isRestingPoint(point:List[Trace[State]]) = point.find(trace => {

@@ -4,6 +4,7 @@ import su.msk.dunno.scage.support.Vec
 import scatris.{Point, Figure}
 import su.msk.dunno.scage.handlers.controller.Controller
 import org.lwjgl.input.Keyboard
+import su.msk.dunno.scage.support.ScageLibrary._
 
 class S_Inverted_Figure(init_coord:Vec) extends Figure {
   override val name = "S_Inverted_Figure"

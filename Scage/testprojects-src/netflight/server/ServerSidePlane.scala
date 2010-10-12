@@ -5,8 +5,9 @@ import su.msk.dunno.scage.handlers.net.{ClientHandler, NetServer}
 import su.msk.dunno.scage.handlers.AI
 import su.msk.dunno.scage.support.tracer.{State, Trace, StandardTracer}
 import su.msk.dunno.scage.support.{ScageLibrary, Vec}
+import su.msk.dunno.scage.support.ScageLibrary._
 
-class ServerSidePlane(val name:String, init_coord:Vec, val client:ClientHandler) extends ScageLibrary {
+class ServerSidePlane(val name:String, init_coord:Vec, val client:ClientHandler) {
    // parameters
   protected var delta = 5.0f
   protected var rotation = 0.0f

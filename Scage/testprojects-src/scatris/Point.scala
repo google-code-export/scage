@@ -4,21 +4,21 @@ import su.msk.dunno.scage.support.tracer.{StandardTracer, Trace, State}
 import su.msk.dunno.scage.handlers.{Renderer}
 import org.lwjgl.opengl.GL11
 import su.msk.dunno.scage.support.{ScageLibrary, Vec}
+import su.msk.dunno.scage.support.ScageLibrary._
 
-class Point(init_coord:Vec, private val figure:Figure) extends ScageLibrary {
+class Point(init_coord:Vec, private val figure:Figure) {
   val coord = init_coord
   private var is_active = true
   def isActive = is_active
 
   val trace = StandardTracer.addTrace(new Trace[State] {
-    override def isActive = is_active
     def getCoord = coord
     def getState() = new State("figure", figure.name).put("isActive", is_active).put("isMoving", figure.canMoveDown)
     def changeState(s:State) = if(s.contains("disable")) is_active = false
   })
 
-  def move(excluded_traces:List[Int], dir:Vec) = (trace in coord) --> (coord + dir, -1 to 1, dir.norma, excluded_traces)
-  def canMove(excluded_traces:List[Int], dir:Vec) = is_active && !((trace in (coord + dir)) ? (-1 to 1, dir.norma, excluded_traces))
+  def move(condition:(Trace[State]) => Boolean, dir:Vec) = (trace in coord) --> (coord + dir, -1 to 1, dir.norma, condition)
+  def canMove(condition:(Trace[State]) => Boolean, dir:Vec) = is_active && !((trace in (coord + dir)) ? (-1 to 1, dir.norma, condition))
 
   private val BOX = Renderer.createList("img/Crate.png", StandardTracer.h_x, StandardTracer.h_y, 0, 0, 256, 256)
   Renderer.addRender(() => {

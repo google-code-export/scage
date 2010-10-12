@@ -7,18 +7,19 @@ import org.apache.log4j.Logger
 object Tracer {
   private val log = Logger.getLogger(this.getClass);
 
-  private var current_tracer:Tracer[_] = null
+  private var current_tracer:Tracer[_ <: State] = null
   def currentTracer = current_tracer
 
   private var next_trace_id = 0
-  def nextTraceID = {
+  private[tracer] def nextTraceID = {
     val trace_id = next_trace_id
     next_trace_id += 1
     trace_id
   }
 }
 
-class Tracer[S <: State] extends Colors {
+import Tracer._
+class Tracer[S <: State] {
   private val log = Logger.getLogger(this.getClass);
 
   Tracer.current_tracer = this
@@ -36,11 +37,7 @@ class Tracer[S <: State] extends Colors {
   val N_y = ScageProperties.intProperty("N_y", 15)
 
   private var coord_matrix = Array.ofDim[List[Trace[S]]](N_x, N_y)
-  for(i <- 0 to N_x-1) {
-    for(j <- 0 to N_y-1) {
-      coord_matrix(i)(j) = Nil
-    }
-  }
+  (0 to N_x-1).foreachpair(0 to N_y-1) ((i, j) => coord_matrix(i)(j) = Nil)
   def matrix = coord_matrix
 
   val h_x = game_width/N_x
@@ -57,6 +54,7 @@ class Tracer[S <: State] extends Colors {
     val p = if(are_solid_edges) point(t.getCoord()) else checkPointEdges(point(t.getCoord()))
     if(isPointOnArea(p)) {
       coord_matrix(p.ix)(p.iy) = t :: coord_matrix(p.ix)(p.iy)
+      t._id = nextTraceID
       log.debug("added new trace #"+t.id)
     }
     else log.error("failed to add trace #"+t.id+": coord "+t.getCoord+" is out of area")
@@ -68,7 +66,7 @@ class Tracer[S <: State] extends Colors {
   def pointCenter(p:Vec):Vec = Vec(game_from_x + p.x*h_x + h_x/2, game_from_y + p.y*h_y + h_y/2)
   def pointCenter(x:Int, y:Int):Vec = Vec(game_from_x + x*h_x + h_x/2, game_from_y + y*h_y + h_y/2)
   
-  def getNeighbours(coord:Vec, range:Range):List[Trace[S]] = {
+  /*def getNeighbours(coord:Vec, range:Range):List[Trace[S]] = {
     val p = point(coord)
     var neighbours = List[Trace[S]]()
     for(i <- range) {
@@ -81,12 +79,21 @@ class Tracer[S <: State] extends Colors {
     	}
     }
     neighbours
-  }
+  }*/
 
-  def getNeighbours(trace_id:Int, coord:Vec, range:Range):List[Trace[S]] = {
+  def getNeighbours(trace_id:Int, coord:Vec, range:Range, condition:(Trace[S]) => Boolean):List[Trace[S]] = {
     val p = point(coord)
     var neighbours:List[Trace[S]] = Nil
-    for(i <- range) {
+    range.foreachpair(
+      (i, j) => {
+        val near_point = checkPointEdges(p + Vec(i, j))
+    		neighbours = coord_matrix(near_point.ix)(near_point.iy).foldLeft(List[Trace[S]]())((acc, trace) => {
+    		  if(condition(trace) && trace.id != trace_id) trace :: acc
+    			else acc
+    		}) ::: neighbours
+      }
+    )
+    /*for(i <- range) {
     	for(j <- range) {
         val near_point = checkPointEdges(p + Vec(i, j))
     		neighbours = coord_matrix(near_point.ix)(near_point.iy).foldLeft(List[Trace[S]]())((acc, trace) => {
@@ -94,7 +101,7 @@ class Tracer[S <: State] extends Colors {
     			else acc
     		}) ::: neighbours
     	}
-    }
+    }*/
     neighbours
   }
 
@@ -146,14 +153,13 @@ class Tracer[S <: State] extends Colors {
 
   def isPointOnArea(point:Vec) = point.x >= 0 && point.x < N_x && point.y >= 0 && point.y < N_y
 
-  def hasCollisions(trace_id:Int, coord:Vec, range:Range, min_dist:Float, excluded_traces:List[Int]) = {
+  def hasCollisions(trace_id:Int, coord:Vec, range:Range, min_dist:Float, condition:(Trace[S]) => Boolean) = {
     if(are_solid_edges && !isCoordOnArea(coord)) true
     else {
       val coord_edges_affected = checkEdges(coord)
       val min_dist2 = min_dist*min_dist
-      getNeighbours(trace_id, coord_edges_affected, range).foldLeft(false)((is_collision, neighbour) => {
-        (!excluded_traces.contains(neighbour.id) && neighbour.id != trace_id && (neighbour.getCoord dist2 coord_edges_affected) < min_dist2) || is_collision
-      })
+      getNeighbours(trace_id, coord_edges_affected, range, condition).exists(neighbour =>
+        (neighbour.getCoord dist2 coord_edges_affected) < min_dist2)
     }
   }
 }

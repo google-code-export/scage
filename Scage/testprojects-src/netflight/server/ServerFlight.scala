@@ -3,8 +3,9 @@ package netflight.server
 import su.msk.dunno.scage.handlers.AI
 import su.msk.dunno.scage.handlers.net.NetServer
 import su.msk.dunno.scage.support.{ScageLibrary, Vec}
+import su.msk.dunno.scage.support.ScageLibrary._
 
-object ServerFlight extends Application with ScageLibrary {
+object ServerFlight extends Application {
   properties = "scage-properties.txt"
 
   var next_plane = 0

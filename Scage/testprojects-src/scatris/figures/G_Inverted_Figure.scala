@@ -2,6 +2,7 @@ package scatris.figures
 
 import su.msk.dunno.scage.support.Vec
 import scatris.{Point, Figure}
+import su.msk.dunno.scage.support.ScageLibrary._
 
 class G_Inverted_Figure(init_coord:Vec) extends Figure {
   override val name = "G_Inverted_Figure"

@@ -8,8 +8,9 @@ import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.support.messages.Message
 import org.lwjgl.opengl.GL11
 import su.msk.dunno.scage.support.{ScageProperties, ScageLibrary, Vec}
+import su.msk.dunno.scage.support.ScageLibrary._
 
-object Universe extends ScageLibrary with Gravitation {
+object Universe extends Gravitation {
   val G = ScageProperties.floatProperty("G")
   val dt = ScageProperties.floatProperty("dt")
   private val mass = ScageProperties.floatProperty("mass")

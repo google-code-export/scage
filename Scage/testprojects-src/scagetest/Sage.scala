@@ -9,8 +9,9 @@ import su.msk.dunno.scage.handlers.controller.Controller
 import su.msk.dunno.scage.handlers.Renderer
 import su.msk.dunno.scage.support.{ScageProperties, ScageLibrary, Vec}
 import su.msk.dunno.scage.support.tracer.StandardTracer
+import su.msk.dunno.scage.support.ScageLibrary._
 
-object Sage extends ScageLibrary {
+object Sage {
   def main(args:Array[String]):Unit = {
     Scage.setDefaultHandlers
 

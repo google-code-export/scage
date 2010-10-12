@@ -4,8 +4,9 @@ import su.msk.dunno.scage.support.ScageLibrary
 import su.msk.dunno.scage.handlers.net.NetServer
 import su.msk.dunno.scage.handlers.AI
 import org.apache.log4j.Logger
+import su.msk.dunno.scage.support.ScageLibrary._
 
-object ChatServer extends Application with ScageLibrary {
+object ChatServer extends Application {
   private val log = Logger.getLogger(this.getClass)
   //var times:List[Long] = Nil
 

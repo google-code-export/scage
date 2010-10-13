@@ -15,7 +15,6 @@ class ServerSideRocket(private val shooter:String, init_coord:Vec, dir:Vec, priv
   private var coord = init_coord
 
   val trace = StandardTracer.addTrace(new Trace[State] {
-    override def isActive = fuel > 5
     def getCoord = coord
     def getState() = new State("name", name)
     def changeState(s:State) = {}

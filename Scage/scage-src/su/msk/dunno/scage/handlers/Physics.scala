@@ -5,12 +5,12 @@ import _root_.net.phys2d.raw.{Body, World}
 import _root_.net.phys2d.raw.strategies.QuadSpaceStrategy
 import su.msk.dunno.scage.main.Scage
 import su.msk.dunno.scage.prototypes.Handler
-import su.msk.dunno.scage.support.ScageProperties
+import su.msk.dunno.scage.support.ScageProperties._
 
 object Physics extends Handler {
-  val dt = ScageProperties.intProperty("dt")
-  val gravity = ScageProperties.intProperty("gravity")
-  val friction = ScageProperties.floatProperty("friction")
+  val dt = intProperty("dt")
+  val gravity = intProperty("gravity")
+  val friction = floatProperty("friction")
   val world = new World(new Vector2f(0.0f, gravity), 10, new QuadSpaceStrategy(20,5));
   world.enableRestingBodyDetection(0.01f, 0.000001f, 0.01f)
 

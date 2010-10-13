@@ -23,7 +23,6 @@ class ServerSidePlane(val name:String, init_coord:Vec, val client:ClientHandler)
 
 
   val trace = StandardTracer.addTrace(new Trace[State] {
-    override def isActive = isAlive
     def getCoord = coord
     def getState() = new State("name", name)
     def changeState(s:State) = {}

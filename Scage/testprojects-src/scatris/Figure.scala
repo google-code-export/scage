@@ -57,7 +57,7 @@ abstract class Figure {
 
   private def haveDisabledPoints = _points.exists(!_.isActive)
 
-  protected def isExcludedTrace(t:Trace[State]) = {
+  protected def isExcludedTrace(t:Trace[_ <: State]) = {
     activePoints.map(point => point.trace).contains(t.id) || !t.getState.getBool("isActive")
   }
 

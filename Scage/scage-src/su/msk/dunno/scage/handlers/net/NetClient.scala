@@ -4,12 +4,12 @@ import su.msk.dunno.scage.main.Scage
 import org.json.{JSONException, JSONObject}
 import su.msk.dunno.scage.prototypes.Handler
 import java.io.{BufferedReader, InputStreamReader, OutputStreamWriter, PrintWriter}
-import su.msk.dunno.scage.support.ScageProperties
 import java.net.{SocketException, Socket}
+import su.msk.dunno.scage.support.ScageProperties._
 
 object NetClient extends Handler {
-  val server_url =  ScageProperties.stringProperty("server", "127.0.0.1")
-  val port =  ScageProperties.intProperty("port", 9800)
+  val server_url =  stringProperty("server", "127.0.0.1")
+  val port =  intProperty("port", 9800)
 
   private var is_connected = false
   def isConnected = is_connected
@@ -61,7 +61,7 @@ object NetClient extends Handler {
   def addOutgoingData(key:Any, data:Any) = cd.put(key.toString, data)
   def addOutgoingData(key:Any) = cd.put(key.toString, "")  
 
-  private val check_timeout =  ScageProperties.intProperty("check_timeout")
+  private val check_timeout =  intProperty("check_timeout")
   private var last_answer_time = System.currentTimeMillis
   def isServerOnline = check_timeout == 0 || System.currentTimeMillis - last_answer_time < check_timeout
 

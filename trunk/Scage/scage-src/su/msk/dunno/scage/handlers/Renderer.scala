@@ -6,7 +6,8 @@ import org.lwjgl.util.glu.GLU
 import org.newdawn.slick.opengl.{TextureLoader, Texture}
 import java.io.{FileInputStream, InputStream}
 import su.msk.dunno.scage.prototypes.Handler
-import su.msk.dunno.scage.support.{ScageProperties, Color, Vec}
+import su.msk.dunno.scage.support.{Color, Vec}
+import su.msk.dunno.scage.support.ScageProperties._
 
 object Renderer extends Handler {
   private var render_list:List[() => Unit] = List[() => Unit]()
@@ -28,8 +29,8 @@ object Renderer extends Handler {
 	  isSetScaleFunc = true
   }
 
-  val width = ScageProperties.intProperty("width", 800);
-  val height = ScageProperties.intProperty("height", 600);
+  val width = intProperty("width", 800);
+  val height = intProperty("height", 600);
   
   val center = Vec(width/2, height/2)
   private var central_coord = () => Vec(width/2, height/2)
@@ -38,7 +39,7 @@ object Renderer extends Handler {
   }
 
   Display.setDisplayMode(new DisplayMode(width, height));
-  Display.setTitle(ScageProperties.stringProperty("name", "Scage")+" - "+ScageProperties.stringProperty("version"));
+  Display.setTitle(stringProperty("name", "Scage")+" - "+stringProperty("version"));
   Display.setVSyncEnabled(true);
   Display.create();
 

@@ -11,10 +11,10 @@ import su.msk.dunno.scage.support.{ScageProperties, ScageLibrary, Vec}
 import su.msk.dunno.scage.support.ScageLibrary._
 
 object Universe extends Gravitation {
-  val G = ScageProperties.floatProperty("G")
-  val dt = ScageProperties.floatProperty("dt")
-  private val mass = ScageProperties.floatProperty("mass")
-  private val num_bodies = ScageProperties.intProperty("num_bodies")
+  val G = floatProperty("G")
+  val dt = floatProperty("dt")
+  private val mass = floatProperty("mass")
+  private val num_bodies = intProperty("num_bodies")
 
   // background
   private val SPACE = Renderer.createList("img/deep-space.png", 800, 600, 0, 0, 1024, 768)

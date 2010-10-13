@@ -87,7 +87,7 @@ object Sage {
     Renderer.addInterfaceElement(() => if(Scage.on_pause)Message.print("PAUSE", Renderer.width/2-20, Renderer.height/2+60))
 
     // scaling
-    val auto_scaling = ScageProperties.booleanProperty("auto_scaling")
+    val auto_scaling = booleanProperty("auto_scaling")
     if(auto_scaling) {
     	Renderer.setScaleFunc((scale) => {
     		if(Controller.last_key  != Keyboard.KEY_ADD && Controller.last_key != Keyboard.KEY_SUBTRACT) {

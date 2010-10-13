@@ -7,25 +7,18 @@ import org.apache.log4j.Logger
 object ScageProperties {
   private val log = Logger.getLogger(this.getClass);
 
-  private def is_loaded = properties != null
+  private var file = "scage-properties.txt"
+  private var props:Properties = null
+  def properties = file
+  def properties_= (f:String) = {
+    file = f
+    log.info("new properties file is "+file)
+    props = load
+  }  
 
-  private var _file = "scage-properties.txt"
-  def file = _file
-  def file_= (f:String) = {
-    _file = f
-    properties = load
-  }
-
-  private var properties:Properties = {
-    try {
-      val p = new Properties
-      p.load(new FileInputStream(file))
-      log.info("using properties file "+file)
-      p
-    }
-    catch {
-      case ex:FileNotFoundException => null
-    }
+  private lazy val fileNotFound = {
+    log.error("failed to load properties: file "+file+" not found")
+    null
   }
   private def load:Properties = {
     try {
@@ -35,37 +28,41 @@ object ScageProperties {
       p
     }
     catch {
-      case ex:FileNotFoundException =>
-        log.error("failed to load properties: file "+file+" not found")
-        null
+      case ex:FileNotFoundException => fileNotFound
     }
   }
 
-  private lazy val noPropertiesWarning = {
-    log.error("warning: there is no properties file load, using default values")
-  }
   private def getProperty(key:String) = {
-    if(!is_loaded) {
-      noPropertiesWarning
-      null
-    }
-    else {
-      val p = properties.getProperty(key)
-      if(p == null) log.error("failed to find property "+key)
-      else log.info("read property "+key+": "+p)
-      p
-    }
+    val p = if(props == null) null else props.getProperty(key)
+    if(p == null) log.error("failed to find property "+key)
+    else log.info("read property "+key+": "+p)
+    p
   }
   private def defaultValue[A](key:String, default:A) = {
     log.info("default value for "+key+" is "+default)
     default
   }
 
+  def property[A](key:String, default:A)(implicit m:Manifest[A]):A = {
+    val p = getProperty(key)
+    if(p != null) {
+      try {
+        m.erasure.asInstanceOf[Class[A]].cast(p)
+      }
+      catch {
+        case e:Exception =>
+          log.error("failed to use property ("+key+" : "+p+") as "+m)
+          defaultValue(key, default)
+      }
+    }
+    else defaultValue(key, default)
+  }
+
   def stringProperty(key:String):String = stringProperty(key, "")
   def stringProperty(key:String, default:String):String = {
     val s = getProperty(key)
     if(s != null) s
-    else defaultValue[String](key, default)
+    else defaultValue(key, default)
   }
 
   def intProperty(key:String):Int = intProperty(key, 0)
@@ -78,11 +75,11 @@ object ScageProperties {
       catch {
         case e:NumberFormatException => {
           log.error("property "+key+" is not integer: "+p)
-          defaultValue[Int](key, default)
+          defaultValue(key, default)
         }
       }
     }
-    else defaultValue[Int](key, default)
+    else defaultValue(key, default)
   }
 
   def floatProperty(key:String):Float = floatProperty(key, 0)
@@ -95,17 +92,17 @@ object ScageProperties {
       catch {
         case e:NumberFormatException => {
           log.error("property "+key+" is not float: "+p)
-          defaultValue[Float](key, default)
+          defaultValue(key, default)
         }
       }
     }
-    else defaultValue[Float](key, default)
+    else defaultValue(key, default)
   }
   
   def booleanProperty(key:String):Boolean = booleanProperty(key, false)
   def booleanProperty(key:String, default:Boolean):Boolean = {
     val s = stringProperty(key)
     if(!"".equals(s)) s.equalsIgnoreCase("yes") || s.equalsIgnoreCase("1") || s.equalsIgnoreCase("true")
-    else defaultValue[Boolean](key, default)
+    else defaultValue(key, default)
   }
 }

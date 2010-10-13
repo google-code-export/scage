@@ -9,6 +9,8 @@ import su.msk.dunno.scage.handlers.{AI, Renderer}
 import su.msk.dunno.scage.support.ScageLibrary._
 
 object GloriousTracer extends Application {
+  //properties = "scatris-propertiies.txt"
+
   var coord = Vec(150,150)
 
   Renderer.addRender(() => {

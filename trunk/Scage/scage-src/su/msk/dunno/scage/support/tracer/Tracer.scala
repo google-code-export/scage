@@ -3,12 +3,16 @@ package su.msk.dunno.scage.support.tracer
 import su.msk.dunno.scage.handlers.Renderer
 import su.msk.dunno.scage.support.{Colors, ScageProperties, Vec}
 import org.apache.log4j.Logger
+import su.msk.dunno.scage.support.ScageLibrary._
 
 object Tracer {
   private val log = Logger.getLogger(this.getClass);
 
   private var current_tracer:Tracer[_ <: State] = null
-  def currentTracer = current_tracer
+  def currentTracer = {
+    if(current_tracer == null) current_tracer = StandardTracer
+    current_tracer
+  }
 
   private var next_trace_id = 0
   private[tracer] def nextTraceID = {
@@ -25,16 +29,16 @@ class Tracer[S <: State] {
   Tracer.current_tracer = this
   log.info("using tracer "+this.getClass.getName)
 
-  val game_from_x = ScageProperties.intProperty("game_from_x", 0)
-  val game_to_x = ScageProperties.intProperty("game_to_x", 800)
-  val game_from_y = ScageProperties.intProperty("game_from_y", 0)
-  val game_to_y = ScageProperties.intProperty("game_to_y", 600)
+  val game_from_x:Int = intProperty("game_from_x", 0)
+  val game_to_x:Int = intProperty("game_to_x", 800)
+  val game_from_y:Int = intProperty("game_from_y", 0)
+  val game_to_y:Int = intProperty("game_to_y", 600)
 
   val game_width = game_to_x - game_from_x
   val game_height = game_to_y - game_from_y
 
-  val N_x = ScageProperties.intProperty("N_x", 20)
-  val N_y = ScageProperties.intProperty("N_y", 15)
+  val N_x = intProperty("N_x", 20)
+  val N_y = intProperty("N_y", 15)
 
   private var coord_matrix = Array.ofDim[List[Trace[S]]](N_x, N_y)
   (0 to N_x-1).foreachpair(0 to N_y-1) ((i, j) => coord_matrix(i)(j) = Nil)
@@ -42,7 +46,7 @@ class Tracer[S <: State] {
 
   val h_x = game_width/N_x
 	val h_y = game_height/N_y
-  if(ScageProperties.booleanProperty("show_grid", true)) {
+  if(booleanProperty("show_grid", true)) {
 	  Renderer.addRender(() => {
 	 	  Renderer.setColor(LIME_GREEN)
 	 	  for(i <- 0 to N_x) Renderer.drawLine(Vec(i*h_x + game_from_x, game_from_y), Vec(i*h_x + game_from_x, game_to_y))
@@ -55,9 +59,9 @@ class Tracer[S <: State] {
     if(isPointOnArea(p)) {
       coord_matrix(p.ix)(p.iy) = t :: coord_matrix(p.ix)(p.iy)
       t._id = nextTraceID
-      log.debug("added new trace #"+t.id)
+      log.debug("added new trace #"+t.id+" in coord "+t.getCoord)
     }
-    else log.error("failed to add trace #"+t.id+": coord "+t.getCoord+" is out of area")
+    else log.error("failed to add trace: coord "+t.getCoord+" is out of area")
     t.id
   }
 
@@ -66,33 +70,29 @@ class Tracer[S <: State] {
   def pointCenter(p:Vec):Vec = Vec(game_from_x + p.x*h_x + h_x/2, game_from_y + p.y*h_y + h_y/2)
   def pointCenter(x:Int, y:Int):Vec = Vec(game_from_x + x*h_x + h_x/2, game_from_y + y*h_y + h_y/2)
   
-  /*def getNeighbours(coord:Vec, range:Range):List[Trace[S]] = {
+  def getNeighbours(coord:Vec, range:Range):List[Trace[S]] = {
     val p = point(coord)
     var neighbours = List[Trace[S]]()
-    for(i <- range) {
-    	for(j <- range) {
-        val near_point = checkPointEdges(p + Vec(i, j))
-    		neighbours = coord_matrix(near_point.ix)(near_point.iy).foldLeft(List[Trace[S]]())((acc, trace) => {
-    		  if(trace.isActive && trace.getCoord != coord) trace :: acc
-    			else acc
-    		}) ::: neighbours
-    	}
-    }
+    range.foreachpair((i, j) => {
+      val near_point = checkPointEdges(p + Vec(i, j))
+      neighbours = coord_matrix(near_point.ix)(near_point.iy).foldLeft(List[Trace[S]]())((acc, trace) => {
+    	  if(trace.getCoord != coord) trace :: acc
+    		else acc
+    	}) ::: neighbours
+    })
     neighbours
-  }*/
+  }
 
-  def getNeighbours(trace_id:Int, coord:Vec, range:Range, condition:(Trace[S]) => Boolean):List[Trace[S]] = {
+  def getNeighbours(trace_id:Int, coord:Vec, range:Range, condition:(StateTrace) => Boolean):List[Trace[S]] = {
     val p = point(coord)
     var neighbours:List[Trace[S]] = Nil
-    range.foreachpair(
-      (i, j) => {
-        val near_point = checkPointEdges(p + Vec(i, j))
-    		neighbours = coord_matrix(near_point.ix)(near_point.iy).foldLeft(List[Trace[S]]())((acc, trace) => {
-    		  if(condition(trace) && trace.id != trace_id) trace :: acc
-    			else acc
-    		}) ::: neighbours
-      }
-    )
+    range.foreachpair((i, j) => {
+      val near_point = checkPointEdges(p + Vec(i, j))
+    	neighbours = coord_matrix(near_point.ix)(near_point.iy).foldLeft(List[Trace[S]]())((acc, trace) => {
+    	  if(condition(trace) && trace.id != trace_id) trace :: acc
+    		else acc
+    	}) ::: neighbours
+    })
     /*for(i <- range) {
     	for(j <- range) {
         val near_point = checkPointEdges(p + Vec(i, j))
@@ -114,7 +114,7 @@ class Tracer[S <: State] {
     Vec(checkC(p.x, N_x), checkC(p.y, N_y))
   }
 
-  val are_solid_edges = ScageProperties.booleanProperty("solid_edges")
+  val are_solid_edges = booleanProperty("solid_edges")
   def updateLocation(trace_id:Int, old_coord:Vec, new_coord:Vec):Boolean = {
     if(are_solid_edges && !isCoordOnArea(new_coord)) false
     else {
@@ -153,7 +153,7 @@ class Tracer[S <: State] {
 
   def isPointOnArea(point:Vec) = point.x >= 0 && point.x < N_x && point.y >= 0 && point.y < N_y
 
-  def hasCollisions(trace_id:Int, coord:Vec, range:Range, min_dist:Float, condition:(Trace[S]) => Boolean) = {
+  def hasCollisions(trace_id:Int, coord:Vec, range:Range, min_dist:Float, condition:(StateTrace) => Boolean) = {
     if(are_solid_edges && !isCoordOnArea(coord)) true
     else {
       val coord_edges_affected = checkEdges(coord)

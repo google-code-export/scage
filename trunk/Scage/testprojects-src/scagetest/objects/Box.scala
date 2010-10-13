@@ -2,11 +2,11 @@ package scagetest.objects
 
 import org.lwjgl.opengl.GL11
 import su.msk.dunno.scage.objects.DynaBox
-import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.scage.handlers.Renderer
 import su.msk.dunno.scage.support.tracer.{StandardTracer, State, Trace}
+import su.msk.dunno.scage.support.{Colors, Vec}
 
-class Box(leftup_coord:Vec) extends DynaBox(leftup_coord, 50, 50) {
+class Box(leftup_coord:Vec) extends DynaBox(leftup_coord, 50, 50) with Colors {
   val trace = new Trace[State] {
 	  def getCoord = coord()
       def getState = new State("name", "Box")

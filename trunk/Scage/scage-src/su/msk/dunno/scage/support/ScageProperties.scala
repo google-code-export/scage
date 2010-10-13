@@ -5,19 +5,32 @@ import java.util.Properties
 import org.apache.log4j.Logger
 
 object ScageProperties {
-  private val log = Logger.getLogger(this.getClass);
+  private val log = Logger.getLogger(this.getClass)
 
-  private var file = "scage-properties.txt"
-  private var props:Properties = null
-  def properties = file
+  private var _file:String = null
+  def properties = _file
   def properties_= (f:String) = {
-    file = f
-    log.info("new properties file is "+file)
-    props = load
-  }  
+    _file = f
+    log.info("new properties file is "+_file)
+  }
+
+  private lazy val defaultPropsWarning = {
+    log.warn("warning: no properties file set, using defaults")
+    _file = "scage-properties.txt"
+  }
+  def file = {
+    if(_file == null) defaultPropsWarning
+    _file
+  }
+
+  private var _props:Properties = null
+  private def props = {
+    if(_props == null) _props = load
+    _props
+  }
 
   private lazy val fileNotFound = {
-    log.error("failed to load properties: file "+file+" not found")
+    log.error("failed to load properties: file "+_file+" not found")
     null
   }
   private def load:Properties = {

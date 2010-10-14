@@ -29,8 +29,8 @@ object Renderer extends Handler {
 	  isSetScaleFunc = true
   }
 
-  val width = intProperty("width", 800);
-  val height = intProperty("height", 600);
+  val width = property("width", 800);
+  val height = property("height", 600);
   
   val center = Vec(width/2, height/2)
   private var central_coord = () => Vec(width/2, height/2)
@@ -39,7 +39,7 @@ object Renderer extends Handler {
   }
 
   Display.setDisplayMode(new DisplayMode(width, height));
-  Display.setTitle(stringProperty("name", "Scage")+" - "+stringProperty("version"));
+  Display.setTitle(property("name", "Scage")+" - "+stringProperty("version"));
   Display.setVSyncEnabled(true);
   Display.create();
 
@@ -79,7 +79,7 @@ object Renderer extends Handler {
 		GL11.glLoadIdentity();
       GL11.glPushMatrix
 
-      if(isSetScaleFunc && !Scage.on_pause)scale = scaleFunc(scale)
+      if(isSetScaleFunc && !Scage.on_pause) scale = scaleFunc(scale)
       val coord = center - central_coord()*scale
       GL11.glTranslatef(coord.x , coord.y, 0.0f)
       GL11.glScalef(scale, scale, 1)

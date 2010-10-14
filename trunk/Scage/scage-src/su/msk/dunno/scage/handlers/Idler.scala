@@ -4,16 +4,13 @@ import su.msk.dunno.scage.prototypes.Handler
 import su.msk.dunno.scage.support.ScageProperties._
 
 object Idler extends Handler {
-  val framerate:Int = intProperty("framerate", 100);
+  val framerate:Int = property("framerate", 100);
 
   private var msek = System.currentTimeMillis
   private var frames:Int = 0
-  private var _time = 0
-  def time = _time
   var fps:Int = 0
   def countFPS() = {
     frames += 1
-    _time += 1
     if(System.currentTimeMillis - msek >= 1000) {
       fps = frames
       frames = 0

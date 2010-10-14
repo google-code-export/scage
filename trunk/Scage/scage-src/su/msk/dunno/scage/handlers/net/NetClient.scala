@@ -8,8 +8,8 @@ import java.net.{SocketException, Socket}
 import su.msk.dunno.scage.support.ScageProperties._
 
 object NetClient extends Handler {
-  val server_url =  stringProperty("server", "127.0.0.1")
-  val port =  intProperty("port", 9800)
+  val server_url =  property("server", "127.0.0.1")
+  val port = property("port", 9800)
 
   private var is_connected = false
   def isConnected = is_connected

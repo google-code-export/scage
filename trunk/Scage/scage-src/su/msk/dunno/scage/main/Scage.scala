@@ -22,7 +22,7 @@ object Scage {
   var on_pause:Boolean = false
   def switchPause() = on_pause = !on_pause
   
-  private var is_running = false
+  private var is_running = true
   def isRunning = is_running
   def start = {
     Idler
@@ -32,7 +32,6 @@ object Scage {
   def stop = is_running = false
 
   private def run = {
-    is_running = true
     while(is_running) {
       scage_handlers.foreach(h => h.actionSequence)
     }

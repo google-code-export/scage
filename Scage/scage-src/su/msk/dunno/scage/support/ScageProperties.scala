@@ -42,7 +42,13 @@ object ScageProperties {
       p
     }
     catch {
-      case ex:FileNotFoundException => fileNotFound
+      case ex:FileNotFoundException =>
+        if(!file.contains("properties/")) {
+          _file = "properties/" + _file
+          log.debug("development mode: looking for properties in respective folder")
+          load
+        }
+        else fileNotFound
     }
   }
 
@@ -68,7 +74,10 @@ object ScageProperties {
           case "Boolean" =>
             val s = p.asInstanceOf[String]
             if(!"".equals(s)) {
-              val b = s.equalsIgnoreCase("yes") || s.equalsIgnoreCase("1") || s.equalsIgnoreCase("true")
+              val b = s.equalsIgnoreCase("yes") || !s.equalsIgnoreCase("no") ||
+                      s.equalsIgnoreCase("1") || !s.equalsIgnoreCase("0") ||
+                      s.equalsIgnoreCase("true") || !s.equalsIgnoreCase("false") || 
+                      s.equalsIgnoreCase("on") || !s.equalsIgnoreCase("off")
               b.asInstanceOf[A]
             }
             else defaultValue(key, default)

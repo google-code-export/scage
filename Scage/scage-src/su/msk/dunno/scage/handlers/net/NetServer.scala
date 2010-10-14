@@ -37,6 +37,9 @@ object NetServer extends Handler {
   def addOutgoingData(key:Any, data:Any) = sd.put(key.toString, data)
   def addOutgoingData(key:Any) = sd.put(key.toString, "")
 
+  private var greetings_message = "This is Scage NetServer"
+  def greetings = greetings_message
+  def greetings_= (s:String) = greetings_message = s
   private var next_client = 0
   new Thread(new Runnable { // awaiting new connections
     def run():Unit = {
@@ -45,8 +48,10 @@ object NetServer extends Handler {
         if(max_clients == 0 || client_handlers.length < max_clients) {
           log.info("listening port "+port+", "+client_handlers.length+"/"+max_clients+" client(s) are connected")
           val socket = server_socket.accept
-          client_handlers = new ClientHandler(next_client, socket) :: client_handlers
+          val client = new ClientHandler(next_client, socket)
+          client_handlers = client :: client_handlers
           log.info("established connection with "+socket.getInetAddress.getHostAddress)
+          client.send(new JSONObject().put("greetings", greetings_message))
           has_new_connection = true
           next_client += 1
         }
@@ -87,6 +92,7 @@ class ClientHandler(val id:Int, val socket:Socket) {
     out.println(data)
     out.flush
   }
+  def send(data:String):Unit = send(new JSONObject().put("raw", data))
 
   def disconnect = {
     socket.close

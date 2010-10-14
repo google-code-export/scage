@@ -34,6 +34,7 @@ object ScageLibrary extends Colors {
   def switchPause = Scage.switchPause
   def start = Scage.start
   def stop = Scage.stop
+  def isRunning = Scage.isRunning
 
   type StateTrace = Trace[_ <: State]
 

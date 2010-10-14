@@ -29,7 +29,6 @@ object ScageLibrary extends Colors {
 
   lazy val framerate = Idler.framerate
   def fps = Idler.fps
-  def time = Idler.time
 
   def onPause = Scage.on_pause
   def switchPause = Scage.switchPause
@@ -82,17 +81,12 @@ object ScageLibrary extends Colors {
   lazy val h_y = Tracer.currentTracer.h_y
 
   def properties = ScageProperties.properties
-  def properties_= (f:String) = ScageProperties.properties = f 
+  def properties_= (f:String) = ScageProperties.properties = f
+
+  def property[A](key:String, default:A)(implicit m:Manifest[A]):A = ScageProperties.property(key, default)
 
   def stringProperty(key:String):String = ScageProperties.stringProperty(key)
-  def stringProperty(key:String, default:String):String = ScageProperties.stringProperty(key, default)
-
   def intProperty(key:String):Int = ScageProperties.intProperty(key)
-  def intProperty(key:String, default:Int):Int = ScageProperties.intProperty(key, default)
-
   def floatProperty(key:String):Float = ScageProperties.floatProperty(key)
-  def floatProperty(key:String, default:Float):Float = ScageProperties.floatProperty(key, default)
-
   def booleanProperty(key:String):Boolean = ScageProperties.booleanProperty(key)
-  def booleanProperty(key:String, default:Boolean):Boolean = ScageProperties.booleanProperty(key, default)  
 }

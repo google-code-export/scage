@@ -25,8 +25,10 @@ object TestProject extends Application {
     coord_matrix(i)(j) = List(1)
   })*/
 
-  //properties = "scage-properties.txt"
-  println(property("name", 0))
+  //properties = "test-properties.txt"
+  //println(property("testprop1", 0) + property("testprop2", 0))
+  println(5)
 
-  println()
+  val s = "10.1f".toFloat
+  println(s)
 }

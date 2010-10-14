@@ -9,8 +9,8 @@ import org.json.{JSONException, JSONObject}
 import su.msk.dunno.scage.support.ScageProperties._
 
 object NetServer extends Handler {
-  val port = intProperty("port", 9800)
-  val max_clients = intProperty("max_clients", 20)
+  val port = property("port", 9800)
+  val max_clients = property("max_clients", 20)
   private var client_handlers:List[ClientHandler] = Nil
   def clients = client_handlers
   def client(num:Int) = client_handlers(num)
@@ -93,7 +93,7 @@ class ClientHandler(val id:Int, val socket:Socket) {
     log.debug("client #"+id+" was disconnected")
   }
 
-  private val check_timeout = intProperty("check_timeout", 0)
+  private val check_timeout = property("check_timeout", 0)
   private var last_answer_time = System.currentTimeMillis
   def isOnline = check_timeout == 0 || System.currentTimeMillis - last_answer_time < check_timeout
 

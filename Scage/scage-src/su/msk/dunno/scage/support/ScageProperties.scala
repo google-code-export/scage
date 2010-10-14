@@ -12,6 +12,7 @@ object ScageProperties {
   def properties_= (f:String) = {
     _file = f
     log.info("new properties file is "+_file)
+    _props = load
   }
 
   private lazy val defaultPropsWarning = {
@@ -60,7 +61,18 @@ object ScageProperties {
     val p = getProperty(key)
     if(p != null) {
       try {
-        m.erasure.asInstanceOf[Class[A]].cast(p)
+        m.toString match {
+          case "Int" => p.toInt.asInstanceOf[A]
+          case "Float" => p.toFloat.asInstanceOf[A]
+          case "Double" => p.toDouble.asInstanceOf[A]
+          case "Boolean" =>
+            val s = p.asInstanceOf[String]
+            if(!"".equals(s)) {
+              val b = s.equalsIgnoreCase("yes") || s.equalsIgnoreCase("1") || s.equalsIgnoreCase("true")
+              b.asInstanceOf[A]
+            }
+            else defaultValue(key, default)
+        }
       }
       catch {
         case e:Exception =>
@@ -71,51 +83,8 @@ object ScageProperties {
     else defaultValue(key, default)
   }
 
-  def stringProperty(key:String):String = stringProperty(key, "")
-  def stringProperty(key:String, default:String):String = {
-    val s = getProperty(key)
-    if(s != null) s
-    else defaultValue(key, default)
-  }
-
-  def intProperty(key:String):Int = intProperty(key, 0)
-  def intProperty(key:String, default:Int):Int = {
-    val p = getProperty(key)
-    if(p != null) {
-      try {
-        Integer.valueOf(p).intValue
-      }
-      catch {
-        case e:NumberFormatException => {
-          log.error("property "+key+" is not integer: "+p)
-          defaultValue(key, default)
-        }
-      }
-    }
-    else defaultValue(key, default)
-  }
-
-  def floatProperty(key:String):Float = floatProperty(key, 0)
-  def floatProperty(key:String, default:Float):Float = {
-    val p = getProperty(key)
-    if(p != null) {
-      try {
-        java.lang.Float.valueOf(p).floatValue
-      }
-      catch {
-        case e:NumberFormatException => {
-          log.error("property "+key+" is not float: "+p)
-          defaultValue(key, default)
-        }
-      }
-    }
-    else defaultValue(key, default)
-  }
-  
-  def booleanProperty(key:String):Boolean = booleanProperty(key, false)
-  def booleanProperty(key:String, default:Boolean):Boolean = {
-    val s = stringProperty(key)
-    if(!"".equals(s)) s.equalsIgnoreCase("yes") || s.equalsIgnoreCase("1") || s.equalsIgnoreCase("true")
-    else defaultValue(key, default)
-  }
+  def stringProperty(key:String) = property(key, "")
+  def intProperty(key:String) = property(key, 0)
+  def floatProperty(key:String) = property(key, 0.0f)  
+  def booleanProperty(key:String) = property(key, false)
 }

@@ -29,16 +29,16 @@ class Tracer[S <: State] {
   Tracer.current_tracer = this
   log.info("using tracer "+this.getClass.getName)
 
-  val game_from_x:Int = intProperty("game_from_x", 0)
-  val game_to_x:Int = intProperty("game_to_x", 800)
-  val game_from_y:Int = intProperty("game_from_y", 0)
-  val game_to_y:Int = intProperty("game_to_y", 600)
+  val game_from_x:Int = property("game_from_x", 0)
+  val game_to_x:Int = property("game_to_x", 800)
+  val game_from_y:Int = property("game_from_y", 0)
+  val game_to_y:Int = property("game_to_y", 600)
 
   val game_width = game_to_x - game_from_x
   val game_height = game_to_y - game_from_y
 
-  val N_x = intProperty("N_x", 20)
-  val N_y = intProperty("N_y", 15)
+  val N_x = property("N_x", 20)
+  val N_y = property("N_y", 15)
 
   private var coord_matrix = Array.ofDim[List[Trace[S]]](N_x, N_y)
   (0 to N_x-1).foreachpair(0 to N_y-1) ((i, j) => coord_matrix(i)(j) = Nil)
@@ -46,7 +46,7 @@ class Tracer[S <: State] {
 
   val h_x = game_width/N_x
 	val h_y = game_height/N_y
-  if(booleanProperty("show_grid", true)) {
+  if(property("show_grid", true)) {
 	  Renderer.addRender(() => {
 	 	  Renderer.setColor(LIME_GREEN)
 	 	  for(i <- 0 to N_x) Renderer.drawLine(Vec(i*h_x + game_from_x, game_from_y), Vec(i*h_x + game_from_x, game_to_y))

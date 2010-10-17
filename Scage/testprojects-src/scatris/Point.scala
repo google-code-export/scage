@@ -11,14 +11,17 @@ class Point(init_coord:Vec, private val figure:Figure) {
   private var is_active = true
   def isActive = is_active
 
-  val trace = StandardTracer.addTrace(new Trace[State] {
+  val trace_id = StandardTracer.addTrace(new Trace[State] {
     def getCoord = coord
-    def getState() = new State("figure", figure.name).put("isActive", is_active).put("isMoving", figure.canMoveDown)
+    def getState() = new State("figure", figure.name).put("isActive", is_active).put("isMoving", !figure.was_landed)
     def changeState(s:State) = if(s.contains("disable")) is_active = false
   })
 
-  def move(condition:(Trace[_ <: State]) => Boolean, dir:Vec) = (trace in coord) --> (coord + dir, -1 to 1, dir.norma, condition)
-  def canMove(condition:(Trace[_ <: State]) => Boolean, dir:Vec) = is_active && !((trace in (coord + dir)) ? (-1 to 1, dir.norma, condition))
+  def move(condition:(StateTrace) => Boolean, dir:Vec) =
+    (trace_id in coord) --> (coord + dir, -1 to 1, dir.norma, condition)
+
+  def canMove(condition:(StateTrace) => Boolean, dir:Vec) =
+    is_active && !((trace_id in (coord + dir)) ? (-1 to 1, dir.norma, condition))
 
   private val BOX = Renderer.createList("img/Crate.png", StandardTracer.h_x, StandardTracer.h_y, 0, 0, 256, 256)
   Renderer.addRender(() => {

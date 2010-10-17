@@ -32,13 +32,13 @@ abstract class Figure {
           val canMove = (0 to _points.length-1).foldLeft(true)((can_move, point_number) => {
             val point = _points(point_number)
             val step = positions_array(next)(point_number)
-            can_move && point.canMove(isExcludedTrace, step)
+            can_move && point.canMove(isIncludedTrace, step)
           })
           if(canMove) {
             (0 to _points.length-1).foreach(point_number => {
               val point = _points(point_number)
               val step = positions_array(next)(point_number)
-              point.move(isExcludedTrace, step)
+              point.move(isIncludedTrace, step)
             })
             true
           }
@@ -57,8 +57,8 @@ abstract class Figure {
 
   private def haveDisabledPoints = _points.exists(!_.isActive)
 
-  protected def isExcludedTrace(t:Trace[_ <: State]) = {
-    activePoints.map(point => point.trace).contains(t.id) || !t.getState.getBool("isActive")
+  private def isIncludedTrace(trace:StateTrace) = {
+    !activePoints.map(point => point.trace_id).contains(trace.id) && trace.getState.getBool("isActive")
   }
 
   private var last_move_time = System.currentTimeMillis
@@ -67,31 +67,31 @@ abstract class Figure {
   private def isNextMove = System.currentTimeMillis - last_move_time > movePeriod
 
   private val down = Vec(0, -h_y)
-  private var was_landed = false
+  private[scatris] var was_landed = false
   def canMoveDown:Boolean = {
-    val can_move = canMove(point => point.canMove(isExcludedTrace, down))
+    val can_move = canMove(point => point.canMove(isIncludedTrace, down))
     if(!can_move) was_landed = true
     can_move
   }
   AI.registerAI(() => {
     if(!was_disabled && isNextMove) {
-      if(canMoveDown) activePoints.foreach(point => point.move(isExcludedTrace, down))
-      else if(haveDisabledPoints) activePoints.foreach(point => if(point.canMove((t:Trace[_]) => true, down))
-        point.move((t:Trace[_]) => true, down))
+      if(canMoveDown) activePoints.foreach(point => point.move(isIncludedTrace, down))
+      else if(haveDisabledPoints) activePoints.foreach(point =>
+        if(point.canMove((t:Trace[_]) => true, down)) point.move((t:Trace[_]) => true, down))
       last_move_time = System.currentTimeMillis
     }
   })
 
   private val left = Vec(-h_x, 0)
-  private def canMoveLeft = canMove(point => point.canMove(isExcludedTrace, left))
+  private def canMoveLeft = canMove(point => point.canMove(isIncludedTrace, left))
   Controller.addKeyListener(Keyboard.KEY_LEFT, 75, () => {
-    if(!onPause && !was_landed && canMoveLeft) activePoints.foreach(point => point.move(isExcludedTrace, left))
+    if(!onPause && !was_landed && canMoveLeft) activePoints.foreach(point => point.move(isIncludedTrace, left))
   })
 
   private val right = Vec(h_x, 0)
-  private def canMoveRight = canMove(point => point.canMove(isExcludedTrace, right))
+  private def canMoveRight = canMove(point => point.canMove(isIncludedTrace, right))
   Controller.addKeyListener(Keyboard.KEY_RIGHT, 75, () => {
-    if(!onPause && !was_landed && canMoveRight) activePoints.foreach(point => point.move(isExcludedTrace, right))
+    if(!onPause && !was_landed && canMoveRight) activePoints.foreach(point => point.move(isIncludedTrace, right))
   })
 
   Controller.addKeyListener(Keyboard.KEY_DOWN, 500, () => is_acceleration = true, () => is_acceleration = false)

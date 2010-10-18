@@ -1,0 +1,2 @@
+port = 9800
+max_clients = 1

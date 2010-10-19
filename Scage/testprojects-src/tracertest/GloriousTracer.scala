@@ -1,6 +1,6 @@
 package tracertest
 
-import su.msk.dunno.scage.support.{Vec, ScageLibrary}
+import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.scage.handlers.controller.Controller
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.support.messages.Message

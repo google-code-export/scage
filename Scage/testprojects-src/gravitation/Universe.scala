@@ -7,7 +7,7 @@ import su.msk.dunno.scage.handlers.controller.Controller
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.support.messages.Message
 import org.lwjgl.opengl.GL11
-import su.msk.dunno.scage.support.{ScageProperties, ScageLibrary, Vec}
+import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.scage.support.ScageLibrary._
 
 object Universe extends Gravitation {

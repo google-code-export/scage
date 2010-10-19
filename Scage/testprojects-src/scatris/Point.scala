@@ -1,9 +1,9 @@
 package scatris
 
 import su.msk.dunno.scage.support.tracer.{StandardTracer, Trace, State}
-import su.msk.dunno.scage.handlers.{Renderer}
+import su.msk.dunno.scage.handlers.Renderer
 import org.lwjgl.opengl.GL11
-import su.msk.dunno.scage.support.{ScageLibrary, Vec}
+import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.scage.support.ScageLibrary._
 
 class Point(init_coord:Vec, private val figure:Figure) {

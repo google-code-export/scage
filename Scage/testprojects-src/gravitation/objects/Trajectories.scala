@@ -3,7 +3,7 @@ package gravitation.objects
 import org.lwjgl.opengl.GL11
 import su.msk.dunno.scage.handlers.Renderer
 import gravitation.{Gravitation, Universe}
-import su.msk.dunno.scage.support.{ScageLibrary, Vec}
+import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.scage.support.ScageLibrary._
 
 class Trajectories extends Gravitation {

@@ -7,7 +7,7 @@ import su.msk.dunno.scage.support.messages.Message
 import su.msk.dunno.scage.objects.{StaticLine, StaticBox, StaticPolygon, Platform}
 import su.msk.dunno.scage.handlers.controller.Controller
 import su.msk.dunno.scage.handlers.Renderer
-import su.msk.dunno.scage.support.{ScageProperties, ScageLibrary, Vec}
+import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.scage.support.tracer.StandardTracer
 import su.msk.dunno.scage.support.ScageLibrary._
 

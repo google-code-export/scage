@@ -3,10 +3,10 @@ package scatris
 import su.msk.dunno.scage.handlers.AI
 import su.msk.dunno.scage.handlers.controller.Controller
 import org.lwjgl.input.Keyboard
-import su.msk.dunno.scage.support.{Vec, ScageLibrary}
+import su.msk.dunno.scage.support.Vec
 import org.apache.log4j.Logger
 import su.msk.dunno.scage.support.ScageLibrary._
-import su.msk.dunno.scage.support.tracer.{State, Trace}
+import su.msk.dunno.scage.support.tracer.Trace
 
 abstract class Figure {
   private val log = Logger.getLogger(this.getClass)

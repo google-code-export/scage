@@ -1,6 +1,6 @@
 package gravitation.objects
 
-import su.msk.dunno.scage.support.{ScageLibrary, Vec}
+import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.scage.support.ScageLibrary._
 
 // the name is self-explainable

@@ -2,7 +2,7 @@ package su.msk.dunno.scage.support
 
 import su.msk.dunno.scage.main.Scage
 import su.msk.dunno.scage.handlers.{Idler, Renderer}
-import tracer.{State, Trace, StandardTracer}
+import tracer.{State, Trace}
 import tracer.Tracer
 
 object ScageLibrary extends Colors {

@@ -45,7 +45,7 @@ object ScageProperties {
       case ex:FileNotFoundException =>
         if(!file.contains("properties/")) {
           _file = "properties/" + _file
-          log.debug("development mode: looking for properties in respective folder")
+          log.debug("development mode: looking for properties in the respective folder")
           load
         }
         else fileNotFound
@@ -81,6 +81,7 @@ object ScageProperties {
               b.asInstanceOf[A]
             }
             else defaultValue(key, default)
+          case _ => p.asInstanceOf[A] 
         }
       }
       catch {

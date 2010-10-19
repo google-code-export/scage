@@ -1,7 +1,6 @@
 package scatris.figures
 
-import su.msk.dunno.scage.support.tracer.StandardTracer
-import su.msk.dunno.scage.support.{Vec}
+import su.msk.dunno.scage.support.Vec
 import scatris.{Figure, Point}
 import su.msk.dunno.scage.support.ScageLibrary._
 

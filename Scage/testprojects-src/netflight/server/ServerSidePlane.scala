@@ -4,7 +4,7 @@ import org.json.JSONObject
 import su.msk.dunno.scage.handlers.net.{ClientHandler, NetServer}
 import su.msk.dunno.scage.handlers.AI
 import su.msk.dunno.scage.support.tracer.{State, Trace, StandardTracer}
-import su.msk.dunno.scage.support.{ScageLibrary, Vec}
+import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.scage.support.ScageLibrary._
 
 class ServerSidePlane(val name:String, init_coord:Vec, val client:ClientHandler) {

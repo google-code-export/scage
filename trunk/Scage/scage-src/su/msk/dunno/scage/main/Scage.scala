@@ -22,23 +22,21 @@ object Scage {
   var on_pause:Boolean = false
   def switchPause() = on_pause = !on_pause
   
-  private var is_running = true
+  private var is_running = false
   def isRunning = is_running
   def start = {
     Idler
-    scage_handlers.foreach(h => h.initSequence)
-    run
+    new Thread {
+      override def run:Unit = {
+        scage_handlers.foreach(h => h.initSequence)
+        is_running = true
+        while(is_running) scage_handlers.foreach(h => h.actionSequence)
+        scage_handlers.foreach(h => h.exitSequence)
+        log.info("app was stopped")
+      }
+    }.start
   }
   def stop = is_running = false
-
-  private def run = {
-    while(is_running) {
-      scage_handlers.foreach(h => h.actionSequence)
-    }
-    scage_handlers.foreach(h => h.exitSequence)
-    log.info("app was stopped")
-    System.exit(0)
-  }
 
   def main(args:Array[String]):Unit = {
     val app_classname = ScageProperties.stringProperty("app")

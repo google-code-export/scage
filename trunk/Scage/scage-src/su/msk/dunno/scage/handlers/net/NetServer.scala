@@ -41,25 +41,35 @@ object NetServer extends Handler {
   def greetings = greetings_message
   def greetings_= (s:String) = greetings_message = s
   private var next_client = 0
-  new Thread(new Runnable { // awaiting new connections
-    def run():Unit = {
-      val server_socket = new ServerSocket(port)
-      while(Scage.isRunning) {
-        if(max_clients == 0 || client_handlers.length < max_clients) {
-          log.info("listening port "+port+", "+client_handlers.length+"/"+max_clients+" client(s) are connected")
-          val socket = server_socket.accept
-          val client = new ClientHandler(next_client, socket)
-          client_handlers = client :: client_handlers
-          log.info("established connection with "+socket.getInetAddress.getHostAddress)
-          client.send(new JSONObject().put("greetings", greetings_message))
-          has_new_connection = true
-          next_client += 1
+
+  override def initSequence = {
+    new Thread(new Runnable { // awaiting new connections
+      def run():Unit = {
+        try {
+          val server_socket = new ServerSocket(port)
+          while(Scage.isRunning) {
+            if(max_clients == 0 || client_handlers.length < max_clients) {
+              log.info("listening port "+port+", "+client_handlers.length+"/"+max_clients+" client(s) are connected")
+              val socket = server_socket.accept
+              val client = new ClientHandler(next_client, socket)
+              client_handlers = client :: client_handlers
+              log.info("established connection with "+socket.getInetAddress.getHostAddress+", "+client_handlers.length+"/"+max_clients+" client(s) are connected")
+              client.send(new JSONObject().put("greetings", greetings_message))
+              has_new_connection = true
+              next_client += 1
+            }
+            else Thread.sleep(1000)
+          }
+          server_socket.close
         }
-        else Thread.sleep(1000)
+        catch {
+          case e:Exception =>
+            log.error("failed to start server, exiting...")
+            Scage.stop
+        }
       }
-      server_socket.close
-    }
-  }).start
+    }).start
+  }
 
   override def actionSequence = { // check clients being online
     client_handlers.filter(client => !client.isOnline).foreach(client => client.disconnect)

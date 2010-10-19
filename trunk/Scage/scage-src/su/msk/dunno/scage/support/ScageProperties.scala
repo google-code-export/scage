@@ -81,7 +81,7 @@ object ScageProperties {
               b.asInstanceOf[A]
             }
             else defaultValue(key, default)
-           case _ => p.asInstanceOf[A] 
+          case _ => p.asInstanceOf[A] 
         }
       }
       catch {

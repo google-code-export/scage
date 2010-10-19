@@ -53,10 +53,14 @@ object ScageProperties {
   }
 
   private def getProperty(key:String) = {
-    val p = if(props == null) null else props.getProperty(key)
-    if(p == null) log.error("failed to find property "+key)
-    else log.info("read property "+key+": "+p)
-    p
+    if(props == null) null else props.getProperty(key) match {
+      case p:String =>
+        log.info("read property "+key+": "+p)
+        p.trim
+      case _ =>
+        log.error("failed to find property "+key)
+        null
+    }
   }
   private def defaultValue[A](key:String, default:A) = {
     log.info("default value for "+key+" is "+default)
@@ -64,33 +68,33 @@ object ScageProperties {
   }
 
   def property[A](key:String, default:A)(implicit m:Manifest[A]):A = {
-    val p = getProperty(key)
-    if(p != null) {
-      try {
-        m.toString match {
-          case "Int" => p.toInt.asInstanceOf[A]
-          case "Float" => p.toFloat.asInstanceOf[A]
-          case "Double" => p.toDouble.asInstanceOf[A]
-          case "Boolean" =>
-            val s = p.asInstanceOf[String]
-            if(!"".equals(s)) {
-              val b = s.equalsIgnoreCase("yes") || !s.equalsIgnoreCase("no") ||
-                      s.equalsIgnoreCase("1") || !s.equalsIgnoreCase("0") ||
-                      s.equalsIgnoreCase("true") || !s.equalsIgnoreCase("false") || 
-                      s.equalsIgnoreCase("on") || !s.equalsIgnoreCase("off")
-              b.asInstanceOf[A]
-            }
-            else defaultValue(key, default)
-          case _ => p.asInstanceOf[A] 
+    getProperty(key) match {
+      case p:String =>
+        try {
+          m.toString match {
+            case "Int" => p.toInt.asInstanceOf[A]
+            case "Float" => p.toFloat.asInstanceOf[A]
+            case "Double" => p.toDouble.asInstanceOf[A]
+            case "Boolean" =>
+              if(p.equalsIgnoreCase("yes")  || p.equalsIgnoreCase("1") ||
+                 p.equalsIgnoreCase("true") || p.equalsIgnoreCase("on")) true.asInstanceOf[A]
+              else if(p.equalsIgnoreCase("no")    || p.equalsIgnoreCase("0") ||
+                      p.equalsIgnoreCase("false") || p.equalsIgnoreCase("off")) false.asInstanceOf[A]
+              else {
+                log.info("boolean property "+p+" unsupported")
+                log.info("supported boolean properties: yes/no, 1/0, true/false, on/off")
+                defaultValue(key, default)
+              }
+            case _ => p.asInstanceOf[A]
+          }
         }
-      }
-      catch {
-        case e:Exception =>
-          log.error("failed to use property ("+key+" : "+p+") as "+m)
-          defaultValue(key, default)
-      }
+        catch {
+          case e:Exception =>
+            log.error("failed to use property ("+key+" : "+p+") as "+m)
+            defaultValue(key, default)
+        }
+      case _ => defaultValue(key, default)
     }
-    else defaultValue(key, default)
   }
 
   def stringProperty(key:String) = property(key, "")

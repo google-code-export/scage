@@ -1,8 +1,6 @@
 package su.msk.dunno.scage.support
 
 import _root_.net.phys2d.math.ROVector2f
-import tracer.{Tracer}
-
 case class Vec(private var _x:Float, private var _y:Float) {
   def x = _x
   def y = _y

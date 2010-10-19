@@ -1,7 +1,7 @@
 package functest
 
 import org.lwjgl.input.Keyboard
-import su.msk.dunno.scage.support.{Vec, ScageLibrary}
+import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.scage.handlers.{Renderer, Controller2}
 import su.msk.dunno.scage.support.ScageLibrary._
 

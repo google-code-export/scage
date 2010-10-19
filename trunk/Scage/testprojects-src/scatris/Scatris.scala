@@ -6,7 +6,6 @@ import su.msk.dunno.scage.handlers.{Renderer, AI}
 import su.msk.dunno.scage.support.messages.Message
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.handlers.controller.Controller
-import su.msk.dunno.scage.support.{Vec, ScageProperties, ScageLibrary}
 import su.msk.dunno.scage.support.ScageLibrary._
 
 object Scatris extends Application {

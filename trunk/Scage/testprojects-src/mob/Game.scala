@@ -5,7 +5,7 @@ import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.main.Scage
 import su.msk.dunno.scage.handlers.Renderer
 import su.msk.dunno.scage.support.messages.Message
-import su.msk.dunno.scage.support.{Vec, ScageLibrary}
+import su.msk.dunno.scage.support.Vec
 import org.lwjgl.opengl.GL11
 import su.msk.dunno.scage.support.ScageLibrary._
 

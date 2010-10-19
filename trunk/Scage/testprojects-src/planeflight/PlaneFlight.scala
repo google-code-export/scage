@@ -9,7 +9,7 @@ import su.msk.dunno.scage.handlers.controller.Controller
 import org.newdawn.slick.opengl.Texture
 import su.msk.dunno.scage.support.tracer.StandardTracer
 import su.msk.dunno.scage.handlers.{AI, Idler, Renderer}
-import su.msk.dunno.scage.support.{ScageLibrary, Vec}
+import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.scage.support.ScageLibrary._
 
 object PlaneFlight {

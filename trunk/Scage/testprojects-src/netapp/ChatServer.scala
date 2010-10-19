@@ -1,6 +1,5 @@
 package netapp
 
-import su.msk.dunno.scage.support.ScageLibrary
 import su.msk.dunno.scage.handlers.net.NetServer
 import su.msk.dunno.scage.handlers.AI
 import org.apache.log4j.Logger

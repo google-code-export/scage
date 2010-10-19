@@ -2,8 +2,6 @@ package su.msk.dunno.scage.prototypes
 
 import su.msk.dunno.scage.main.Scage
 import org.apache.log4j.Logger
-import su.msk.dunno.scage.support.ScageProperties
-
 abstract class Handler {
   protected val log = Logger.getLogger(this.getClass)
 

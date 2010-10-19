@@ -4,7 +4,7 @@ import su.msk.dunno.scage.handlers.AI
 import su.msk.dunno.scage.handlers.net.NetServer
 import org.json.JSONObject
 import su.msk.dunno.scage.support.tracer.{Trace, State, StandardTracer}
-import su.msk.dunno.scage.support.{ScageLibrary, Colors, Vec}
+import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.scage.support.ScageLibrary._
 
 class ServerSideRocket(private val shooter:String, init_coord:Vec, dir:Vec, private val rotation:Float) {

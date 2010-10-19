@@ -25,10 +25,10 @@ object TestProject extends Application {
     coord_matrix(i)(j) = List(1)
   })*/
 
-  //properties = "test-properties.txt"
-  //println(property("testprop1", 0) + property("testprop2", 0))
-  println(5)
+  properties = "test-properties.txt"
+  println(property("testprop1", "a") + property("testprop2", "b"))
+  /*println(5)
 
   val s = "10.1f".toFloat
-  println(s)
+  println(s)*/
 }

@@ -8,7 +8,7 @@ import su.msk.dunno.scage.objects.{StaticBox, DynaBall, StaticLine}
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.handlers.{AI, Renderer}
 import su.msk.dunno.scage.support.tracer.{StandardTracer, State, Trace}
-import su.msk.dunno.scage.support.{ScageProperties, ScageLibrary, Vec}
+import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.scage.support.ScageLibrary._
 
 object ScageTest {

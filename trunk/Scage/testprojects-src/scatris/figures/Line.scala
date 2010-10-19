@@ -1,10 +1,7 @@
 package scatris.figures
 
 import su.msk.dunno.scage.support.Vec
-import su.msk.dunno.scage.support.tracer.StandardTracer
 import scatris.{Point, Figure}
-import su.msk.dunno.scage.handlers.controller.Controller
-import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.support.ScageLibrary._
 
 class Line(init_coord:Vec) extends Figure {

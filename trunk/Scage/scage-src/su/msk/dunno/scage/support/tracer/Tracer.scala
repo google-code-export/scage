@@ -1,7 +1,7 @@
 package su.msk.dunno.scage.support.tracer
 
 import su.msk.dunno.scage.handlers.Renderer
-import su.msk.dunno.scage.support.{Colors, ScageProperties, Vec}
+import su.msk.dunno.scage.support.Vec
 import org.apache.log4j.Logger
 import su.msk.dunno.scage.support.ScageLibrary._
 
@@ -59,9 +59,9 @@ class Tracer[S <: State] {
     if(isPointOnArea(p)) {
       coord_matrix(p.ix)(p.iy) = t :: coord_matrix(p.ix)(p.iy)
       t._id = nextTraceID
-      log.debug("added new trace #"+t.id+" in coord "+t.getCoord)
+      log.debug("added new trace #"+t.id+" in coord ("+t.getCoord+")")
     }
-    else log.error("failed to add trace: coord "+t.getCoord+" is out of area")
+    else log.error("failed to add trace: coord ("+t.getCoord+") is out of area")
     t.id
   }
 
@@ -93,15 +93,6 @@ class Tracer[S <: State] {
     		else acc
     	}) ::: neighbours
     })
-    /*for(i <- range) {
-    	for(j <- range) {
-        val near_point = checkPointEdges(p + Vec(i, j))
-    		neighbours = coord_matrix(near_point.ix)(near_point.iy).foldLeft(List[Trace[S]]())((acc, trace) => {
-    		  if(trace.isActive && trace.id != trace_id) trace :: acc
-    			else acc
-    		}) ::: neighbours
-    	}
-    }*/
     neighbours
   }
 

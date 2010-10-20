@@ -101,6 +101,10 @@ object NetClient extends Handler {
     }).start
   }
 
+  override def actionSequence = if(!isServerOnline) { // connection checker
+    if(is_connected) disconnect
+    connect
+  }
 
   override def exitSequence = if(is_connected) disconnect
 

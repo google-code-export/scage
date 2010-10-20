@@ -71,8 +71,12 @@ object NetServer extends Handler {
     }).start
   }
 
+  val check_timeout = property("check_timeout", 0)
   override def actionSequence = { // check clients being online
-    client_handlers.filter(client => !client.isOnline).foreach(client => client.disconnect)
+    client_handlers.filter(client => !client.isOnline).foreach(client => {
+      client.send(new JSONObject().put("quit", "no responce from you for "+check_timeout+" msecs"))
+      client.disconnect
+    })
     client_handlers = client_handlers.filter(client => client.isOnline)
   }
 
@@ -109,9 +113,8 @@ class ClientHandler(val id:Int, val socket:Socket) {
     log.debug("client #"+id+" was disconnected")
   }
 
-  private val check_timeout = property("check_timeout", 0)
   private var last_answer_time = System.currentTimeMillis
-  def isOnline = check_timeout == 0 || System.currentTimeMillis - last_answer_time < check_timeout
+  def isOnline = NetServer.check_timeout == 0 || System.currentTimeMillis - last_answer_time < NetServer.check_timeout
 
   new Thread(new Runnable { // receive data from client
     def run():Unit = {

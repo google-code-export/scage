@@ -25,12 +25,21 @@ object TestProject extends Application {
     coord_matrix(i)(j) = List(1)
   })*/
 
-  properties = "test-properties.txt"
+  /*properties = "test-properties.txt"
   println(property("testprop1", false))
   println(property("testprop2", true))
-  println(property("testprop3", 0.0f))
+  println(property("testprop3", 0.0f))*/
   /*println(5)
 
   val s = "10.1f".toFloat
   println(s)*/
+  val logEntry = """(\d+) (\d+)""".r
+  val str = "5 6"
+  val logEntry(first_coord, second_coord ) = str
+
+  str match {
+    case logEntry(first_coord, second_coord) =>
+    println(first_coord)
+    println(second_coord)
+  }
 }

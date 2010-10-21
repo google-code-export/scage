@@ -37,6 +37,13 @@ object TestProject extends Application {
   val str = "5 6"
   val logEntry(first_coord, second_coord ) = str
 
+  def str2list[A](s:String, regexp:String = " "):List[A] = {
+    str.split(regexp).toList.map(p => p.asInstanceOf[A])
+  }
+
+  val l = str2list[Int](s = str)
+  println(l(0) + l(1))
+
   str match {
     case logEntry(first_coord, second_coord) =>
     println(first_coord)

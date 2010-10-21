@@ -37,9 +37,9 @@ object NetServer extends Handler {
   def addOutgoingData(key:Any, data:Any) = sd.put(key.toString, data)
   def addOutgoingData(key:Any) = sd.put(key.toString, "")
 
-  private var greetings_message = "This is Scage NetServer"
+  private var greetings_message:(ClientHandler) => Unit = (client) => client.send("This is Scage NetServer")
   def greetings = greetings_message
-  def greetings_= (s:String) = greetings_message = s
+  def greetings_= (s:(ClientHandler) => Unit) = greetings_message = s
   private var next_client = 0
 
   override def initSequence = {
@@ -53,8 +53,8 @@ object NetServer extends Handler {
               val socket = server_socket.accept
               val client = new ClientHandler(next_client, socket)
               client_handlers = client :: client_handlers
-              log.info("established connection with "+socket.getInetAddress.getHostAddress+", "+client_handlers.length+"/"+max_clients+" client(s) are connected")
-              client.send(new JSONObject().put("greetings", greetings_message))
+              log.info("established connection with "+socket.getInetAddress.getHostAddress)
+              greetings(client)
               has_new_connection = true
               next_client += 1
             }

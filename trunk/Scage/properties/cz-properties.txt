@@ -1,1 +1,3 @@
 max_clients = 2
+size_x = 5
+size_y = 5

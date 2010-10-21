@@ -11,12 +11,15 @@ object CZServer {
   NetServer.greetings = (client) => {
     if(NetServer.clients.length < 2) {
       client.send("CrossesZeros v0.1")
-      client.send("waiting another player...")
+      client.send("waiting for another player...")
     }
     else {
       client.send("CrossesZeros v0.1")
       NetServer.send("starting game...")
-      NetServer.clients.foreach(client => showBoard(client))
+      NetServer.send("to make a turn type 'x y', where x, y - coordinates of the free point on the board")
+      NetServer.send(line_to_win+" in line to win")
+      NetServer.send("good luck")
+      NetServer.clients.foreach(client => {showInterface(client); showBoard(client)})
     }
   }
 
@@ -41,25 +44,49 @@ object CZServer {
    def +(p:Point) = new Point(x+p.x, y+p.y)
    def *(i:Int) = new Point(x*i, y*i)
   }
-  def isPlayerWinHere(from:Point, line_to_win:Int, shift:Point, winFunc:(Int) => Boolean, board:Array[Array[Int]]) = {
+  def isPlayerWonHere(from:Point, shift:Point, winFunc:(Int) => Boolean) = {
    (0 to line_to_win-1).forall(offset => {
       val next_point = from + (shift*offset)
-      onBoard(next_point, board) && winFunc(board(next_point.x)(next_point.y))
+      onBoard(next_point.x, next_point.y) && winFunc(board(next_point.x)(next_point.y))
    })
   }
 
-  def showBoard(player:ClientHandler) = {
+  def isPlayerWon(x:Int, y:Int) = {
+    val from = new Point(x, y)
+    val winFunc = (i:Int) => if(is_crosses_move) i == CROSS else i == ZERO
+
+    isPlayerWonHere(from, new Point(1, 0), winFunc) ||
+    isPlayerWonHere(from, new Point(-1, 0), winFunc) ||
+    isPlayerWonHere(from, new Point(0, 1), winFunc) ||
+    isPlayerWonHere(from, new Point(0, -1), winFunc) ||
+    isPlayerWonHere(from, new Point(1, 1), winFunc) ||
+    isPlayerWonHere(from, new Point(-1, -1), winFunc) ||
+    isPlayerWonHere(from, new Point(1, -1), winFunc) ||
+    isPlayerWonHere(from, new Point(-1, 1), winFunc)
+  }
+
+  def showInterface(player:ClientHandler) = {
     if(player == NetServer.clients(0)) {
-      player.send("You are cross")
+      player.send("You are crosses")
       if(is_crosses_move) player.send("Your turn now")
       else player.send("It is zero's turn now")
     }
     else if(player == NetServer.clients(1)) {
-      player.send("You are zero")
+      player.send("You are zeros")
       if(!is_crosses_move) player.send("Your turn now")
       else player.send("It is cross's turn now")
     }
+  }
 
+  val CROSS = 1
+  val ZERO = 2
+  def playerType(player:ClientHandler) = {
+    if(player == NetServer.clients(0)) 1
+    else if(player == NetServer.clients(1)) 2
+    else 0
+  }
+
+  def showBoard(player:ClientHandler) = {
     val len = board.length
     var new_j = len-1
     var str:StringBuilder = new StringBuilder
@@ -71,8 +98,8 @@ object CZServer {
           new_j = j
         }
         board(i)(j) match {
-          case 1 => str.append("x ")
-          case 2 => str.append("o ")
+          case CROSS => str.append("x ")
+          case ZERO => str.append("o ")
           case _ => str.append("_ ")
         }
       }
@@ -82,7 +109,8 @@ object CZServer {
   }
 
   var is_crosses_move= true
-  def makeMove(player:ClientHandler, player_type:Int) = {
+  var is_player_won = false
+  def makeMove(player:ClientHandler) = {
     if(player.hasNewIncomingData) {
       val data = player.incomingData
       if(data.has("raw")) {
@@ -91,9 +119,18 @@ object CZServer {
           if(!onBoard(x, y)) player.send("your move is not inside the board")
           else if(!isFreePoint(x, y)) player.send("you try to move on a non-free point")
           else {
-            board(x)(y) = player_type
-            is_crosses_move = !is_crosses_move
-            NetServer.clients.foreach(client => showBoard(client))
+            if(is_crosses_move) board(x)(y) = CROSS
+            else board(x)(y) = ZERO
+            is_player_won = isPlayerWon(x, y)
+            if(!is_player_won) {
+              is_crosses_move = !is_crosses_move
+              NetServer.clients.foreach(client => {showInterface(client); showBoard(client)})
+            }
+            else {
+              NetServer.clients.foreach(client => showBoard(client))
+              if(is_crosses_move) NetServer.send("crosses won")
+              else NetServer.send("zeros won")
+            }
           }
         case _ => player.send("wrong move. type 'x y', where x, y - coordinates of the free point of the board")
         }
@@ -103,8 +140,11 @@ object CZServer {
 
   AI.registerAI(() => {
     if(NetServer.clients.length == 2) {
-      if(is_crosses_move) makeMove(NetServer.clients(0), 1)
-      else makeMove(NetServer.clients(1), 2)
+      if(!is_player_won) {
+        if(is_crosses_move) makeMove(NetServer.clients(0))
+        else makeMove(NetServer.clients(1))
+      }
+      else stop
     }
   })
 

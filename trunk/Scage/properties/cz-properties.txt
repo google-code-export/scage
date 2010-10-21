@@ -1,3 +1,4 @@
 max_clients = 2
-size_x = 5
-size_y = 5
+size_x = 3
+size_y = 3
+line_to_win = 3

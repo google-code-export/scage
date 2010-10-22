@@ -1,0 +1,4 @@
+testprop1 = 
+testprop2 = nooo
+testprop3 = 1.5         
+#testprop4 = 5.dfdf

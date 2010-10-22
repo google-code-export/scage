@@ -26,15 +26,14 @@ object Scage {
   def isRunning = is_running
   def start = {
     Idler
-    new Thread {
-      override def run:Unit = {
-        scage_handlers.foreach(h => h.initSequence)
-        is_running = true
-        while(is_running) scage_handlers.foreach(h => h.actionSequence)
-        scage_handlers.foreach(h => h.exitSequence)
-        log.info("app was stopped")
-      }
-    }.start
+    run
+  }
+  private def run = {
+    scage_handlers.foreach(h => h.initSequence)
+    is_running = true
+    while(is_running) scage_handlers.foreach(h => h.actionSequence)
+    scage_handlers.foreach(h => h.exitSequence)
+    log.info("app was stopped")
   }
   def stop = is_running = false
 

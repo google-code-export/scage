@@ -1,6 +1,6 @@
 package su.msk.dunno.scage.support
 
-import su.msk.dunno.scage.main.Scage
+import su.msk.dunno.scage.Scage
 import su.msk.dunno.scage.handlers.{Idler, Renderer}
 import tracer.{State, Trace}
 import tracer.Tracer
@@ -29,6 +29,11 @@ object ScageLibrary extends Colors {
 
   lazy val framerate = Idler.framerate
   def fps = Idler.fps
+
+  def init(init_func: => Unit) = Scage.init(init_func)
+  def action(action_period:Long)(action_func: => Unit) = Scage.action(action_period)(action_func)
+  def action(action_func: => Unit) = Scage.action(action_func)
+  def exit(exit_func: => Unit) = Scage.exit(exit_func)
 
   def onPause = Scage.on_pause
   def switchPause = Scage.switchPause

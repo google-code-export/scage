@@ -1,15 +1,14 @@
 package su.msk.dunno.scage.handlers
 
-import su.msk.dunno.scage.main.Scage
+import su.msk.dunno.scage.Scage
 import org.lwjgl.opengl.{DisplayMode, Display, GL11}
 import org.lwjgl.util.glu.GLU
 import org.newdawn.slick.opengl.{TextureLoader, Texture}
 import java.io.{FileInputStream, InputStream}
-import su.msk.dunno.scage.prototypes.Handler
 import su.msk.dunno.scage.support.{Color, Vec}
 import su.msk.dunno.scage.support.ScageProperties._
 
-object Renderer extends Handler {
+object Renderer {
   private var render_list:List[() => Unit] = List[() => Unit]()
   def addRender(render: () => Unit) = {render_list = render_list ::: List(render)}
 
@@ -73,8 +72,8 @@ object Renderer extends Handler {
     interface = renderFunc :: interface
   }
 
-  override def actionSequence() = {
-	if(Display.isCloseRequested()) Scage.stop
+  Scage.action {
+    if(Display.isCloseRequested()) Scage.stop
     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
 		GL11.glLoadIdentity();
       GL11.glPushMatrix
@@ -83,13 +82,16 @@ object Renderer extends Handler {
       val coord = center - central_coord()*scale
       GL11.glTranslatef(coord.x , coord.y, 0.0f)
       GL11.glScalef(scale, scale, 1)
-      render_list.foreach(render => render())
+      render_list.foreach(render_func => render_func())
       GL11.glPopMatrix
 
-      interface.foreach(renderFunc => renderFunc())
+      interface.foreach(interface_func => interface_func())
     Display.update();
   }
-  override def exitSequence() = Display.destroy();
+
+  Scage.exit {
+    Display.destroy
+  }
 
   def setBackground(c:Color) = GL11.glClearColor(c.red, c.green, c.blue, 0)
 

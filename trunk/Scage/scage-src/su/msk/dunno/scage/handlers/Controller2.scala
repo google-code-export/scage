@@ -1,10 +1,10 @@
 package su.msk.dunno.scage.handlers
 
-import su.msk.dunno.scage.prototypes.Handler
 import collection.mutable.HashMap
 import org.lwjgl.input.Keyboard
+import su.msk.dunno.scage.Scage
 
-object Controller2 extends Handler {
+object Controller2 {
   private var keys:HashMap[Int, List[KeyState]] = new HashMap[Int, List[KeyState]]()
 
   private var next_listener_id = 0
@@ -22,7 +22,7 @@ object Controller2 extends Handler {
     ks
   }
 
-  override def actionSequence():Unit = {
+  Scage.action {
     keys = keys.map(key => {
       if(Keyboard.isKeyDown(key._1)) key._2.foreach(keystate => {
         keystate.is_pressed = true

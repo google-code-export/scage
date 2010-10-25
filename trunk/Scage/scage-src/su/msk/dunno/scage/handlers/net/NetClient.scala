@@ -1,13 +1,15 @@
 package su.msk.dunno.scage.handlers.net
 
-import su.msk.dunno.scage.main.Scage
+import su.msk.dunno.scage.Scage
 import org.json.{JSONException, JSONObject}
-import su.msk.dunno.scage.prototypes.Handler
 import java.io.{BufferedReader, InputStreamReader, OutputStreamWriter, PrintWriter}
 import java.net.{SocketException, Socket}
 import su.msk.dunno.scage.support.ScageProperties._
+import org.apache.log4j.Logger
 
-object NetClient extends Handler {
+object NetClient {
+  private val log = Logger.getLogger(this.getClass)
+
   val server_url =  property("server", "127.0.0.1")
   val port = property("port", 9800)
 
@@ -65,7 +67,7 @@ object NetClient extends Handler {
   private var last_answer_time = System.currentTimeMillis
   def isServerOnline = check_timeout == 0 || System.currentTimeMillis - last_answer_time < check_timeout
 
-  override def initSequence = {
+  Scage.init {
     new Thread(new Runnable { // receive data from server
       def run():Unit = {
         while(Scage.isRunning) {
@@ -101,12 +103,14 @@ object NetClient extends Handler {
     }).start
   }
 
-  override def actionSequence = if(!isServerOnline) { // connection checker
-    if(is_connected) disconnect
-    connect
+  Scage.action {
+    if(!isServerOnline) { // connection checker
+      if(is_connected) disconnect
+      connect
+    }
   }
 
-  override def exitSequence = if(is_connected) disconnect
+  Scage.exit {if(is_connected) disconnect}
 
   def disconnect = {
     if(socket != null) socket.close

@@ -1,14 +1,15 @@
 package su.msk.dunno.scage.handlers.net
 
-import su.msk.dunno.scage.main.Scage
-import su.msk.dunno.scage.prototypes.Handler
+import su.msk.dunno.scage.Scage
 import java.io.{BufferedReader, InputStreamReader, OutputStreamWriter, PrintWriter}
 import org.apache.log4j.Logger
 import java.net.{Socket, SocketException, ServerSocket}
 import org.json.{JSONException, JSONObject}
 import su.msk.dunno.scage.support.ScageProperties._
 
-object NetServer extends Handler {
+object NetServer {
+  private val log = Logger.getLogger(this.getClass)
+  
   val port = property("port", 9800)
   val max_clients = property("max_clients", 20)
   private var client_handlers:List[ClientHandler] = Nil
@@ -42,7 +43,7 @@ object NetServer extends Handler {
   def greetings_= (s:(ClientHandler) => Unit) = greetings_message = s
   private var next_client = 0
 
-  override def initSequence = {
+  Scage.init {
     new Thread(new Runnable { // awaiting new connections
       def run():Unit = {
         try {
@@ -72,7 +73,7 @@ object NetServer extends Handler {
   }
 
   val check_timeout = property("check_timeout", 0)
-  override def actionSequence = { // check clients being online
+  Scage.action { // check clients being online
     client_handlers.filter(client => !client.isOnline).foreach(client => {
       client.send(new JSONObject().put("quit", "no responce from you for "+check_timeout+" msecs"))
       client.disconnect
@@ -80,7 +81,7 @@ object NetServer extends Handler {
     client_handlers = client_handlers.filter(client => client.isOnline)
   }
 
-  override def exitSequence = { // sending quit message and disconnecting
+  Scage.exit { // sending quit message and disconnecting
     if(client_handlers.length > 0) log.info("disconnecting all clients...")
     client_handlers.foreach(client => client.send(new JSONObject().put("quit", "")))
     client_handlers.foreach(client => client.disconnect)

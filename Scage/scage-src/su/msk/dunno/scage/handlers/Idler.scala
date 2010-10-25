@@ -1,9 +1,9 @@
 package su.msk.dunno.scage.handlers
 
-import su.msk.dunno.scage.prototypes.Handler
 import su.msk.dunno.scage.support.ScageProperties._
+import su.msk.dunno.scage.Scage
 
-object Idler extends Handler {
+object Idler {
   val framerate:Int = property("framerate", 100);
 
   private var msek = System.currentTimeMillis
@@ -18,9 +18,9 @@ object Idler extends Handler {
     }
   }
 
-  override def actionSequence() = {
+  Scage.action {
     countFPS
     if(framerate != 0) Thread.sleep(1000/framerate)
-    else Thread.sleep(10)
+    else Thread.sleep(10)    
   }
 }

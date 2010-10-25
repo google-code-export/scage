@@ -1,7 +1,8 @@
 package su.msk.dunno.scage.handlers.controller
 
-import su.msk.dunno.scage.prototypes.Handler
-object Controller extends Handler {
+import su.msk.dunno.scage.Scage
+
+object Controller {
   var listeners = List[TListener]()
 
   var to_add = List[TListener]()
@@ -27,7 +28,7 @@ object Controller extends Handler {
   }
 
   var last_key:Int = 0
-  override def actionSequence():Unit = {
+  Scage.action {
     if(to_add.length > 0) {
       listeners = to_add ::: listeners
       to_add = List[TListener]()

@@ -9,9 +9,6 @@ import su.msk.dunno.scage.support.{Color, Vec}
 import su.msk.dunno.scage.support.ScageProperties._
 
 object Renderer {
-  private var render_list:List[() => Unit] = List[() => Unit]()
-  def addRender(render: () => Unit) = {render_list = render_list ::: List(render)}
-
   val CIRCLE = 1
   private var next_displaylist_key = 2
   private def nextDisplayListKey() = {
@@ -20,21 +17,24 @@ object Renderer {
     next_key
   }
 
-  var scale:Float = 1.0f
-  private var scaleFunc:(Float) => Float = (Float) => 1
-  private var isSetScaleFunc = false
-  def setScaleFunc(func: (Float) => Float) = {
-	  scaleFunc = func
-	  isSetScaleFunc = true
-  }
+  private var _scale:Float = 1.0f
+  def scale = _scale
+  def scale_= (value:Float) = _scale = value
 
   val width = property("width", 800);
   val height = property("height", 600);
   
-  val center = Vec(width/2, height/2)
-  private var central_coord = () => Vec(width/2, height/2)
-  def setCentral(coord: () => Vec) = {
-    central_coord = coord
+  val window_center = Vec(width/2, height/2)
+  private var central_coord = () => window_center
+  def center = central_coord()
+  def center_= (coord: => Vec) = central_coord = () => coord
+
+  private var render_list:List[() => Unit] = List[() => Unit]()
+  def render(render_func: => Unit) = {render_list = render_list ::: List(() => render_func)}
+
+  private var interface_list:List[() => Unit] = List[() => Unit]()
+  def interface(render_func: => Unit) = {
+    interface_list = (() => render_func) :: interface_list
   }
 
   Display.setDisplayMode(new DisplayMode(width, height));
@@ -60,17 +60,12 @@ object Renderer {
 		GL11.glBegin(GL11.GL_LINE_LOOP);
 			for(i <- 0 to 100)
 			{
-				val cosine = Math.cos(i*2*Math.Pi/100).toFloat;
-				val sine = Math.sin(i*2*Math.Pi/100).toFloat;
+				val cosine = math.cos(i*2*math.Pi/100).toFloat;
+				val sine = math.sin(i*2*math.Pi/100).toFloat;
 				GL11.glVertex2f(cosine, sine);
 			}
 	  GL11.glEnd();
 	GL11.glEndList();
-
-  var interface:List[() => Unit] = List[() => Unit]()
-  def addInterfaceElement(renderFunc: () => Unit) = {
-    interface = renderFunc :: interface
-  }
 
   Scage.action {
     if(Display.isCloseRequested()) Scage.stop
@@ -78,14 +73,13 @@ object Renderer {
 		GL11.glLoadIdentity();
       GL11.glPushMatrix
 
-      if(isSetScaleFunc && !Scage.on_pause) scale = scaleFunc(scale)
-      val coord = center - central_coord()*scale
+      val coord = window_center - central_coord()*_scale
       GL11.glTranslatef(coord.x , coord.y, 0.0f)
-      GL11.glScalef(scale, scale, 1)
+      GL11.glScalef(_scale, _scale, 1)
       render_list.foreach(render_func => render_func())
       GL11.glPopMatrix
 
-      interface.foreach(interface_func => interface_func())
+      interface_list.foreach(interface_func => interface_func())
     Display.update();
   }
 

@@ -47,15 +47,15 @@ class Tracer[S <: State] {
   val h_x = game_width/N_x
 	val h_y = game_height/N_y
   if(property("show_grid", true)) {
-	  Renderer.addRender(() => {
+	  Renderer.render {
 	 	  Renderer.setColor(LIME_GREEN)
 	 	  for(i <- 0 to N_x) Renderer.drawLine(Vec(i*h_x + game_from_x, game_from_y), Vec(i*h_x + game_from_x, game_to_y))
 	 	  for(j <- 0 to N_y) Renderer.drawLine(Vec(game_from_x, j*h_y + game_from_y), Vec(game_to_x, j*h_y + game_from_y))
-	  })
+	  }
   }
 
   def addTrace(t:Trace[S]) = {
-    val p = if(are_solid_edges) point(t.getCoord()) else checkPointEdges(point(t.getCoord()))
+    val p = point(t.getCoord())
     if(isPointOnArea(p)) {
       coord_matrix(p.ix)(p.iy) = t :: coord_matrix(p.ix)(p.iy)
       t._id = nextTraceID

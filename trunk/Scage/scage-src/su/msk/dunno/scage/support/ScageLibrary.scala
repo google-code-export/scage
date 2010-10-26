@@ -4,6 +4,7 @@ import su.msk.dunno.scage.Scage
 import su.msk.dunno.scage.handlers.{Idler, Renderer}
 import tracer.{State, Trace}
 import tracer.Tracer
+import su.msk.dunno.scage.handlers.controller.Controller
 
 object ScageLibrary extends Colors {
   implicit def rangeToPairs(range:Range) = {
@@ -16,7 +17,7 @@ object ScageLibrary extends Colors {
 
       def foreachpair(second_range:Range)(doIt:(Int, Int) => Unit) = {
         second_range.foldLeft(List[(Int, Int)]())((pairs, number) =>
-          (range zip List().padTo(second_range.length, number)).toList ::: pairs)
+          (range zip List().padTo(range.length, number)).toList ::: pairs)
              .foreach(pair => doIt(pair._1, pair._2))
       }
     }
@@ -24,8 +25,18 @@ object ScageLibrary extends Colors {
 
   lazy val width = Renderer.width
   lazy val height = Renderer.height
+
   def scale = Renderer.scale
-  def scale_= (value:Float):Unit = Renderer.scale = value
+  def scale_= (value:Float) = Renderer.scale = value
+  
+  def center = Renderer.center
+  def center_= (coord: => Vec) = Renderer.center = coord
+
+  def render(render_func: => Unit) = Renderer.render(render_func)
+  def interface(interface_func: => Unit) = Renderer.interface(interface_func)
+
+  def keyListener(key:Int, repeatTime:Long = 0, onKeyDown: => Any, onKeyUp: => Any = {}) =
+    Controller.keyListener(key, repeatTime, onKeyDown, onKeyUp)
 
   lazy val framerate = Idler.framerate
   def fps = Idler.fps

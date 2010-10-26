@@ -1,0 +1,8 @@
+width = 200
+height = 200
+
+game_to_x = 800
+game_to_y = 600
+
+N_x = 20
+N_y = 15

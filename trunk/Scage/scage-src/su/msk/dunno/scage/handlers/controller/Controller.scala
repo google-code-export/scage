@@ -3,40 +3,31 @@ package su.msk.dunno.scage.handlers.controller
 import su.msk.dunno.scage.Scage
 
 object Controller {
-  var listeners = List[TListener]()
+  private var listeners = List[UIListener]()
 
-  var to_add = List[TListener]()
-  def addKeyListener(key:Int, onKeyDown: () => Any) = {
-    to_add = new KeyListener(key, onKeyDown) :: to_add
-  }
-  def addKeyListener(key:Int, repeatTime:Long, onKeyDown: () => Any) = {
-    to_add = new KeyListener(key, repeatTime, onKeyDown) :: to_add
-  }
-  def addKeyListener(key:Int, onKeyDown: () => Any, onKeyUp: () => Any) = {
-	  to_add = new KeyListener(key, onKeyDown, onKeyUp) :: to_add
-  }
-  def addKeyListener(key:Int, repeatTime:Long, onKeyDown: () => Any, onKeyUp: () => Any) = {
+  private var to_add = List[UIListener]()
+  def keyListener(key:Int, repeatTime:Long = 0, onKeyDown: => Any, onKeyUp: => Any = {}) = {
 	  to_add = new KeyListener(key, repeatTime, onKeyDown, onKeyUp) :: to_add
   }
-  def addListeners(ll:List[TListener]) = {
-    to_add = ll ::: to_add
-  }
 
-  var to_remove = List[TListener]()
-  def removeKeyListener(key:Int, repeatTime:Long, onKeyDown: () => Any) = {
-    to_remove = new KeyListener(key, repeatTime, onKeyDown) :: to_remove
-  }
+  def isKeyPressed = listeners.exists(l => l.wasPressed)
+
+  /*private var to_remove = List[UIListener]()
+    def removeKeyListener(key:Int, repeatTime:Long, onKeyDown: () => Any) = {
+      to_remove = new KeyListener(key, repeatTime, onKeyDown) :: to_remove
+  }*/
 
   var last_key:Int = 0
+
   Scage.action {
     if(to_add.length > 0) {
       listeners = to_add ::: listeners
-      to_add = List[TListener]()
+      to_add = List[UIListener]()
     }
-    if(to_remove.length > 0) {
+    /*if(to_remove.length > 0) {
       listeners.filterNot(l => to_remove.contains(l))
-      to_remove = List[TListener]()
-    }
+      to_remove = List[UIListener]()
+    }*/
     listeners.foreach(l => l.check)
   }
 }

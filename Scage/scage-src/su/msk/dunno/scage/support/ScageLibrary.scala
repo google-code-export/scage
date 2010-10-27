@@ -81,6 +81,8 @@ object ScageLibrary extends Colors {
   }
   
   def point(v:Vec) = Tracer.currentTracer.point(v)
+  def pointCenter(p:Vec):Vec = Tracer.currentTracer.pointCenter(p)
+  def pointCenter(x:Int, y:Int):Vec = Tracer.currentTracer.pointCenter(x, y)
 
   lazy val game_from_x = Tracer.currentTracer.game_from_x
   lazy val game_to_x = Tracer.currentTracer.game_to_x

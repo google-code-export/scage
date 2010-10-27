@@ -24,18 +24,13 @@ object HW {
 
   center = coord
 
-  keyListener(Keyboard.KEY_UP,    100, onKeyDown = (trace in coord) --> (coord + Vec(0, 10),  -1 to 1, 20))
-  keyListener(Keyboard.KEY_DOWN,  100, onKeyDown = (trace in coord) --> (coord + Vec(0, -10), -1 to 1, 20))
-  keyListener(Keyboard.KEY_RIGHT, 100, onKeyDown = (trace in coord) --> (coord + Vec(10, 0),  -1 to 1, 20))
-  keyListener(Keyboard.KEY_LEFT,  100, onKeyDown = (trace in coord) --> (coord + Vec(-10, 0), -1 to 1, 20))
+  keyListener(Keyboard.KEY_UP,    10, onKeyDown = (trace in coord) --> (coord + Vec(0, 10),  -1 to 1, 20))
+  keyListener(Keyboard.KEY_DOWN,  10, onKeyDown = (trace in coord) --> (coord + Vec(0, -10), -1 to 1, 20))
+  keyListener(Keyboard.KEY_RIGHT, 10, onKeyDown = (trace in coord) --> (coord + Vec(10, 0),  -1 to 1, 20))
+  keyListener(Keyboard.KEY_LEFT,  10, onKeyDown = (trace in coord) --> (coord + Vec(-10, 0), -1 to 1, 20))
 
   keyListener(Keyboard.KEY_ADD,      100, onKeyDown = if(scale < 10) scale += 1)
   keyListener(Keyboard.KEY_SUBTRACT, 100, onKeyDown = if(scale > 1) scale -= 1)
-
-  action {
-    if(Controller.isKeyPressed) scale = 2
-    else scale = 1
-  }
 
   render {
     Renderer.setColor(BLACK)

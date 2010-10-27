@@ -2,7 +2,7 @@ package scatris
 
 import figures._
 import su.msk.dunno.scage.support.tracer.{Trace, State, StandardTracer}
-import su.msk.dunno.scage.handlers.{Renderer, AI}
+import su.msk.dunno.scage.handlers.{Renderer}
 import su.msk.dunno.scage.support.messages.Message
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.handlers.controller.Controller
@@ -22,12 +22,12 @@ object Scatris extends Application {
 
   private def isFullRow(y:Int) = {
     val matrix = StandardTracer.matrix
-    (0 to StandardTracer.N_x-1).foldLeft(true)((is_full, x) => is_full && isRestingPoint(matrix(x)(y)))
+    (0 to N_x-1).foldLeft(true)((is_full, x) => is_full && isRestingPoint(matrix(x)(y)))
   }
 
   private def disableRow(y:Int) = {
     val matrix = StandardTracer.matrix
-    (0 to StandardTracer.N_x-1).foreach(x => matrix(x)(y).foreach(trace => trace.changeState(new State("disable"))))
+    (0 to N_x-1).foreach(x => matrix(x)(y).foreach(trace => trace.changeState(new State("disable"))))
   }
 
   private def getRandomFigure = {
@@ -51,7 +51,7 @@ object Scatris extends Application {
   private var is_game_finished = false
   private def upperCenter = StandardTracer.pointCenter(N_x/2, N_y-2)
   private var figure = getRandomFigure
-  AI.registerAI(() => {
+  action {
     for(y <- 0 to N_y-1) {
       if(isFullRow(y)) {
         disableRow(y)
@@ -63,18 +63,18 @@ object Scatris extends Application {
       figure = getRandomFigure
       if(!figure.canMoveDown) is_game_finished = true
     }
-  })
+  }
   
-  Renderer.addInterfaceElement(() => {
+  interface {
     Message.print("FPS: "+fps, 200, height-25)
     Message.print("Score: "+score, 20, height-25)
     Message.print("Speed: x"+(300.0f/gameSpeed), 20, height-45)
     if(is_game_finished) Message.print("Game Over", 20, height-65)
     if(onPause) Message.print("PAUSE", width/2-20, height/2+60)
-  })
+  }
 
   // game pause
-  Controller.addKeyListener(Keyboard.KEY_SPACE, () => switchPause)
+  keyListener(Keyboard.KEY_SPACE, onKeyDown = switchPause)
 
   start
 }

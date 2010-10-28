@@ -72,13 +72,7 @@ object Renderer {
     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
 		GL11.glLoadIdentity();
       GL11.glPushMatrix
-
-      val coord = window_center - central_coord()*_scale
-      GL11.glTranslatef(coord.x , coord.y, 0.0f)
-      GL11.glScalef(_scale, _scale, 1)
       render_list.foreach(render_func => render_func())
-      GL11.glPopMatrix
-
       interface_list.foreach(interface_func => interface_func())
     Display.update();
   }

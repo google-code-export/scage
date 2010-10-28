@@ -17,4 +17,4 @@ N_y = 28
 
 solid_edges = yes
 
-framerate = 30
+framerate = 100

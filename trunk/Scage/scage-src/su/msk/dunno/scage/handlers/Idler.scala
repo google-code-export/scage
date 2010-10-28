@@ -19,8 +19,9 @@ object Idler {
   }
 
   Scage.action {
-    countFPS
-    if(framerate != 0) Thread.sleep(1000/framerate)
-    else Thread.sleep(10)    
+      countFPS
+//    if(framerate != 0) Thread.sleep(1000/framerate)
+//    else Thread.sleep(10)    
+      Thread.sleep(10)
   }
 }

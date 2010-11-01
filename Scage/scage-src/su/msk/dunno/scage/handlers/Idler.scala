@@ -18,10 +18,9 @@ object Idler {
     }
   }
 
+  private val sleep:Long = if(framerate != 0) 1000/framerate else 10
   Scage.action {
-      countFPS
-//    if(framerate != 0) Thread.sleep(1000/framerate)
-//    else Thread.sleep(10)    
-      Thread.sleep(10)
+    countFPS
+    Thread.sleep(sleep)
   }
 }

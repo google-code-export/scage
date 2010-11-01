@@ -6,6 +6,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
+import su.msk.dunno.scage.support.messages.TrueTypeFont;
 
 import java.io.*;
 import java.util.Properties;
@@ -49,16 +50,16 @@ public class TestJavaRendering
     
     int BOX = createList("img/Crate.png", h_x, h_y, 0, 0, 256, 256);
     isRunning = true;
+    long start_time = System.currentTimeMillis();
     while(isRunning)
     {
       countFPS();
-      System.out.println(fps);
       if(Display.isCloseRequested()) isRunning = false;
       GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
       GL11.glLoadIdentity();
       for(int i = 0; i <= N_x-1; i++)
       {
-        for(int j = 0; j <= N_x-3; j++)
+        for(int j = 0; j <= N_y-3; j++)
         {
           float x = i*h_x + h_x/2;
           float y = j*h_y + h_y/2;
@@ -69,6 +70,11 @@ public class TestJavaRendering
 	    GL11.glPopMatrix();
         }
       }
+
+      GL11.glColor3f(0,0,0);
+      TrueTypeFont.instance().drawString("FPS: "+fps, 200, height-25);
+      TrueTypeFont.instance().drawString("Time: "+(System.currentTimeMillis() - start_time), 200, height-40);
+        start_time = System.currentTimeMillis();
       Display.sync(100);
       Display.update();
     }

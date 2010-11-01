@@ -49,12 +49,11 @@ object NetClient {
   def send(data:String):Unit = send(new JSONObject().put("raw", data))
 
   private var sd:JSONObject = new JSONObject
+  private var has_new_data = false
   def incomingData:JSONObject = {
     has_new_data = false
     sd
-  }
-
-  private var has_new_data = false
+  }  
   def hasNewIncomingData = has_new_data
 
   private var cd:JSONObject = new JSONObject
@@ -89,21 +88,9 @@ object NetClient {
         }
       }
     }).start
-
-    new Thread(new Runnable { // connection checker
-      def run():Unit = {
-        while(Scage.isRunning) {
-          if(!isServerOnline) {
-            if(is_connected) disconnect
-            connect
-          }
-          Thread.sleep(1000)
-        }
-      }
-    }).start
   }
 
-  Scage.action {
+  Scage.action(1000) {
     if(!isServerOnline) { // connection checker
       if(is_connected) disconnect
       connect

@@ -25,6 +25,7 @@ object NetServer {
     has_new
   }
 
+  private var sd:JSONObject = new JSONObject  // outgoing data
   def send = client_handlers.foreach(client => client.send(sd)) // data sending methods
   def send(data:JSONObject):Unit = {
     sd = data
@@ -32,7 +33,6 @@ object NetServer {
   }
   def send(data:String):Unit = send(new JSONObject().put("raw", data))
 
-  private var sd:JSONObject = new JSONObject  // outgoing data
   def hasOutgoingData = sd.length != 0
   def eraseOutgoingData = sd = new JSONObject
   def addOutgoingData(key:Any, data:Any) = sd.put(key.toString, data)
@@ -73,7 +73,7 @@ object NetServer {
   }
 
   val check_timeout = property("check_timeout", 0)
-  Scage.action { // check clients being online
+  Scage.action(1000) { // check clients being online
     client_handlers.filter(client => !client.isOnline).foreach(client => {
       client.send(new JSONObject().put("quit", "no responce from you for "+check_timeout+" msecs"))
       client.disconnect
@@ -95,12 +95,11 @@ class ClientHandler(val id:Int, val socket:Socket) {
   private val in = new BufferedReader(new InputStreamReader(socket.getInputStream))
 
   private var cd:JSONObject = new JSONObject
+  private var has_new_data = false
   def incomingData = {
     has_new_data = false
     cd
-  }
-
-  private var has_new_data = false
+  }  
   def hasNewIncomingData = has_new_data
 
   def send(data:JSONObject) = {

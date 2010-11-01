@@ -4,7 +4,7 @@ version = 0.1
 width = 340
 height = 640
 
-show_grid = yes
+show_grid = no
 
 game_from_x = 10
 game_to_x = 330

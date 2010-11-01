@@ -26,5 +26,5 @@ object HelloWorld {
 
   Renderer.interface(() => Message.print("Hello World! "+steps, coord))
 
-  def main(args:Array[String]):Unit = start
+  def main(args:Array[String]):Unit = run
 }

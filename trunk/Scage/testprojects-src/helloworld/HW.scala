@@ -38,5 +38,5 @@ object HW {
     Renderer.drawCircle(coord2, 10)
   }
 
-  def main(args:Array[String]):Unit = start
+  def main(args:Array[String]):Unit = run
 }

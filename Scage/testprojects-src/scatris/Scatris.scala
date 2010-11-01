@@ -76,5 +76,5 @@ object Scatris extends Application {
   // game pause
   keyListener(Keyboard.KEY_SPACE, onKeyDown = switchPause)
 
-  start
+  run
 }

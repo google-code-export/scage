@@ -24,13 +24,10 @@ object Scage {
   
   private var is_running = false
   def isRunning = is_running
-  def start = {
-    Idler
-    run
-  }
-  private def run = {
+  def run = {
     init_list.foreach(init_func => init_func())
     is_running = true
+    Idler
     while(is_running) action_list.foreach(action_func => action_func())
     exit_list.foreach(exit_func => exit_func())
     log.info("app was stopped")
@@ -42,7 +39,7 @@ object Scage {
     val app_classname = ScageProperties.stringProperty("app")
     log.info("starting app "+app_classname)
     Class.forName(app_classname).getField("MODULE$").get(null)
-    start
+    run
   }
 
   private[Scage] class ActionWaiter(period:Long, action_func: => Unit) {

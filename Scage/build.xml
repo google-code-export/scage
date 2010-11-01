@@ -19,7 +19,8 @@
                 <mkdir dir="builds/scage/scage-bin" />
                 <scalac srcdir="scage-src"
                         destdir="builds/scage/scage-bin"
-                            classpathref="classpath" />
+                        classpathref="classpath"
+                        addparams="-optimise" />
         <javac srcdir="scage-src"
                        destdir="builds/scage/scage-bin"
                            classpathref="classpath"
@@ -59,7 +60,8 @@
                 <mkdir dir="builds/testprojects/${project.name}-${project.version}-${os.type}/bin" />
                 <scalac srcdir="${project.src}"
                         destdir="builds/testprojects/${project.name}-${project.version}-${os.type}/bin"
-                            classpathref="classpath-project" />
+                            classpathref="classpath-project"
+                        addparams="-optimise" />
         <javac srcdir="${project.src}"
                        destdir="builds/testprojects/${project.name}-${project.version}-${os.type}/bin"
                            classpathref="classpath-project"

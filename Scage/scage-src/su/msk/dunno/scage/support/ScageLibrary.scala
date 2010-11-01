@@ -48,7 +48,7 @@ object ScageLibrary extends Colors {
 
   def onPause = Scage.on_pause
   def switchPause = Scage.switchPause
-  def start = Scage.start
+  def run = Scage.run
   def stop = Scage.stop
   def isRunning = Scage.isRunning
 

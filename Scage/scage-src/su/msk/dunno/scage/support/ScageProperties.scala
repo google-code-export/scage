@@ -63,7 +63,7 @@ object ScageProperties {
     }
   }
   private def defaultValue[A](key:String, default:A) = {
-    log.info("default value for "+key+" is "+default)
+    log.info("default value for "+key+" is "+(if("".equals(default.toString)) "empty string" else default))
     default
   }
 

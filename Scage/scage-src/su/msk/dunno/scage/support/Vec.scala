@@ -45,7 +45,7 @@ case class Vec(private var _x:Float, private var _y:Float) {
 
   def ::(o:Vec) = o :: List[Vec](this)
 
-  private[scage] def is(v:Vec) = {
+  /*private[scage] */def is(v:Vec) = {
     _x = v.x
     _y = v.y
   }

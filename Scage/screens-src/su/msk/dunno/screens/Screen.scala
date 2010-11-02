@@ -3,7 +3,7 @@ package su.msk.dunno.screens
 import handlers.controller.Controller
 import handlers.{Idler, Renderer}
 import org.apache.log4j.Logger
-import su.msk.dunno.scage.support.Vec
+import su.msk.dunno.scage.support.{ScageProperties, Vec}
 
 object Screen {
   private var isAllScreensStop = false
@@ -15,6 +15,9 @@ class Screen(val name:String, val isMain:Boolean) {
 
   private val log = Logger.getLogger(this.getClass);
   log.info("starting "+name+"...")
+
+  val properties = "scage-properties.txt"
+  ScageProperties.properties = properties
 
   private var init_list:List[() => Unit] = Nil
   def init(init_func: => Unit) = if(is_running) init_func else init_list = (() => init_func) :: init_list

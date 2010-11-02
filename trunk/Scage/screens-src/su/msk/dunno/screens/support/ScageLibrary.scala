@@ -2,6 +2,7 @@ package su.msk.dunno.screens.support
 
 import su.msk.dunno.screens.handlers.{Idler, Renderer}
 import su.msk.dunno.scage.support.{ScageProperties, Colors}
+import tracer.{Trace, State}
 
 object ScageLibrary extends Colors {
   implicit def rangeToPairs(range:Range) = {
@@ -34,4 +35,6 @@ object ScageLibrary extends Colors {
   def intProperty(key:String):Int = ScageProperties.intProperty(key)
   def floatProperty(key:String):Float = ScageProperties.floatProperty(key)
   def booleanProperty(key:String):Boolean = ScageProperties.booleanProperty(key)
+
+  type StateTrace = Trace[_ <: State]
 }

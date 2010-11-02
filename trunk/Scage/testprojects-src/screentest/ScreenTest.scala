@@ -10,7 +10,7 @@ object ScreenTest extends Screen("Main Screen") {
     Message.print("Press Esc to Exit", width/2, height/2)
   }
 
-  keyListener(Keyboard.KEY_ESCAPE, onKeyDown = Screen.stopApp)
+  keyListener(Keyboard.KEY_ESCAPE, onKeyDown = stop)
 
   def main(args:Array[String]):Unit = run
 }

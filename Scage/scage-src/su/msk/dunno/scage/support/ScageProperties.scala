@@ -43,9 +43,9 @@ object ScageProperties {
     }
     catch {
       case ex:FileNotFoundException =>
-        if(!file.contains("properties/")) {
-          _file = "properties/" + _file
-          log.debug("development mode: looking for properties in the respective folder")
+        if(!file.contains("resources/")) {
+          _file = "resources/" + _file
+          log.debug("development mode: looking for properties in the resource folder")
           load
         }
         else fileNotFound

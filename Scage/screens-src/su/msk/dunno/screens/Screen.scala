@@ -5,6 +5,7 @@ import handlers.{Idler, Renderer}
 import org.apache.log4j.Logger
 import prototypes.{Renderable, Handler}
 import su.msk.dunno.scage.support.{Vec, ScageProperties}
+import org.lwjgl.opengl.Display
 
 object Screen {
   private var isAllScreensStop = false
@@ -21,13 +22,13 @@ class Screen(val name:String, val isMain:Boolean) {
   ScageProperties.properties = properties
   
   private var handlers:List[Handler] = Nil
-  def addHandler(handler:Handler) = handler :: handlers
+  def addHandler(handler:Handler) = handlers = handler :: handlers
 
-  val controller = new Controller(this)
+  val controller = new Controller
   def keyListener(key:Int, repeatTime:Long = 0, onKeyDown: => Any, onKeyUp: => Any = {}) =
     controller.keyListener(key, repeatTime, onKeyDown, onKeyUp)
 
-  val renderer = new Renderer(this)
+  val renderer = new Renderer
   def addRender(render:Renderable) = renderer.addRender(render)
 
   def scale = renderer.scale
@@ -48,13 +49,17 @@ class Screen(val name:String, val isMain:Boolean) {
     handlers.foreach(handler => handler.init)
     is_running = true
     while(is_running && !Screen.isAllScreensStop) {
+      controller.checkControls
       handlers.foreach(handler => handler.action)
       renderer.render
       idler.idle
     }
     handlers.foreach(handler => handler.exit)
     log.info(name+" was stopped")
-    if(isMain) System.exit(0)
+    if(isMain) {
+      Display.destroy
+      System.exit(0)
+    }
   }
   def stop = {
     if(isMain) Screen.allStop

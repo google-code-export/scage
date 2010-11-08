@@ -7,7 +7,7 @@ import su.msk.dunno.scage.support.{ScageProperties, Vec}
 
 object Screen {
   private var isAllScreensStop = false
-  def stopApp = isAllScreensStop = true
+  def allStop = isAllScreensStop = true
 }
 
 class Screen(val name:String, val isMain:Boolean) {
@@ -16,7 +16,7 @@ class Screen(val name:String, val isMain:Boolean) {
   private val log = Logger.getLogger(this.getClass);
   log.info("starting "+name+"...")
 
-  val properties = "scage-properties.txt"
+  def properties:String = "scage-properties.txt"
   ScageProperties.properties = properties
 
   private var init_list:List[() => Unit] = Nil
@@ -61,7 +61,7 @@ class Screen(val name:String, val isMain:Boolean) {
     if(isMain) System.exit(0)
   }
   def stop = {
-    if(isMain) Screen.stopApp
+    if(isMain) Screen.allStop
     else is_running = false 
   }
 

@@ -7,7 +7,7 @@ import su.msk.dunno.screens.support.ScageLibrary._
 
 object ScreenTest extends Screen("Main Screen") {
   interface {
-    Message.print("Press Esc to Exit", width/2, height/2)
+    Message.print("Press Esc to\nExit", width/2, height/2)
   }
 
   keyListener(Keyboard.KEY_ESCAPE, onKeyDown = stop)

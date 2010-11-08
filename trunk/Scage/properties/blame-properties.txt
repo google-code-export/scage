@@ -1,2 +1,8 @@
+name = Blamer
+version = 0.1
+
 width = 640
 height = 480
+
+symbol_width = 16
+symbol_height = 32

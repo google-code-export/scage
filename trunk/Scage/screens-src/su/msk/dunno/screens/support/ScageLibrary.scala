@@ -1,8 +1,9 @@
 package su.msk.dunno.screens.support
 
 import su.msk.dunno.screens.handlers.{Idler, Renderer}
-import su.msk.dunno.scage.support.{ScageProperties, Colors}
 import tracer.{Trace, State}
+import su.msk.dunno.screens.Screen
+import su.msk.dunno.scage.support.{Color, Vec, ScageProperties, Colors}
 
 object ScageLibrary extends Colors {
   implicit def rangeToPairs(range:Range) = {
@@ -21,8 +22,13 @@ object ScageLibrary extends Colors {
     }
   }
 
+  def allStop = Screen.allStop
+
   lazy val width = Renderer.width
   lazy val height = Renderer.height
+  
+  def drawList(list_code:Int, coord:Vec) = Renderer.drawList(list_code:Int, coord:Vec)
+  def drawList(list_code:Int, coord:Vec, color:Color) = Renderer.drawList(list_code:Int, coord:Vec, color:Color)
 
   lazy val framerate = Idler.framerate
 

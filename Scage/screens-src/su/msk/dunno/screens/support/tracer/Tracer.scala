@@ -17,7 +17,7 @@ object Tracer {
 
 import Tracer._
 
-class Tracer[S <: State](val game_from_x:Int = 0, val game_to_x:Int = 800,
+class Tracer[T <: Trace](val game_from_x:Int = 0, val game_to_x:Int = 800,
                          val game_from_y:Int = 0, val game_to_y:Int = 600,
                          val N_x:Int = 20, val N_y:Int = 15,
                          val are_solid_edges:Boolean = true) {
@@ -28,14 +28,14 @@ class Tracer[S <: State](val game_from_x:Int = 0, val game_to_x:Int = 800,
   val game_width = game_to_x - game_from_x
   val game_height = game_to_y - game_from_y
 
-  private var coord_matrix = Array.ofDim[List[Trace[S]]](N_x, N_y)
+  private var coord_matrix = Array.ofDim[List[T]](N_x, N_y)
   (0 to N_x-1).foreachpair(0 to N_y-1) ((i, j) => coord_matrix(i)(j) = Nil)
   def matrix = coord_matrix
 
   val h_x = game_width/N_x
 	val h_y = game_height/N_y
 
-  def addTrace(t:Trace[S]) = {
+  def addTrace(t:T) = {
     val p = point(t.getCoord())
     if(isPointOnArea(p)) {
       coord_matrix(p.ix)(p.iy) = t :: coord_matrix(p.ix)(p.iy)
@@ -51,12 +51,12 @@ class Tracer[S <: State](val game_from_x:Int = 0, val game_to_x:Int = 800,
   def pointCenter(p:Vec):Vec = Vec(game_from_x + p.x*h_x + h_x/2, game_from_y + p.y*h_y + h_y/2)
   def pointCenter(x:Int, y:Int):Vec = Vec(game_from_x + x*h_x + h_x/2, game_from_y + y*h_y + h_y/2)
 
-  def getNeighbours(coord:Vec, range:Range):List[Trace[S]] = {
+  def getNeighbours(coord:Vec, range:Range):List[T] = {
     val p = point(coord)
-    var neighbours = List[Trace[S]]()
+    var neighbours = List[T]()
     range.foreachpair((i, j) => {
       val near_point = checkPointEdges(p + Vec(i, j))
-      neighbours = coord_matrix(near_point.ix)(near_point.iy).foldLeft(List[Trace[S]]())((acc, trace) => {
+      neighbours = coord_matrix(near_point.ix)(near_point.iy).foldLeft(List[T]())((acc, trace) => {
     	  if(trace.getCoord != coord) trace :: acc
     		else acc
     	}) ::: neighbours
@@ -64,12 +64,12 @@ class Tracer[S <: State](val game_from_x:Int = 0, val game_to_x:Int = 800,
     neighbours
   }
 
-  def getNeighbours(trace_id:Int, coord:Vec, range:Range, condition:(StateTrace) => Boolean):List[Trace[S]] = {
+  def getNeighbours(trace_id:Int, coord:Vec, range:Range, condition:(T) => Boolean):List[T] = {
     val p = point(coord)
-    var neighbours:List[Trace[S]] = Nil
+    var neighbours:List[T] = Nil
     range.foreachpair((i, j) => {
       val near_point = checkPointEdges(p + Vec(i, j))
-    	neighbours = coord_matrix(near_point.ix)(near_point.iy).foldLeft(List[Trace[S]]())((acc, trace) => {
+    	neighbours = coord_matrix(near_point.ix)(near_point.iy).foldLeft(List[T]())((acc, trace) => {
     	  if(condition(trace) && trace.id != trace_id) trace :: acc
     		else acc
     	}) ::: neighbours
@@ -124,7 +124,7 @@ class Tracer[S <: State](val game_from_x:Int = 0, val game_to_x:Int = 800,
 
   def isPointOnArea(point:Vec) = point.x >= 0 && point.x < N_x && point.y >= 0 && point.y < N_y
 
-  def hasCollisions(trace_id:Int, coord:Vec, range:Range, min_dist:Float, condition:(StateTrace) => Boolean) = {
+  def hasCollisions(trace_id:Int, coord:Vec, range:Range, min_dist:Float, condition:(T) => Boolean) = {
     if(are_solid_edges && !isCoordOnArea(coord)) true
     else {
       val coord_edges_affected = checkEdges(coord)

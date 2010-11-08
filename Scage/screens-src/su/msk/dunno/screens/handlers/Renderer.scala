@@ -7,6 +7,7 @@ import org.lwjgl.opengl.{DisplayMode, GL11, Display}
 import org.lwjgl.util.glu.GLU
 import su.msk.dunno.scage.support.ScageProperties._
 import su.msk.dunno.scage.support.{Color, Colors, Vec}
+import su.msk.dunno.screens.prototypes.{Handler, Renderable}
 
 object Renderer extends Colors {
   val width = property("width", 800);
@@ -51,9 +52,9 @@ object Renderer extends Colors {
     next_key
   }
 
-  def setBackground(c:Color) = GL11.glClearColor(c.red, c.green, c.blue, 0)
+  def background(c:Color) = GL11.glClearColor(c.red, c.green, c.blue, 0)
+  def color(c:Color) = GL11.glColor3f(c.red, c.green, c.blue)
 
-  def setColor(c:Color) = GL11.glColor3f(c.red, c.green, c.blue)
   def drawLine(v1:Vec, v2:Vec) = {
     GL11.glDisable(GL11.GL_TEXTURE_2D);
     	GL11.glBegin(GL11.GL_LINES);
@@ -62,6 +63,7 @@ object Renderer extends Colors {
     	GL11.glEnd();
     GL11.glEnable(GL11.GL_TEXTURE_2D);
   }
+  
   def drawCircle(coord:Vec, radius:Float) = {
     GL11.glDisable(GL11.GL_TEXTURE_2D);
       GL11.glPushMatrix();
@@ -72,11 +74,11 @@ object Renderer extends Colors {
     GL11.glEnable(GL11.GL_TEXTURE_2D);
   }
 
-  def drawList(list_code:Int, coord:Vec):Unit = drawList(list_code:Int, coord:Vec, WHITE)
-  def drawList(list_code:Int, coord:Vec, color:Color):Unit = {
+  def drawDisplayList(list_code:Int, coord:Vec):Unit = drawDisplayList(list_code:Int, coord:Vec, WHITE)
+  def drawDisplayList(list_code:Int, coord:Vec, color:Color):Unit = {
     GL11.glPushMatrix();
 	  GL11.glTranslatef(coord.x, coord.y, 0.0f);
-	  Renderer.setColor(color)
+	  Renderer.color(color)
 	  GL11.glCallList(list_code)
 	  GL11.glPopMatrix()
   }
@@ -87,7 +89,7 @@ object Renderer extends Colors {
     getTexture(format, new FileInputStream(filename))
   }
 
-  def createList(texture:Texture, game_width:Float, game_height:Float, start_x:Float, start_y:Float, real_width:Float, real_height:Float):Int = {
+  def createDisplayList(texture:Texture, game_width:Float, game_height:Float, start_x:Float, start_y:Float, real_width:Float, real_height:Float):Int = {
 	  	val list_name = nextDisplayListKey()
 
 		val t_width:Float = texture.getTextureWidth
@@ -113,8 +115,8 @@ object Renderer extends Colors {
 
 		list_name
 	}
-  def createList(filename:String, game_width:Float, game_height:Float, start_x:Float, start_y:Float, real_width:Float, real_height:Float):Int = {
-    createList(getTexture(filename), game_width, game_height, start_x, start_y, real_width, real_height)
+  def createDisplayList(filename:String, game_width:Float, game_height:Float, start_x:Float, start_y:Float, real_width:Float, real_height:Float):Int = {
+    createDisplayList(getTexture(filename), game_width, game_height, start_x, start_y, real_width, real_height)
   }
 
   def createAnimation(filename:String, game_width:Float, game_height:Float, real_width:Float, real_height:Float, num_frames:Int):Array[Int] = {
@@ -123,7 +125,7 @@ object Renderer extends Colors {
     def nextFrame(arr:List[Int], texture:Texture):List[Int] = {
       val x = real_width*(arr.length - arr.length/columns*columns)
       val y = real_height*(arr.length/columns)
-      val next_key = Renderer.createList(texture, game_width, game_height, x, y, real_width, real_height)
+      val next_key = Renderer.createDisplayList(texture, game_width, game_height, x, y, real_width, real_height)
       val new_arr = arr ::: List(next_key)
       if(new_arr.length == num_frames)new_arr
       else nextFrame(new_arr, texture)
@@ -143,16 +145,11 @@ class Renderer(screen:Screen) {
   private var central_coord = () => window_center
   def center = central_coord()
   def center_= (coord: => Vec) = central_coord = () => coord
+  
+  private var render_list:List[Renderable] = Nil
+  def addRender(render:Renderable) = render :: render_list
 
-  private var render_list:List[() => Unit] = List[() => Unit]()
-  def render(render_func: => Unit) = {render_list = render_list ::: List(() => render_func)}
-
-  private var interface_list:List[() => Unit] = List[() => Unit]()
-  def interface(render_func: => Unit) = {
-    interface_list = (() => render_func) :: interface_list
-  }
-
-  screen.action {
+  def render = {
     if(Display.isCloseRequested()) screen.stop
     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
 		GL11.glLoadIdentity();
@@ -160,14 +157,14 @@ class Renderer(screen:Screen) {
       val coord = window_center - central_coord()*_scale
       GL11.glTranslatef(coord.x , coord.y, 0.0f)
       GL11.glScalef(_scale, _scale, 1)
-      render_list.foreach(render_func => render_func())
+      render_list.foreach(renderable => renderable.render)
       GL11.glPopMatrix
 
-      interface_list.foreach(interface_func => interface_func())
+      render_list.foreach(renderable => renderable.interface)
     Display.update();
   }
 
-  if(screen.isMain) screen.exit {
-    Display.destroy
-  }
+  if(screen.isMain) screen.addHandler(new Handler {
+    override def exit = Display.destroy
+  })
 }

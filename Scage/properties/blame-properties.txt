@@ -6,3 +6,9 @@ height = 480
 
 symbol_width = 16
 symbol_height = 32
+
+game_to_x = 500
+game_from_y = 80
+
+N_x = 5
+N_y = 5

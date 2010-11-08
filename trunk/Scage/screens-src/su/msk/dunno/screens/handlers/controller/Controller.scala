@@ -1,6 +1,7 @@
 package su.msk.dunno.screens.handlers.controller
 
 import su.msk.dunno.screens.Screen
+import su.msk.dunno.screens.prototypes.Handler
 
 class Controller(screen:Screen) {
   private var listeners = List[UIListener]()
@@ -17,7 +18,7 @@ class Controller(screen:Screen) {
       to_remove = new KeyListener(key, repeatTime, onKeyDown) :: to_remove
   }*/
 
-  screen.action {
+  screen.addHandler(new Handler {
     if(to_add.length > 0) {
       listeners = to_add ::: listeners
       to_add = List[UIListener]()
@@ -27,5 +28,5 @@ class Controller(screen:Screen) {
       to_remove = List[UIListener]()
     }*/
     listeners.foreach(l => l.check)
-  }
+  })
 }

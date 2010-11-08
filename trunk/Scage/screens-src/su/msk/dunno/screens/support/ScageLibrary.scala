@@ -27,8 +27,8 @@ object ScageLibrary extends Colors {
   lazy val width = Renderer.width
   lazy val height = Renderer.height
   
-  def drawList(list_code:Int, coord:Vec) = Renderer.drawList(list_code:Int, coord:Vec)
-  def drawList(list_code:Int, coord:Vec, color:Color) = Renderer.drawList(list_code:Int, coord:Vec, color:Color)
+  def drawDisplayList(list_code:Int, coord:Vec) = Renderer.drawDisplayList(list_code:Int, coord:Vec)
+  def drawDisplayList(list_code:Int, coord:Vec, color:Color) = Renderer.drawDisplayList(list_code:Int, coord:Vec, color:Color)
 
   lazy val framerate = Idler.framerate
 
@@ -41,6 +41,4 @@ object ScageLibrary extends Colors {
   def intProperty(key:String):Int = ScageProperties.intProperty(key)
   def floatProperty(key:String):Float = ScageProperties.floatProperty(key)
   def booleanProperty(key:String):Boolean = ScageProperties.booleanProperty(key)
-
-  type StateTrace = Trace[_ <: State]
 }

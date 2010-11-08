@@ -6,9 +6,9 @@ import org.lwjgl.input.Keyboard
 import su.msk.dunno.screens.support.ScageLibrary._
 
 object ScreenTest extends Screen("Main Screen") {
-  interface {
+  /*interface {
     Message.print("Press Esc to\nExit", width/2, height/2)
-  }
+  }*/
 
   keyListener(Keyboard.KEY_ESCAPE, onKeyDown = stop)
 

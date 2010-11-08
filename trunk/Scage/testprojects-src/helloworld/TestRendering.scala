@@ -20,7 +20,7 @@ object TestRendering {
 //        val coord = pointCenter(i, j)
 //    	  GL11.glPushMatrix();
 //        GL11.glTranslatef(coord.x, coord.y, 0.0f);
-//        Renderer.setColor(WHITE)
+//        Renderer.color(WHITE)
 //        GL11.glCallList(BOX)
 //        GL11.glPopMatrix()
 

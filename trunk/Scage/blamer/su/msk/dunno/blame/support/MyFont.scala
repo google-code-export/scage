@@ -6,6 +6,8 @@ import su.msk.dunno.scage.support.ScageProperties._
 
 object MyFont {
   val font_file = "img/font.png"
+  val WALL = symbol('#')
+  val FLOOR = symbol('.')
 
   private def charCoord(ch:Char):Vec = {
     val code = ch.toInt
@@ -20,8 +22,8 @@ object MyFont {
 
   private val symbol_width = property("symbol_width", 32)
   private val symbol_height = property("symbol_height", 32)
-  def symbol(ch:Char) = {
+  private def symbol(ch:Char) = {
     val char_coord = charCoord(ch)
-    Renderer.createList(font_file, symbol_width, symbol_height, char_coord.ix, char_coord.iy, 32, 32)
+    Renderer.createDisplayList(font_file, symbol_width, symbol_height, char_coord.ix, char_coord.iy, 32, 32)
   }
 }

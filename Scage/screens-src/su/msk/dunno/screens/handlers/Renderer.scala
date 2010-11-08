@@ -2,13 +2,13 @@ package su.msk.dunno.screens.handlers
 
 import su.msk.dunno.screens.Screen
 import java.io.{InputStream, FileInputStream}
-import su.msk.dunno.scage.support.{Color, Vec}
 import org.newdawn.slick.opengl.{TextureLoader, Texture}
 import org.lwjgl.opengl.{DisplayMode, GL11, Display}
 import org.lwjgl.util.glu.GLU
 import su.msk.dunno.scage.support.ScageProperties._
+import su.msk.dunno.scage.support.{Color, Colors, Vec}
 
-object Renderer {
+object Renderer extends Colors {
   val width = property("width", 800);
   val height = property("height", 600);
 
@@ -70,6 +70,15 @@ object Renderer {
      	  GL11.glCallList(CIRCLE);
       GL11.glPopMatrix()
     GL11.glEnable(GL11.GL_TEXTURE_2D);
+  }
+
+  def drawList(list_code:Int, coord:Vec):Unit = drawList(list_code:Int, coord:Vec, WHITE)
+  def drawList(list_code:Int, coord:Vec, color:Color):Unit = {
+    GL11.glPushMatrix();
+	  GL11.glTranslatef(coord.x, coord.y, 0.0f);
+	  Renderer.setColor(color)
+	  GL11.glCallList(list_code)
+	  GL11.glPopMatrix()
   }
 
   private def getTexture(format:String, in:InputStream):Texture = TextureLoader.getTexture(format, in)

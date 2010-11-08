@@ -9,18 +9,23 @@ import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.screens.handlers.Renderer
 
 object FieldScreen extends Screen("Field Screen") {
-  override val properties = "blame-properties.txt"
+  override def properties = "blame-properties.txt"
 
   Renderer.setBackground(BLACK)
 
+  val A = symbol('A')
+  val q = symbol('q')
+  val G = symbol('G')
+  val question = symbol('?')
+
   interface {
-    drawList(A, Vec(width/2, height/2+30))
+    drawList(A, Vec(width/2, height/2+30), RED)
     drawList(q, Vec(width/2, height/2))
     drawList(G, Vec(width/2, height/2-30))
     Message.print("Press Esc to Exit", 20, height/2, WHITE)
   }
   
-  keyListener(Keyboard.KEY_ESCAPE, onKeyDown = stop)
+  keyListener(Keyboard.KEY_ESCAPE, onKeyDown = allStop)
   
   def main(args:Array[String]):Unit = run
 }

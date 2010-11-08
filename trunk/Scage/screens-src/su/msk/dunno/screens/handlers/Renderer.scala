@@ -6,10 +6,10 @@ import org.newdawn.slick.opengl.{TextureLoader, Texture}
 import org.lwjgl.opengl.{DisplayMode, GL11, Display}
 import org.lwjgl.util.glu.GLU
 import su.msk.dunno.scage.support.ScageProperties._
+import su.msk.dunno.screens.prototypes.Renderable
 import su.msk.dunno.scage.support.{Color, Colors, Vec}
-import su.msk.dunno.screens.prototypes.{Handler, Renderable}
 
-object Renderer extends Colors {
+object Renderer {
   val width = property("width", 800);
   val height = property("height", 600);
 
@@ -74,7 +74,7 @@ object Renderer extends Colors {
     GL11.glEnable(GL11.GL_TEXTURE_2D);
   }
 
-  def drawDisplayList(list_code:Int, coord:Vec):Unit = drawDisplayList(list_code:Int, coord:Vec, WHITE)
+  def drawDisplayList(list_code:Int, coord:Vec):Unit = drawDisplayList(list_code:Int, coord:Vec, Colors.WHITE)
   def drawDisplayList(list_code:Int, coord:Vec, color:Color):Unit = {
     GL11.glPushMatrix();
 	  GL11.glTranslatef(coord.x, coord.y, 0.0f);
@@ -134,7 +134,7 @@ object Renderer extends Colors {
   }
 }
 
-class Renderer(screen:Screen) {
+class Renderer {
   Renderer.initgl
 
   private var _scale:Float = 1.0f
@@ -147,10 +147,10 @@ class Renderer(screen:Screen) {
   def center_= (coord: => Vec) = central_coord = () => coord
   
   private var render_list:List[Renderable] = Nil
-  def addRender(render:Renderable) = render :: render_list
+  def addRender(render:Renderable) = render_list = render :: render_list
 
   def render = {
-    if(Display.isCloseRequested()) screen.stop
+    if(Display.isCloseRequested()) Screen.allStop
     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
 		GL11.glLoadIdentity();
     GL11.glPushMatrix
@@ -158,13 +158,9 @@ class Renderer(screen:Screen) {
       GL11.glTranslatef(coord.x , coord.y, 0.0f)
       GL11.glScalef(_scale, _scale, 1)
       render_list.foreach(renderable => renderable.render)
-      GL11.glPopMatrix
+    GL11.glPopMatrix
 
-      render_list.foreach(renderable => renderable.interface)
+    render_list.foreach(renderable => renderable.interface)
     Display.update();
   }
-
-  if(screen.isMain) screen.addHandler(new Handler {
-    override def exit = Display.destroy
-  })
 }

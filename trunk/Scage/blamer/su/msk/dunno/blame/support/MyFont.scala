@@ -3,9 +3,15 @@ package su.msk.dunno.blame.support
 import su.msk.dunno.screens.handlers.Renderer
 import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.scage.support.ScageProperties._
+import org.apache.log4j.Logger
 
 object MyFont {
+  private val log = Logger.getLogger(this.getClass)
+
   val font_file = "img/font.png"
+  private val symbol_width = property("symbol_width", 32)
+  private val symbol_height = property("symbol_height", 32)
+
   val WALL = symbol('#')
   val FLOOR = symbol('.')
 
@@ -20,10 +26,9 @@ object MyFont {
     else Vec(480, 96) // coord for symbol '?'
   }
 
-  private val symbol_width = property("symbol_width", 32)
-  private val symbol_height = property("symbol_height", 32)
-  private def symbol(ch:Char) = {
+  def symbol(ch:Char) = {
     val char_coord = charCoord(ch)
+    log.info("creating display list for symbol "+ch)
     Renderer.createDisplayList(font_file, symbol_width, symbol_height, char_coord.ix, char_coord.iy, 32, 32)
   }
 }

@@ -13,6 +13,8 @@ object Renderer {
   val width = property("width", 800);
   val height = property("height", 600);
 
+  val framerate = property("framerate", 100)
+
   lazy val initgl = {
     Display.setDisplayMode(new DisplayMode(width, height));
     Display.setTitle(property("name", "Scage")+" - "+stringProperty("version"));
@@ -149,6 +151,18 @@ class Renderer {
   private var render_list:List[Renderable] = Nil
   def addRender(render:Renderable) = render_list = render :: render_list
 
+  private[screens] var fps:Int = 0
+  private var msek = System.currentTimeMillis
+  private var frames:Int = 0
+  private def countFPS() = {
+    frames += 1
+    if(System.currentTimeMillis - msek >= 1000) {
+      fps = frames
+      frames = 0
+      msek = System.currentTimeMillis
+    }
+  }
+
   def render = {
     if(Display.isCloseRequested()) Screen.allStop
     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
@@ -161,6 +175,10 @@ class Renderer {
     GL11.glPopMatrix
 
     render_list.foreach(renderable => renderable.interface)
+
+    Display.sync(Renderer.framerate)
     Display.update();
+
+    countFPS
   }
 }

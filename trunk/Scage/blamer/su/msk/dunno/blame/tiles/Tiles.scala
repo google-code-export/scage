@@ -1,6 +1,6 @@
-package su.msk.dunno.blame.field.tiles
+package su.msk.dunno.blame.tiles.tiles
 
-import su.msk.dunno.blame.field.{FieldObject, FieldTracer}
+import su.msk.dunno.blame.tiles.{FieldObject, FieldTracer}
 import su.msk.dunno.blame.support.MyFont
 import su.msk.dunno.screens.support.tracer.State
 import su.msk.dunno.scage.support.Colors._

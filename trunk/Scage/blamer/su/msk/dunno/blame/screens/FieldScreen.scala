@@ -7,8 +7,8 @@ import su.msk.dunno.screens.support.ScageLibrary._
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.screens.handlers.Renderer
-import su.msk.dunno.blame.field.tiles.{Wall, Floor}
-import su.msk.dunno.blame.field.FieldTracer
+import su.msk.dunno.blame.tiles.tiles.{Wall, Floor}
+import su.msk.dunno.blame.tiles.FieldTracer
 import su.msk.dunno.screens.prototypes.Renderable
 import su.msk.dunno.blame.support.{MyFont, GenLib}
 

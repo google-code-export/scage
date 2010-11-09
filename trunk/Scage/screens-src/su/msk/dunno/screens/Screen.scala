@@ -37,8 +37,7 @@ class Screen(val name:String, val isMain:Boolean) {
   def center = renderer.center
   def center_= (coord: => Vec) = renderer.center = coord
 
-  val idler = new Idler
-  def fps = idler.fps
+  def fps = renderer.fps
 
   var onPause:Boolean = false
   def switchPause() = onPause = !onPause
@@ -52,7 +51,6 @@ class Screen(val name:String, val isMain:Boolean) {
       controller.checkControls
       handlers.foreach(handler => handler.action)
       renderer.render
-      idler.idle
     }
     handlers.foreach(handler => handler.exit)
     log.info(name+" was stopped")

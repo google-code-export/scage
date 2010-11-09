@@ -1,4 +1,4 @@
-package su.msk.dunno.blame.tiles
+package su.msk.dunno.blame.field
 
 import su.msk.dunno.screens.support.tracer.{Tracer, Trace}
 import su.msk.dunno.scage.support.Color

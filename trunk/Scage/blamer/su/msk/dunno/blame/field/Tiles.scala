@@ -1,12 +1,13 @@
-package su.msk.dunno.blame.tiles.tiles
+package su.msk.dunno.blame.field.tiles
 
-import su.msk.dunno.blame.tiles.{FieldObject, FieldTracer}
+import su.msk.dunno.blame.field.{FieldObject, FieldTracer}
 import su.msk.dunno.blame.support.MyFont
 import su.msk.dunno.screens.support.tracer.State
 import su.msk.dunno.scage.support.Colors._
+import su.msk.dunno.scage.support.Vec
 
 class Wall(x:Int, y:Int, fieldTracer:FieldTracer) {
-  val coord = fieldTracer.pointCenter(x, y)
+  private val coord = fieldTracer.pointCenter(x, y)
 
   fieldTracer.addTrace(new FieldObject {
     def getCoord = coord
@@ -21,7 +22,7 @@ class Wall(x:Int, y:Int, fieldTracer:FieldTracer) {
 }
 
 class Floor(x:Int, y:Int, fieldTracer:FieldTracer) {
-  val coord = fieldTracer.pointCenter(x, y)
+  private val coord = fieldTracer.pointCenter(x, y)
 
   fieldTracer.addTrace(new FieldObject {
     def getCoord = coord

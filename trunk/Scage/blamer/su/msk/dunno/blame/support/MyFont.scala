@@ -14,6 +14,7 @@ object MyFont {
 
   val WALL = symbol('#')
   val FLOOR = symbol('.')
+  val PLAYER = symbol('@')
 
   private def charCoord(ch:Char):Vec = {
     val code = ch.toInt

@@ -26,8 +26,8 @@ object FieldScreen extends Screen("Field Screen") {
 
   val maze = GenLib.CreateMaze(N_x, N_y)
   (0 to N_x-1).foreachpair(0 to N_y-1)((i, j) => {
-    if(maze(i)(j) == '#') new Wall(i, j, fieldTracer)
-    else if(maze(i)(j) == '.') new Floor(i, j, fieldTracer)
+    if(maze(i)(j) == '#') new Floor(i, j, fieldTracer)
+    else if(maze(i)(j) == '.') new Wall(i, j, fieldTracer)
   })
 
   val killy = new Killy(fieldTracer.getRandomPassablePoint, fieldTracer)

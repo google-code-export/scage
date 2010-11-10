@@ -18,7 +18,7 @@ class FieldTracer(game_from_x:Int = 0, game_to_x:Int = 800,
                   are_solid_edges:Boolean = true)
 extends Tracer[FieldObject] (game_from_x, game_to_x, game_from_y, game_to_y, N_x, N_y, are_solid_edges) {
   def onArea(x:Int, y:Int) = {
-    x >= 0 && x < N_x-1 && y >= 0 && y < N_y-1
+    x >= 0 && x < N_x && y >= 0 && y < N_y
   }
 
   def isPointPassable(x:Int, y:Int):Boolean = {
@@ -62,9 +62,8 @@ extends Tracer[FieldObject] (game_from_x, game_to_x, game_from_y, game_to_y, N_x
   }
 
   def drawField = {
-
+    for(i <- 0 to N_x-1) {
       for(j <- 0 to N_y-1) {
-        for(i <- 0 to N_x-1) {
         if(matrix(i)(j).length > 0) {
           val symbol = matrix(i)(j).head.getSymbol
           val color = matrix(i)(j).head.getColor

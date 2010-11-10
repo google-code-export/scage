@@ -18,7 +18,7 @@ public class TestJavaRendering
   public static void main(String[] args) throws Exception
   {
     Properties p = new Properties();
-    p.load(new FileInputStream("properties/scatris-properties.txt"));
+    p.load(new FileInputStream("resources/scatris-properties.txt"));
     
     int width = Integer.parseInt(p.getProperty("width"));
     int height = Integer.parseInt(p.getProperty("height"));
@@ -76,7 +76,7 @@ public class TestJavaRendering
       TrueTypeFont.instance().drawString("FPS: "+fps, 200, height-25);
       TrueTypeFont.instance().drawString("Time: "+(System.currentTimeMillis() - start_time), 200, height-40);
       start_time = System.currentTimeMillis();
-      Display.sync(100);
+      Display.sync(75);
       Display.update();
     }
     Display.destroy();

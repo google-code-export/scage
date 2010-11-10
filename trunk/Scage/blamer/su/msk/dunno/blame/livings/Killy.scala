@@ -18,5 +18,8 @@ class Killy(val point:Vec, fieldTracer:FieldTracer) {
     def changeState(s:State) = {}
   })
 
-  //def move()
+  def move(step:Vec):Boolean = {
+    val new_point = point + step
+    fieldTracer.updatePointIfPassable(trace, point, new_point)
+  }
 }

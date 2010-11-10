@@ -2,7 +2,7 @@ name = Blamer
 version = 0.1
 
 width = 800
-height = 580
+height = 600
 
 symbol_width = 12
 symbol_height = 24
@@ -15,3 +15,5 @@ game_to_y = 600
 
 N_x = 37
 N_y = 20
+
+framerate = 100

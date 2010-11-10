@@ -31,21 +31,16 @@ object FieldScreen extends Screen("Field Screen") {
   })
 
   val killy = new Killy(fieldTracer.getRandomPassablePoint, fieldTracer)
-  
+  keyListener(Keyboard.KEY_UP, onKeyDown = killy.move(Vec(0,1)))
+  keyListener(Keyboard.KEY_DOWN, onKeyDown = killy.move(Vec(0,-1)))
+  keyListener(Keyboard.KEY_RIGHT, onKeyDown = killy.move(Vec(1,0)))
+  keyListener(Keyboard.KEY_LEFT, onKeyDown = killy.move(Vec(-1,0)))
   
   Renderer.background(BLACK)
 
   addRender(new Renderable {
     override def render {
-	    (0 to N_x-1).foreachpair(0 to N_y-1)((i, j) => {
-        if(fieldTracer.matrix(i)(j).length > 0) {
-          val symbol = fieldTracer.matrix(i)(j).head.getSymbol
-          val color = fieldTracer.matrix(i)(j).head.getColor
-          val coord = fieldTracer.pointCenter(i, j)
-
-          Renderer.drawDisplayList(symbol, coord, color)
-        }
-	    })
+	    fieldTracer.drawField
     }
 
     override def interface {

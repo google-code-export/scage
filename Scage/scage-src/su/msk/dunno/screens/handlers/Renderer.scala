@@ -18,11 +18,11 @@ object Renderer {
   lazy val initgl = {
     Display.setDisplayMode(new DisplayMode(width, height));
     Display.setTitle(property("name", "Scage")+" - "+stringProperty("version"));
-    Display.setVSyncEnabled(true);
+    //Display.setVSyncEnabled(true);
     Display.create();
 
     GL11.glEnable(GL11.GL_TEXTURE_2D);
-    GL11.glClearColor(1,1,1,0);
+    GL11.glClearColor(0,0,0,0);
     GL11.glDisable(GL11.GL_DEPTH_TEST);
 
     GL11.glEnable(GL11.GL_BLEND);
@@ -176,7 +176,7 @@ class Renderer {
 
     render_list.foreach(renderable => renderable.interface)
 
-    Display.sync(Renderer.framerate)
+    Thread.sleep(1000/Renderer.framerate)
     Display.update();
 
     countFPS

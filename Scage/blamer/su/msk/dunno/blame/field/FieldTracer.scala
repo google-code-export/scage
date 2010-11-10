@@ -2,6 +2,8 @@ package su.msk.dunno.blame.field
 
 import su.msk.dunno.screens.support.tracer.{Tracer, Trace}
 import su.msk.dunno.scage.support.{Vec, Color}
+import su.msk.dunno.screens.support.ScageLibrary._
+import su.msk.dunno.screens.handlers.Renderer
 
 trait FieldObject extends Trace {
   def getSymbol:Int
@@ -19,8 +21,14 @@ extends Tracer[FieldObject] (game_from_x, game_to_x, game_from_y, game_to_y, N_x
     x >= 0 && x < N_x-1 && y >= 0 && y < N_y-1
   }
 
-  def isPassable(x:Int, y:Int) = {
+  def isPointPassable(x:Int, y:Int):Boolean = {
     onArea(x, y) && (matrix(x)(y).length == 0 || matrix(x)(y).forall(_.isPassable))
+  }
+  def isPointPassable(point:Vec):Boolean = isPointPassable(point.ix, point.iy)
+  
+  def isLocationPassable(coord:Vec) = {
+    val p = point(coord)
+    isPointPassable(p.ix, p.iy)
   }
 
   def getRandomPassablePoint:Vec = {
@@ -30,15 +38,41 @@ extends Tracer[FieldObject] (game_from_x, game_to_x, game_from_y, game_to_y, N_x
     var y = -1
 
     var count = 10
-    while(!isPassable(x, y) && count > 0) {
+    while(!isPointPassable(x, y) && count > 0) {
       x = (math.random*N_x).toInt
       y = (math.random*N_y).toInt
 
       count -= 1
     }
-    if(count == 0 && !isPassable(x, y))
+    if(count == 0 && !isPointPassable(x, y))
       log.warn("warning: cannot locate random passable point within "+count+" tries")
 
     Vec(x, y)
+  }
+  
+  def updatePointIfPassable(trace_id:Int, old_point:Vec, new_point:Vec) = {
+    if(isPointPassable(new_point)) {
+      val old_coord = pointCenter(old_point)
+      val new_coord = pointCenter(new_point)
+      updateLocation(trace_id, old_coord, new_coord)
+      old_point is new_point
+      true
+    }
+    else false
+  }
+
+  def drawField = {
+
+      for(j <- 0 to N_y-1) {
+        for(i <- 0 to N_x-1) {
+        if(matrix(i)(j).length > 0) {
+          val symbol = matrix(i)(j).head.getSymbol
+          val color = matrix(i)(j).head.getColor
+          val coord = pointCenter(i, j)
+
+          Renderer.drawDisplayList(symbol, coord, color)
+        }
+      }
+    }
   }
 }

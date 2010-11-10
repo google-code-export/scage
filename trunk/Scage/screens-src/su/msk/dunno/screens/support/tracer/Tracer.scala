@@ -21,7 +21,7 @@ class Tracer[T <: Trace](val game_from_x:Int = 0, val game_to_x:Int = 800,
                          val game_from_y:Int = 0, val game_to_y:Int = 600,
                          val N_x:Int = 20, val N_y:Int = 15,
                          val are_solid_edges:Boolean = true) {
-  private val log = Logger.getLogger(this.getClass);
+  protected val log = Logger.getLogger(this.getClass);
 
   log.info("using tracer "+this.getClass.getName)
 

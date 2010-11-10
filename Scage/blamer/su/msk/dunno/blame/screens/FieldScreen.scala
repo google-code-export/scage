@@ -11,6 +11,7 @@ import su.msk.dunno.blame.field.tiles.{Wall, Floor}
 import su.msk.dunno.blame.field.FieldTracer
 import su.msk.dunno.screens.prototypes.Renderable
 import su.msk.dunno.blame.support.{MyFont, GenLib}
+import su.msk.dunno.blame.livings.Killy
 
 object FieldScreen extends Screen("Field Screen") {
   override def properties = "blame-properties.txt"
@@ -28,6 +29,9 @@ object FieldScreen extends Screen("Field Screen") {
     if(maze(i)(j) == '#') new Wall(i, j, fieldTracer)
     else if(maze(i)(j) == '.') new Floor(i, j, fieldTracer)
   })
+
+  val killy = new Killy(fieldTracer.getRandomPassablePoint, fieldTracer)
+  
   
   Renderer.background(BLACK)
 
@@ -35,8 +39,8 @@ object FieldScreen extends Screen("Field Screen") {
     override def render {
 	    (0 to N_x-1).foreachpair(0 to N_y-1)((i, j) => {
         if(fieldTracer.matrix(i)(j).length > 0) {
-          val symbol = fieldTracer.matrix(i)(j).last.getSymbol
-          val color = fieldTracer.matrix(i)(j).last.getColor
+          val symbol = fieldTracer.matrix(i)(j).head.getSymbol
+          val color = fieldTracer.matrix(i)(j).head.getColor
           val coord = fieldTracer.pointCenter(i, j)
 
           Renderer.drawDisplayList(symbol, coord, color)
@@ -58,29 +62,4 @@ object FieldScreen extends Screen("Field Screen") {
   keyListener(Keyboard.KEY_ESCAPE, onKeyDown = allStop)
   
   def main(args:Array[String]):Unit = run
-
-  /*override def properties = "blame-properties.txt"
-
-  Renderer.background(BLACK)
-
-  val A = symbol('#')
-  val q = symbol('.')
-  val G = symbol('G')
-  val question = symbol('?')
-
-  addRender(new Renderable {
-    override def render {
-      Renderer.drawDisplayList(A, Vec(width/2, height/2+30), RED)
-      Renderer.drawDisplayList(q, Vec(width/2, height/2))
-      Renderer.drawDisplayList(G, Vec(width/2, height/2-30))
-    }
-
-    override def interface {
-      Message.print("Press Esc to Exit", 20, height/2, WHITE)      
-    }
-  })
-
-  keyListener(Keyboard.KEY_ESCAPE, onKeyDown = allStop)
-
-  def main(args:Array[String]):Unit = run*/
 }

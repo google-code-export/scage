@@ -7,7 +7,7 @@ import su.msk.dunno.scage.support.Colors._
 import su.msk.dunno.scage.support.Vec
 
 class Killy(val point:Vec, fieldTracer:FieldTracer) {
-  fieldTracer.addTrace(new FieldObject {
+  val trace = fieldTracer.addTrace(new FieldObject {
     def getCoord = fieldTracer.pointCenter(point)
     def getSymbol = MyFont.PLAYER
     def getColor = RED

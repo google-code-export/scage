@@ -2,7 +2,7 @@ package su.msk.dunno.screens.handlers.controller
 
 import org.lwjgl.input.Keyboard
 
-class KeyListener(val key:Int, val repeatTime:Long, onKeyDown: => Any, onKeyUp: => Any) extends UIListener {
+class KeyListener(val key:Int, repeatTime: => Long, onKeyDown: => Any, onKeyUp: => Any) extends UIListener {
   val isRepeatable = repeatTime > 0
 
   def check() = {

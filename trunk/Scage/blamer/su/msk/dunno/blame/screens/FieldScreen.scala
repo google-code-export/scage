@@ -35,27 +35,30 @@ object FieldScreen extends Screen("Field Screen") {
   })
 
   val killy = new Killy(fieldTracer.getRandomPassablePoint, fieldTracer)
-  keyListener(Keyboard.KEY_NUMPAD9, onKeyDown = killy.move(Vec(1,1)))  
-  keyListener(Keyboard.KEY_UP, onKeyDown = killy.move(Vec(0,1)))
-  keyListener(Keyboard.KEY_NUMPAD8, onKeyDown = killy.move(Vec(0,1)))
-  keyListener(Keyboard.KEY_NUMPAD7, onKeyDown = killy.move(Vec(-1,1)))  
-  keyListener(Keyboard.KEY_RIGHT, onKeyDown = killy.move(Vec(1,0)))
-  keyListener(Keyboard.KEY_NUMPAD6, onKeyDown = killy.move(Vec(1,0)))
-  keyListener(Keyboard.KEY_LEFT, onKeyDown = killy.move(Vec(-1,0)))
-  keyListener(Keyboard.KEY_NUMPAD4, onKeyDown = killy.move(Vec(-1,0)))  
-  keyListener(Keyboard.KEY_NUMPAD3, onKeyDown = killy.move(Vec(1,-1)))  
-  keyListener(Keyboard.KEY_DOWN, onKeyDown = killy.move(Vec(0,-1)))
-  keyListener(Keyboard.KEY_NUMPAD2, onKeyDown = killy.move(Vec(0,-1)))  
-  keyListener(Keyboard.KEY_NUMPAD1, onKeyDown = killy.move(Vec(-1,-1)))
+  keyListener(Keyboard.KEY_NUMPAD9, 300, onKeyDown = killy.move(Vec(1,1)))  
+  keyListener(Keyboard.KEY_UP, 300, onKeyDown = killy.move(Vec(0,1)))
+  keyListener(Keyboard.KEY_NUMPAD8, 300, onKeyDown = killy.move(Vec(0,1)))
+  keyListener(Keyboard.KEY_NUMPAD7, 300, onKeyDown = killy.move(Vec(-1,1)))  
+  keyListener(Keyboard.KEY_RIGHT, 300, onKeyDown = killy.move(Vec(1,0)))
+  keyListener(Keyboard.KEY_NUMPAD6, 300, onKeyDown = killy.move(Vec(1,0)))
+  keyListener(Keyboard.KEY_LEFT, 300, onKeyDown = killy.move(Vec(-1,0)))
+  keyListener(Keyboard.KEY_NUMPAD4, 300, onKeyDown = killy.move(Vec(-1,0)))  
+  keyListener(Keyboard.KEY_NUMPAD3, 300, onKeyDown = killy.move(Vec(1,-1)))  
+  keyListener(Keyboard.KEY_DOWN, 300, onKeyDown = killy.move(Vec(0,-1)))
+  keyListener(Keyboard.KEY_NUMPAD2, 300, onKeyDown = killy.move(Vec(0,-1)))  
+  keyListener(Keyboard.KEY_NUMPAD1, 300, onKeyDown = killy.move(Vec(-1,-1)))
   
   keyListener(Keyboard.KEY_O, onKeyDown = killy.openDoor)    
-  keyListener(Keyboard.KEY_C, onKeyDown = killy.closeDoor)      
+  keyListener(Keyboard.KEY_C, onKeyDown = killy.closeDoor)
+  
+  
+  center = fieldTracer.pointCenter(killy.point)
   
   Renderer.background(BLACK)
 
   addRender(new Renderable {
     override def render {
-	    fieldTracer.drawField
+	    fieldTracer.drawField(killy.point)
     }
 
     override def interface {

@@ -143,8 +143,11 @@ class Renderer {
   def scale = _scale
   def scale_= (value:Float) = _scale = value
 
-  val window_center = Vec(Renderer.width/2, Renderer.height/2)
-  private var central_coord = () => window_center
+  private var window_center = () => Vec(Renderer.width/2, Renderer.height/2)
+  def windowCenter = window_center()
+  def windowCenter_= (coord: => Vec) = window_center = () => coord
+  
+  private var central_coord = window_center
   def center = central_coord()
   def center_= (coord: => Vec) = central_coord = () => coord
   
@@ -168,7 +171,7 @@ class Renderer {
     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
 		GL11.glLoadIdentity();
     GL11.glPushMatrix
-      val coord = window_center - central_coord()*_scale
+      val coord = window_center() - central_coord()*_scale
       GL11.glTranslatef(coord.x , coord.y, 0.0f)
       GL11.glScalef(_scale, _scale, 1)
       render_list.foreach(renderable => renderable.render)

@@ -45,6 +45,7 @@
                         <copy toDir="builds/projects/${project.name}-${project.version}-${os.type}/lib" file="lib/phys2d-060408.jar" />
                         <copy toDir="builds/projects/${project.name}-${project.version}-${os.type}/lib" file="lib/slick-util.jar" />
             <copy toDir="builds/projects/${project.name}-${project.version}-${os.type}/lib" file="lib/json.jar" />
+            <copy toDir="builds/projects/${project.name}-${project.version}-${os.type}/lib" file="lib/rlforj.0.2.jar" />
             <copy toDir="builds/projects/${project.name}-${project.version}-${os.type}/lib" file="builds/scage/scage-${scage.version}.jar" />
 
                         <copy toDir="builds/projects/${project.name}-${project.version}-${os.type}/lib" file="resources/log4j.properties" />
@@ -79,10 +80,10 @@
                 </jar>
         <delete dir="builds/projects/${project.name}-${project.version}-${os.type}/bin" />
         <echo file="builds/projects/${project.name}-${project.version}-${os.type}/run.bat"
-            message="java -Djava.library.path=native -cp lib/commons-logging-1.1.1.jar;lib/jinput.jar;lib/log4j-1.2.15.jar;lib/lwjgl.jar;lib/lwjgl_util.jar;lib/phys2d-060408.jar;lib/scala-library.jar;lib/slick-util.jar;lib/json.jar;lib/scage-${scage.version}.jar;lib/${project.name}-${project.version}.jar ${project.entrypoint}"
+            message="java -Djava.library.path=native -cp lib/commons-logging-1.1.1.jar;lib/jinput.jar;lib/log4j-1.2.15.jar;lib/lwjgl.jar;lib/lwjgl_util.jar;lib/phys2d-060408.jar;lib/scala-library.jar;lib/slick-util.jar;lib/json.jar;lib/rlforj.0.2.jar;lib/scage-${scage.version}.jar;lib/${project.name}-${project.version}.jar ${project.entrypoint}"
         />
         <echo file="builds/projects/${project.name}-${project.version}-${os.type}/run.sh">#!/bin/bash
-            java -Djava.library.path=native -DLWJGL_DISABLE_XRANDR=true -cp lib/commons-logging-1.1.1.jar:lib/jinput.jar:lib/log4j-1.2.15.jar:lib/lwjgl.jar:lib/lwjgl_util.jar:lib/phys2d-060408.jar:lib/scala-library.jar:lib/slick-util.jar:lib/json.jar:lib/scage-${scage.version}.jar:lib/${project.name}-${project.version}.jar ${project.entrypoint}
+            java -Djava.library.path=native -DLWJGL_DISABLE_XRANDR=true -cp lib/commons-logging-1.1.1.jar:lib/jinput.jar:lib/log4j-1.2.15.jar:lib/lwjgl.jar:lib/lwjgl_util.jar:lib/phys2d-060408.jar:lib/scala-library.jar:lib/slick-util.jar:lib/json.jar:lib/rlforj.0.2.jar:lib/scage-${scage.version}.jar:lib/${project.name}-${project.version}.jar ${project.entrypoint}
         </echo>
         <chmod file="builds/projects/${project.name}-${project.version}-${os.type}/run.sh" perm="ugo+rx"/>
                 <copy file="resources/${project.properties}" tofile="builds/projects/${project.name}-${project.version}-${os.type}/${project.properties}" />

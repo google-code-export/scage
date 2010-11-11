@@ -33,6 +33,9 @@ class Screen(val name:String, val isMain:Boolean) {
 
   def scale = renderer.scale
   def scale_= (value:Float) = renderer.scale = value
+  
+  def windowCenter = renderer.windowCenter
+  def windowCenter_= (coord: => Vec) = renderer.windowCenter = coord
 
   def center = renderer.center
   def center_= (coord: => Vec) = renderer.center = coord

@@ -2,10 +2,8 @@ package scatris
 
 import figures._
 import su.msk.dunno.scage.support.tracer.{Trace, State, StandardTracer}
-import su.msk.dunno.scage.handlers.{Renderer}
 import su.msk.dunno.scage.support.messages.Message
 import org.lwjgl.input.Keyboard
-import su.msk.dunno.scage.handlers.controller.Controller
 import su.msk.dunno.scage.support.ScageLibrary._
 
 object Scatris extends Application {

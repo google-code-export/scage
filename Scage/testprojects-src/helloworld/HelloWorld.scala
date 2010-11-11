@@ -2,7 +2,7 @@ package helloworld
 
 import su.msk.dunno.scage.support.ScageLibrary._
 import su.msk.dunno.scage.support.messages.Message
-import su.msk.dunno.scage.handlers.{Idler, Renderer}
+import su.msk.dunno.scage.handlers.Renderer
 import su.msk.dunno.scage.support.Vec
 
 object HelloWorld {

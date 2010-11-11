@@ -22,4 +22,12 @@ class Killy(val point:Vec, fieldTracer:FieldTracer) {
     val new_point = point + step
     fieldTracer.updatePointIfPassable(trace, point, new_point)
   }
+  
+  def openDoor = {
+    fieldTracer.neighboursOfPoint(trace, point, -1 to 1).foreach(n => n.changeState(new State("door_open")))
+  }
+  
+  def closeDoor = {
+    fieldTracer.neighboursOfPoint(trace, point, -1 to 1).foreach(n => n.changeState(new State("door_close")))
+  }  
 }

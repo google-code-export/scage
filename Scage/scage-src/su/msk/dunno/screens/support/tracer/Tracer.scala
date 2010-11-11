@@ -64,7 +64,7 @@ class Tracer[T <: Trace](val game_from_x:Int = 0, val game_to_x:Int = 800,
     neighbours
   }
 
-  def getNeighbours(trace_id:Int, coord:Vec, range:Range, condition:(T) => Boolean):List[T] = {
+  def neighbours(trace_id:Int, coord:Vec, range:Range, condition:(T) => Boolean):List[T] = {
     val p = point(coord)
     var neighbours:List[T] = Nil
     range.foreachpair((i, j) => {
@@ -129,7 +129,7 @@ class Tracer[T <: Trace](val game_from_x:Int = 0, val game_to_x:Int = 800,
     else {
       val coord_edges_affected = checkEdges(coord)
       val min_dist2 = min_dist*min_dist
-      getNeighbours(trace_id, coord_edges_affected, range, condition).exists(neighbour =>
+      neighbours(trace_id, coord_edges_affected, range, condition).exists(neighbour =>
         (neighbour.getCoord dist2 coord_edges_affected) < min_dist2)
     }
   }

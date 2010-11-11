@@ -1,6 +1,5 @@
 package scatris
 
-import su.msk.dunno.scage.handlers.controller.Controller
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.support.Vec
 import org.apache.log4j.Logger

@@ -1,7 +1,6 @@
 package su.msk.dunno.screens.support
 
 import su.msk.dunno.screens.handlers.{Idler, Renderer}
-import tracer.{Trace, State}
 import su.msk.dunno.screens.Screen
 import su.msk.dunno.scage.support.{Color, Vec, ScageProperties, Colors}
 

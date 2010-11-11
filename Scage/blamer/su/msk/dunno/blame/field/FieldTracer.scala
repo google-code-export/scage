@@ -3,12 +3,20 @@ package su.msk.dunno.blame.field
 import su.msk.dunno.screens.support.tracer.{Tracer, Trace}
 import su.msk.dunno.scage.support.{Vec, Color}
 import su.msk.dunno.screens.handlers.Renderer
+import rlforj.los.{ILosBoard, PrecisePermissive}
 
 trait FieldObject extends Trace {
   def getSymbol:Int
   def getColor:Color
   def isTransparent:Boolean
   def isPassable:Boolean
+  
+  private var was_drawed = false
+  def draw = {
+    Renderer.drawDisplayList(getSymbol, getCoord, getColor)
+    was_drawed = true
+  }
+  def wasDrawed = was_drawed
 }
 
 class FieldTracer(game_from_x:Int = 0, game_to_x:Int = 800,
@@ -24,6 +32,10 @@ extends Tracer[FieldObject] (game_from_x, game_to_x, game_from_y, game_to_y, N_x
     onArea(x, y) && (matrix(x)(y).length == 0 || matrix(x)(y).forall(_.isPassable))
   }
   def isPointPassable(point:Vec):Boolean = isPointPassable(point.ix, point.iy)
+  
+  def isPointTransparent(x:Int, y:Int) = {
+    onArea(x, y) && (matrix(x)(y).length == 0 || matrix(x)(y).forall(_.isTransparent))  
+  }
   
   def isLocationPassable(coord:Vec) = {
     val p = point(coord)
@@ -49,7 +61,7 @@ extends Tracer[FieldObject] (game_from_x, game_to_x, game_from_y, game_to_y, N_x
     Vec(x, y)
   }
   
-  def updatePointIfPassable(trace_id:Int, old_point:Vec, new_point:Vec) = {
+  def move2PointIfPassable(trace_id:Int, old_point:Vec, new_point:Vec) = {
     if(isPointPassable(new_point)) {
       val old_coord = pointCenter(old_point)
       val new_coord = pointCenter(new_point)
@@ -64,17 +76,33 @@ extends Tracer[FieldObject] (game_from_x, game_to_x, game_from_y, game_to_y, N_x
     neighbours(trace_id, pointCenter(point), -1 to 1, (f) => true)
   }
 
-  def drawField = {
-    for(i <- 0 to N_x-1) {
-      for(j <- 0 to N_y-1) {
-        if(matrix(i)(j).length > 0) {
-          val symbol = matrix(i)(j).head.getSymbol
-          val color = matrix(i)(j).head.getColor
-          val coord = pointCenter(i, j)
+  private var lightSources:List[() => Vec] = Nil
+  def addLightSource(coord: => Vec) = lightSources = (() => coord) :: lightSources
+  
+  private val pp = new PrecisePermissive();  
+  private val drawView = new RL4JMapView() {
+    def isObstacle(x:Int, y:Int):Boolean = !isPointTransparent(x, y);
 
-          Renderer.drawDisplayList(symbol, coord, color)
-        }
+    def visit(x:Int, y:Int) = {
+      if(matrix(x)(y).length > 0) matrix(x)(y).head.draw
+    }   
+  }
+  
+  def drawField(player_point:Vec) = {
+    lightSources.foreach(source => {
+      pp.visitFieldOfView(drawView, source().ix, source().iy, 5)  
+    })
+  }
+
+  def drawField = {
+    for(x <- 0 to N_x-1) {
+      for(y <- 0 to N_y-1) {
+        if(matrix(x)(y).length > 0) matrix(x)(y).head.draw
       }
     }
+  }
+  
+  private[FieldTracer] abstract class RL4JMapView extends ILosBoard {
+    def contains(x:Int, y:Int):Boolean = x >= 0 && x < N_x && y >= 0 && y < N_y
   }
 }

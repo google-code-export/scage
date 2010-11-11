@@ -1,9 +1,9 @@
 package su.msk.dunno.blame.field
 
 import su.msk.dunno.screens.support.tracer.{Tracer, Trace}
-import su.msk.dunno.scage.support.{Vec, Color}
 import su.msk.dunno.screens.handlers.Renderer
 import rlforj.los.{ILosBoard, PrecisePermissive}
+import su.msk.dunno.scage.support.{Colors, Vec, Color}
 
 trait FieldObject extends Trace {
   def getSymbol:Int
@@ -16,6 +16,7 @@ trait FieldObject extends Trace {
     Renderer.drawDisplayList(getSymbol, getCoord, getColor)
     was_drawed = true
   }
+  def drawGray = Renderer.drawDisplayList(getSymbol, getCoord, Colors.GRAY)
   def wasDrawed = was_drawed
 }
 
@@ -87,17 +88,25 @@ extends Tracer[FieldObject] (game_from_x, game_to_x, game_from_y, game_to_y, N_x
       if(matrix(x)(y).length > 0) matrix(x)(y).head.draw
     }   
   }
-  
-  def drawField(player_point:Vec) = {
-    lightSources.foreach(source => {
+
+  def draw(player_point:Vec) = {
+    drawGray(player_point)
+    drawEnlighted(player_point)
+  }
+  private val distance_from_player = math.min(N_x/2, N_y/2)*math.min(N_x/2, N_y/2)
+  private def drawEnlighted(player_point:Vec) = {
+    lightSources.filter(source => (source() dist2 player_point) < distance_from_player).foreach(source => {
       pp.visitFieldOfView(drawView, source().ix, source().iy, 5)  
     })
   }
-
-  def drawField = {
-    for(x <- 0 to N_x-1) {
-      for(y <- 0 to N_y-1) {
-        if(matrix(x)(y).length > 0) matrix(x)(y).head.draw
+  private def drawGray(player_point:Vec) = {
+    val from_x = math.max(0, player_point.ix-N_x/2)
+    val to_x = math.min(N_x-1, player_point.ix+N_x/2)
+    val from_y = math.max(0, player_point.iy-N_y/2)
+    val to_y = math.min(N_y-1, player_point.iy+N_y/2)
+    for(x <- from_x to to_x) {
+      for(y <- from_y to to_y) {
+        if(matrix(x)(y).length > 0 && matrix(x)(y).head.wasDrawed) matrix(x)(y).head.drawGray
       }
     }
   }

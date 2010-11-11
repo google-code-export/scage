@@ -24,17 +24,17 @@ class FieldTracer(game_from_x:Int = 0, game_to_x:Int = 800,
                   N_x:Int = 20, N_y:Int = 15,
                   are_solid_edges:Boolean = true)
 extends Tracer[FieldObject] (game_from_x, game_to_x, game_from_y, game_to_y, N_x, N_y, are_solid_edges) {
-  def onArea(x:Int, y:Int) = {
+  def isPointOnArea(x:Int, y:Int) = {
     x >= 0 && x < N_x && y >= 0 && y < N_y
   }
 
   def isPointPassable(x:Int, y:Int):Boolean = {
-    onArea(x, y) && (matrix(x)(y).length == 0 || matrix(x)(y).forall(_.isPassable))
+    isPointOnArea(x, y) && (matrix(x)(y).length == 0 || matrix(x)(y).forall(_.isPassable))
   }
   def isPointPassable(point:Vec):Boolean = isPointPassable(point.ix, point.iy)
   
   def isPointTransparent(x:Int, y:Int) = {
-    onArea(x, y) && (matrix(x)(y).length == 0 || matrix(x)(y).forall(_.isTransparent))  
+    isPointOnArea(x, y) && (matrix(x)(y).length == 0 || matrix(x)(y).forall(_.isTransparent))
   }
   
   def isLocationPassable(coord:Vec) = {
@@ -80,9 +80,9 @@ extends Tracer[FieldObject] (game_from_x, game_to_x, game_from_y, game_to_y, N_x
   def addLightSource(coord: => Vec) = lightSources = (() => coord) :: lightSources
   
   private val pp = new PrecisePermissive();  
-  private val drawView = new RL4JMapView() {
+  private val drawView = new ILosBoard() {
+    def contains(x:Int, y:Int):Boolean = isPointOnArea(x, y)    
     def isObstacle(x:Int, y:Int):Boolean = !isPointTransparent(x, y);
-
     def visit(x:Int, y:Int) = {
       if(matrix(x)(y).length > 0) matrix(x)(y).head.draw
     }   
@@ -100,9 +100,5 @@ extends Tracer[FieldObject] (game_from_x, game_to_x, game_from_y, game_to_y, N_x
         if(matrix(x)(y).length > 0) matrix(x)(y).head.draw
       }
     }
-  }
-  
-  private[FieldTracer] abstract class RL4JMapView extends ILosBoard {
-    def contains(x:Int, y:Int):Boolean = x >= 0 && x < N_x && y >= 0 && y < N_y
   }
 }

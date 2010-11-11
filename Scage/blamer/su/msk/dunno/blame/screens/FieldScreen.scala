@@ -33,20 +33,34 @@ object FieldScreen extends Screen("Field Screen") {
       case _ =>
     }
   })
+  
+  private var is_pressed = false
+  private var pressed_start_time:Long = 0
+  def pressedPause = {
+    if(is_pressed) {
+      if(System.currentTimeMillis - pressed_start_time > 1000) 100
+      else 300
+    }
+    else {
+      is_pressed = true
+      pressed_start_time = System.currentTimeMillis
+      300
+    }
+  }
 
   val killy = new Killy(fieldTracer.getRandomPassablePoint, fieldTracer)
-  keyListener(Keyboard.KEY_NUMPAD9, 300, onKeyDown = killy.move(Vec(1,1)))  
-  keyListener(Keyboard.KEY_UP, 300, onKeyDown = killy.move(Vec(0,1)))
-  keyListener(Keyboard.KEY_NUMPAD8, 300, onKeyDown = killy.move(Vec(0,1)))
-  keyListener(Keyboard.KEY_NUMPAD7, 300, onKeyDown = killy.move(Vec(-1,1)))  
-  keyListener(Keyboard.KEY_RIGHT, 300, onKeyDown = killy.move(Vec(1,0)))
-  keyListener(Keyboard.KEY_NUMPAD6, 300, onKeyDown = killy.move(Vec(1,0)))
-  keyListener(Keyboard.KEY_LEFT, 300, onKeyDown = killy.move(Vec(-1,0)))
-  keyListener(Keyboard.KEY_NUMPAD4, 300, onKeyDown = killy.move(Vec(-1,0)))  
-  keyListener(Keyboard.KEY_NUMPAD3, 300, onKeyDown = killy.move(Vec(1,-1)))  
-  keyListener(Keyboard.KEY_DOWN, 300, onKeyDown = killy.move(Vec(0,-1)))
-  keyListener(Keyboard.KEY_NUMPAD2, 300, onKeyDown = killy.move(Vec(0,-1)))  
-  keyListener(Keyboard.KEY_NUMPAD1, 300, onKeyDown = killy.move(Vec(-1,-1)))
+  keyListener(Keyboard.KEY_NUMPAD9, pressedPause, onKeyDown = killy.move(Vec(1,1)),   onKeyUp = is_pressed = false)  
+  keyListener(Keyboard.KEY_UP,      pressedPause, onKeyDown = killy.move(Vec(0,1)),   onKeyUp = is_pressed = false)
+  keyListener(Keyboard.KEY_NUMPAD8, pressedPause, onKeyDown = killy.move(Vec(0,1)),   onKeyUp = is_pressed = false)
+  keyListener(Keyboard.KEY_NUMPAD7, pressedPause, onKeyDown = killy.move(Vec(-1,1)),  onKeyUp = is_pressed = false)  
+  keyListener(Keyboard.KEY_RIGHT,   pressedPause, onKeyDown = killy.move(Vec(1,0)),   onKeyUp = is_pressed = false)
+  keyListener(Keyboard.KEY_NUMPAD6, pressedPause, onKeyDown = killy.move(Vec(1,0)),   onKeyUp = is_pressed = false)
+  keyListener(Keyboard.KEY_LEFT,    pressedPause, onKeyDown = killy.move(Vec(-1,0)),  onKeyUp = is_pressed = false)
+  keyListener(Keyboard.KEY_NUMPAD4, pressedPause, onKeyDown = killy.move(Vec(-1,0)),  onKeyUp = is_pressed = false)  
+  keyListener(Keyboard.KEY_NUMPAD3, pressedPause, onKeyDown = killy.move(Vec(1,-1)),  onKeyUp = is_pressed = false)  
+  keyListener(Keyboard.KEY_DOWN,    pressedPause, onKeyDown = killy.move(Vec(0,-1)),  onKeyUp = is_pressed = false)
+  keyListener(Keyboard.KEY_NUMPAD2, pressedPause, onKeyDown = killy.move(Vec(0,-1)),  onKeyUp = is_pressed = false)  
+  keyListener(Keyboard.KEY_NUMPAD1, pressedPause, onKeyDown = killy.move(Vec(-1,-1)), onKeyUp = is_pressed = false)
   
   keyListener(Keyboard.KEY_O, onKeyDown = killy.openDoor)    
   keyListener(Keyboard.KEY_C, onKeyDown = killy.closeDoor)
@@ -58,7 +72,7 @@ object FieldScreen extends Screen("Field Screen") {
 
   addRender(new Renderable {
     override def render {
-	    fieldTracer.drawField(killy.point)
+      fieldTracer.drawField(killy.point)
     }
 
     override def interface {

@@ -2,7 +2,6 @@ package su.msk.dunno.blame.field
 
 import su.msk.dunno.screens.support.tracer.{Tracer, Trace}
 import su.msk.dunno.scage.support.{Vec, Color}
-import su.msk.dunno.screens.support.ScageLibrary._
 import su.msk.dunno.screens.handlers.Renderer
 
 trait FieldObject extends Trace {
@@ -59,6 +58,10 @@ extends Tracer[FieldObject] (game_from_x, game_to_x, game_from_y, game_to_y, N_x
       true
     }
     else false
+  }
+  
+  def neighboursOfPoint(trace_id:Int, point:Vec, range:Range) = {
+    neighbours(trace_id, pointCenter(point), -1 to 1, (f) => true)
   }
 
   def drawField = {

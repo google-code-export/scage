@@ -1,17 +1,16 @@
 package su.msk.dunno.blame.screens
 
 import su.msk.dunno.screens.Screen
-import su.msk.dunno.blame.support.MyFont._
 import su.msk.dunno.scage.support.messages.Message
 import su.msk.dunno.screens.support.ScageLibrary._
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.screens.handlers.Renderer
-import su.msk.dunno.blame.field.tiles.{Wall, Floor}
 import su.msk.dunno.blame.field.FieldTracer
 import su.msk.dunno.screens.prototypes.Renderable
-import su.msk.dunno.blame.support.{MyFont, GenLib}
+import su.msk.dunno.blame.support.GenLib
 import su.msk.dunno.blame.livings.Killy
+import su.msk.dunno.blame.field.tiles.{Door, Wall, Floor}
 
 object FieldScreen extends Screen("Field Screen") {
   override def properties = "blame-properties.txt"
@@ -24,17 +23,33 @@ object FieldScreen extends Screen("Field Screen") {
   val N_y = property("N_y", 12)
   val fieldTracer = new FieldTracer(game_from_x, game_to_x, game_from_y, game_to_y, N_x, N_y, true)
 
-  val maze = GenLib.CreateMaze(N_x, N_y)
+  val maze = GenLib.createRDM(N_x, N_y, 5)
   (0 to N_x-1).foreachpair(0 to N_y-1)((i, j) => {
-    if(maze(i)(j) == '#') new Floor(i, j, fieldTracer)
-    else if(maze(i)(j) == '.') new Wall(i, j, fieldTracer)
+    maze(i)(j) match {
+      case '#' => new Wall(i, j, fieldTracer)
+      case '.' => new Floor(i, j, fieldTracer)
+      case ',' => new Floor(i, j, fieldTracer)
+      case '+' => new Door(i, j, fieldTracer)
+      case _ =>
+    }
   })
 
   val killy = new Killy(fieldTracer.getRandomPassablePoint, fieldTracer)
+  keyListener(Keyboard.KEY_NUMPAD9, onKeyDown = killy.move(Vec(1,1)))  
   keyListener(Keyboard.KEY_UP, onKeyDown = killy.move(Vec(0,1)))
-  keyListener(Keyboard.KEY_DOWN, onKeyDown = killy.move(Vec(0,-1)))
+  keyListener(Keyboard.KEY_NUMPAD8, onKeyDown = killy.move(Vec(0,1)))
+  keyListener(Keyboard.KEY_NUMPAD7, onKeyDown = killy.move(Vec(-1,1)))  
   keyListener(Keyboard.KEY_RIGHT, onKeyDown = killy.move(Vec(1,0)))
+  keyListener(Keyboard.KEY_NUMPAD6, onKeyDown = killy.move(Vec(1,0)))
   keyListener(Keyboard.KEY_LEFT, onKeyDown = killy.move(Vec(-1,0)))
+  keyListener(Keyboard.KEY_NUMPAD4, onKeyDown = killy.move(Vec(-1,0)))  
+  keyListener(Keyboard.KEY_NUMPAD3, onKeyDown = killy.move(Vec(1,-1)))  
+  keyListener(Keyboard.KEY_DOWN, onKeyDown = killy.move(Vec(0,-1)))
+  keyListener(Keyboard.KEY_NUMPAD2, onKeyDown = killy.move(Vec(0,-1)))  
+  keyListener(Keyboard.KEY_NUMPAD1, onKeyDown = killy.move(Vec(-1,-1)))
+  
+  keyListener(Keyboard.KEY_O, onKeyDown = killy.openDoor)    
+  keyListener(Keyboard.KEY_C, onKeyDown = killy.closeDoor)      
   
   Renderer.background(BLACK)
 

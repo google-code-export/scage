@@ -1,7 +1,5 @@
 package su.msk.dunno.screens.handlers.controller
 
-import su.msk.dunno.screens.Screen
-
 class Controller {
   private var listeners = List[UIListener]()
 

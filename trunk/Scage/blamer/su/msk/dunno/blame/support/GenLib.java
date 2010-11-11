@@ -24,7 +24,7 @@ public class GenLib
 
     //---------------------------- Map Generators ----------------------------------------------
 
-	public static int[][] cretaRDM(int N_x, int N_y, int num_stations)
+	public static int[][] createRDM(int N_x, int N_y, int num_stations)
 	{
 		int[][] map = new int[N_x][N_y];
     	for(int i = 0; i < N_x; i++)

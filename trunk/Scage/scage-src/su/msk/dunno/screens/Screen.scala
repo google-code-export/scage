@@ -1,7 +1,7 @@
 package su.msk.dunno.screens
 
 import handlers.controller.Controller
-import handlers.{Idler, Renderer}
+import handlers.Renderer
 import org.apache.log4j.Logger
 import prototypes.{Renderable, Handler}
 import su.msk.dunno.scage.support.{Vec, ScageProperties}

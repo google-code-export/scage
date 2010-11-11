@@ -2,7 +2,6 @@ package helloworld
 
 import su.msk.dunno.scage.support.ScageLibrary._
 import su.msk.dunno.scage.support.Vec
-import su.msk.dunno.scage.handlers.controller.Controller
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.handlers.Renderer
 import su.msk.dunno.scage.support.tracer.{Trace, State, StandardTracer}

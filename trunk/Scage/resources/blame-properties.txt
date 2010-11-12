@@ -16,4 +16,4 @@ game_to_y = 600
 N_x = 37
 N_y = 20
 
-framerate = 100
+framerate = 60

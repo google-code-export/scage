@@ -23,7 +23,7 @@ object FieldScreen extends Screen("Field Screen") {
   val N_y = property("N_y", 12)
   val fieldTracer = new FieldTracer(game_from_x, game_to_x, game_from_y, game_to_y, N_x, N_y, true)
 
-  val maze = GenLib.createRDM(N_x, N_y, 5)
+  val maze = GenLib.CreateStandardDunegon(N_x, N_y)
   (0 to N_x-1).foreachpair(0 to N_y-1)((i, j) => {
     maze(i)(j) match {
       case '#' => new Wall(i, j, fieldTracer)
@@ -65,7 +65,7 @@ object FieldScreen extends Screen("Field Screen") {
   keyListener(Keyboard.KEY_O, onKeyDown = killy.openDoor)    
   keyListener(Keyboard.KEY_C, onKeyDown = killy.closeDoor)
   
-  windowCenter = Vec(fieldTracer.game_from_x + fieldTracer.game_width/2, game_from_y + fieldTracer.game_height/2)
+  windowCenter = Vec(width/2, height/2)
   center = fieldTracer.pointCenter(killy.point)
   
   Renderer.background(BLACK)

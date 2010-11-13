@@ -8,12 +8,12 @@ symbol_width = 12
 symbol_height = 24
 
 game_from_x = 0
-game_to_x = 600
+game_to_x = 1600
 
-game_from_y = 100
-game_to_y = 600
+game_from_y = 0
+game_to_y = 2000
 
-N_x = 37
-N_y = 20
+N_x = 100
+N_y = 100
 
 framerate = 60

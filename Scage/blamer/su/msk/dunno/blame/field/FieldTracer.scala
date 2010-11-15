@@ -4,6 +4,7 @@ import su.msk.dunno.screens.support.tracer.{Tracer, Trace}
 import su.msk.dunno.screens.handlers.Renderer
 import rlforj.los.{ILosBoard, PrecisePermissive}
 import su.msk.dunno.scage.support.{Colors, Vec, Color}
+import su.msk.dunno.blame.support.MyFont
 
 trait FieldObject extends Trace {
   def getSymbol:Int
@@ -106,7 +107,10 @@ extends Tracer[FieldObject] (game_from_x, game_to_x, game_from_y, game_to_y, N_x
     val to_y = math.min(N_y-1, player_point.iy+N_y/2)
     for(x <- from_x to to_x) {
       for(y <- from_y to to_y) {
-        if(matrix(x)(y).length > 0 && matrix(x)(y).head.wasDrawed) matrix(x)(y).head.drawGray
+        if(matrix(x)(y).length > 0) {
+          var tile = matrix(x)(y).head
+          if(tile.wasDrawed && tile.getSymbol != MyFont.FLOOR) tile.drawGray
+        }
       }
     }
   }

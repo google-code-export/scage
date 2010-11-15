@@ -54,7 +54,7 @@ object Renderer {
     next_key
   }
 
-  def background(c:Color) = GL11.glClearColor(c.red, c.green, c.blue, 0)
+  def backgroundColor(c:Color) = GL11.glClearColor(c.red, c.green, c.blue, 0)
   def color(c:Color) = GL11.glColor3f(c.red, c.green, c.blue)
 
   def drawLine(v1:Vec, v2:Vec) = {

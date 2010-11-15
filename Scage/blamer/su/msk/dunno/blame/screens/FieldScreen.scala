@@ -68,7 +68,7 @@ object FieldScreen extends Screen("Field Screen") {
   windowCenter = Vec(width/2, height/2)
   center = fieldTracer.pointCenter(killy.point)
   
-  Renderer.background(BLACK)
+  Renderer.backgroundColor(BLACK)
 
   addRender(new Renderable {
     override def render = fieldTracer.draw(killy.point)

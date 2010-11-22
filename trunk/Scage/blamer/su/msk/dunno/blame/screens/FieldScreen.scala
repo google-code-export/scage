@@ -65,7 +65,7 @@ object FieldScreen extends Screen("Field Screen") {
   keyListener(Keyboard.KEY_O, onKeyDown = killy.openDoor)    
   keyListener(Keyboard.KEY_C, onKeyDown = killy.closeDoor)
   
-  windowCenter = Vec(width/2, height/2)
+  windowCenter = Vec((width - 200)/2, 100 + (height - 100)/2)
   center = fieldTracer.pointCenter(killy.point)
   
   Renderer.backgroundColor(BLACK)
@@ -81,6 +81,7 @@ object FieldScreen extends Screen("Field Screen") {
       Message.print("Message Message Message Message Message ", 10, 0, WHITE)
 
       Message.print("FPS: "+fps, 600, height-25, WHITE)
+      Message.print("coord: "+fieldTracer.pointCenter(killy.point), width - 200, height-45, WHITE)
     }
   })
 

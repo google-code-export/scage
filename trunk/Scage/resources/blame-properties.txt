@@ -4,6 +4,9 @@ version = 0.1
 width = 800
 height = 600
 
+#visible_width = 200
+#visible_height = 200
+
 symbol_width = 12
 symbol_height = 24
 

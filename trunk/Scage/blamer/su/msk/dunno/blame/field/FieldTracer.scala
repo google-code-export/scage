@@ -5,6 +5,7 @@ import su.msk.dunno.screens.handlers.Renderer
 import rlforj.los.{ILosBoard, PrecisePermissive}
 import su.msk.dunno.scage.support.{Colors, Vec, Color}
 import su.msk.dunno.blame.support.MyFont
+import su.msk.dunno.scage.support.ScageProperties._
 
 trait FieldObject extends Trace {
   def getSymbol:Int
@@ -100,16 +101,22 @@ extends Tracer[FieldObject] (game_from_x, game_to_x, game_from_y, game_to_y, N_x
       pp.visitFieldOfView(drawView, source().ix, source().iy, 5)  
     })
   }
+
+  val visible_width  = property("visible_width",  Renderer.width - 200)
+  val visible_height = property("visible_height", Renderer.height - 100)
+
+  private val half_visible_N_x:Int = visible_width/h_x/2
+  private val half_visible_N_y:Int = visible_height/h_y/2
   private def drawGray(player_point:Vec) = {
-    val from_x = math.max(0, player_point.ix-N_x/2)
-    val to_x = math.min(N_x-1, player_point.ix+N_x/2)
-    val from_y = math.max(0, player_point.iy-N_y/2)
-    val to_y = math.min(N_y-1, player_point.iy+N_y/2)
+    val from_x = math.max(0,     player_point.ix - half_visible_N_x)
+    val to_x   = math.min(N_x-1, player_point.ix + half_visible_N_x)
+    val from_y = math.max(0,     player_point.iy - half_visible_N_y)
+    val to_y   = math.min(N_y-1, player_point.iy + half_visible_N_y)
     for(x <- from_x to to_x) {
       for(y <- from_y to to_y) {
         if(matrix(x)(y).length > 0) {
-          var tile = matrix(x)(y).head
-          if(tile.wasDrawed && tile.getSymbol != MyFont.FLOOR) tile.drawGray
+          val tile = matrix(x)(y).head
+          if(tile.wasDrawed && tile.getSymbol != MyFont.FLOOR) matrix(x)(y).head.drawGray
         }
       }
     }

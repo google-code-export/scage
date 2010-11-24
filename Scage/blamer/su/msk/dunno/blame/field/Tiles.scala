@@ -4,10 +4,12 @@ import su.msk.dunno.blame.field.{FieldObject, FieldTracer}
 import su.msk.dunno.blame.support.MyFont._
 import su.msk.dunno.screens.support.tracer.State
 import su.msk.dunno.scage.support.Colors._
-class Wall(x:Int, y:Int, fieldTracer:FieldTracer) {
-  private val coord = fieldTracer.pointCenter(x, y)
+private[tiles] abstract class Tile(x:Int, y:Int) {
+  protected val coord = FieldTracer.pointCenter(x, y)
+}
 
-  fieldTracer.addTrace(new FieldObject {
+class Wall(x:Int, y:Int) extends Tile(x, y) {
+  FieldTracer.addTrace(new FieldObject {
     def getCoord = coord
     def getSymbol = WALL
     def getColor = WHITE
@@ -19,10 +21,8 @@ class Wall(x:Int, y:Int, fieldTracer:FieldTracer) {
   })
 }
 
-class Floor(x:Int, y:Int, fieldTracer:FieldTracer) {
-  private val coord = fieldTracer.pointCenter(x, y)
-
-  fieldTracer.addTrace(new FieldObject {
+class Floor(x:Int, y:Int) extends Tile(x, y) {
+  FieldTracer.addTrace(new FieldObject {
     def getCoord = coord
     def getSymbol = FLOOR
     def getColor = WHITE
@@ -34,11 +34,10 @@ class Floor(x:Int, y:Int, fieldTracer:FieldTracer) {
   })
 }
 
-class Door(x:Int, y:Int, fieldTracer:FieldTracer) {
-  private val coord = fieldTracer.pointCenter(x, y)
+class Door(x:Int, y:Int) extends Tile(x, y) {
   private var is_open = false
 
-  fieldTracer.addTrace(new FieldObject {
+  FieldTracer.addTrace(new FieldObject {
     def getCoord = coord
     def getSymbol = if(is_open) DOOR_OPEN else DOOR_CLOSE
     def getColor = WHITE

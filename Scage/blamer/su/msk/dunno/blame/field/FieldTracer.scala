@@ -22,11 +22,14 @@ trait FieldObject extends Trace {
   def wasDrawed = was_drawed
 }
 
-class FieldTracer(game_from_x:Int = 0, game_to_x:Int = 800,
-                  game_from_y:Int = 0, game_to_y:Int = 600,
-                  N_x:Int = 20, N_y:Int = 15,
-                  are_solid_edges:Boolean = true)
-extends Tracer[FieldObject] (game_from_x, game_to_x, game_from_y, game_to_y, N_x, N_y, are_solid_edges) {
+object FieldTracer extends Tracer[FieldObject](
+  property("game_from_x", 0), 
+  property("game_to_x", 800), 
+  property("game_from_y", 0), 
+  property("game_to_y", 600), 
+  property("N_x", 16), 
+  property("N_y", 12), 
+  true) {
   def isPointOnArea(x:Int, y:Int) = {
     x >= 0 && x < N_x && y >= 0 && y < N_y
   }

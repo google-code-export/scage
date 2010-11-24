@@ -5,10 +5,11 @@ import su.msk.dunno.screens.support.tracer.State
 import su.msk.dunno.blame.support.MyFont._
 import su.msk.dunno.scage.support.Colors._
 import su.msk.dunno.scage.support.Vec
+import su.msk.dunno.blame.prototypes.Living
 
-class Killy(val point:Vec, fieldTracer:FieldTracer) {
-  val trace = fieldTracer.addTrace(new FieldObject {
-    def getCoord = fieldTracer.pointCenter(point)
+class Killy(point:Vec) extends Living(point) {
+  override val trace = FieldTracer.addTrace(new FieldObject {
+    def getCoord = FieldTracer.pointCenter(point)
     def getSymbol = PLAYER
     def getColor = RED
     def isTransparent = true
@@ -18,17 +19,5 @@ class Killy(val point:Vec, fieldTracer:FieldTracer) {
     def changeState(s:State) = {}
   })
   
-  fieldTracer.addLightSource(point)
-
-  def move(step:Vec):Boolean = {
-    val new_point = point + step
-    fieldTracer.move2PointIfPassable(trace, point, new_point)
-  }
-  
-  def openDoor = {
-    fieldTracer.neighboursOfPoint(trace, point, -1 to 1).foreach(n => n.changeState(new State("door_open")))
-  }  
-  def closeDoor = {
-    fieldTracer.neighboursOfPoint(trace, point, -1 to 1).foreach(n => n.changeState(new State("door_close")))
-  }  
+  FieldTracer.addLightSource(point)
 }

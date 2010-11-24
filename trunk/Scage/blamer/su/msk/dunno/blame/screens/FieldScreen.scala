@@ -5,31 +5,25 @@ import su.msk.dunno.scage.support.messages.Message
 import su.msk.dunno.screens.support.ScageLibrary._
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.support.Vec
-import su.msk.dunno.screens.handlers.Renderer
 import su.msk.dunno.blame.field.FieldTracer
-import su.msk.dunno.blame.support.GenLib
 import su.msk.dunno.blame.livings.Killy
 import su.msk.dunno.blame.field.tiles.{Door, Wall, Floor}
-import su.msk.dunno.screens.prototypes.{Handler, Renderable}
+import su.msk.dunno.screens.prototypes.Renderable
+import su.msk.dunno.blame.prototypes.Decision
+import su.msk.dunno.blame.decisions.{CloseDoor, OpenDoor, Move}
+import su.msk.dunno.screens.handlers.Renderer
+import su.msk.dunno.blame.support.{IngameMessages, TimeUpdater, GenLib}
 
 object FieldScreen extends Screen("Field Screen") {
   override def properties = "blame-properties.txt"
 
-  val game_from_x = property("game_from_x", 0)
-  val game_to_x = property("game_to_x", 800)
-  val game_from_y = property("game_from_y", 0)
-  val game_to_y = property("game_to_y", 600)
-  val N_x = property("N_x", 16)
-  val N_y = property("N_y", 12)
-  val fieldTracer = new FieldTracer(game_from_x, game_to_x, game_from_y, game_to_y, N_x, N_y, true)
-
-  val maze = GenLib.CreateStandardDunegon(N_x, N_y)
-  (0 to N_x-1).foreachpair(0 to N_y-1)((i, j) => {
+  private val maze = GenLib.CreateStandardDunegon(FieldTracer.N_x, FieldTracer.N_y)
+  (0 to FieldTracer.N_x-1).foreachpair(0 to FieldTracer.N_y-1)((i, j) => {
     maze(i)(j) match {
-      case '#' => new Wall(i, j, fieldTracer)
-      case '.' => new Floor(i, j, fieldTracer)
-      case ',' => new Floor(i, j, fieldTracer)
-      case '+' => new Door(i, j, fieldTracer)
+      case '#' => new Wall(i, j)
+      case '.' => new Floor(i, j)
+      case ',' => new Floor(i, j)
+      case '+' => new Door(i, j)
       case _ =>
     }
   })
@@ -43,51 +37,61 @@ object FieldScreen extends Screen("Field Screen") {
     }
     else 300
   }
-  def press = if(!is_key_pressed) {
-    is_key_pressed = true
-    pressed_start_time = System.currentTimeMillis
+  private def press(d:Decision) = {
+    if(!is_key_pressed) {
+      is_key_pressed = true
+      pressed_start_time = System.currentTimeMillis
+    }
+    TimeUpdater.addPlayerDecision(d)
   }
 
-  val killy = new Killy(fieldTracer.getRandomPassablePoint, fieldTracer)
-  keyListener(Keyboard.KEY_NUMPAD9, repeatTime, onKeyDown = {killy.move(Vec(1,1)); press},   onKeyUp = is_key_pressed = false)
-  keyListener(Keyboard.KEY_UP,      repeatTime, onKeyDown = {killy.move(Vec(0,1)); press},   onKeyUp = is_key_pressed = false)
-  keyListener(Keyboard.KEY_NUMPAD8, repeatTime, onKeyDown = {killy.move(Vec(0,1)); press},   onKeyUp = is_key_pressed = false)
-  keyListener(Keyboard.KEY_NUMPAD7, repeatTime, onKeyDown = {killy.move(Vec(-1,1)); press},  onKeyUp = is_key_pressed = false)
-  keyListener(Keyboard.KEY_RIGHT,   repeatTime, onKeyDown = {killy.move(Vec(1,0)); press},   onKeyUp = is_key_pressed = false)
-  keyListener(Keyboard.KEY_NUMPAD6, repeatTime, onKeyDown = {killy.move(Vec(1,0)); press},   onKeyUp = is_key_pressed = false)
-  keyListener(Keyboard.KEY_LEFT,    repeatTime, onKeyDown = {killy.move(Vec(-1,0)); press},  onKeyUp = is_key_pressed = false)
-  keyListener(Keyboard.KEY_NUMPAD4, repeatTime, onKeyDown = {killy.move(Vec(-1,0)); press},  onKeyUp = is_key_pressed = false)
-  keyListener(Keyboard.KEY_NUMPAD3, repeatTime, onKeyDown = {killy.move(Vec(1,-1)); press},  onKeyUp = is_key_pressed = false)
-  keyListener(Keyboard.KEY_DOWN,    repeatTime, onKeyDown = {killy.move(Vec(0,-1)); press},  onKeyUp = is_key_pressed = false)
-  keyListener(Keyboard.KEY_NUMPAD2, repeatTime, onKeyDown = {killy.move(Vec(0,-1)); press},  onKeyUp = is_key_pressed = false)
-  keyListener(Keyboard.KEY_NUMPAD1, repeatTime, onKeyDown = {killy.move(Vec(-1,-1)); press}, onKeyUp = is_key_pressed = false)
+  val killy = new Killy(FieldTracer.getRandomPassablePoint)
   
-  keyListener(Keyboard.KEY_O, onKeyDown = killy.openDoor)    
-  keyListener(Keyboard.KEY_C, onKeyDown = killy.closeDoor)
+  keyListener(Keyboard.KEY_NUMPAD9, repeatTime, 
+    onKeyDown = press(new Move(Vec(1,1), killy)), onKeyUp = is_key_pressed = false)
+  keyListener(Keyboard.KEY_UP,      repeatTime, 
+    onKeyDown = press(new Move(Vec(0,1), killy)), onKeyUp = is_key_pressed = false)
+  keyListener(Keyboard.KEY_NUMPAD8, repeatTime, 
+    onKeyDown = press(new Move(Vec(0,1), killy)),   onKeyUp = is_key_pressed = false)
+  keyListener(Keyboard.KEY_NUMPAD7, repeatTime, 
+    onKeyDown = press(new Move(Vec(-1,1), killy)),  onKeyUp = is_key_pressed = false)
+  keyListener(Keyboard.KEY_RIGHT,   repeatTime, 
+    onKeyDown = press(new Move(Vec(1,0), killy)),   onKeyUp = is_key_pressed = false)
+  keyListener(Keyboard.KEY_NUMPAD6, repeatTime, 
+    onKeyDown = press(new Move(Vec(1,0), killy)),   onKeyUp = is_key_pressed = false)
+  keyListener(Keyboard.KEY_LEFT,    repeatTime, 
+    onKeyDown = press(new Move(Vec(-1,0), killy)),  onKeyUp = is_key_pressed = false)
+  keyListener(Keyboard.KEY_NUMPAD4, repeatTime, 
+    onKeyDown = press(new Move(Vec(-1,0), killy)),  onKeyUp = is_key_pressed = false)
+  keyListener(Keyboard.KEY_NUMPAD3, repeatTime, 
+    onKeyDown = press(new Move(Vec(1,-1), killy)),  onKeyUp = is_key_pressed = false)
+  keyListener(Keyboard.KEY_DOWN,    repeatTime, 
+    onKeyDown = press(new Move(Vec(0,-1), killy)),  onKeyUp = is_key_pressed = false)
+  keyListener(Keyboard.KEY_NUMPAD2, repeatTime, 
+    onKeyDown = press(new Move(Vec(0,-1), killy)),  onKeyUp = is_key_pressed = false)
+  keyListener(Keyboard.KEY_NUMPAD1, repeatTime, 
+    onKeyDown = press(new Move(Vec(-1,-1), killy)), onKeyUp = is_key_pressed = false)
+  
+  keyListener(Keyboard.KEY_O, onKeyDown = TimeUpdater.addPlayerDecision(new OpenDoor(killy)))
+  keyListener(Keyboard.KEY_C, onKeyDown = TimeUpdater.addPlayerDecision(new CloseDoor(killy)))
   
   windowCenter = Vec((width - 200)/2, 100 + (height - 100)/2)
-  center = fieldTracer.pointCenter(killy.point)
+  center = FieldTracer.pointCenter(killy.point)
   
   Renderer.backgroundColor(BLACK)
+  
+  IngameMessages.addBottomPropMessage("greetings.helloworld", "killy")
 
   addRender(new Renderable {
-    override def render = fieldTracer.draw(killy.point)
+    override def render = FieldTracer.draw(killy.point)
 
     override def interface {
-      Message.print("Message Message Message Message Message ", 10, 80, WHITE)
-      Message.print("Message Message Message Message Message ", 10, 60, WHITE)
-      Message.print("Message Message Message Message Message ", 10, 40, WHITE)
-      Message.print("Message Message Message Message Message ", 10, 20, WHITE)
-      Message.print("Message Message Message Message Message ", 10, 0, WHITE)
+      IngameMessages.showBottomMessages
 
       Message.print("FPS: "+fps, 600, height-25, WHITE)
-      Message.print("coord: "+fieldTracer.pointCenter(killy.point), width - 200, height-45, WHITE)
+      Message.print("time: "+TimeUpdater.time, width - 200, height-45, WHITE)
     }
   })
-
-  /*addHandler(new Handler {
-    override def action = println(is_pressed)
-  })*/
   
   keyListener(Keyboard.KEY_ESCAPE, onKeyDown = allStop)
   

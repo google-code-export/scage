@@ -20,3 +20,5 @@ N_x = 100
 N_y = 100
 
 framerate = 60
+
+lang = en

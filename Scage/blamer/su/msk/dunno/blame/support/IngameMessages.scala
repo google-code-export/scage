@@ -56,7 +56,7 @@ object IngameMessages {
     
     override def endElement(uri:String, local_name:String, raw_name:String) = {
       if("message".equalsIgnoreCase(raw_name)) {
-        xml_messages += (current_message_key -> current_message_text.toString)
+        xml_messages += (current_message_key -> current_message_text.toString.trim)
         current_message_text.clear
       }
     }

@@ -24,14 +24,11 @@ object IngameMessages {
   def addBottomMessage(message:String) = {
     bottom_messages = message :: bottom_messages
     if(bottom_messages.length > message_capacity) 
-      bottom_messages = bottom_messages match {
-        case messages :: bottom_messages.last => messages
-        case _ => bottom_messages
-      }
+      bottom_messages = bottom_messages.init
   }
   
   def addBottomPropMessage(message_code:String, parameters:String*) = {
-    var message = imh.XMLMessages(message_code)
+    var message = imh.xml_messages(message_code)
     parameters.foreach(parameter => message = message.replaceFirst("\\?", parameter))
     addBottomMessage(message)
   }
@@ -43,7 +40,6 @@ object IngameMessages {
 
   private[IngameMessages] class IngameMessageHandler extends DefaultHandler {
     private var xml_messages = new HashMap[String,String]
-    def XMLMessages = xml_messages
     
     private var current_message_key = ""
     private var current_message_text = new StringBuilder

@@ -10,8 +10,8 @@ abstract class Decision(val living:Living) {
   def wasExecuted = was_executed
   
   protected def doAction:Boolean
-  def execute:Boolean = {
-    if(doAction) {living.lastActionTime = TimeUpdater.time; true}
-    else false
+  def execute = {
+    if(doAction) living.lastActionTime = TimeUpdater.time; 
+    was_executed = true
   }
 }

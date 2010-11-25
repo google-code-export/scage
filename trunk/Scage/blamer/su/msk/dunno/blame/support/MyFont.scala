@@ -17,6 +17,7 @@ object MyFont {
   val WALL = symbol('#')
   val FLOOR = symbol('.')
   val PLAYER = symbol('@')
+  val SILICON_CREATURE = symbol('S')
   val DOOR_CLOSE = symbol('+')
   val DOOR_OPEN = symbol('\'')
 

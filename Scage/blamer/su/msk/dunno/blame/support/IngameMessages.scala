@@ -39,7 +39,7 @@ object IngameMessages {
   }
 
   private[IngameMessages] class IngameMessageHandler extends DefaultHandler {
-    private var xml_messages = new HashMap[String,String]
+    var xml_messages = new HashMap[String,String]
     
     private var current_message_key = ""
     private var current_message_text = new StringBuilder

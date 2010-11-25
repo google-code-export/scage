@@ -6,17 +6,18 @@ import su.msk.dunno.screens.support.ScageLibrary._
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.blame.field.FieldTracer
-import su.msk.dunno.blame.livings.Killy
 import su.msk.dunno.blame.field.tiles.{Door, Wall, Floor}
 import su.msk.dunno.screens.prototypes.Renderable
 import su.msk.dunno.blame.prototypes.Decision
 import su.msk.dunno.blame.decisions.{CloseDoor, OpenDoor, Move}
 import su.msk.dunno.screens.handlers.Renderer
 import su.msk.dunno.blame.support.{IngameMessages, TimeUpdater, GenLib}
+import su.msk.dunno.blame.livings.{Cibo, Killy}
 
-object FieldScreen extends Screen("Field Screen") {
+object FieldScreen extends Screen("Field Screen", is_main = true) {
   override def properties = "blame-properties.txt"
 
+  // map
   private val maze = GenLib.CreateStandardDunegon(FieldTracer.N_x, FieldTracer.N_y)
   (0 to FieldTracer.N_x-1).foreachpair(0 to FieldTracer.N_y-1)((i, j) => {
     maze(i)(j) match {
@@ -27,7 +28,17 @@ object FieldScreen extends Screen("Field Screen") {
       case _ =>
     }
   })
+  
+  // players
+  private var is_play_cibo = false
+  val killy = new Killy(FieldTracer.getRandomPassablePoint)
+  val cibo = new Cibo(FieldTracer.getRandomPassablePoint)
+  def currentPlayer = if(is_play_cibo) cibo else killy  
+  
+  // enemies
+  // TODO
 
+  // controls on main screen
   private var is_key_pressed = false
   private var pressed_start_time:Long = 0
   private def repeatTime = {
@@ -44,57 +55,57 @@ object FieldScreen extends Screen("Field Screen") {
     }
     TimeUpdater.addDecision(d)
   }
-
-  val killy = new Killy(FieldTracer.getRandomPassablePoint)
   
   keyListener(Keyboard.KEY_NUMPAD9, repeatTime, 
-    onKeyDown = press(new Move(Vec(1,1), killy)), onKeyUp = is_key_pressed = false)
+    onKeyDown = press(new Move(Vec(1,1), currentPlayer)), onKeyUp = is_key_pressed = false)
   keyListener(Keyboard.KEY_UP,      repeatTime, 
-    onKeyDown = press(new Move(Vec(0,1), killy)), onKeyUp = is_key_pressed = false)
+    onKeyDown = press(new Move(Vec(0,1), currentPlayer)), onKeyUp = is_key_pressed = false)
   keyListener(Keyboard.KEY_NUMPAD8, repeatTime, 
-    onKeyDown = press(new Move(Vec(0,1), killy)),   onKeyUp = is_key_pressed = false)
+    onKeyDown = press(new Move(Vec(0,1), currentPlayer)),   onKeyUp = is_key_pressed = false)
   keyListener(Keyboard.KEY_NUMPAD7, repeatTime, 
-    onKeyDown = press(new Move(Vec(-1,1), killy)),  onKeyUp = is_key_pressed = false)
+    onKeyDown = press(new Move(Vec(-1,1), currentPlayer)),  onKeyUp = is_key_pressed = false)
   keyListener(Keyboard.KEY_RIGHT,   repeatTime, 
-    onKeyDown = press(new Move(Vec(1,0), killy)),   onKeyUp = is_key_pressed = false)
+    onKeyDown = press(new Move(Vec(1,0), currentPlayer)),   onKeyUp = is_key_pressed = false)
   keyListener(Keyboard.KEY_NUMPAD6, repeatTime, 
-    onKeyDown = press(new Move(Vec(1,0), killy)),   onKeyUp = is_key_pressed = false)
+    onKeyDown = press(new Move(Vec(1,0), currentPlayer)),   onKeyUp = is_key_pressed = false)
   keyListener(Keyboard.KEY_LEFT,    repeatTime, 
-    onKeyDown = press(new Move(Vec(-1,0), killy)),  onKeyUp = is_key_pressed = false)
+    onKeyDown = press(new Move(Vec(-1,0), currentPlayer)),  onKeyUp = is_key_pressed = false)
   keyListener(Keyboard.KEY_NUMPAD4, repeatTime, 
-    onKeyDown = press(new Move(Vec(-1,0), killy)),  onKeyUp = is_key_pressed = false)
+    onKeyDown = press(new Move(Vec(-1,0), currentPlayer)),  onKeyUp = is_key_pressed = false)
   keyListener(Keyboard.KEY_NUMPAD3, repeatTime, 
-    onKeyDown = press(new Move(Vec(1,-1), killy)),  onKeyUp = is_key_pressed = false)
+    onKeyDown = press(new Move(Vec(1,-1), currentPlayer)),  onKeyUp = is_key_pressed = false)
   keyListener(Keyboard.KEY_DOWN,    repeatTime, 
-    onKeyDown = press(new Move(Vec(0,-1), killy)),  onKeyUp = is_key_pressed = false)
+    onKeyDown = press(new Move(Vec(0,-1), currentPlayer)),  onKeyUp = is_key_pressed = false)
   keyListener(Keyboard.KEY_NUMPAD2, repeatTime, 
-    onKeyDown = press(new Move(Vec(0,-1), killy)),  onKeyUp = is_key_pressed = false)
+    onKeyDown = press(new Move(Vec(0,-1), currentPlayer)),  onKeyUp = is_key_pressed = false)
   keyListener(Keyboard.KEY_NUMPAD1, repeatTime, 
-    onKeyDown = press(new Move(Vec(-1,-1), killy)), onKeyUp = is_key_pressed = false)
+    onKeyDown = press(new Move(Vec(-1,-1), currentPlayer)), onKeyUp = is_key_pressed = false)
   
-  keyListener(Keyboard.KEY_O, onKeyDown = TimeUpdater.addDecision(new OpenDoor(killy)))
-  keyListener(Keyboard.KEY_C, onKeyDown = TimeUpdater.addDecision(new CloseDoor(killy)))
+  keyListener(Keyboard.KEY_O, onKeyDown = TimeUpdater.addDecision(new OpenDoor(currentPlayer)))
+  keyListener(Keyboard.KEY_C, onKeyDown = TimeUpdater.addDecision(new CloseDoor(currentPlayer)))
   
-  windowCenter = Vec((width - 200)/2, 100 + (height - 100)/2)
-  center = FieldTracer.pointCenter(killy.point)
-  
-  Renderer.backgroundColor(BLACK)
-  
-  IngameMessages.addBottomPropMessage("greetings.helloworld", killy.name)
+  keyListener(Keyboard.KEY_TAB, onKeyDown = is_play_cibo = !is_play_cibo)  
+  keyListener(Keyboard.KEY_ESCAPE, onKeyDown = allStop)
 
+  // render on main screen
+  windowCenter = Vec((width - 200)/2, 100 + (height - 100)/2)
+  center = FieldTracer.pointCenter(currentPlayer.point)
+  
+  Renderer.backgroundColor(BLACK)  
+  
   addRender(new Renderable {
-    override def render = FieldTracer.draw(killy.point)
+    override def render = FieldTracer.draw(currentPlayer.point)
 
     override def interface {
       IngameMessages.showBottomMessages
 
       Message.print("FPS: "+fps, 600, height-25, WHITE)
       Message.print("time: "+TimeUpdater.time, width - 200, height-45, WHITE)
-      //Message.print("decisions: "+TimeUpdater.decisions.length, width - 200, height-65, WHITE)
     }
   })
   
-  keyListener(Keyboard.KEY_ESCAPE, onKeyDown = allStop)
+  // initial message
+  IngameMessages.addBottomPropMessage("greetings.helloworld", currentPlayer.stat("name"))
   
   def main(args:Array[String]):Unit = run
 }

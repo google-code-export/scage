@@ -18,6 +18,9 @@ class Killy(point:Vec) extends Living(point) {
     def getState = new State
     def changeState(s:State) = {}
   })
+
+  override def name = "Killy"
+  override def isPlayer = true
   
   FieldTracer.addLightSource(point)
 }

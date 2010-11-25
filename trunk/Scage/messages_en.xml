@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<message code="greetings.helloworld">
-    Hello, World! - said ?
-</message>
+<messages>
+    <message code="greetings.helloworld">
+        Hello, World! - said ?
+    </message>
+
+    <message code="door.open">
+        ? opened a door
+    </message>
+
+    <message code="door.close">
+        ? closed a door
+    </message>
+</messages>

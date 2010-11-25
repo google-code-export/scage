@@ -24,7 +24,10 @@ object IngameMessages {
   def addBottomMessage(message:String) = {
     bottom_messages = message :: bottom_messages
     if(bottom_messages.length > message_capacity) 
-      bottom_messages = bottom_messages.tail
+      bottom_messages = bottom_messages match {
+        case messages :: bottom_messages.last => messages
+        case _ => bottom_messages
+      }
   }
   
   def addBottomPropMessage(message_code:String, parameters:String*) = {

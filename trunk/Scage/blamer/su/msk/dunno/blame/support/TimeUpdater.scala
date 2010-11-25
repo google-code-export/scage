@@ -8,25 +8,18 @@ object TimeUpdater {
   private var _time = 0;
   def time = _time
 
-  private var playerDecisions:List[Decision] = Nil
-  def addPlayerDecision(d:Decision) = playerDecisions = playerDecisions ::: List(d)
-  
-  private var otherDecisions:List[Decision] = Nil
-  def addDecision(d:Decision) = otherDecisions = otherDecisions ::: List(d)
-  
+  private var decisions:List[Decision] = Nil
+  def addDecision(decision:Decision) = decisions = decisions ::: List(decision)
+
   FieldScreen.addHandler(new Handler {
     override def action = {
-      if(playerDecisions.length > 0) {
-        playerDecisions.foreach(playerAction => {
-          if(playerAction.execute) _time += playerAction.actionPeriod        
-        })
-      }
-      playerDecisions = Nil
-      
-      val enemyActions = otherDecisions.filter(decision => 
-        decision.living.lastActionTime + decision.actionPeriod <= _time)
-      enemyActions.foreach(_.execute)
-      otherDecisions = otherDecisions.filterNot(enemyActions.contains(_))
+      val current_actions = decisions.filter(decision =>
+        decision.living.lastActionTime + decision.actionPeriod <= _time || decision.living.isPlayer)
+      current_actions.foreach(action => {
+        action.execute
+        if(action.living.isPlayer) _time += action.actionPeriod
+      })
+      decisions = decisions.filterNot(current_actions.contains(_))
     }
   })
 }

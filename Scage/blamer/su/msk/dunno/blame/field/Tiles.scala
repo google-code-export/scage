@@ -44,7 +44,7 @@ class Door(x:Int, y:Int) extends Tile(x, y) {
     def isTransparent = is_open
     def isPassable = is_open
 
-    def getState = new State
+    def getState = new State("door", if(is_open) "open" else "close")
     def changeState(s:State) = {
       if(s.contains("door_open")) is_open = true
       else if(s.contains("door_close")) is_open = false

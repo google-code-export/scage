@@ -42,7 +42,7 @@ object FieldScreen extends Screen("Field Screen") {
       is_key_pressed = true
       pressed_start_time = System.currentTimeMillis
     }
-    TimeUpdater.addPlayerDecision(d)
+    TimeUpdater.addDecision(d)
   }
 
   val killy = new Killy(FieldTracer.getRandomPassablePoint)
@@ -72,15 +72,15 @@ object FieldScreen extends Screen("Field Screen") {
   keyListener(Keyboard.KEY_NUMPAD1, repeatTime, 
     onKeyDown = press(new Move(Vec(-1,-1), killy)), onKeyUp = is_key_pressed = false)
   
-  keyListener(Keyboard.KEY_O, onKeyDown = TimeUpdater.addPlayerDecision(new OpenDoor(killy)))
-  keyListener(Keyboard.KEY_C, onKeyDown = TimeUpdater.addPlayerDecision(new CloseDoor(killy)))
+  keyListener(Keyboard.KEY_O, onKeyDown = TimeUpdater.addDecision(new OpenDoor(killy)))
+  keyListener(Keyboard.KEY_C, onKeyDown = TimeUpdater.addDecision(new CloseDoor(killy)))
   
   windowCenter = Vec((width - 200)/2, 100 + (height - 100)/2)
   center = FieldTracer.pointCenter(killy.point)
   
   Renderer.backgroundColor(BLACK)
   
-  IngameMessages.addBottomPropMessage("greetings.helloworld", "killy")
+  IngameMessages.addBottomPropMessage("greetings.helloworld", killy.name)
 
   addRender(new Renderable {
     override def render = FieldTracer.draw(killy.point)
@@ -90,6 +90,7 @@ object FieldScreen extends Screen("Field Screen") {
 
       Message.print("FPS: "+fps, 600, height-25, WHITE)
       Message.print("time: "+TimeUpdater.time, width - 200, height-45, WHITE)
+      //Message.print("decisions: "+TimeUpdater.decisions.length, width - 200, height-65, WHITE)
     }
   })
   

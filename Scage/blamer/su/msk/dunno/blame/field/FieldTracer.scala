@@ -54,7 +54,8 @@ object FieldTracer extends Tracer[FieldObject](
     var x = -1
     var y = -1
 
-    var count = 10
+    val max_count = 10
+    var count = max_count
     while(!isPointPassable(x, y) && count > 0) {
       x = (math.random*N_x).toInt
       y = (math.random*N_y).toInt
@@ -62,7 +63,7 @@ object FieldTracer extends Tracer[FieldObject](
       count -= 1
     }
     if(count == 0 && !isPointPassable(x, y))
-      log.warn("warning: cannot locate random passable point within "+count+" tries")
+      log.warn("warning: cannot locate random passable point within "+max_count+" tries")
 
     Vec(x, y)
   }
@@ -118,7 +119,7 @@ object FieldTracer extends Tracer[FieldObject](
     for(x <- from_x to to_x) {
       for(y <- from_y to to_y) {
         if(matrix(x)(y).length > 0) {
-          val tile = matrix(x)(y).head
+          val tile = matrix(x)(y).last
           if(tile.wasDrawed && tile.getSymbol != MyFont.FLOOR) matrix(x)(y).head.drawGray
         }
       }

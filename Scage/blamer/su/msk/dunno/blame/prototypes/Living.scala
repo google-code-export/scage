@@ -35,8 +35,7 @@ abstract class Living(val point:Vec, symbol:Int, color:Color) {
       case "Int" => stats.put(key, value.asInstanceOf[Int])
       case "Float" => stats.put(key, value.asInstanceOf[Float])
       case "Boolean" => stats.put(key, value.asInstanceOf[Boolean])
-      case "String" => stats.put(key, value.asInstanceOf[String])
-      case _ =>
+      case _ => stats.put(key, value.asInstanceOf[String])
     }
   }
   

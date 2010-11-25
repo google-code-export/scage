@@ -23,7 +23,7 @@ class OpenDoor(living:Living) extends Decision(living) {
       val neighbour_state = neighbour.getState
       if(neighbour_state.contains("door") && "close".equals(neighbour_state.getString("door"))) {
         neighbour.changeState(new State("door_open"))
-        IngameMessages.addBottomPropMessage("door.open", living.name)
+        IngameMessages.addBottomPropMessage("door.open", living.stat("name"))
       }
     })
     TimeUpdater.addDecision(new Move(Vec(1,0), living))
@@ -39,7 +39,7 @@ class CloseDoor(living:Living) extends Decision(living) {
       val neighbour_state = neighbour.getState
       if(neighbour_state.contains("door") && "open".equals(neighbour_state.getString("door"))) {
         neighbour.changeState(new State("door_close"))
-        IngameMessages.addBottomPropMessage("door.close", living.name)
+        IngameMessages.addBottomPropMessage("door.close", living.stat("name"))
       }
     })
     true

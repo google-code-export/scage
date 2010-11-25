@@ -1,6 +1,6 @@
 package su.msk.dunno.blame.support
 
-import su.msk.dunno.screens.prototypes.Handler
+import su.msk.dunno.screens.prototypes.ActionHandler
 import su.msk.dunno.blame.prototypes.Decision
 import su.msk.dunno.blame.screens.FieldScreen
 
@@ -11,13 +11,13 @@ object TimeUpdater {
   private var decisions:List[Decision] = Nil
   def addDecision(decision:Decision) = decisions = decisions ::: List(decision)
 
-  FieldScreen.addHandler(new Handler {
+  FieldScreen.addHandler(new ActionHandler {
     override def action = {
       val current_actions = decisions.filter(decision =>
-        decision.living.lastActionTime + decision.actionPeriod <= _time || decision.living.isPlayer)
+        decision.living.lastActionTime + decision.actionPeriod <= _time || decision.living.boolStat("is_player"))
       current_actions.foreach(action => {
         action.execute
-        if(action.living.isPlayer) _time += action.actionPeriod
+        if(action.living.boolStat("is_player")) _time += action.actionPeriod
       })
       decisions = decisions.filterNot(current_actions.contains(_))
     }

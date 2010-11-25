@@ -3,16 +3,17 @@ package su.msk.dunno.screens
 import handlers.controller.Controller
 import handlers.Renderer
 import org.apache.log4j.Logger
-import prototypes.{Renderable, Handler}
+import prototypes.{Renderable, ActionHandler}
 import su.msk.dunno.scage.support.{Vec, ScageProperties}
 import org.lwjgl.opengl.Display
 
 object Screen {
   private var isAllScreensStop = false
+  def isAppRunning = !isAllScreensStop
   def allStop = isAllScreensStop = true
 }
 
-class Screen(val name:String, val isMain:Boolean) {
+class Screen(val name:String, val is_main:Boolean) {
   def this(name:String) = this(name, false)
 
   private val log = Logger.getLogger(this.getClass);
@@ -21,8 +22,8 @@ class Screen(val name:String, val isMain:Boolean) {
   def properties:String = "scage-properties.txt"
   ScageProperties.properties = properties
   
-  private var handlers:List[Handler] = Nil
-  def addHandler(handler:Handler) = handlers = handler :: handlers
+  private var handlers:List[ActionHandler] = Nil
+  def addHandler(handler:ActionHandler) = handlers = handler :: handlers
 
   val controller = new Controller
   def keyListener(key:Int, repeatTime: => Long = 0, onKeyDown: => Any, onKeyUp: => Any = {}) =
@@ -57,13 +58,14 @@ class Screen(val name:String, val isMain:Boolean) {
     }
     handlers.foreach(handler => handler.exit)
     log.info(name+" was stopped")
-    if(isMain) {
+    if(is_main) {
+      Screen.isAllScreensStop = true
       Display.destroy
       System.exit(0)
     }
   }
   def stop = {
-    if(isMain) Screen.allStop
+    if(is_main) Screen.allStop
     else is_running = false 
   }
 

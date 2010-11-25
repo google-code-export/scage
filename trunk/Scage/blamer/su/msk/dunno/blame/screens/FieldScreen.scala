@@ -12,7 +12,7 @@ import su.msk.dunno.blame.prototypes.Decision
 import su.msk.dunno.blame.decisions.{CloseDoor, OpenDoor, Move}
 import su.msk.dunno.screens.handlers.Renderer
 import su.msk.dunno.blame.support.{IngameMessages, TimeUpdater, GenLib}
-import su.msk.dunno.blame.livings.{Cibo, Killy}
+import su.msk.dunno.blame.livings.{SiliconCreature, Cibo, Killy}
 
 object FieldScreen extends Screen("Field Screen", is_main = true) {
   override def properties = "blame-properties.txt"
@@ -36,7 +36,7 @@ object FieldScreen extends Screen("Field Screen", is_main = true) {
   def currentPlayer = if(is_play_cibo) cibo else killy  
   
   // enemies
-  // TODO
+  (1 to 100).foreach(i => new SiliconCreature(FieldTracer.getRandomPassablePoint))
 
   // controls on main screen
   private var is_key_pressed = false
@@ -68,6 +68,8 @@ object FieldScreen extends Screen("Field Screen", is_main = true) {
     onKeyDown = press(new Move(Vec(1,0), currentPlayer)),   onKeyUp = is_key_pressed = false)
   keyListener(Keyboard.KEY_NUMPAD6, repeatTime, 
     onKeyDown = press(new Move(Vec(1,0), currentPlayer)),   onKeyUp = is_key_pressed = false)
+  keyListener(Keyboard.KEY_NUMPAD5, repeatTime,
+    onKeyDown = press(new Move(Vec(0,0), currentPlayer)),   onKeyUp = is_key_pressed = false)
   keyListener(Keyboard.KEY_LEFT,    repeatTime, 
     onKeyDown = press(new Move(Vec(-1,0), currentPlayer)),  onKeyUp = is_key_pressed = false)
   keyListener(Keyboard.KEY_NUMPAD4, repeatTime, 

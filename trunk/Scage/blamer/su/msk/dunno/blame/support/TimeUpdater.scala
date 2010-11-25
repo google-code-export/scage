@@ -13,13 +13,17 @@ object TimeUpdater {
 
   FieldScreen.addHandler(new ActionHandler {
     override def action = {
-      val current_actions = decisions.filter(decision =>
+      var current_actions = decisions.filter(decision =>
         decision.living.lastActionTime + decision.actionPeriod <= _time || decision.living.boolStat("is_player"))
-      current_actions.foreach(action => {
-        action.execute
-        if(action.living.boolStat("is_player")) _time += action.actionPeriod
-      })
-      decisions = decisions.filterNot(current_actions.contains(_))
+      while(!current_actions.isEmpty) {
+        current_actions.foreach(action => {
+          action.execute
+          if(action.living.boolStat("is_player")) _time += action.actionPeriod
+        })
+        decisions = decisions.filterNot(current_actions.contains(_))
+        current_actions = decisions.filter(decision =>
+          decision.living.lastActionTime + decision.actionPeriod <= _time || decision.living.boolStat("is_player"))
+      }
     }
   })
 } 

@@ -33,10 +33,10 @@ object FieldScreen extends Screen("Field Screen", is_main = true) {
   private var is_play_cibo = false
   val killy = new Killy(FieldTracer.getRandomPassablePoint)
   val cibo = new Cibo(FieldTracer.getRandomPassablePoint)
-  def currentPlayer = if(is_play_cibo) cibo else killy  
+  def currentPlayer = if(is_play_cibo) cibo else killy
   
   // enemies
-  (1 to 100).foreach(i => new SiliconCreature(FieldTracer.getRandomPassablePoint))
+  (1 to 50).foreach(i => new SiliconCreature(FieldTracer.getRandomPassablePoint))
 
   // controls on main screen
   private var is_key_pressed = false
@@ -103,6 +103,7 @@ object FieldScreen extends Screen("Field Screen", is_main = true) {
 
       Message.print("FPS: "+fps, 600, height-25, WHITE)
       Message.print("time: "+TimeUpdater.time, width - 200, height-45, WHITE)
+      Message.print("decisions: "+TimeUpdater.decisions.size, width - 200, height-65, WHITE)
     }
   })
   

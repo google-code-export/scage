@@ -7,16 +7,16 @@ import su.msk.dunno.screens.support.tracer.State
 import su.msk.dunno.blame.support.{IngameMessages, TimeUpdater}
 
 class Move(val step:Vec, living:Living) extends Decision(living) {
-  action_period = 2
+  def actionPeriod = 2
 
   def doAction = {
     val new_point = living.point + step
-    FieldTracer.move2PointIfPassable(living.trace, living.point, new_point)
+    was_executed = FieldTracer.move2PointIfPassable(living.trace, living.point, new_point)
   }
 }
 
 class OpenDoor(living:Living) extends Decision(living) {
-  action_period = 1
+  def actionPeriod = 1
 
   def doAction = {
     FieldTracer.neighboursOfPoint(living.trace, living.point, -1 to 1).foreach(neighbour => {
@@ -24,15 +24,15 @@ class OpenDoor(living:Living) extends Decision(living) {
       if(neighbour_state.contains("door") && "close".equals(neighbour_state.getString("door"))) {
         neighbour.changeState(new State("door_open"))
         IngameMessages.addBottomPropMessage("door.open", living.stat("name"))
+        TimeUpdater.addDecision(new Move(Vec(1,0), living))
       }
     })
-    TimeUpdater.addDecision(new Move(Vec(1,0), living))
-    true
+    was_executed = true
   }
 }
 
 class CloseDoor(living:Living) extends Decision(living) {
-  action_period = 1
+  def actionPeriod = 1
 
   def doAction = {
     FieldTracer.neighboursOfPoint(living.trace, living.point, -1 to 1).foreach(neighbour => {
@@ -42,6 +42,6 @@ class CloseDoor(living:Living) extends Decision(living) {
         IngameMessages.addBottomPropMessage("door.close", living.stat("name"))
       }
     })
-    true
+    was_executed = true
   }
 }

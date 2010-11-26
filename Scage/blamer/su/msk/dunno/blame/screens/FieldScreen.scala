@@ -1,6 +1,6 @@
 package su.msk.dunno.blame.screens
 
-import su.msk.dunno.screens.Screen
+import su.msk.dunno.screens.ScageScreen
 import su.msk.dunno.scage.support.messages.Message
 import su.msk.dunno.screens.support.ScageLibrary._
 import org.lwjgl.input.Keyboard
@@ -14,9 +14,7 @@ import su.msk.dunno.screens.handlers.Renderer
 import su.msk.dunno.blame.support.{IngameMessages, TimeUpdater, GenLib}
 import su.msk.dunno.blame.livings.{SiliconCreature, Cibo, Killy}
 
-object FieldScreen extends Screen("Field Screen", is_main = true) {
-  override def properties = "blame-properties.txt"
-
+object FieldScreen extends ScageScreen("Field ScageScreen", is_main = true, "blame-properties.txt") {
   // map
   private val maze = GenLib.CreateStandardDunegon(FieldTracer.N_x, FieldTracer.N_y)
   (0 to FieldTracer.N_x-1).foreachpair(0 to FieldTracer.N_y-1)((i, j) => {
@@ -36,7 +34,7 @@ object FieldScreen extends Screen("Field Screen", is_main = true) {
   def currentPlayer = if(is_play_cibo) cibo else killy
   
   // enemies
-  (1 to 50).foreach(i => new SiliconCreature(FieldTracer.getRandomPassablePoint))
+  //(1 to 50).foreach(i => new SiliconCreature(FieldTracer.getRandomPassablePoint))
 
   // controls on main screen
   private var is_key_pressed = false
@@ -48,12 +46,12 @@ object FieldScreen extends Screen("Field Screen", is_main = true) {
     }
     else 300
   }
-  private def press(d:Decision) = {
+  private def press(decision:Decision) = {
     if(!is_key_pressed) {
       is_key_pressed = true
       pressed_start_time = System.currentTimeMillis
     }
-    TimeUpdater.addDecision(d)
+    TimeUpdater.addDecision(decision)
   }
   
   keyListener(Keyboard.KEY_NUMPAD9, repeatTime, 
@@ -85,6 +83,8 @@ object FieldScreen extends Screen("Field Screen", is_main = true) {
   
   keyListener(Keyboard.KEY_O, onKeyDown = TimeUpdater.addDecision(new OpenDoor(currentPlayer)))
   keyListener(Keyboard.KEY_C, onKeyDown = TimeUpdater.addDecision(new CloseDoor(currentPlayer)))
+  keyListener(Keyboard.KEY_F, 
+    onKeyDown = TimeUpdater.addDecision(new Move(new SelectTarget(Keyboard.KEY_F).targetPoint - currentPlayer.point, currentPlayer)))
   
   keyListener(Keyboard.KEY_TAB, onKeyDown = is_play_cibo = !is_play_cibo)  
   keyListener(Keyboard.KEY_ESCAPE, onKeyDown = allStop)
@@ -93,17 +93,20 @@ object FieldScreen extends Screen("Field Screen", is_main = true) {
   windowCenter = Vec((width - 200)/2, 100 + (height - 100)/2)
   center = FieldTracer.pointCenter(currentPlayer.point)
   
-  Renderer.backgroundColor(BLACK)  
+  Renderer.backgroundColor(BLACK)
+  
+  def drawInterface = {
+    Message.print("FPS: "+fps, 600, height-25, WHITE)
+    Message.print("time: "+TimeUpdater.time, width - 200, height-45, WHITE)
+    Message.print("decisions: "+TimeUpdater.decisions.size, width - 200, height-65, WHITE)  
+  } 
   
   addRender(new Renderable {
     override def render = FieldTracer.draw(currentPlayer.point)
 
     override def interface {
       IngameMessages.showBottomMessages
-
-      Message.print("FPS: "+fps, 600, height-25, WHITE)
-      Message.print("time: "+TimeUpdater.time, width - 200, height-45, WHITE)
-      Message.print("decisions: "+TimeUpdater.decisions.size, width - 200, height-65, WHITE)
+      drawInterface
     }
   })
   

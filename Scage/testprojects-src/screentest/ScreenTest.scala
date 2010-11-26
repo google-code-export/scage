@@ -1,8 +1,8 @@
 package screentest
 
-import su.msk.dunno.screens.Screen
+import su.msk.dunno.screens.ScageScreen
 import org.lwjgl.input.Keyboard
-object ScreenTest extends Screen("Main Screen") {
+object ScreenTest extends ScageScreen("Main ScageScreen") {
   /*interface {
     Message.print("Press Esc to\nExit", width/2, height/2)
   }*/

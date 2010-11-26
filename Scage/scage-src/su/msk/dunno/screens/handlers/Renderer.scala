@@ -1,6 +1,6 @@
 package su.msk.dunno.screens.handlers
 
-import su.msk.dunno.screens.Screen
+import su.msk.dunno.screens.ScageScreen
 import java.io.{InputStream, FileInputStream}
 import org.newdawn.slick.opengl.{TextureLoader, Texture}
 import org.lwjgl.opengl.{DisplayMode, GL11, Display}
@@ -167,7 +167,7 @@ class Renderer {
   }
 
   def render = {
-    if(Display.isCloseRequested()) Screen.allStop
+    if(Display.isCloseRequested()) ScageScreen.allStop
     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
 		GL11.glLoadIdentity();
     GL11.glPushMatrix

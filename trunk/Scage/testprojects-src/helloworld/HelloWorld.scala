@@ -1,15 +1,14 @@
 package helloworld
 
-object HelloWorld extends Application {
-  var my_list = List(1,2,3,4,5)
+import su.msk.dunno.screens.ScageScreen
+import su.msk.dunno.screens.prototypes.ActionHandler
 
-  var count = 5
-  my_list.foreach(number => {
-    if(count > 0) {
-      my_list = my_list ::: List(0)
-      count -= 1
-    }
-    println(my_list)
-    my_list = my_list.tail
-  })
+object HelloWorld extends Application {
+  val myScreen = new ScageScreen("My Screen", is_main = true, "blame-properties.txt") {
+    addHandler(new ActionHandler {
+      override def action = println("here we are!")
+    }, period = 5000)
+
+    run
+  }
 }

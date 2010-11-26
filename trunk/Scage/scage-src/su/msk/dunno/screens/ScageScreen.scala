@@ -7,23 +7,22 @@ import prototypes.{Renderable, ActionHandler}
 import su.msk.dunno.scage.support.{Vec, ScageProperties}
 import org.lwjgl.opengl.Display
 
-object Screen {
+object ScageScreen {
   private var isAllScreensStop = false
   def isAppRunning = !isAllScreensStop
   def allStop = isAllScreensStop = true
 }
 
-class Screen(val name:String, val is_main:Boolean) {
-  def this(name:String) = this(name, false)
-
+class ScageScreen(val name:String, val is_main:Boolean = false, properties:String = "") {
   private val log = Logger.getLogger(this.getClass);
   log.info("starting "+name+"...")
 
-  def properties:String = "scage-properties.txt"
-  ScageProperties.properties = properties
+  if(!"".equals(properties)) ScageProperties.properties = properties
   
   private var handlers:List[ActionHandler] = Nil
-  def addHandler(handler:ActionHandler) = handlers = handler :: handlers
+  def addHandler(handler:ActionHandler, period:Long = 0) = 
+    if(period > 0) handlers = new ActionWaiter(period, handler) :: handlers
+    else handlers = handler :: handlers
 
   val controller = new Controller
   def keyListener(key:Int, repeatTime: => Long = 0, onKeyDown: => Any, onKeyUp: => Any = {}) =
@@ -51,7 +50,7 @@ class Screen(val name:String, val is_main:Boolean) {
   def run = {
     handlers.foreach(handler => handler.init)
     is_running = true
-    while(is_running && !Screen.isAllScreensStop) {
+    while(is_running && !ScageScreen.isAllScreensStop) {
       controller.checkControls
       handlers.foreach(handler => handler.action)
       renderer.render
@@ -59,22 +58,22 @@ class Screen(val name:String, val is_main:Boolean) {
     handlers.foreach(handler => handler.exit)
     log.info(name+" was stopped")
     if(is_main) {
-      Screen.isAllScreensStop = true
+      ScageScreen.isAllScreensStop = true
       Display.destroy
       System.exit(0)
     }
   }
   def stop = {
-    if(is_main) Screen.allStop
+    if(is_main) ScageScreen.allStop
     else is_running = false 
   }
 
-  private[Screen] class ActionWaiter(period:Long, action_func: => Unit) {
+  private[ScageScreen] class ActionWaiter(val period:Long, private val action_handler:ActionHandler) extends ActionHandler {
     private var last_action_time:Long = 0
 
-    def doAction = () => {
+    override def action {
       if(System.currentTimeMillis - last_action_time > period) {
-        action_func
+        action_handler.action
         last_action_time = System.currentTimeMillis
       }
     }

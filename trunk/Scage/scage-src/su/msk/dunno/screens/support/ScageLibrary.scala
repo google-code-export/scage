@@ -1,7 +1,7 @@
 package su.msk.dunno.screens.support
 
 import su.msk.dunno.screens.handlers.{Idler, Renderer}
-import su.msk.dunno.screens.Screen
+import su.msk.dunno.screens.ScageScreen
 import su.msk.dunno.scage.support.{Color, Vec, ScageProperties, Colors}
 
 object ScageLibrary extends Colors {
@@ -21,7 +21,7 @@ object ScageLibrary extends Colors {
     }
   }
 
-  def allStop = Screen.allStop
+  def allStop = ScageScreen.allStop
 
   lazy val width = Renderer.width
   lazy val height = Renderer.height

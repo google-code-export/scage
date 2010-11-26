@@ -11,4 +11,12 @@
     <message code="door.close">
         ? closed a door
     </message>
+    
+    <message code="move.wrong">
+        ? can't go there!
+    </message>
+    
+    <message code="selecttarget.helpmessage">
+        Choose your target with arrow or numpad keys
+    </message>
 </messages>

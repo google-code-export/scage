@@ -2,10 +2,11 @@ package su.msk.dunno.blame.field
 
 import su.msk.dunno.screens.support.tracer.{Tracer, Trace}
 import su.msk.dunno.screens.handlers.Renderer
-import rlforj.los.{ILosBoard, PrecisePermissive}
 import su.msk.dunno.scage.support.{Colors, Vec, Color}
 import su.msk.dunno.blame.support.MyFont
 import su.msk.dunno.scage.support.ScageProperties._
+import rlforj.los.{BresLos, ILosBoard, PrecisePermissive}
+import collection.JavaConversions
 
 trait FieldObject extends Trace {
   def getSymbol:Int
@@ -14,12 +15,17 @@ trait FieldObject extends Trace {
   def isPassable:Boolean
   
   private var was_drawed = false
+  def wasDrawed = was_drawed
+
+  private var is_draw_prevented = false
+  def preventDraw = is_draw_prevented = true
+  def allowDraw= is_draw_prevented = false
+  
   def draw = {
-    Renderer.drawDisplayList(getSymbol, getCoord, getColor)
+    if(!is_draw_prevented) Renderer.drawDisplayList(getSymbol, getCoord, getColor)
     was_drawed = true
   }
-  def drawGray = Renderer.drawDisplayList(getSymbol, getCoord, Colors.GRAY)
-  def wasDrawed = was_drawed
+  def drawGray = if(!is_draw_prevented) Renderer.drawDisplayList(getSymbol, getCoord, Colors.GRAY)
 }
 
 object FieldTracer extends Tracer[FieldObject](
@@ -34,9 +40,8 @@ object FieldTracer extends Tracer[FieldObject](
     x >= 0 && x < N_x && y >= 0 && y < N_y
   }
 
-  def isPointPassable(x:Int, y:Int):Boolean = {
+  def isPointPassable(x:Int, y:Int):Boolean = 
     isPointOnArea(x, y) && (matrix(x)(y).length == 0 || matrix(x)(y).forall(_.isPassable))
-  }
   def isPointPassable(point:Vec):Boolean = isPointPassable(point.ix, point.iy)
   
   def isPointTransparent(x:Int, y:Int) = {
@@ -82,6 +87,18 @@ object FieldTracer extends Tracer[FieldObject](
   def neighboursOfPoint(trace_id:Int, point:Vec, range:Range) = {
     neighbours(trace_id, pointCenter(point), -1 to 1, (f) => true)
   }
+  def objectsAtPoint(point:Vec) = matrix(point.ix)(point.iy)
+
+  private val lineView = new ILosBoard {
+    def contains(x:Int, y:Int):Boolean = isPointOnArea(x, y)    
+    def isObstacle(x:Int, y:Int):Boolean = !isPointTransparent(x, y)
+    def visit(x:Int, y:Int) = {}
+  }  
+  def line(p1:Vec, p2:Vec):List[Vec] = {
+    val ila = new BresLos(false)
+    ila.existsLineOfSight(lineView, p1.ix, p1.iy, p2.ix, p2.iy, true);
+    JavaConversions.asBuffer(ila.getProjectPath).foldLeft(List[Vec]())((line, point) => new Vec(point.x, point.y) :: line)
+  }
 
   private var lightSources:List[() => Vec] = Nil
   def addLightSource(coord: => Vec) = lightSources = (() => coord) :: lightSources
@@ -89,7 +106,7 @@ object FieldTracer extends Tracer[FieldObject](
   private val pp = new PrecisePermissive();  
   private val drawView = new ILosBoard() {
     def contains(x:Int, y:Int):Boolean = isPointOnArea(x, y)    
-    def isObstacle(x:Int, y:Int):Boolean = !isPointTransparent(x, y);
+    def isObstacle(x:Int, y:Int):Boolean = !isPointTransparent(x, y)
     def visit(x:Int, y:Int) = {
       if(matrix(x)(y).length > 0) matrix(x)(y).head.draw
     }   

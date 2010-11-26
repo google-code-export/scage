@@ -20,6 +20,8 @@ object MyFont {
   val SILICON_CREATURE = symbol('S')
   val DOOR_CLOSE = symbol('+')
   val DOOR_OPEN = symbol('\'')
+  val MINOR_SELECTOR = symbol('x')
+  val MAIN_SELECTOR = symbol('X')
 
   private def charCoord(ch:Char):Vec = {
     val code = ch.toInt

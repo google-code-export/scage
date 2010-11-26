@@ -9,7 +9,7 @@ abstract class Npc(point:Vec, symbol:Int, color:Color) extends Living(point, sym
   protected var last_decision:Decision = null
   FieldScreen.addHandler(new ActionHandler {
     override def action = {
-      if(last_decision == null || last_decision.wasExecuted) {
+      if(last_decision == null || TimeUpdater.time - lastActionTime >= last_decision.actionPeriod) {
         last_decision = livingAI
         if(last_decision != null) TimeUpdater.addDecision(last_decision)
       }

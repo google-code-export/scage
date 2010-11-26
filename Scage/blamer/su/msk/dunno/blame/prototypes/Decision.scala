@@ -3,15 +3,14 @@ package su.msk.dunno.blame.prototypes
 import su.msk.dunno.blame.support.TimeUpdater
 
 abstract class Decision(val living:Living) {
-  protected var action_period = 0
-  def actionPeriod = action_period
+  def actionPeriod:Int
   
   protected var was_executed = false
   def wasExecuted = was_executed
   
-  protected def doAction:Boolean
+  protected def doAction
   def execute = {
-    if(doAction) living.lastActionTime = TimeUpdater.time; 
-    was_executed = true
+    doAction
+    if(wasExecuted) living.lastActionTime = TimeUpdater.time;
   }
 }

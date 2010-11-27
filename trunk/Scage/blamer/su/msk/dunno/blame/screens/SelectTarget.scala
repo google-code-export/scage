@@ -6,27 +6,29 @@ import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.screens.handlers.Renderer
 import su.msk.dunno.screens.prototypes.Renderable
 import su.msk.dunno.blame.field.FieldTracer
-import su.msk.dunno.blame.support.{IngameMessages, TimeUpdater}
-import su.msk.dunno.scage.support.messages.Message
+import su.msk.dunno.blame.support.IngameMessages
 import su.msk.dunno.screens.support.ScageLibrary._
 import su.msk.dunno.blame.support.MyFont._
+import su.msk.dunno.blame.prototypes.Living
 
-class SelectTarget(stop_key:Int) extends ScageScreen("Target Selector") {
+class SelectTarget(stop_key:Int, living:Living) extends ScageScreen("Target Selector") {
   IngameMessages.addBottomPropMessage("selecttarget.helpmessage", FieldScreen.currentPlayer.stat("name"))
+
+  private var select_line = List(living.point)
   
-  private var select_line = List(FieldScreen.currentPlayer.point)
-  
-  private var target_point:Vec = FieldScreen.currentPlayer.point
+  private var target_point:Vec = living.point
   def targetPoint = target_point
   
   def clearSelectLine = {
-    select_line.foreach(FieldTracer.objectsAtPoint(_).foreach(_.allowDraw))
+    select_line.foreach(FieldTracer.allowDraw(_))
     select_line = Nil
   }
-  def buildSelectLine = {
+  def buildSelectLine(delta:Vec) = {
+    target_point += delta
     clearSelectLine
-    select_line = FieldTracer.line(FieldScreen.currentPlayer.point, target_point)
-    select_line.foreach(FieldTracer.objectsAtPoint(_).foreach(_.preventDraw))
+    select_line = FieldTracer.line(living.point, target_point)
+    select_line.foreach(FieldTracer.preventDraw(_))
+    target_point = select_line.head
   }
   def drawSelectLine = {
     if(!select_line.isEmpty) {
@@ -35,29 +37,31 @@ class SelectTarget(stop_key:Int) extends ScageScreen("Target Selector") {
       })
       Renderer.drawDisplayList(MAIN_SELECTOR, FieldTracer.pointCenter(select_line.head), WHITE)
     }
-  }
+  }  
   
-  
-  keyListener(Keyboard.KEY_UP, 500, onKeyDown = {
-    target_point += Vec(0,1)
-    buildSelectLine
-  })
-  keyListener(Keyboard.KEY_DOWN, 500, onKeyDown = {
-    target_point += Vec(0,-1)
-    buildSelectLine
-  })
-  keyListener(Keyboard.KEY_RIGHT, 500, onKeyDown = {
-    target_point += Vec(1,0)
-    buildSelectLine
-  })
-  keyListener(Keyboard.KEY_LEFT, 500, onKeyDown = {
-    target_point += Vec(-1,0)
-    buildSelectLine
-  })    
-  keyListener(stop_key, 500, onKeyDown = {
+  keyListener(Keyboard.KEY_NUMPAD9, 100, onKeyDown = buildSelectLine(Vec(1,1)))
+  keyListener(Keyboard.KEY_NUMPAD8, 100, onKeyDown = buildSelectLine(Vec(0,1)))
+  keyListener(Keyboard.KEY_NUMPAD7, 100, onKeyDown = buildSelectLine(Vec(-1,1)))
+  keyListener(Keyboard.KEY_NUMPAD6, 100, onKeyDown = buildSelectLine(Vec(1,0)))
+  keyListener(Keyboard.KEY_NUMPAD4, 100, onKeyDown = buildSelectLine(Vec(-1,0)))
+  keyListener(Keyboard.KEY_NUMPAD3, 100, onKeyDown = buildSelectLine(Vec(1,-1)))
+  keyListener(Keyboard.KEY_NUMPAD2, 100, onKeyDown = buildSelectLine(Vec(0,-1)))
+  keyListener(Keyboard.KEY_NUMPAD1, 100, onKeyDown = buildSelectLine(Vec(-1,-1)))
+
+  keyListener(Keyboard.KEY_UP,    100, onKeyDown = buildSelectLine(Vec(0,1)))
+  keyListener(Keyboard.KEY_RIGHT, 100, onKeyDown = buildSelectLine(Vec(1,0)))
+  keyListener(Keyboard.KEY_LEFT,  100, onKeyDown = buildSelectLine(Vec(-1,0)))
+  keyListener(Keyboard.KEY_DOWN,  100, onKeyDown = buildSelectLine(Vec(0,-1)))
+
+  keyListener(stop_key, onKeyDown = {
     clearSelectLine
     stop
-  })  
+  })
+  keyListener(Keyboard.KEY_ESCAPE, onKeyDown = {
+    target_point = living.point
+    clearSelectLine
+    stop
+  })
 
   // render on main screen
   windowCenter = Vec((width - 200)/2, 100 + (height - 100)/2)

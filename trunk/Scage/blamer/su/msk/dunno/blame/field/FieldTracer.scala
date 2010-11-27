@@ -89,6 +89,11 @@ object FieldTracer extends Tracer[FieldObject](
   }
   def objectsAtPoint(point:Vec) = matrix(point.ix)(point.iy)
 
+  def preventDraw(point:Vec) =
+    if(!matrix(point.ix)(point.iy).isEmpty) matrix(point.ix)(point.iy).foreach(_.preventDraw)
+  def allowDraw(point:Vec) =
+    if(!matrix(point.ix)(point.iy).isEmpty) matrix(point.ix)(point.iy).foreach(_.allowDraw)
+
   private val lineView = new ILosBoard {
     def contains(x:Int, y:Int):Boolean = isPointOnArea(x, y)    
     def isObstacle(x:Int, y:Int):Boolean = !isPointTransparent(x, y)

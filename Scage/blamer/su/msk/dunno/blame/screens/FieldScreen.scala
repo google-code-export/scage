@@ -84,7 +84,7 @@ object FieldScreen extends ScageScreen("Field ScageScreen", is_main = true, "bla
   keyListener(Keyboard.KEY_O, onKeyDown = TimeUpdater.addDecision(new OpenDoor(currentPlayer)))
   keyListener(Keyboard.KEY_C, onKeyDown = TimeUpdater.addDecision(new CloseDoor(currentPlayer)))
   keyListener(Keyboard.KEY_F, 
-    onKeyDown = TimeUpdater.addDecision(new Move(new SelectTarget(Keyboard.KEY_F).targetPoint - currentPlayer.point, currentPlayer)))
+    onKeyDown = TimeUpdater.addDecision(new Move(new SelectTarget(Keyboard.KEY_F, currentPlayer).targetPoint - currentPlayer.point, currentPlayer)))
   
   keyListener(Keyboard.KEY_TAB, onKeyDown = is_play_cibo = !is_play_cibo)  
   keyListener(Keyboard.KEY_ESCAPE, onKeyDown = allStop)

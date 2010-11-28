@@ -43,4 +43,6 @@ abstract class Living(val point:Vec, symbol:Int, color:Color) {
     val old_value = stats.getFloat(key)
     stats.put(key, old_value + delta)
   }
+
+  setStat("health", 100)
 }

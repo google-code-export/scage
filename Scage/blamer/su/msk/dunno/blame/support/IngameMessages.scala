@@ -21,8 +21,9 @@ object IngameMessages {
   private var bottom_messages:List[String] = Nil
   private val message_capacity = 5
   
-  def addBottomMessage(message:String) = {
-    bottom_messages = message :: bottom_messages
+  def addBottomMessage(message:String, is_same_string:Boolean = false) = {
+    if(is_same_string) bottom_messages = bottom_messages.head+" "+message :: bottom_messages.tail
+    else bottom_messages = message :: bottom_messages
     if(bottom_messages.length > message_capacity) 
       bottom_messages = bottom_messages.init
   }
@@ -30,7 +31,12 @@ object IngameMessages {
   def addBottomPropMessage(message_code:String, parameters:String*) = {
     var message = imh.xml_messages(message_code)
     parameters.foreach(parameter => message = message.replaceFirst("\\?", parameter))
-    addBottomMessage(message)
+    addBottomMessage(message, false)
+  }
+  def addBottomPropMessageSameString(message_code:String, parameters:String*) = {
+    var message = imh.xml_messages(message_code)
+    parameters.foreach(parameter => message = message.replaceFirst("\\?", parameter))
+    addBottomMessage(message, true)
   }
   
   def showBottomMessages = {

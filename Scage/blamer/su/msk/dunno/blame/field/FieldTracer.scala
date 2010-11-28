@@ -36,6 +36,16 @@ object FieldTracer extends Tracer[FieldObject](
   property("N_x", 16), 
   property("N_y", 12), 
   true) {
+  override def removeTraceFromPoint(trace_id:Int, p:Vec) = {
+    matrix(p.ix)(p.iy).find(_.id == trace_id) match {
+      case Some(fieldObject) => {
+        light_sources = light_sources.filterNot(source => pointCenter(source._1()) == fieldObject.getCoord)
+        matrix(p.ix)(p.iy) = matrix(p.ix)(p.iy).filterNot(_ == fieldObject)
+      }
+      case None =>
+    }
+  }
+
   def isPointOnArea(x:Int, y:Int) = {
     x >= 0 && x < N_x && y >= 0 && y < N_y
   }
@@ -53,7 +63,7 @@ object FieldTracer extends Tracer[FieldObject](
     isPointPassable(p.ix, p.iy)
   }
 
-  def getRandomPassablePoint:Vec = {
+  def randomPassablePoint(from:Vec = Vec(0, 0), to:Vec = Vec(N_x, N_y)):Vec = {
     log.debug("looking for new random passable point")
 
     var x = -1
@@ -62,8 +72,8 @@ object FieldTracer extends Tracer[FieldObject](
     val max_count = 10
     var count = max_count
     while(!isPointPassable(x, y) && count > 0) {
-      x = (math.random*N_x).toInt
-      y = (math.random*N_y).toInt
+      x = (from.x + math.random*(to.x - from.x)).toInt
+      y = (from.y + math.random*(to.y - from.y)).toInt
 
       count -= 1
     }
@@ -75,11 +85,7 @@ object FieldTracer extends Tracer[FieldObject](
   
   def move2PointIfPassable(trace_id:Int, old_point:Vec, new_point:Vec) = {
     if(isPointPassable(new_point)) {
-      val old_coord = pointCenter(old_point)
-      val new_coord = pointCenter(new_point)
-      updateLocation(trace_id, old_coord, new_coord)
-      old_point is new_point
-      true
+      updatePointLocation(trace_id, old_point, new_point)
     }
     else false
   }
@@ -105,8 +111,8 @@ object FieldTracer extends Tracer[FieldObject](
     JavaConversions.asBuffer(ila.getProjectPath).foldLeft(List[Vec]())((line, point) => new Vec(point.x, point.y) :: line)
   }
 
-  private var lightSources:List[() => Vec] = Nil
-  def addLightSource(coord: => Vec) = lightSources = (() => coord) :: lightSources
+  private var light_sources:List[(() => Vec, () => Int)] = Nil
+  def addLightSource(point: => Vec, dov: => Int = 5) = light_sources = (() => point, () => dov) :: light_sources
   
   private val pp = new PrecisePermissive();  
   private val drawView = new ILosBoard() {
@@ -123,8 +129,8 @@ object FieldTracer extends Tracer[FieldObject](
   }
   private val distance_from_player = math.min(N_x/2, N_y/2)*math.min(N_x/2, N_y/2)
   private def drawEnlighted(player_point:Vec) = {
-    lightSources.filter(source => (source() dist2 player_point) < distance_from_player).foreach(source => {
-      pp.visitFieldOfView(drawView, source().ix, source().iy, 5)  
+    light_sources.filter(source => (source._1() dist2 player_point) < distance_from_player).foreach(source => {
+      pp.visitFieldOfView(drawView, source._1().ix, source._1().iy, source._2())
     })
   }
 

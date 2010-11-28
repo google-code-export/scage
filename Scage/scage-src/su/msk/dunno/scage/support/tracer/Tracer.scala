@@ -110,13 +110,13 @@ class Tracer[S <: State] {
     if(are_solid_edges && !isCoordOnArea(new_coord)) false
     else {
       val new_coord_edges_affected = checkEdges(new_coord)
-      val old_p = point(old_coord)
-      val new_p = point(new_coord_edges_affected)
-      if(old_p != new_p) {
-        coord_matrix(old_p.ix)(old_p.iy).find(trace => trace.id == trace_id) match {
+      val old_point = point(old_coord)
+      val new_point = point(new_coord_edges_affected)
+      if(old_point != new_point) {
+        coord_matrix(old_point.ix)(old_point.iy).find(trace => trace.id == trace_id) match {
           case Some(target_trace) => {
-            coord_matrix(old_p.ix)(old_p.iy) = coord_matrix(old_p.ix)(old_p.iy).filter(trace => trace.id != trace_id)
-            coord_matrix(new_p.ix)(new_p.iy) = target_trace :: coord_matrix(new_p.ix)(new_p.iy)
+            coord_matrix(old_point.ix)(old_point.iy) = coord_matrix(old_point.ix)(old_point.iy).filter(trace => trace.id != trace_id)
+            coord_matrix(new_point.ix)(new_point.iy) = target_trace :: coord_matrix(new_point.ix)(new_point.iy)
           }
           case _ =>
         }
@@ -125,7 +125,7 @@ class Tracer[S <: State] {
       true
     }
   }
-
+  
   def checkEdges(coord:Vec):Vec = {
     def checkC(c:Float, from:Float, to:Float):Float = {
       val dist = to - from

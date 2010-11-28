@@ -9,10 +9,11 @@ import su.msk.dunno.blame.field.FieldTracer
 import su.msk.dunno.blame.field.tiles.{Door, Wall, Floor}
 import su.msk.dunno.screens.prototypes.Renderable
 import su.msk.dunno.blame.prototypes.Decision
-import su.msk.dunno.blame.decisions.{CloseDoor, OpenDoor, Move}
 import su.msk.dunno.screens.handlers.Renderer
 import su.msk.dunno.blame.support.{IngameMessages, TimeUpdater, GenLib}
 import su.msk.dunno.blame.livings.{SiliconCreature, Cibo, Killy}
+import su.msk.dunno.blame.animations.BulletFlight
+import su.msk.dunno.blame.decisions.{Shoot, CloseDoor, OpenDoor, Move}
 
 object FieldScreen extends ScageScreen("Field ScageScreen", is_main = true, "blame-properties.txt") {
   // map
@@ -29,12 +30,12 @@ object FieldScreen extends ScageScreen("Field ScageScreen", is_main = true, "bla
   
   // players
   private var is_play_cibo = false
-  val killy = new Killy(FieldTracer.getRandomPassablePoint)
-  val cibo = new Cibo(FieldTracer.getRandomPassablePoint)
+  val killy = new Killy(FieldTracer.randomPassablePoint())
+  val cibo = new Cibo(FieldTracer.randomPassablePoint(killy.point - Vec(2,2), killy.point + Vec(2,2)))
   def currentPlayer = if(is_play_cibo) cibo else killy
   
   // enemies
-  //(1 to 50).foreach(i => new SiliconCreature(FieldTracer.getRandomPassablePoint))
+  (1 to 50).foreach(i => new SiliconCreature(FieldTracer.randomPassablePoint()))
 
   // controls on main screen
   private var is_key_pressed = false
@@ -84,7 +85,8 @@ object FieldScreen extends ScageScreen("Field ScageScreen", is_main = true, "bla
   keyListener(Keyboard.KEY_O, onKeyDown = TimeUpdater.addDecision(new OpenDoor(currentPlayer)))
   keyListener(Keyboard.KEY_C, onKeyDown = TimeUpdater.addDecision(new CloseDoor(currentPlayer)))
   keyListener(Keyboard.KEY_F, 
-    onKeyDown = TimeUpdater.addDecision(new Move(new SelectTarget(Keyboard.KEY_F, currentPlayer).targetPoint - currentPlayer.point, currentPlayer)))
+    /*onKeyDown = TimeUpdater.addDecision(new Move(new SelectTarget(Keyboard.KEY_F, currentPlayer).targetPoint - currentPlayer.point, currentPlayer))*/
+    onKeyDown = TimeUpdater.addDecision(new Shoot(new SelectTarget(Keyboard.KEY_F, currentPlayer).targetPoint, currentPlayer)))
   
   keyListener(Keyboard.KEY_TAB, onKeyDown = is_play_cibo = !is_play_cibo)  
   keyListener(Keyboard.KEY_ESCAPE, onKeyDown = allStop)
@@ -96,9 +98,10 @@ object FieldScreen extends ScageScreen("Field ScageScreen", is_main = true, "bla
   Renderer.backgroundColor(BLACK)
   
   def drawInterface = {
-    Message.print("FPS: "+fps, 600, height-25, WHITE)
-    Message.print("time: "+TimeUpdater.time, width - 200, height-45, WHITE)
-    Message.print("decisions: "+TimeUpdater.decisions.size, width - 200, height-65, WHITE)  
+    Message.print(currentPlayer.stat("name"), 600, height-25, WHITE)
+    Message.print("FPS: "+fps, 600, height-45, WHITE)
+    Message.print("time: "+TimeUpdater.time, width - 200, height-65, WHITE)
+    Message.print("HP: "+currentPlayer.stat("health"), width - 200, height-85, WHITE)  
   } 
   
   addRender(new Renderable {

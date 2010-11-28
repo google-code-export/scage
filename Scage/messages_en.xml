@@ -19,4 +19,12 @@
     <message code="selecttarget.helpmessage">
         Choose your target with arrow or numpad keys
     </message>
+
+    <message code="decision.shoot">
+        ? shoots!
+    </message>
+
+    <message code="changestatus.damage">
+        ? received ? damage
+    </message>
 </messages>

@@ -8,21 +8,21 @@ object TimeUpdater {
   private var _time = 0;
   def time = _time
 
-  /*private*/ var decisions:List[Decision] = Nil
+  private var decisions:List[Decision] = Nil
   def addDecision(decision:Decision) = decisions = decisions ::: List(decision)
 
   FieldScreen.addHandler(new ActionHandler {
     override def action = {
       var current_actions = decisions.filter(decision =>
-        decision.living.lastActionTime + decision.actionPeriod <= _time || decision.living.boolStat("is_player"))
+        decision.living.lastActionTime + decision.action_period <= _time || decision.living.boolStat("is_player"))
       while(!current_actions.isEmpty) {
         current_actions.foreach(action => {
           action.execute
-          if(action.wasExecuted && action.living.boolStat("is_player")) _time += action.actionPeriod
+          if(action.wasExecuted && action.living.boolStat("is_player")) _time += action.action_period
         })
         decisions = decisions.filterNot(current_actions.contains(_))
         current_actions = decisions.filter(decision =>
-          decision.living.lastActionTime + decision.actionPeriod <= _time || decision.living.boolStat("is_player"))
+          decision.living.lastActionTime + decision.action_period <= _time || decision.living.boolStat("is_player"))
       }
     }
   })

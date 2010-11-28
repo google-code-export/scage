@@ -43,7 +43,7 @@ class State() {
   }
   def getString(key:String) = {
     if(!args.contains(key)) ""
-    else if(args(key).string != null) args(key).string
+    else if(args(key).string != "") args(key).string
     else if(args(key).int != 0) args(key).int.toString
     else if(args(key).float != 0) args(key).float.toString
     else ""

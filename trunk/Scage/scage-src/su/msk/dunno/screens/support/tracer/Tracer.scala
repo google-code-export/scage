@@ -45,6 +45,13 @@ class Tracer[T <: Trace](val game_from_x:Int = 0, val game_to_x:Int = 800,
     else log.error("failed to add trace: coord ("+t.getCoord+") is out of area")
     t.id
   }
+  def removeTrace(trace_id:Int, coord:Vec) = {
+    val p = point(coord)
+    matrix(p.ix)(p.iy) = matrix(p.ix)(p.iy).filterNot(_.id == trace_id)
+  }
+  def removeTraceFromPoint(trace_id:Int, point:Vec) = {
+    matrix(point.ix)(point.iy) = matrix(point.ix)(point.iy).filterNot(_.id == trace_id)
+  }
 
   def point(v:Vec):Vec = Vec(((v.x - game_from_x)/game_width*N_x).toInt,
                               ((v.y - game_from_y)/game_height*N_y).toInt)
@@ -102,6 +109,24 @@ class Tracer[T <: Trace](val game_from_x:Int = 0, val game_to_x:Int = 800,
         }
       }
       old_coord is new_coord_edges_affected
+      true
+    }
+  }
+
+  def updatePointLocation(trace_id:Int, old_point:Vec, new_point:Vec):Boolean = {
+    if(are_solid_edges && !isPointOnArea(new_point)) false
+    else {
+      val new_point_edges_affected = checkPointEdges(new_point)
+      if(old_point != new_point_edges_affected) {
+        coord_matrix(old_point.ix)(old_point.iy).find(trace => trace.id == trace_id) match {
+          case Some(target_trace) => {
+            coord_matrix(old_point.ix)(old_point.iy) = coord_matrix(old_point.ix)(old_point.iy).filter(trace => trace.id != trace_id)
+            coord_matrix(new_point.ix)(new_point.iy) = target_trace :: coord_matrix(new_point.ix)(new_point.iy)
+          }
+          case _ =>
+        }
+      }
+      old_point is new_point_edges_affected
       true
     }
   }

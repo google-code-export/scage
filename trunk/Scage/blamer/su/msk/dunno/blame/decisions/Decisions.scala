@@ -5,9 +5,12 @@ import su.msk.dunno.blame.field.FieldTracer
 import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.screens.support.tracer.State
 import su.msk.dunno.blame.support.{IngameMessages, TimeUpdater}
+import su.msk.dunno.scage.support.Colors._
+import su.msk.dunno.blame.animations.BulletFlight
+import su.msk.dunno.blame.screens.SelectTarget
 
 class Move(val step:Vec, living:Living) extends Decision(living) {
-  def actionPeriod = 2
+  override val action_period = 2
 
   def doAction = {
     val new_point = living.point + step
@@ -16,32 +19,39 @@ class Move(val step:Vec, living:Living) extends Decision(living) {
 }
 
 class OpenDoor(living:Living) extends Decision(living) {
-  def actionPeriod = 1
+  override val action_period = 1
 
   def doAction = {
-    FieldTracer.neighboursOfPoint(living.trace, living.point, -1 to 1).foreach(neighbour => {
-      val neighbour_state = neighbour.getState
-      if(neighbour_state.contains("door") && "close".equals(neighbour_state.getString("door"))) {
-        neighbour.changeState(new State("door_open"))
-        IngameMessages.addBottomPropMessage("door.open", living.stat("name"))
-        TimeUpdater.addDecision(new Move(Vec(1,0), living))
-      }
-    })
+    FieldTracer.neighboursOfPoint(living.trace, living.point, -1 to 1)
+               .foreach(_.changeState(new State("door_open", living.stat("name"))))
     was_executed = true
   }
 }
 
 class CloseDoor(living:Living) extends Decision(living) {
-  def actionPeriod = 1
+  override val action_period = 1
 
   def doAction = {
-    FieldTracer.neighboursOfPoint(living.trace, living.point, -1 to 1).foreach(neighbour => {
-      val neighbour_state = neighbour.getState
-      if(neighbour_state.contains("door") && "open".equals(neighbour_state.getString("door"))) {
-        neighbour.changeState(new State("door_close"))
-        IngameMessages.addBottomPropMessage("door.close", living.stat("name"))
-      }
-    })
+    FieldTracer.neighboursOfPoint(living.trace, living.point, -1 to 1)
+               .foreach(_.changeState(new State("door_close", living.stat("name"))))
+    was_executed = true
+  }
+}
+
+class Shoot(target_point: => Vec, living:Living) extends Decision(living) {
+  override val action_period = 2
+
+  def doAction = {
+    val target:Vec = target_point   // we are using by-name parameter for target_point because it can change after Shoot constructor done and before doAction
+    if(target != living.point) {
+      new BulletFlight(living.point, target, YELLOW)
+      val kickback = (living.point - target).n
+      val kickback_delta = Vec(if(math.abs(kickback.x) > 0.3) math.signum(kickback.x) else 0, if(math.abs(kickback.y) > 0.3) math.signum(kickback.y) else 0)
+      TimeUpdater.addDecision(new Move(kickback_delta, living))
+      val objects = FieldTracer.objectsAtPoint(target)
+      IngameMessages.addBottomPropMessage("decision.shoot", living.stat("name"))
+      objects.foreach(_.changeState(new State("damage", 10)))
+    }    
     was_executed = true
   }
 }

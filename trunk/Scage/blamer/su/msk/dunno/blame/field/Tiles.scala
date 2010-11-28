@@ -4,6 +4,8 @@ import su.msk.dunno.blame.field.{FieldObject, FieldTracer}
 import su.msk.dunno.blame.support.MyFont._
 import su.msk.dunno.screens.support.tracer.State
 import su.msk.dunno.scage.support.Colors._
+import su.msk.dunno.blame.support.IngameMessages
+
 private[tiles] abstract class Tile(x:Int, y:Int) {
   protected val coord = FieldTracer.pointCenter(x, y)
 }
@@ -46,8 +48,14 @@ class Door(x:Int, y:Int) extends Tile(x, y) {
 
     def getState = new State("door", if(is_open) "open" else "close")
     def changeState(s:State) = {
-      if(s.contains("door_open")) is_open = true
-      else if(s.contains("door_close")) is_open = false
+      if(s.contains("door_open")) {
+        is_open = true
+        IngameMessages.addBottomPropMessage("door.open", s.getString("door_open"))
+      }
+      else if(s.contains("door_close")) {
+        is_open = false
+        IngameMessages.addBottomPropMessage("door.close", s.getString("door_close"))
+      }
     }
   })
 }

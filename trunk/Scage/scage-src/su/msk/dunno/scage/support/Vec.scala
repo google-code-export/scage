@@ -21,6 +21,8 @@ case class Vec(private var _x:Float, private var _y:Float) {
   def *(k:Float) = Vec(x*k, y*k)
   def *(k:Int) = Vec(x*k, y*k)
 
+  def **(v:Vec) = Vec(x*v.x, y*v.y)
+
   def /(k:Float) = if(k == 0)Vec(x*1000, y*1000) else Vec(x/k, y/k)
   def /(k:Double):Float = this/k.toFloat
   def /(k:Int):Float = this/k.toFloat

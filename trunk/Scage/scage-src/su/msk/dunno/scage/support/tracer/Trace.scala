@@ -8,4 +8,6 @@ trait Trace[S <: State] {
   def getCoord():Vec
   def getState():S
   def changeState(state:S):Unit
+
+  def ==(other_object:Trace[S]):Boolean = _id == other_object.id
 }

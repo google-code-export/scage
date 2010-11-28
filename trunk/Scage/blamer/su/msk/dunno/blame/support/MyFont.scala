@@ -14,14 +14,15 @@ object MyFont {
   private val symbol_width = property("symbol_width", 32)
   private val symbol_height = property("symbol_height", 32)
 
-  val WALL = symbol('#')
-  val FLOOR = symbol('.')
-  val PLAYER = symbol('@')
+  val WALL             = symbol('#')
+  val FLOOR            = symbol('.')
+  val PLAYER           = symbol('@')
   val SILICON_CREATURE = symbol('S')
-  val DOOR_CLOSE = symbol('+')
-  val DOOR_OPEN = symbol('\'')
-  val MINOR_SELECTOR = symbol('x')
-  val MAIN_SELECTOR = symbol('X')
+  val DOOR_CLOSE       = symbol('+')
+  val DOOR_OPEN        = symbol('\'')
+  val MINOR_SELECTOR   = symbol('x')
+  val MAIN_SELECTOR    = symbol('X')
+  val BULLET           = symbol('*')
 
   private def charCoord(ch:Char):Vec = {
     val code = ch.toInt

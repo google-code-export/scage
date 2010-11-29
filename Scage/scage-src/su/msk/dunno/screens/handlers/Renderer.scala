@@ -8,6 +8,7 @@ import org.lwjgl.util.glu.GLU
 import su.msk.dunno.scage.support.ScageProperties._
 import su.msk.dunno.screens.prototypes.Renderable
 import su.msk.dunno.scage.support.{Color, Colors, Vec}
+import su.msk.dunno.scage.support.messages.Message
 
 object Renderer {
   val width = property("width", 800);
@@ -44,6 +45,10 @@ object Renderer {
         }
       GL11.glEnd();
     GL11.glEndList();
+
+    Message.print("Loading...", 20, height-25, Colors.GREEN)
+    Display.sync(framerate)
+    Display.update
   }
 
   val CIRCLE = 1

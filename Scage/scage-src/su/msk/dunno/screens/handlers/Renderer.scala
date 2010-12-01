@@ -32,6 +32,7 @@ object Renderer {
     GL11.glMatrixMode(GL11.GL_PROJECTION); // Select The Projection Matrix
     GL11.glLoadIdentity(); // Reset The Projection Matrix
     GLU.gluOrtho2D(0, width, 0, height);
+    //GL11.glOrtho(0, width, height, 0, 1, -1);
 
     GL11.glMatrixMode(GL11.GL_MODELVIEW);
     GL11.glLoadIdentity();
@@ -70,7 +71,7 @@ object Renderer {
     	GL11.glEnd();
     GL11.glEnable(GL11.GL_TEXTURE_2D);
   }
-  
+
   def drawCircle(coord:Vec, radius:Float) = {
     GL11.glDisable(GL11.GL_TEXTURE_2D);
       GL11.glPushMatrix();

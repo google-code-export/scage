@@ -37,6 +37,10 @@ object Renderer {
     GL11.glMatrixMode(GL11.GL_MODELVIEW);
     GL11.glLoadIdentity();
 
+    Message.print("Loading...", 20, Renderer.height-25, Colors.GREEN)
+    Display.sync(Renderer.framerate)
+    Display.update
+
     GL11.glNewList(CIRCLE, GL11.GL_COMPILE);
       GL11.glBegin(GL11.GL_LINE_LOOP);
         for(i <- 0 to 100) {
@@ -46,14 +50,10 @@ object Renderer {
         }
       GL11.glEnd();
     GL11.glEndList();
-
-    Message.print("Loading...", 20, Renderer.height-25, Colors.GREEN)
-    Display.sync(Renderer.framerate)
-    Display.update
   }
 
-  val CIRCLE = 1
-  private var next_displaylist_key = 2
+  private var next_displaylist_key = 10000
+  val CIRCLE = nextDisplayListKey           
   private def nextDisplayListKey() = {
     val next_key = next_displaylist_key
     next_displaylist_key += 1

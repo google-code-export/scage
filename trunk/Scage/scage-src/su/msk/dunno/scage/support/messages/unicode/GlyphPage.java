@@ -6,6 +6,8 @@ import java.awt.RenderingHints;
 import java.awt.font.FontRenderContext;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
+import java.io.File;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
@@ -22,6 +24,8 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.opengl.TextureImpl;
 import org.newdawn.slick.opengl.renderer.Renderer;
 import org.newdawn.slick.opengl.renderer.SGL;
+
+import javax.imageio.ImageIO;
 
 /**
  * Stores a number of glyphs on a single texture.
@@ -76,7 +80,7 @@ public class GlyphPage {
 	/** The height of this page's image */
 	private final int pageHeight;
 	/** The image containing the glyphs */
-	private final Image pageImage;
+	private final MyImage pageImage;
 	/** The x position of the page */
 	private int pageX;
 	/** The y position of the page */
@@ -101,7 +105,7 @@ public class GlyphPage {
 		this.pageWidth = pageWidth;
 		this.pageHeight = pageHeight;
 
-		pageImage = new Image(pageWidth, pageHeight);
+		pageImage = new MyImage(pageWidth, pageHeight);
 	}
 
 	/**

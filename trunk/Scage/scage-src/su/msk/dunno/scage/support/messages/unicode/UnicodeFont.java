@@ -6,6 +6,7 @@ import java.awt.FontMetrics;
 import java.awt.Rectangle;
 import java.awt.font.GlyphVector;
 import java.awt.font.TextAttribute;
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -25,6 +26,8 @@ import org.newdawn.slick.opengl.renderer.Renderer;
 import org.newdawn.slick.opengl.renderer.SGL;
 import org.newdawn.slick.util.ResourceLoader;
 import org.newdawn.slick.SlickException;
+
+import javax.imageio.ImageIO;
 
 /**
  * A Slick bitmap font that can display unicode glyphs from a TrueTypeFont.
@@ -512,6 +515,7 @@ public class UnicodeFont implements org.newdawn.slick.Font {
 					GL.glBegin(SGL.GL_QUADS);
 					lastBind = texture;
 				}
+
 				image.drawEmbedded(bounds.x + extraX, bounds.y + extraY, image.getWidth(), image.getHeight());
 			}
 

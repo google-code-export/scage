@@ -26,7 +26,7 @@ public class Glyph {
 	/** The shape drawn for this glyph */
 	private Shape shape;
 	/** The image generated for this glyph */
-	private Image image;
+	private MyImage image;
 
 	/**
 	 * Create a new glyph
@@ -134,8 +134,9 @@ public class Glyph {
 	 *
 	 * @param image The image that has been generated for this glyph
 	 */
-	public void setImage(Image image) {
+	public void setImage(MyImage image) {
 		this.image = image;
+        this.image.rotate(180);
 	}
 
 	/**

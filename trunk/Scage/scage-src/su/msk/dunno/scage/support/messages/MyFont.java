@@ -11,9 +11,9 @@ public class MyFont
     public MyFont() throws SlickException
     {
         String fontPath = "fonts/DroidSans.ttf";
-        uFont = new UnicodeFont(fontPath , 20, false, false);
+        uFont = new UnicodeFont(fontPath , 18, false, false);
         uFont.addAsciiGlyphs();
-        uFont.addGlyphs(1024,1279);
+        uFont.addGlyphs(1024,1279);     // cyrillic stuff
         uFont.getEffects().add(new ColorEffect(java.awt.Color.WHITE));
         uFont.loadGlyphs();
     }

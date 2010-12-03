@@ -101,7 +101,7 @@ object FieldScreen extends ScageScreen("Field ScageScreen", is_main = true, "bla
     Message.print(currentPlayer.stat("name"), 600, height-25, WHITE)
     Message.print("FPS: "+fps, 600, height-45, WHITE)
     Message.print("time: "+TimeUpdater.time, width - 200, height-65, WHITE)
-    Message.print("HP: "+currentPlayer.stat("health"), width - 200, height-85, WHITE)  
+    Message.print("HP: "+currentPlayer.stat("health"), width - 200, height-85, WHITE)
   } 
   
   addRender(new Renderable {

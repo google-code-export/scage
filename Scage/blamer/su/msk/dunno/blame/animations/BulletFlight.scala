@@ -2,7 +2,7 @@ package su.msk.dunno.blame.animations
 
 import su.msk.dunno.screens.ScageScreen
 import su.msk.dunno.blame.support.IngameMessages
-import su.msk.dunno.blame.screens.FieldScreen
+import su.msk.dunno.blame.screens.Blamer
 import su.msk.dunno.scage.support.{Color, Vec}
 import su.msk.dunno.screens.prototypes.{ActionHandler, Renderable}
 import su.msk.dunno.blame.field.{FieldObject, FieldTracer}
@@ -49,16 +49,16 @@ extends ScageScreen("Bullet Flight") {
 
   // render on main screen
   windowCenter = Vec((width - 200)/2, 100 + (height - 100)/2)
-  center = FieldTracer.pointCenter(FieldScreen.currentPlayer.point)
+  center = FieldTracer.pointCenter(Blamer.currentPlayer.point)
 
   Renderer.backgroundColor(BLACK)  
 
   addRender(new Renderable {
-    override def render = FieldTracer.draw(FieldScreen.currentPlayer.point)
+    override def render = FieldTracer.draw(Blamer.currentPlayer.point)
 
     override def interface {
       IngameMessages.showBottomMessages
-      FieldScreen.drawInterface
+      Blamer.drawInterface
     }
   })
 

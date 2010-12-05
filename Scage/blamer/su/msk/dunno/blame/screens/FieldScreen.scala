@@ -15,7 +15,7 @@ import su.msk.dunno.blame.livings.{SiliconCreature, Cibo, Killy}
 import su.msk.dunno.blame.animations.BulletFlight
 import su.msk.dunno.blame.decisions.{Shoot, CloseDoor, OpenDoor, Move}
 
-object FieldScreen extends ScageScreen("Field ScageScreen", is_main = true, "blame-properties.txt") {
+object Blamer extends ScageScreen("Blamer", is_main_screen = true, "blame-properties.txt") {
   // map
   private val maze = GenLib.CreateStandardDunegon(FieldTracer.N_x, FieldTracer.N_y)
   (0 to FieldTracer.N_x-1).foreachpair(0 to FieldTracer.N_y-1)((i, j) => {

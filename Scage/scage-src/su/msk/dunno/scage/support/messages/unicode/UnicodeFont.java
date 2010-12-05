@@ -501,7 +501,7 @@ public class UnicodeFont implements org.newdawn.slick.Font {
 				startNewLine = false;
 			}
 
-			Image image = glyph.getImage();
+			MyImage image = glyph.getImage();
 			if (image == null && missingGlyph != null && glyph.isMissing()) image = missingGlyph.getImage();
 			if (image != null) {
 				// Draw glyph, only binding a new glyph page texture when necessary.
@@ -516,7 +516,7 @@ public class UnicodeFont implements org.newdawn.slick.Font {
 					lastBind = texture;
 				}
 
-				image.drawEmbedded(bounds.x + extraX, bounds.y + extraY, image.getWidth(), image.getHeight());
+				image.drawEmbedded(bounds.x + extraX, bounds.y + extraY, image.getWidth(), image.getHeight(), font.getSize());
 			}
 
 			if (glyphIndex >= 0) extraX += paddingRight + paddingLeft + paddingAdvanceX;

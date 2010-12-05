@@ -2,7 +2,7 @@ package su.msk.dunno.blame.support
 
 import su.msk.dunno.screens.prototypes.ActionHandler
 import su.msk.dunno.blame.prototypes.Decision
-import su.msk.dunno.blame.screens.FieldScreen
+import su.msk.dunno.blame.screens.Blamer
 
 object TimeUpdater {
   private var _time = 0;
@@ -11,7 +11,7 @@ object TimeUpdater {
   private var decisions:List[Decision] = Nil
   def addDecision(decision:Decision) = decisions = decisions ::: List(decision)
 
-  FieldScreen.addHandler(new ActionHandler {
+  Blamer.addHandler(new ActionHandler {
     override def action = {
       var current_actions = decisions.filter(decision =>
         decision.living.lastActionTime + decision.action_period <= _time || decision.living.boolStat("is_player"))

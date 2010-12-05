@@ -48,7 +48,7 @@
             <copy toDir="builds/projects/${project.name}-${project.version}-${os.type}/lib" file="lib/rlforj.0.2.jar" />
             <copy toDir="builds/projects/${project.name}-${project.version}-${os.type}/lib" file="builds/scage/scage-${scage.version}.jar" />
 
-                        <copy toDir="builds/projects/${project.name}-${project.version}-${os.type}/lib" file="resources/log4j.properties" />
+                        <copy toDir="builds/projects/${project.name}-${project.version}-${os.type}/lib" file="properties/log4j.properties" />
                 </sequential>
         </macrodef>
 
@@ -86,14 +86,14 @@
             java -Djava.library.path=native -DLWJGL_DISABLE_XRANDR=true -cp lib/commons-logging-1.1.1.jar:lib/jinput.jar:lib/log4j-1.2.15.jar:lib/lwjgl.jar:lib/lwjgl_util.jar:lib/phys2d-060408.jar:lib/scala-library.jar:lib/slick-util.jar:lib/json.jar:lib/rlforj.0.2.jar:lib/scage-${scage.version}.jar:lib/${project.name}-${project.version}.jar ${project.entrypoint}
         </echo>
         <chmod file="builds/projects/${project.name}-${project.version}-${os.type}/run.sh" perm="ugo+rx"/>
-                <copy file="resources/${project.properties}" tofile="builds/projects/${project.name}-${project.version}-${os.type}/${project.properties}" />
+                <copy file="properties/${project.properties}" tofile="builds/projects/${project.name}-${project.version}-${os.type}/${project.properties}" />
         <mkdir dir="builds/projects/${project.name}-${project.version}-${os.type}/native" />
         <copy toDir="builds/projects/${project.name}-${project.version}-${os.type}/native">
                         <fileset dir="lib/lwjgl/native/${os.type}" />
                 </copy>
         <mkdir dir="builds/projects/${project.name}-${project.version}-${os.type}/img" />
         <copy toDir="builds/projects/${project.name}-${project.version}-${os.type}/img">
-                        <fileset dir="img" />
+                        <fileset dir="images" />
                 </copy>
         </target>
 

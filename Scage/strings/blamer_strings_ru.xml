@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<messages>
+    <message code="message.loading">
+        Начинаем загрузку, пожалуйста, подождите...
+    </message>
+
+    <message code="message.exiting">
+        Приложение заканчивает работу...
+    </message>
+
+    <message code="hello.world">
+        Привет, Мир!
+    </message>
+
+    <message code="player.killy">
+        Килли
+    </message>
+
+    <message code="player.cibo">
+        Сибо
+    </message>
+
+    <message code="greetings.helloworld">
+        Привет, Мир, - сказал ?
+    </message>
+
+    <message code="door.open">
+        ? открыл дверь
+    </message>
+
+    <message code="door.close">
+        ? закрыл дверь
+    </message>
+
+    <message code="move.wrong">
+        ? не может пойти туда!
+    </message>
+
+    <message code="selecttarget.helpmessage">
+        Выберите цель с помощью стрелок или  клавиш цифровой клавиатуры
+    </message>
+
+    <message code="decision.shoot">
+        ? стреляет!
+    </message>
+
+    <message code="changestatus.damage">
+        ? получил ? единиц урона
+    </message>
+</messages>

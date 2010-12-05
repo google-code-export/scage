@@ -21,4 +21,4 @@ N_y = 100
 
 framerate = 60
 
-lang = en
+lang = ru

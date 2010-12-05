@@ -4,16 +4,15 @@ import org.newdawn.slick.SlickException;
 import su.msk.dunno.scage.support.messages.unicode.ColorEffect;
 import su.msk.dunno.scage.support.messages.unicode.UnicodeFont;
 
-public class MyFont
+public class SlickUnicodeFont
 {
-    public UnicodeFont uFont = null;
+    private UnicodeFont uFont = null;
     
-    public MyFont() throws SlickException
+    public SlickUnicodeFont(String font_path, int size, int glyph_from, int glyph_to) throws SlickException
     {
-        String fontPath = "fonts/DroidSans.ttf";
-        uFont = new UnicodeFont(fontPath , 18, false, false);
+        uFont = new UnicodeFont(font_path , size, false, false);
         uFont.addAsciiGlyphs();
-        uFont.addGlyphs(1024,1279);     // cyrillic stuff
+        uFont.addGlyphs(glyph_from, glyph_to);     // other alphabets (cyrillic by default)
         uFont.getEffects().add(new ColorEffect(java.awt.Color.WHITE));
         uFont.loadGlyphs();
     }

@@ -12,7 +12,7 @@ import su.msk.dunno.blame.support.MyFont._
 import su.msk.dunno.blame.prototypes.Living
 
 class SelectTarget(stop_key:Int, living:Living) extends ScageScreen("Target Selector") {
-  //IngameMessages.addBottomPropMessage("selecttarget.helpmessage", FieldScreen.currentPlayer.stat("name"))
+  //IngameMessages.addBottomPropMessage("selecttarget.helpmessage", Blamer.currentPlayer.stat("name"))
 
   private var select_line = List(living.point)
   
@@ -65,19 +65,19 @@ class SelectTarget(stop_key:Int, living:Living) extends ScageScreen("Target Sele
 
   // render on main screen
   windowCenter = Vec((width - 200)/2, 100 + (height - 100)/2)
-  center = FieldTracer.pointCenter(FieldScreen.currentPlayer.point)
+  center = FieldTracer.pointCenter(Blamer.currentPlayer.point)
   
   Renderer.backgroundColor(BLACK)  
   
   addRender(new Renderable {
     override def render = {
-      FieldTracer.draw(FieldScreen.currentPlayer.point)
+      FieldTracer.draw(Blamer.currentPlayer.point)
       drawSelectLine
     }
     
     override def interface {
       IngameMessages.showBottomMessages
-      FieldScreen.drawInterface
+      Blamer.drawInterface
     }
   })
   

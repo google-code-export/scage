@@ -125,7 +125,7 @@ public class Glyph {
 	 *
 	 * @return The image that has been generated for this glyph
 	 */
-	public Image getImage () {
+	public MyImage getImage () {
 		return image;
 	}
 

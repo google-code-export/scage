@@ -7,7 +7,7 @@ import org.lwjgl.opengl.{DisplayMode, GL11, Display}
 import org.lwjgl.util.glu.GLU
 import su.msk.dunno.scage.support.ScageProperties._
 import su.msk.dunno.scage.support.{Color, Colors, Vec}
-import su.msk.dunno.scage.support.messages.Message
+import su.msk.dunno.scage.support.messages.Message._
 import su.msk.dunno.screens.prototypes.{ActionHandler, Renderable}
 
 object Renderer {
@@ -37,7 +37,7 @@ object Renderer {
     GL11.glMatrixMode(GL11.GL_MODELVIEW);
     GL11.glLoadIdentity();
 
-    Message.print("Loading...", 20, Renderer.height-25, Colors.GREEN)
+    print(xml("message.loading", "Loading..."), 20, Renderer.height-25, Colors.GREEN)
     Display.sync(Renderer.framerate)
     Display.update
 
@@ -148,7 +148,7 @@ class Renderer {
     main_screen.addHandler(new ActionHandler {
       override def exit = {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
-        Message.print("Exiting...", 20, Renderer.height-25, Colors.GREEN)
+        print(xml("message.exiting", "Exiting..."), 20, Renderer.height-25, Colors.GREEN)
         Display.sync(Renderer.framerate)
         Display.update
 

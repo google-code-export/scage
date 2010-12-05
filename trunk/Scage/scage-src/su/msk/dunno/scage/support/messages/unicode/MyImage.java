@@ -21,21 +21,21 @@ public class MyImage extends org.newdawn.slick.Image
 
     }
 
-    @Override public void drawEmbedded(float x,float y,float width,float height)
+    public void drawEmbedded(float x, float y, float width, float height, int size)
     {
         init();
         if (corners == null) {
             GL.glTexCoord2f(textureOffsetX, textureOffsetY);
-			GL.glVertex3f(x, -y+18, 0);
+			GL.glVertex3f(x, -y + size, 0);
 
 			GL.glTexCoord2f(textureOffsetX, textureOffsetY + textureHeight);
-			GL.glVertex3f(x, -y - height+18, 0);
+			GL.glVertex3f(x, -y - height + size, 0);
 
 			GL.glTexCoord2f(textureOffsetX + textureWidth, textureOffsetY + textureHeight);
-			GL.glVertex3f(x + width, -y - height+18, 0);
+			GL.glVertex3f(x + width, -y - height + size, 0);
 
 			GL.glTexCoord2f(textureOffsetX + textureWidth, textureOffsetY);
-			GL.glVertex3f(x + width, -y+18, 0);
+			GL.glVertex3f(x + width, -y + size, 0);
 		} else {
 			corners[TOP_LEFT].bind();
 		    GL.glTexCoord2f(textureOffsetX, textureOffsetY);

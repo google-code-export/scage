@@ -1,23 +1,9 @@
 package su.msk.dunno.blame.support
 
-import org.xml.sax.Attributes
-import javax.xml.parsers.SAXParserFactory
-import java.io.FileInputStream
-import collection.mutable.HashMap
-import org.xml.sax.helpers.DefaultHandler
-import su.msk.dunno.scage.support.ScageProperties._
 import su.msk.dunno.scage.support.Colors._
 import su.msk.dunno.scage.support.messages.Message
 
 object IngameMessages {
-  val lang = property("lang", "en")
-  val messages_file = "messages_"+lang+".xml"
-  
-  private val imh = new IngameMessageHandler
-  private val parser = SAXParserFactory.newInstance.newSAXParser
-  private val fis = new FileInputStream(messages_file)
-  parser.parse(fis, imh)
-  
   private var bottom_messages:List[String] = Nil
   private val message_capacity = 5
   
@@ -29,41 +15,14 @@ object IngameMessages {
   }
   
   def addBottomPropMessage(message_code:String, parameters:String*) = {
-    var message = imh.xml_messages(message_code)
-    parameters.foreach(parameter => message = message.replaceFirst("\\?", parameter))
-    addBottomMessage(message, false)
+    addBottomMessage(Message.xml(message_code, parameters:_*), false)
   }
   def addBottomPropMessageSameString(message_code:String, parameters:String*) = {
-    var message = imh.xml_messages(message_code)
-    parameters.foreach(parameter => message = message.replaceFirst("\\?", parameter))
-    addBottomMessage(message, true)
+    addBottomMessage(Message.xml(message_code, parameters:_*), true)
   }
   
   def showBottomMessages = {
     var h = 80
     bottom_messages.foreach(message => {Message.print(message, 10, h, WHITE); h -= 20})
-  }
-
-  private[IngameMessages] class IngameMessageHandler extends DefaultHandler {
-    var xml_messages = new HashMap[String,String]
-    
-    private var current_message_key = ""
-    private var current_message_text = new StringBuilder
-  
-    override def startElement(uri:String, local_name:String, raw_name:String, amap:Attributes) = {
-      if("message".equalsIgnoreCase(raw_name)) current_message_key = amap.getValue("code")
-    }
-    
-    override def characters(ch:Array[Char], start:Int, length:Int) = {
-      val value = new String(ch, start, length)
-      current_message_text.append(value)
-    }
-    
-    override def endElement(uri:String, local_name:String, raw_name:String) = {
-      if("message".equalsIgnoreCase(raw_name)) {
-        xml_messages += (current_message_key -> current_message_text.toString.trim)
-        current_message_text.clear
-      }
-    }
   }
 }

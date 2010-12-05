@@ -1,26 +1,75 @@
 package su.msk.dunno.scage.support.messages
 
-import su.msk.dunno.scage.support.{Colors, Color, Vec}
-import org.newdawn.slick.AngelCodeFont
+import su.msk.dunno.scage.support.{ScageProperties, Colors, Color, Vec}
+import collection.mutable.HashMap
+import org.xml.sax.Attributes
+import org.xml.sax.helpers.DefaultHandler
+import java.io.FileInputStream
+import javax.xml.parsers.SAXParserFactory
+import org.apache.log4j.Logger
 
 object Message extends Colors {
-  //private val font = new AngelCodeFont("fonts/tt.fnt", "fonts/tt_0.png")
-  private val font = new MyFont()
+  private val log = Logger.getLogger(this.getClass)
+  
+  val lang = ScageProperties.property("lang", "en")
+  val messages_base = ScageProperties.property("strings.base", "strings")
+  val messages_file = messages_base + "_" + lang + ".xml"
 
-  def print(message:Any, x:Float, y:Float, color:Color) = {
-    //TrueTypeFont.instance.drawString(message.toString, x, y, color)
-    font.drawString(x,y,message.toString, org.newdawn.slick.Color.white)
+  private val xmlmh = new XMLMessageHandler
+  private val parser = SAXParserFactory.newInstance.newSAXParser
+  private val fis = new FileInputStream(messages_file)
+  parser.parse(fis, xmlmh)
+
+  val font_path = ScageProperties.property("font.name", "fonts/DroidSans.ttf")
+  val font_size = ScageProperties.property("font.size", 18)
+  val glyph_from = ScageProperties.property("glyph.from", 1024)
+  val glyph_to = ScageProperties.property("glyph.to", 1279)
+  private val font = new SlickUnicodeFont(font_path, font_size, glyph_from, glyph_to)
+
+  def xml(message_code:String, parameters:String*) = {
+    val xml_message = try {
+      xmlmh.xml_messages(message_code)
+    }
+    catch {
+      case e:Exception => {
+        log.error("failed to find string with code "+message_code+" in file "+messages_file)
+        val default = if(!parameters.isEmpty) {
+          log.error("using string \""+parameters(0)+"\" as default for code "+message_code)
+          parameters(0)
+        }
+        else ""
+        xmlmh.xml_messages += (message_code -> default)
+        default
+      }
+    }
+    parameters.foldLeft(xml_message)((message, parameter) =>
+      message.replaceFirst("\\?", parameter))
   }
-  def print(message:Any, x:Float, y:Float) = {
-    //TrueTypeFont.instance.drawString(message.toString, x, y, BLACK)
-    font.drawString(x,y,message.toString, org.newdawn.slick.Color.white)
+
+  def print(message:Any, x:Float, y:Float, color:Color = WHITE) = {
+    font.drawString(x,y,message.toString, new org.newdawn.slick.Color(color.red, color.green, color.blue))
   }
-  def print(message:Any, coord:Vec, color:Color) = {
-    //TrueTypeFont.instance.drawString(message.toString, coord.x, coord.y, color)
-    font.drawString(coord.x, coord.y, message.toString, org.newdawn.slick.Color.white)
-  }
-  def print(message:Any, coord:Vec) = {
-    //TrueTypeFont.instance.drawString(message.toString, coord.x, coord.y, BLACK)
-    font.drawString(coord.x, coord.y, message.toString, org.newdawn.slick.Color.white)
+
+  private[Message] class XMLMessageHandler extends DefaultHandler {
+    var xml_messages = new HashMap[String,String]
+
+    private var current_message_key = ""
+    private var current_message_text = new StringBuilder
+
+    override def startElement(uri:String, local_name:String, raw_name:String, amap:Attributes) = {
+      if("message".equalsIgnoreCase(raw_name)) current_message_key = amap.getValue("code")
+    }
+
+    override def characters(ch:Array[Char], start:Int, length:Int) = {
+      val value = new String(ch, start, length)
+      current_message_text.append(value)
+    }
+
+    override def endElement(uri:String, local_name:String, raw_name:String) = {
+      if("message".equalsIgnoreCase(raw_name)) {
+        xml_messages += (current_message_key -> current_message_text.toString.trim)
+        current_message_text.clear
+      }
+    }
   }
 }

@@ -12,9 +12,9 @@ object ScageScreen {
   def allStop = isAllScreensStop = true
 }
 
-class ScageScreen(val name:String, val is_main:Boolean = false, properties:String = "") {
+class ScageScreen(val screen_name:String, val is_main_screen:Boolean = false, properties:String = "") {
   private val log = Logger.getLogger(this.getClass);
-  log.info("starting "+name+"...")
+  log.info("starting "+screen_name+"...")
 
   if(!"".equals(properties)) ScageProperties.properties = properties
   
@@ -27,7 +27,7 @@ class ScageScreen(val name:String, val is_main:Boolean = false, properties:Strin
   def keyListener(key:Int, repeatTime: => Long = 0, onKeyDown: => Any, onKeyUp: => Any = {}) =
     controller.keyListener(key, repeatTime, onKeyDown, onKeyUp)
 
-  val renderer = if(is_main) new Renderer(main_screen = this) else new Renderer
+  val renderer = if(is_main_screen) new Renderer(main_screen = this) else new Renderer
   def addRender(render:Renderable) = renderer.addRender(render)
 
   def scale = renderer.scale
@@ -55,11 +55,11 @@ class ScageScreen(val name:String, val is_main:Boolean = false, properties:Strin
       renderer.render
     }
     handlers.foreach(handler => handler.exit)
-    log.info(name+" was stopped")
-    if(is_main) System.exit(0)
+    log.info(screen_name+" was stopped")
+    if(is_main_screen) System.exit(0)
   }
   def stop = {
-    if(is_main) ScageScreen.allStop
+    if(is_main_screen) ScageScreen.allStop
     else is_running = false 
   }
 

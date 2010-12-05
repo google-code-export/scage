@@ -11,7 +11,7 @@ object ScageProperties {
   def properties = _file
   def properties_= (f:String) = {
     _file = f
-    log.info("new properties file is "+_file)
+    log.info("properties file is "+_file)
     _props = load
   }
 
@@ -43,9 +43,9 @@ object ScageProperties {
     }
     catch {
       case ex:FileNotFoundException =>
-        if(!file.contains("resources/")) {
-          _file = "resources/" + _file
-          log.debug("development mode: looking for properties in the resource folder")
+        if(!file.contains("properties/")) {
+          _file = "properties/" + _file
+          log.debug("development mode: looking for properties file in the properties folder")
           load
         }
         else fileNotFound

@@ -33,7 +33,7 @@
     </target>
 
     <macrodef name="copy-libraries">
-                <sequential>
+        <sequential>
                         <mkdir dir="builds/projects/${project.name}-${project.version}-${os.type}/lib" />
                         <copy toDir="builds/projects/${project.name}-${project.version}-${os.type}/lib">
                                 <fileset dir="lib/logging" />
@@ -43,59 +43,74 @@
                         <copy toDir="builds/projects/${project.name}-${project.version}-${os.type}/lib" file="lib/lwjgl/jar/lwjgl.jar" />
                         <copy toDir="builds/projects/${project.name}-${project.version}-${os.type}/lib" file="lib/lwjgl/jar/lwjgl_util.jar" />
                         <copy toDir="builds/projects/${project.name}-${project.version}-${os.type}/lib" file="lib/phys2d-060408.jar" />
-                        <copy toDir="builds/projects/${project.name}-${project.version}-${os.type}/lib" file="lib/slick-util.jar" />
+                        <copy toDir="builds/projects/${project.name}-${project.version}-${os.type}/lib" file="lib/slick.jar" />
             <copy toDir="builds/projects/${project.name}-${project.version}-${os.type}/lib" file="lib/json.jar" />
-            <copy toDir="builds/projects/${project.name}-${project.version}-${os.type}/lib" file="lib/rlforj.0.2.jar" />
+            <copy toDir="builds/projects/${project.name}-${project.version}-${os.type}/lib" file="lib/rlforj-nosources-0.2.jar" />
             <copy toDir="builds/projects/${project.name}-${project.version}-${os.type}/lib" file="builds/scage/scage-${scage.version}.jar" />
 
                         <copy toDir="builds/projects/${project.name}-${project.version}-${os.type}/lib" file="properties/log4j.properties" />
-                </sequential>
-        </macrodef>
+        </sequential>
+    </macrodef>
 
-        <target name="compile" depends="compile-scage">
+    <target name="compile" depends="compile-scage">
         <init/>
         <copy-libraries/>
-    <path id="classpath-project">
-                <fileset dir="builds/projects/${project.name}-${project.version}-${os.type}/lib" includes="**/*.jar"/>
+        <path id="classpath-project">
+            <fileset dir="builds/projects/${project.name}-${project.version}-${os.type}/lib" includes="**/*.jar"/>
         </path>
-                <mkdir dir="builds/projects/${project.name}-${project.version}-${os.type}/bin" />
-                <scalac srcdir="${project.src}"
-                        destdir="builds/projects/${project.name}-${project.version}-${os.type}/bin"
-                            classpathref="classpath-project"
-                        addparams="-optimise" />
+        <mkdir dir="builds/projects/${project.name}-${project.version}-${os.type}/bin" />
+        <scalac srcdir="${project.src}"
+                destdir="builds/projects/${project.name}-${project.version}-${os.type}/bin"
+                classpathref="classpath-project"
+                addparams="-optimise" />
         <javac srcdir="${project.src}"
-                       destdir="builds/projects/${project.name}-${project.version}-${os.type}/bin"
-                           classpathref="classpath-project"
-                           includeantruntime="false" />
-        </target>
+               destdir="builds/projects/${project.name}-${project.version}-${os.type}/bin"
+               classpathref="classpath-project"
+               includeantruntime="false" />
+    </target>
+    
+    <macrodef name="copy-resources">
+        <sequential>
+		<echo file="builds/projects/${project.name}-${project.version}-${os.type}/run.bat"
+	        	message="java -Djava.library.path=native -cp lib/commons-logging-1.1.1.jar;lib/jinput.jar;lib/log4j-1.2.15.jar;lib/lwjgl.jar;lib/lwjgl_util.jar;lib/phys2d-060408.jar;lib/scala-library.jar;lib/slick.jar;lib/json.jar;lib/rlforj-nosources-0.2.jar;lib/scage-${scage.version}.jar;lib/${project.name}-${project.version}.jar ${project.entrypoint}"
+        	/>
+        	<echo file="builds/projects/${project.name}-${project.version}-${os.type}/run.sh">#!/bin/bash
+            java -Djava.library.path=native -DLWJGL_DISABLE_XRANDR=true -cp lib/commons-logging-1.1.1.jar:lib/jinput.jar:lib/log4j-1.2.15.jar:lib/lwjgl.jar:lib/lwjgl_util.jar:lib/phys2d-060408.jar:lib/scala-library.jar:lib/slick.jar:lib/json.jar:lib/rlforj-nosources-0.2.jar:lib/scage-${scage.version}.jar:lib/${project.name}-${project.version}.jar ${project.entrypoint}
+        	</echo>
+        	<chmod file="builds/projects/${project.name}-${project.version}-${os.type}/run.sh" perm="ugo+rx"/>
+                <copy file="properties/${project.properties}" tofile="builds/projects/${project.name}-${project.version}-${os.type}/${project.properties}" />
+        	<mkdir dir="builds/projects/${project.name}-${project.version}-${os.type}/native" />
+ 	       	<copy toDir="builds/projects/${project.name}-${project.version}-${os.type}/native">
+        		<fileset dir="lib/lwjgl/native/${os.type}" />
+               	</copy>
+        	<mkdir dir="builds/projects/${project.name}-${project.version}-${os.type}/res" />
+        	<mkdir dir="builds/projects/${project.name}-${project.version}-${os.type}/res/images" />
+        	<copy toDir="builds/projects/${project.name}-${project.version}-${os.type}/res/images">
+        	        <fileset dir="res/images" />
+                </copy>
+        	<mkdir dir="builds/projects/${project.name}-${project.version}-${os.type}/res/fonts" />
+        	<copy toDir="builds/projects/${project.name}-${project.version}-${os.type}/res/fonts">
+        	        <fileset dir="res/fonts" />
+                </copy>                
+        	<mkdir dir="builds/projects/${project.name}-${project.version}-${os.type}/res/strings" />
+        	<copy toDir="builds/projects/${project.name}-${project.version}-${os.type}/res/strings">
+        	        <fileset dir="res/strings" />
+                </copy>                
+        </sequential>
+    </macrodef>
 
     <target name="dir" depends="compile">
-                <jar destfile="builds/projects/${project.name}-${project.version}-${os.type}/lib/${project.name}-${project.version}.jar"
+        <jar destfile="builds/projects/${project.name}-${project.version}-${os.type}/lib/${project.name}-${project.version}.jar"
              filesetmanifest="mergewithoutmain">
-                        <manifest>
-                                <attribute name="Main-Class" value="${project.entrypoint}"/>
-                                <attribute name="Class-Path" value="."/>
-                        </manifest>
+                  <manifest>
+                        <attribute name="Main-Class" value="${project.entrypoint}"/>
+                        <attribute name="Class-Path" value="."/>
+                  </manifest>
             <fileset dir="builds/projects/${project.name}-${project.version}-${os.type}/bin"/>
-                </jar>
+        </jar>
         <delete dir="builds/projects/${project.name}-${project.version}-${os.type}/bin" />
-        <echo file="builds/projects/${project.name}-${project.version}-${os.type}/run.bat"
-            message="java -Djava.library.path=native -cp lib/commons-logging-1.1.1.jar;lib/jinput.jar;lib/log4j-1.2.15.jar;lib/lwjgl.jar;lib/lwjgl_util.jar;lib/phys2d-060408.jar;lib/scala-library.jar;lib/slick-util.jar;lib/json.jar;lib/rlforj.0.2.jar;lib/scage-${scage.version}.jar;lib/${project.name}-${project.version}.jar ${project.entrypoint}"
-        />
-        <echo file="builds/projects/${project.name}-${project.version}-${os.type}/run.sh">#!/bin/bash
-            java -Djava.library.path=native -DLWJGL_DISABLE_XRANDR=true -cp lib/commons-logging-1.1.1.jar:lib/jinput.jar:lib/log4j-1.2.15.jar:lib/lwjgl.jar:lib/lwjgl_util.jar:lib/phys2d-060408.jar:lib/scala-library.jar:lib/slick-util.jar:lib/json.jar:lib/rlforj.0.2.jar:lib/scage-${scage.version}.jar:lib/${project.name}-${project.version}.jar ${project.entrypoint}
-        </echo>
-        <chmod file="builds/projects/${project.name}-${project.version}-${os.type}/run.sh" perm="ugo+rx"/>
-                <copy file="properties/${project.properties}" tofile="builds/projects/${project.name}-${project.version}-${os.type}/${project.properties}" />
-        <mkdir dir="builds/projects/${project.name}-${project.version}-${os.type}/native" />
-        <copy toDir="builds/projects/${project.name}-${project.version}-${os.type}/native">
-                        <fileset dir="lib/lwjgl/native/${os.type}" />
-                </copy>
-        <mkdir dir="builds/projects/${project.name}-${project.version}-${os.type}/img" />
-        <copy toDir="builds/projects/${project.name}-${project.version}-${os.type}/img">
-                        <fileset dir="res/images" />
-                </copy>
-        </target>
+	<copy-resources />
+    </target>
 
     <target name="zip" depends="dir">
         <zip destfile="builds/projects/${project.name}-${project.version}-${os.type}.zip"

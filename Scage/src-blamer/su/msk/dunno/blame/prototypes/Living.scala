@@ -4,6 +4,7 @@ import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.screens.support.tracer.State
 import su.msk.dunno.blame.field.{FieldTracer, FieldObject}
 import su.msk.dunno.scage.support.Color
+import su.msk.dunno.blame.screens.Inventory
 
 abstract class Living(val point:Vec, symbol:Int, color:Color) {
   val trace = FieldTracer.addTrace(new FieldObject {
@@ -22,6 +23,8 @@ abstract class Living(val point:Vec, symbol:Int, color:Color) {
   protected var last_action_time = 0
   def lastActionTime = last_action_time
   def lastActionTime_=(action_time:Int) = last_action_time = action_time
+  
+  val inventory = new Inventory
   
   // stats
   private val stats = new State

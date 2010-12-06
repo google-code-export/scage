@@ -6,12 +6,17 @@ import su.msk.dunno.scage.support.Colors._
 import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.blame.prototypes.Living
 import su.msk.dunno.scage.support.messages.Message
+import su.msk.dunno.blame.items.TestItem
 
 class Killy(point:Vec) extends Living(point, PLAYER, RED) {
   setStat("name", Message.xml("player.killy"))
   setStat("is_player", true)
   
   FieldTracer.addLightSource(point)
+  
+  inventory.addItem(new TestItem)
+  inventory.addItem(new TestItem)
+  inventory.addItem(new TestItem)
 }
 
 class Cibo(point:Vec) extends Living(point, PLAYER, BLUE) {

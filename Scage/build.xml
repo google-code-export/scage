@@ -93,7 +93,7 @@
                 </copy>
         <mkdir dir="builds/projects/${project.name}-${project.version}-${os.type}/img" />
         <copy toDir="builds/projects/${project.name}-${project.version}-${os.type}/img">
-                        <fileset dir="images" />
+                        <fileset dir="res/images" />
                 </copy>
         </target>
 

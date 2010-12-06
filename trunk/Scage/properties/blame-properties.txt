@@ -21,4 +21,5 @@ N_y = 100
 
 framerate = 60
 
+strings.base = res/strings/blamer_strings
 lang = ru

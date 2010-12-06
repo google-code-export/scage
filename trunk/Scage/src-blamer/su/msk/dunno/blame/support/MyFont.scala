@@ -9,7 +9,7 @@ object MyFont {
   private val log = Logger.getLogger(this.getClass)
   log.info("generating new font...")
 
-  val font_file = "img/font.png"
+  val font_file = "res/images/font.png"
   log.info("image file for the font is "+font_file)
   private val symbol_width = property("symbol_width", 32)
   private val symbol_height = property("symbol_height", 32)

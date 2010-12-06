@@ -12,8 +12,6 @@ import su.msk.dunno.blame.support.MyFont._
 import su.msk.dunno.blame.prototypes.Living
 
 class SelectTarget(stop_key:Int, living:Living) extends ScageScreen("Target Selector") {
-  //IngameMessages.addBottomPropMessage("selecttarget.helpmessage", Blamer.currentPlayer.stat("name"))
-
   private var select_line = List(living.point)
   
   private var target_point:Vec = living.point

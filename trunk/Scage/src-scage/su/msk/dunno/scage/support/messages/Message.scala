@@ -20,7 +20,7 @@ object Message extends Colors {
   private val fis = new FileInputStream(messages_file)
   parser.parse(fis, xmlmh)
 
-  val font_path = ScageProperties.property("font.name", "fonts/DroidSans.ttf")
+  val font_path = ScageProperties.property("font.name", "res/fonts/DroidSans.ttf")
   val font_size = ScageProperties.property("font.size", 18)
   val glyph_from = ScageProperties.property("glyph.from", 1024)
   val glyph_to = ScageProperties.property("glyph.to", 1279)

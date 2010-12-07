@@ -47,4 +47,8 @@
     <message code="changestatus.damage">
         ? получил ? единиц урона
     </message>
+
+    <message code="inventory.ownership">
+        Снаряжение ?
+    </message>
 </messages>

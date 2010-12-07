@@ -35,4 +35,8 @@
     <message code="changestatus.damage">
         ? received ? damage
     </message>
+
+    <message code="inventory.ownership">
+        ?'s Inventory
+    </message>
 </messages>

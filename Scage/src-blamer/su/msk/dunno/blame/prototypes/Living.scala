@@ -24,7 +24,7 @@ abstract class Living(val point:Vec, symbol:Int, color:Color) {
   def lastActionTime = last_action_time
   def lastActionTime_=(action_time:Int) = last_action_time = action_time
   
-  val inventory = new Inventory
+  val inventory = new Inventory(this)
   
   // stats
   private val stats = new State

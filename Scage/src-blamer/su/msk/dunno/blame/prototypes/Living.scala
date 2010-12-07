@@ -4,7 +4,7 @@ import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.screens.support.tracer.State
 import su.msk.dunno.blame.field.{FieldTracer, FieldObject}
 import su.msk.dunno.scage.support.Color
-import su.msk.dunno.blame.screens.Inventory
+import su.msk.dunno.blame.screens.InventoryScreen
 
 abstract class Living(val point:Vec, symbol:Int, color:Color) {
   val trace = FieldTracer.addTrace(new FieldObject {

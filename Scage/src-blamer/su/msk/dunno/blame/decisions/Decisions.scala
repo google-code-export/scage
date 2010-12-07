@@ -51,7 +51,7 @@ class Shoot(target_point: => Vec, living:Living) extends Decision(living) {
       val objects = FieldTracer.objectsAtPoint(target)
       IngameMessages.addBottomPropMessage("decision.shoot", living.stat("name"))
       objects.foreach(_.changeState(new State("damage", 10)))
-    }    
-    was_executed = true
+      was_executed = true
+    }
   }
 }

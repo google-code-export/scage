@@ -1,33 +1,21 @@
 package su.msk.dunno.scage.support.messages.unicode;
 
-import java.awt.Font;
-import java.awt.FontFormatException;
-import java.awt.FontMetrics;
-import java.awt.Rectangle;
-import java.awt.font.GlyphVector;
-import java.awt.font.TextAttribute;
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.newdawn.slick.Color;
-import org.newdawn.slick.Image;
+import org.newdawn.slick.SlickException;
 import org.newdawn.slick.font.HieroSettings;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureImpl;
 import org.newdawn.slick.opengl.renderer.Renderer;
 import org.newdawn.slick.opengl.renderer.SGL;
 import org.newdawn.slick.util.ResourceLoader;
-import org.newdawn.slick.SlickException;
 
-import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.font.GlyphVector;
+import java.awt.font.TextAttribute;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.*;
+import java.util.List;
 
 /**
  * A Slick bitmap font that can display unicode glyphs from a TrueTypeFont.

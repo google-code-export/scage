@@ -24,7 +24,7 @@ class ScageScreen(val screen_name:String, val is_main_screen:Boolean = false, pr
     else handlers = handler :: handlers
 
   val controller = new Controller
-  def keyListener(key:Int, repeatTime: => Long = 0, onKeyDown: => Any, onKeyUp: => Any = {}) =
+  def keyListener(key: => Int, repeatTime: => Long = 0, onKeyDown: => Any, onKeyUp: => Any = {}) =
     controller.keyListener(key, repeatTime, onKeyDown, onKeyUp)
 
   val renderer = if(is_main_screen) new Renderer(main_screen = this) else new Renderer

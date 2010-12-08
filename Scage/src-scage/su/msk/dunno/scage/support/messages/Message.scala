@@ -1,6 +1,6 @@
 package su.msk.dunno.scage.support.messages
 
-import su.msk.dunno.scage.support.{ScageProperties, Colors, Color, Vec}
+import su.msk.dunno.scage.support.{ScageProperties, Colors, Color}
 import collection.mutable.HashMap
 import org.xml.sax.Attributes
 import org.xml.sax.helpers.DefaultHandler

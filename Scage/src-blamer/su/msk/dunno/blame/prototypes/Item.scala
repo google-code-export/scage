@@ -1,9 +1,7 @@
 package su.msk.dunno.blame.prototypes
 
 import su.msk.dunno.screens.support.tracer.State
-import su.msk.dunno.scage.support.{Vec, Color}
-import su.msk.dunno.blame.field.{FieldObject, FieldTracer}
-
+import su.msk.dunno.scage.support.Color
 class Item(val name:String, val description:String, val symbol:Int, val color:Color) {
   // stats
   protected val stats = new State

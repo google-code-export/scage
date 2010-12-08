@@ -1,8 +1,6 @@
 package su.msk.dunno.scage.support.messages.unicode;
 
-import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.SlickException;
-import su.msk.dunno.screens.handlers.Renderer;
 
 public class MyImage extends org.newdawn.slick.Image
 {

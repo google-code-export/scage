@@ -11,24 +11,34 @@ import su.msk.dunno.screens.support.ScageLibrary._
 import su.msk.dunno.blame.support.MyFont._
 import su.msk.dunno.blame.prototypes.Living
 
-class SelectTarget(stop_key:Int, living:Living) extends ScageScreen("Target Selector") {
-  private var select_line = List(living.point)
+object SelectTarget extends ScageScreen("Target Selector") {
+  private var _living:Living = null
+  private var _stop_key:Int = -1
+  private var select_line:List[Vec] = Nil
+  private var target_point:Vec = null
   
-  private var target_point:Vec = living.point
-  def targetPoint = target_point
+  def targetPoint(stop_key:Int, living:Living) = {
+    _living = living
+    _stop_key = stop_key
+    select_line = List(_living.point)
+    target_point = _living.point    
+    
+    super.run
+    target_point
+  }
   
-  def clearSelectLine = {
+  private def clearSelectLine = {
     select_line.foreach(FieldTracer.allowDraw(_))
     select_line = Nil
   }
-  def buildSelectLine(delta:Vec) = {
+  private def buildSelectLine(delta:Vec) = {
     target_point += delta
     clearSelectLine
-    select_line = FieldTracer.line(living.point, target_point)
+    select_line = FieldTracer.line(_living.point, target_point)
     select_line.foreach(FieldTracer.preventDraw(_))
     target_point = select_line.head
   }
-  def drawSelectLine = {
+  private def drawSelectLine = {
     if(!select_line.isEmpty) {
       select_line.tail.foreach(point => {
         Renderer.drawDisplayList(MINOR_SELECTOR, FieldTracer.pointCenter(point), WHITE)
@@ -51,12 +61,12 @@ class SelectTarget(stop_key:Int, living:Living) extends ScageScreen("Target Sele
   keyListener(Keyboard.KEY_LEFT,  100, onKeyDown = buildSelectLine(Vec(-1,0)))
   keyListener(Keyboard.KEY_DOWN,  100, onKeyDown = buildSelectLine(Vec(0,-1)))
 
-  keyListener(stop_key, onKeyDown = {
+  keyListener(_stop_key, onKeyDown = {
     clearSelectLine
     stop
   })
   keyListener(Keyboard.KEY_ESCAPE, onKeyDown = {
-    target_point = living.point
+    target_point = _living.point
     clearSelectLine
     stop
   })
@@ -79,5 +89,5 @@ class SelectTarget(stop_key:Int, living:Living) extends ScageScreen("Target Sele
     }
   })
   
-  run
+  override def run = {}
 }

@@ -2,8 +2,7 @@ package su.msk.dunno.scage.support.messages.unicode;
 
 import org.newdawn.slick.font.effects.EffectUtil;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Iterator;

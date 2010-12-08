@@ -7,8 +7,6 @@ import su.msk.dunno.screens.support.tracer.State
 import su.msk.dunno.blame.support.{IngameMessages, TimeUpdater}
 import su.msk.dunno.scage.support.Colors._
 import su.msk.dunno.blame.animations.BulletFlight
-import su.msk.dunno.blame.screens.SelectTarget
-
 class Move(val step:Vec, living:Living) extends Decision(living) {
   override val action_period = 2
 

@@ -1,11 +1,8 @@
 package su.msk.dunno.scage.support.messages.unicode;
 
-import java.awt.Rectangle;
-import java.awt.Shape;
+import java.awt.*;
 import java.awt.font.GlyphMetrics;
 import java.awt.font.GlyphVector;
-
-import org.newdawn.slick.Image;
 
 /**
  * Represents the glyph in a font for a unicode codepoint.

@@ -4,7 +4,7 @@ class Controller {
   private var listeners = List[UIListener]()
 
   /*private var to_add = List[UIListener]()*/
-  def keyListener(key:Int, repeatTime: => Long = 0, onKeyDown: => Any, onKeyUp: => Any = {}) = {
+  def keyListener(key: => Int, repeatTime: => Long = 0, onKeyDown: => Any, onKeyUp: => Any = {}) = {
 	  /*to_add = new KeyListener(key, repeatTime, onKeyDown, onKeyUp) :: to_add*/
     listeners = new KeyListener(key, repeatTime, onKeyDown, onKeyUp) :: listeners
   }

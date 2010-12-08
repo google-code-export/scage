@@ -1,6 +1,6 @@
 package su.msk.dunno.scage.support.messages.unicode;
 
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**

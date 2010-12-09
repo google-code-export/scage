@@ -2,7 +2,7 @@ name = Blamer
 version = 0.1
 
 width = 800
-height = 600
+height = 650
 
 #visible_width = 200
 #visible_height = 200

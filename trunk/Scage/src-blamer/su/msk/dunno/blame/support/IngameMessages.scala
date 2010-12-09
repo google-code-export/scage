@@ -5,7 +5,9 @@ import su.msk.dunno.scage.support.messages.Message
 
 object IngameMessages {
   private var bottom_messages:List[String] = Nil
-  private val message_capacity = 5
+  val message_capacity = 5
+  val bottom_messages_height = (Message.font_size + 5)*message_capacity
+  println(bottom_messages_height)
   
   def addBottomMessage(message:String, is_same_string:Boolean = false) = {
     if(is_same_string) bottom_messages = bottom_messages.head+" "+message :: bottom_messages.tail
@@ -22,7 +24,7 @@ object IngameMessages {
   }
   
   def showBottomMessages = {
-    var h = 80
+    var h = bottom_messages_height - (Message.font_size + 5)
     bottom_messages.foreach(message => {Message.print(message, 10, h, WHITE); h -= 20})
   }
 }

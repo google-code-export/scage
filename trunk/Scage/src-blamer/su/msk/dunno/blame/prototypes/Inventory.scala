@@ -15,10 +15,10 @@ class Inventory(val owner:Living) {
       item_selector = new_num
   }
   
-  def selectedItem:Item = {
+  def selectedItem:Option[Item] = {
     if(item_selector >= 1 && item_selector <= item_positions.size &&
-       !items(item_positions(item_selector-1)).isEmpty) items(item_positions(item_selector-1)).head
-    else null
+       !items(item_positions(item_selector-1)).isEmpty) Some(items(item_positions(item_selector-1)).head)
+    else None
   }
 
   def addItem(item:Item) = {

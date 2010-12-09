@@ -15,7 +15,7 @@ class SelectTarget(val stop_key:Int, val living:Living) extends ScageScreen("Tar
   private var target_point:Vec = living.point
   def targetPoint = target_point
   
-  private var select_line:List[Vec] = List(_living.point)
+  private var select_line:List[Vec] = List(living.point)
   private def clearSelectLine = {
     select_line.foreach(FieldTracer.allowDraw(_))
     select_line = Nil
@@ -23,7 +23,8 @@ class SelectTarget(val stop_key:Int, val living:Living) extends ScageScreen("Tar
   private def buildSelectLine(delta:Vec) = {
     target_point += delta
     clearSelectLine
-    select_line = FieldTracer.line(_living.point, target_point)
+    select_line = FieldTracer.line(living.point, target_point)
+    if(select_line.size > 1) select_line = select_line.init
     select_line.foreach(FieldTracer.preventDraw(_))
     target_point = select_line.head
   }
@@ -50,19 +51,19 @@ class SelectTarget(val stop_key:Int, val living:Living) extends ScageScreen("Tar
   keyListener(Keyboard.KEY_LEFT,  100, onKeyDown = buildSelectLine(Vec(-1,0)))
   keyListener(Keyboard.KEY_DOWN,  100, onKeyDown = buildSelectLine(Vec(0,-1)))
 
-  keyListener(_stop_key, onKeyDown = {
+  keyListener(stop_key, onKeyDown = {
     clearSelectLine
     stop
   })
   keyListener(Keyboard.KEY_ESCAPE, onKeyDown = {
-    target_point = _living.point
+    target_point = living.point
     clearSelectLine
     stop
   })
 
   // render on main screen
   windowCenter = Vec((width - 200)/2, 100 + (height - 100)/2)
-  center = FieldTracer.pointCenter(Blamer.currentPlayer.point)
+  center = FieldTracer.pointCenter(living.point)
   
   Renderer.backgroundColor(BLACK)  
   
@@ -77,4 +78,6 @@ class SelectTarget(val stop_key:Int, val living:Living) extends ScageScreen("Tar
       Blamer.drawInterface
     }
   })
+
+  run
 }

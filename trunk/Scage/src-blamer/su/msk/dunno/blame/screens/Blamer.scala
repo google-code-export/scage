@@ -93,7 +93,8 @@ object Blamer extends ScageScreen("Blamer", is_main_screen = true, "blame-proper
   keyListener(Keyboard.KEY_ESCAPE, onKeyDown = allStop)
 
   // render on main screen
-  windowCenter = Vec((width - 200)/2, 100 + (height - 100)/2)
+  windowCenter = Vec((width - right_messages_width)/2, 
+  		     BottomMessages.bottom_messages_height + (height - BottomMessages.bottom_messages_height)/2)
   center = FieldTracer.pointCenter(currentPlayer.point)
   
   Renderer.backgroundColor = BLACK

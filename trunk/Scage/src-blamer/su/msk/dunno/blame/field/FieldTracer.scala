@@ -11,6 +11,7 @@ import su.msk.dunno.blame.support.{BottomMessages, MyFont}
 import su.msk.dunno.blame.screens.Blamer
 
 trait FieldObject extends Trace {
+  def getPoint = FieldTracer.point(getCoord)
   def getSymbol:Int
   def getColor:ScageColor
   def isTransparent:Boolean
@@ -78,6 +79,15 @@ object FieldTracer extends Tracer[FieldObject] {
     Vec(x, y)
   }
   
+  def direction(from:Vec, to:Vec) = {
+    val diff = (to - from)
+    Vec(math.signum(diff.x), math.signum(diff.y))
+  }
+  
+  def isDirectionPassable(point:Vec, direction:Vec) = {
+    isPointPassable(point + direction)  
+  }
+  
   def move2PointIfPassable(trace_id:Int, old_point:Vec, new_point:Vec) = {
     if(isPointPassable(new_point)) {
       updatePointLocation(trace_id, old_point, new_point)
@@ -86,25 +96,31 @@ object FieldTracer extends Tracer[FieldObject] {
   }
   
   def neighboursOfPoint(trace_id:Int, point:Vec, range:Range) = {
-    neighbours(trace_id, pointCenter(point), -1 to 1, (f) => true)
+    neighbours(trace_id, pointCenter(point), range, (fieldObject) => 
+      isVisible(point, fieldObject.getPoint, fieldObject.getState.getInt("dov")))
   }
   def objectsAtPoint(point:Vec) = matrix(point.ix)(point.iy)
-
-  def preventDraw(point:Vec) =
-    if(!matrix(point.ix)(point.iy).isEmpty) matrix(point.ix)(point.iy).foreach(_.preventDraw)
-  def allowDraw(point:Vec) =
-    if(!matrix(point.ix)(point.iy).isEmpty) matrix(point.ix)(point.iy).foreach(_.allowDraw)
 
   private val lineView = new ILosBoard {
     def contains(x:Int, y:Int):Boolean = isPointOnArea(x, y)    
     def isObstacle(x:Int, y:Int):Boolean = !isPointTransparent(x, y)
     def visit(x:Int, y:Int) = {}
-  }  
-  def line(p1:Vec, p2:Vec):List[Vec] = {
-    val ila = new BresLos(false)
-    ila.existsLineOfSight(lineView, p1.ix, p1.iy, p2.ix, p2.iy, true);
-    JavaConversions.asBuffer(ila.getProjectPath).foldLeft(List[Vec]())((line, point) => new Vec(point.x, point.y) :: line)
   }
+  private val bresenham = new BresLos(false)  
+  def isVisible(p1:Vec, p2:Vec, dov:Int) = {
+    if((p2 dist p1) > dov*dov) false
+    else if(p2 == p1) true
+    else bresenham.existsLineOfSight(lineView, p1.ix, p1.iy, p2.ix, p2.iy, false)
+  }
+  def line(p1:Vec, p2:Vec):List[Vec] = {
+    bresenham.existsLineOfSight(lineView, p1.ix, p1.iy, p2.ix, p2.iy, true)
+    JavaConversions.asBuffer(bresenham.getProjectPath).foldLeft(List[Vec]())((line, point) => new Vec(point.x, point.y) :: line)
+  }
+  
+  def preventDraw(point:Vec) =
+    if(!matrix(point.ix)(point.iy).isEmpty) matrix(point.ix)(point.iy).foreach(_.preventDraw)
+  def allowDraw(point:Vec) =
+    if(!matrix(point.ix)(point.iy).isEmpty) matrix(point.ix)(point.iy).foreach(_.allowDraw)  
 
   private var light_sources:List[(() => Vec, () => Int)] = Nil
   def addLightSource(point: => Vec, dov: => Int = 5) = light_sources = (() => point, () => dov) :: light_sources

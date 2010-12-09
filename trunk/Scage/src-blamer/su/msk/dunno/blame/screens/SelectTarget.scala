@@ -11,22 +11,11 @@ import su.msk.dunno.screens.support.ScageLibrary._
 import su.msk.dunno.blame.support.MyFont._
 import su.msk.dunno.blame.prototypes.Living
 
-object SelectTarget extends ScageScreen("Target Selector") {
-  private var _living:Living = null
-  private var _stop_key:Int = -1
-  private var select_line:List[Vec] = Nil
-  private var target_point:Vec = null
+class SelectTarget(val stop_key:Int, val living:Living) extends ScageScreen("Target Selector") {
+  private var target_point:Vec = living.point
+  def targetPoint = target_point
   
-  def targetPoint(stop_key:Int, living:Living) = {
-    _living = living
-    _stop_key = stop_key
-    select_line = List(_living.point)
-    target_point = _living.point    
-    
-    super.run
-    target_point
-  }
-  
+  private var select_line:List[Vec] = List(_living.point)
   private def clearSelectLine = {
     select_line.foreach(FieldTracer.allowDraw(_))
     select_line = Nil
@@ -88,6 +77,4 @@ object SelectTarget extends ScageScreen("Target Selector") {
       Blamer.drawInterface
     }
   })
-  
-  override def run = {}
 }

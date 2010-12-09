@@ -84,8 +84,8 @@ object Blamer extends ScageScreen("Blamer", is_main_screen = true, "blame-proper
   keyListener(Keyboard.KEY_O, onKeyDown = TimeUpdater.addDecision(new OpenDoor(currentPlayer)))
   keyListener(Keyboard.KEY_C, onKeyDown = TimeUpdater.addDecision(new CloseDoor(currentPlayer)))
   keyListener(Keyboard.KEY_F, onKeyDown =
-          TimeUpdater.addDecision(new Shoot(SelectTarget.targetPoint(Keyboard.KEY_F, currentPlayer), currentPlayer)))
-  keyListener(Keyboard.KEY_I, onKeyDown = InventoryScreen.show(currentPlayer.inventory))
+          TimeUpdater.addDecision(new Shoot(new SelectTarget(Keyboard.KEY_F, currentPlayer).targetPoint, currentPlayer)))
+  keyListener(Keyboard.KEY_I, onKeyDown = new InventoryScreen(currentPlayer.inventory).run)
   
   keyListener(Keyboard.KEY_TAB, onKeyDown = is_play_cibo = !is_play_cibo)  
   keyListener(Keyboard.KEY_ESCAPE, onKeyDown = allStop)

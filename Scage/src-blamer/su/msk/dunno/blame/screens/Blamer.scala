@@ -15,6 +15,8 @@ import su.msk.dunno.blame.livings.{SiliconCreature, Cibo, Killy}
 import su.msk.dunno.blame.decisions.{Shoot, CloseDoor, OpenDoor, Move}
 
 object Blamer extends ScageScreen("Blamer", is_main_screen = true, "blame-properties.txt") {
+  val right_messages_width = 200
+  
   // map
   private val maze = GenLib.CreateStandardDunegon(FieldTracer.N_x, FieldTracer.N_y)
   (0 to FieldTracer.N_x-1).foreachpair(0 to FieldTracer.N_y-1)((i, j) => {
@@ -85,7 +87,7 @@ object Blamer extends ScageScreen("Blamer", is_main_screen = true, "blame-proper
   keyListener(Keyboard.KEY_C, onKeyDown = TimeUpdater.addDecision(new CloseDoor(currentPlayer)))
   keyListener(Keyboard.KEY_F, onKeyDown =
           TimeUpdater.addDecision(new Shoot(new SelectTarget(Keyboard.KEY_F, currentPlayer).targetPoint, currentPlayer)))
-  keyListener(Keyboard.KEY_I, onKeyDown = new InventoryScreen(currentPlayer.inventory).run)
+  keyListener(Keyboard.KEY_I, onKeyDown = new InventoryScreen(currentPlayer.inventory))
   
   keyListener(Keyboard.KEY_TAB, onKeyDown = is_play_cibo = !is_play_cibo)  
   keyListener(Keyboard.KEY_ESCAPE, onKeyDown = allStop)
@@ -95,14 +97,14 @@ object Blamer extends ScageScreen("Blamer", is_main_screen = true, "blame-proper
   center = FieldTracer.pointCenter(currentPlayer.point)
   
   Renderer.backgroundColor(BLACK)
-  
+
   def drawInterface = {
-    Message.print(currentPlayer.stat("name"), 600, height-25, WHITE)
-    Message.print("FPS: "+fps, 600, height-45, WHITE)
-    Message.print("time: "+TimeUpdater.time, width - 200, height-65, WHITE)
-    Message.print("HP: "+currentPlayer.stat("health"), width - 200, height-85, WHITE)
+    Message.print(currentPlayer.stat("name"),          width - right_messages_width, height-25, WHITE)
+    Message.print("FPS: "+fps,                         width - right_messages_width, height-45, WHITE)
+    Message.print("time: "+TimeUpdater.time,           width - right_messages_width, height-65, WHITE)
+    Message.print("HP: "+currentPlayer.stat("health"), width - right_messages_width, height-85, WHITE)
   } 
-  
+
   addRender(new Renderable {
     override def render = FieldTracer.draw(currentPlayer.point)
 

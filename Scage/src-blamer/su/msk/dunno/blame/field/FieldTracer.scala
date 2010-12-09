@@ -3,10 +3,12 @@ package su.msk.dunno.blame.field
 import su.msk.dunno.screens.support.tracer.{Tracer, Trace}
 import su.msk.dunno.screens.handlers.Renderer
 import su.msk.dunno.scage.support.{Colors, Vec, Color}
-import su.msk.dunno.blame.support.MyFont
 import su.msk.dunno.scage.support.ScageProperties._
 import rlforj.los.{BresLos, ILosBoard, PrecisePermissive}
 import collection.JavaConversions
+import su.msk.dunno.scage.support.messages.Message
+import su.msk.dunno.blame.support.{IngameMessages, MyFont}
+import su.msk.dunno.blame.screens.Blamer
 
 trait FieldObject extends Trace {
   def getSymbol:Int
@@ -134,8 +136,8 @@ object FieldTracer extends Tracer[FieldObject](
     })
   }
 
-  val visible_width  = property("visible_width",  Renderer.width - 200)
-  val visible_height = property("visible_height", Renderer.height - 100)
+  val visible_width  = property("visible_width",  Renderer.width - Blamer.right_messages_width)
+  val visible_height = property("visible_height", Renderer.height - IngameMessages.bottom_messages_height)
 
   private val half_visible_N_x:Int = visible_width/h_x/2
   private val half_visible_N_y:Int = visible_height/h_y/2

@@ -36,17 +36,16 @@ class CloseDoor(living:Living) extends Decision(living) {
   }
 }
 
-class Shoot(target_point: => Vec, living:Living) extends Decision(living) {
+class Shoot(target_point:Vec, living:Living) extends Decision(living) {
   override val action_period = 2
 
   def doAction = {
-    val target:Vec = target_point   // we are using by-name parameter for target_point because it can change after Shoot constructor done and before doAction
-    if(target != living.point) {
-      new BulletFlight(living.point, target, YELLOW)
-      val kickback = (living.point - target).n
+    if(target_point != living.point) {
+      new BulletFlight(living.point, target_point, YELLOW)
+      val kickback = (living.point - target_point).n
       val kickback_delta = Vec(if(math.abs(kickback.x) > 0.3) math.signum(kickback.x) else 0, if(math.abs(kickback.y) > 0.3) math.signum(kickback.y) else 0)
       TimeUpdater.addDecision(new Move(kickback_delta, living))
-      val objects = FieldTracer.objectsAtPoint(target)
+      val objects = FieldTracer.objectsAtPoint(target_point)
       IngameMessages.addBottomPropMessage("decision.shoot", living.stat("name"))
       objects.foreach(_.changeState(new State("damage", 10)))
       was_executed = true

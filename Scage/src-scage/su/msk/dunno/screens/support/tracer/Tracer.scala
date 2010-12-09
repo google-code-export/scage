@@ -61,19 +61,6 @@ class Tracer[T <: Trace](val field_from_x:Int = property("field.from.x", 0),
   def pointCenter(p:Vec):Vec = Vec(field_from_x + p.x*h_x + h_x/2, field_from_y + p.y*h_y + h_y/2)
   def pointCenter(x:Int, y:Int):Vec = Vec(field_from_x + x*h_x + h_x/2, field_from_y + y*h_y + h_y/2)
 
-  def getNeighbours(coord:Vec, range:Range):List[T] = {
-    val p = point(coord)
-    var neighbours = List[T]()
-    range.foreachpair((i, j) => {
-      val near_point = checkPointEdges(p + Vec(i, j))
-      neighbours = coord_matrix(near_point.ix)(near_point.iy).foldLeft(List[T]())((acc, trace) => {
-    	  if(trace.getCoord != coord) trace :: acc
-    		else acc
-    	}) ::: neighbours
-    })
-    neighbours
-  }
-
   def neighbours(trace_id:Int, coord:Vec, range:Range, condition:(T) => Boolean):List[T] = {
     val p = point(coord)
     var neighbours:List[T] = Nil

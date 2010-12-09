@@ -1,12 +1,13 @@
 package su.msk.dunno.blame.decisions
 
-import su.msk.dunno.blame.prototypes.{Living, Decision}
 import su.msk.dunno.blame.field.FieldTracer
 import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.screens.support.tracer.State
 import su.msk.dunno.blame.support.{BottomMessages, TimeUpdater}
 import su.msk.dunno.scage.support.ScageColors._
 import su.msk.dunno.blame.animations.BulletFlight
+import su.msk.dunno.blame.prototypes.{Item, Living, Decision}
+
 class Move(val step:Vec, living:Living) extends Decision(living) {
   override val action_period = 2
 
@@ -50,5 +51,13 @@ class Shoot(target_point:Vec, living:Living) extends Decision(living) {
       objects.foreach(_.changeState(new State("damage", 10)))
       was_executed = true
     }
+  }
+}
+
+class DropItem(living:Living, item:Item) extends Decision(living) {
+  override val action_period = 2
+  
+  def doAction = {
+    living.inventory.removeItem(item)
   }
 }

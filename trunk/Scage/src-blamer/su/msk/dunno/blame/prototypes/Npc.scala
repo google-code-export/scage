@@ -2,10 +2,10 @@ package su.msk.dunno.blame.prototypes
 
 import su.msk.dunno.screens.prototypes.ActionHandler
 import su.msk.dunno.blame.screens.Blamer
-import su.msk.dunno.scage.support.{Color, Vec}
+import su.msk.dunno.scage.support.{ScageColor, Vec}
 import su.msk.dunno.blame.support.TimeUpdater
 
-abstract class Npc(point:Vec, symbol:Int, color:Color) extends Living(point, symbol, color) {
+abstract class Npc(point:Vec, symbol:Int, color:ScageColor) extends Living(point, symbol, color) {
   protected var last_decision:Decision = null
   Blamer.addHandler(new ActionHandler {
     override def action = {

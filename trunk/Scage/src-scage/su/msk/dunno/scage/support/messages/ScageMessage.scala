@@ -1,6 +1,6 @@
 package su.msk.dunno.scage.support.messages
 
-import su.msk.dunno.scage.support.{ScageProperties, Colors, Color}
+import su.msk.dunno.scage.support.{ScageProperties, ScageColors, ScageColor}
 import collection.mutable.HashMap
 import org.xml.sax.Attributes
 import org.xml.sax.helpers.DefaultHandler
@@ -8,7 +8,7 @@ import java.io.FileInputStream
 import javax.xml.parsers.SAXParserFactory
 import org.apache.log4j.Logger
 
-object Message extends Colors {
+object ScageMessage extends ScageColors {
   private val log = Logger.getLogger(this.getClass)
   
   val lang = ScageProperties.property("lang", "en")
@@ -46,11 +46,11 @@ object Message extends Colors {
       message.replaceFirst("\\?", parameter))
   }
 
-  def print(message:Any, x:Float, y:Float, color:Color = WHITE) = {
+  def print(message:Any, x:Float, y:Float, color:ScageColor = WHITE) = {
     font.drawString(x,y,message.toString, new org.newdawn.slick.Color(color.red, color.green, color.blue))
   }
 
-  private[Message] class XMLMessageHandler extends DefaultHandler {
+  private[ScageMessage] class XMLMessageHandler extends DefaultHandler {
     var xml_messages = new HashMap[String,String]
 
     private var current_message_key = ""

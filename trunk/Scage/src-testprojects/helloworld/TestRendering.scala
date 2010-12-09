@@ -1,7 +1,7 @@
 package helloworld
 
 import org.lwjgl.opengl.GL11
-import su.msk.dunno.scage.support.messages.Message
+import su.msk.dunno.scage.support.messages.ScageMessage
 import su.msk.dunno.scage.handlers.Renderer
 import su.msk.dunno.scage.support.ScageLibrary._
 
@@ -37,11 +37,11 @@ object TestRendering {
 	    GL11.glCallList(BOX)
 	    GL11.glPopMatrix()
 	  })
-      	  Message.print("Time: "+(System.currentTimeMillis - start_time), 200, height-40)
+      	  ScageMessage.print("Time: "+(System.currentTimeMillis - start_time), 200, height-40)
 	}
 	
 	interface {
-    Message.print("FPS: "+fps, 200, height-25)
+    ScageMessage.print("FPS: "+fps, 200, height-25)
   }
 	
 	def main(args:Array[String]) = run

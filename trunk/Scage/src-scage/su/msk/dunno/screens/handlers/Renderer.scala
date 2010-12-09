@@ -6,15 +6,36 @@ import org.newdawn.slick.opengl.{TextureLoader, Texture}
 import org.lwjgl.opengl.{DisplayMode, GL11, Display}
 import org.lwjgl.util.glu.GLU
 import su.msk.dunno.scage.support.ScageProperties._
-import su.msk.dunno.scage.support.{Color, Colors, Vec}
-import su.msk.dunno.scage.support.messages.Message._
+import su.msk.dunno.scage.support.{ScageColor, ScageColors, Vec}
+import su.msk.dunno.scage.support.messages.ScageMessage._
 import su.msk.dunno.screens.prototypes.{ActionHandler, Renderable}
+import org.lwjgl.BufferUtils
 
 object Renderer {
-  val width = property("width", 800);
-  val height = property("height", 600);
-
+  val width = property("width", 800)
+  val height = property("height", 600)
+  
   val framerate = property("framerate", 100)
+
+  private var _fps:Int = 0
+  def fps = _fps
+
+  private var msek = System.currentTimeMillis
+  private var frames:Int = 0
+  private def countFPS = {
+    frames += 1
+    if(System.currentTimeMillis - msek >= 1000) {
+      _fps = frames
+      frames = 0
+      msek = System.currentTimeMillis
+    }
+  }
+  
+  def update = {
+    Display.sync(framerate)
+    Display.update
+    countFPS
+  }
 
   lazy val initgl = {
     Display.setDisplayMode(new DisplayMode(width, height));
@@ -37,9 +58,8 @@ object Renderer {
     GL11.glMatrixMode(GL11.GL_MODELVIEW);
     GL11.glLoadIdentity();
 
-    print(xml("message.loading", "Loading..."), 20, Renderer.height-25, Colors.GREEN)
-    Display.sync(Renderer.framerate)
-    Display.update
+    print(xml("message.loading", "Loading..."), 20, Renderer.height-25, ScageColors.GREEN)
+    update
 
     GL11.glNewList(CIRCLE, GL11.GL_COMPILE);
       GL11.glBegin(GL11.GL_LINE_LOOP);
@@ -59,9 +79,20 @@ object Renderer {
     next_displaylist_key += 1
     next_key
   }
-
-  def backgroundColor(c:Color) = GL11.glClearColor(c.red, c.green, c.blue, 0)
-  def color(c:Color) = GL11.glColor3f(c.red, c.green, c.blue)
+  
+  def backgroundColor = {
+    val background_color = BufferUtils.createFloatBuffer(16)    
+    GL11.glGetFloat(GL11.GL_COLOR_CLEAR_VALUE, background_color)
+    new ScageColor(background_color.get(0), background_color.get(1), background_color.get(2))
+  }
+  def backgroundColor_=(c:ScageColor) = GL11.glClearColor(c.red, c.green, c.blue, 0)
+  
+  def color = {
+    val _color = BufferUtils.createFloatBuffer(16)
+    GL11.glGetFloat(GL11.GL_CURRENT_COLOR, _color)
+    new ScageColor(_color.get(0), _color.get(1), _color.get(2))
+  }
+  def color_=(c:ScageColor) = GL11.glColor3f(c.red, c.green, c.blue)
 
   def drawLine(v1:Vec, v2:Vec) = {
     GL11.glDisable(GL11.GL_TEXTURE_2D);
@@ -82,11 +113,11 @@ object Renderer {
     GL11.glEnable(GL11.GL_TEXTURE_2D);
   }
 
-  def drawDisplayList(list_code:Int, coord:Vec):Unit = drawDisplayList(list_code:Int, coord:Vec, Colors.WHITE)
-  def drawDisplayList(list_code:Int, coord:Vec, color:Color):Unit = {
+  def drawDisplayList(list_code:Int, coord:Vec):Unit = drawDisplayList(list_code:Int, coord:Vec, ScageColors.WHITE)
+  def drawDisplayList(list_code:Int, coord:Vec, _color:ScageColor):Unit = {
     GL11.glPushMatrix();
 	  GL11.glTranslatef(coord.x, coord.y, 0.0f);
-	  Renderer.color(color)
+	  Renderer.color = _color
 	  GL11.glCallList(list_code)
 	  GL11.glPopMatrix()
   }
@@ -148,9 +179,8 @@ class Renderer {
     main_screen.addHandler(new ActionHandler {
       override def exit = {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
-        print(xml("message.exiting", "Exiting..."), 20, Renderer.height-25, Colors.GREEN)
-        Display.sync(Renderer.framerate)
-        Display.update
+        print(xml("message.exiting", "Exiting..."), 20, Renderer.height-25, ScageColors.GREEN)
+        Renderer.update
 
         Thread.sleep(1000)
         Display.destroy
@@ -174,34 +204,21 @@ class Renderer {
   private var render_list:List[Renderable] = Nil
   def addRender(render:Renderable) = render_list = render :: render_list
 
-  private[screens] var fps:Int = 0
-  private var msek = System.currentTimeMillis
-  private var frames:Int = 0
-  private def countFPS() = {
-    frames += 1
-    if(System.currentTimeMillis - msek >= 1000) {
-      fps = frames
-      frames = 0
-      msek = System.currentTimeMillis
-    }
-  }
-
   def render = {
     if(Display.isCloseRequested()) ScageScreen.allStop
-    GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
-		GL11.glLoadIdentity();
-    GL11.glPushMatrix
-      val coord = window_center() - central_coord()*_scale
-      GL11.glTranslatef(coord.x , coord.y, 0.0f)
-      GL11.glScalef(_scale, _scale, 1)
-      render_list.foreach(renderable => renderable.render)
-    GL11.glPopMatrix
+    else {
+      GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
+      GL11.glLoadIdentity();
+      GL11.glPushMatrix
+        val coord = window_center() - central_coord()*_scale
+        GL11.glTranslatef(coord.x , coord.y, 0.0f)
+        GL11.glScalef(_scale, _scale, 1)
+        render_list.foreach(renderable => renderable.render)
+      GL11.glPopMatrix
 
-    render_list.foreach(renderable => renderable.interface)
+      render_list.foreach(renderable => renderable.interface)
 
-    Display.sync(Renderer.framerate)
-    Display.update();
-
-    countFPS
+      Renderer.update
+    }
   }
 }

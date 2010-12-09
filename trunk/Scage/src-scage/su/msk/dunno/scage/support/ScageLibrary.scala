@@ -6,7 +6,7 @@ import tracer.{State, Trace}
 import tracer.Tracer
 import su.msk.dunno.scage.handlers.controller.Controller
 
-object ScageLibrary extends Colors {
+object ScageLibrary extends ScageColors {
   implicit def rangeToPairs(range:Range) = {
     new ScalaObject {
       def foreachpair(doIt:(Int, Int) => Unit) = {

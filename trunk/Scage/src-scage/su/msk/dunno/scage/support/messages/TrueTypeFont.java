@@ -3,6 +3,7 @@ package su.msk.dunno.scage.support.messages;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
+import su.msk.dunno.scage.support.ScageColor;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -304,7 +305,7 @@ public class TrueTypeFont
 		this.drawString(x, y, whatchars, 1.0f, 1.0f);
 	}
 
-	public void drawString(String whatchars, float x, float y, su.msk.dunno.scage.support.Color c)
+	public void drawString(String whatchars, float x, float y, ScageColor c)
 	{
 		GL11.glPushMatrix();
 		GL11.glColor3f(c.red(), c.green(), c.blue());

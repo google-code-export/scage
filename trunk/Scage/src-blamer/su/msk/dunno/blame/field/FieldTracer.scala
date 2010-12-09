@@ -2,17 +2,17 @@ package su.msk.dunno.blame.field
 
 import su.msk.dunno.screens.support.tracer.{Tracer, Trace}
 import su.msk.dunno.screens.handlers.Renderer
-import su.msk.dunno.scage.support.{Colors, Vec, Color}
+import su.msk.dunno.scage.support.{ScageColors, Vec, ScageColor}
 import su.msk.dunno.scage.support.ScageProperties._
 import rlforj.los.{BresLos, ILosBoard, PrecisePermissive}
 import collection.JavaConversions
-import su.msk.dunno.scage.support.messages.Message
-import su.msk.dunno.blame.support.{IngameMessages, MyFont}
+import su.msk.dunno.scage.support.messages.ScageMessage
+import su.msk.dunno.blame.support.{BottomMessages, MyFont}
 import su.msk.dunno.blame.screens.Blamer
 
 trait FieldObject extends Trace {
   def getSymbol:Int
-  def getColor:Color
+  def getColor:ScageColor
   def isTransparent:Boolean
   def isPassable:Boolean
   
@@ -27,17 +27,10 @@ trait FieldObject extends Trace {
     if(!is_draw_prevented) Renderer.drawDisplayList(getSymbol, getCoord, getColor)
     was_drawed = true
   }
-  def drawGray = if(!is_draw_prevented) Renderer.drawDisplayList(getSymbol, getCoord, Colors.GRAY)
+  def drawGray = if(!is_draw_prevented) Renderer.drawDisplayList(getSymbol, getCoord, ScageColors.GRAY)
 }
 
-object FieldTracer extends Tracer[FieldObject](
-  property("game_from_x", 0), 
-  property("game_to_x", 800), 
-  property("game_from_y", 0), 
-  property("game_to_y", 600), 
-  property("N_x", 16), 
-  property("N_y", 12), 
-  true) {
+object FieldTracer extends Tracer[FieldObject] {
   override def removeTraceFromPoint(trace_id:Int, p:Vec) = {
     matrix(p.ix)(p.iy).find(_.id == trace_id) match {
       case Some(fieldObject) => {
@@ -125,7 +118,7 @@ object FieldTracer extends Tracer[FieldObject](
     }   
   }
 
-  def draw(player_point:Vec) = {
+  def drawField(player_point:Vec) = {
     drawGray(player_point)
     drawEnlighted(player_point)
   }
@@ -136,11 +129,11 @@ object FieldTracer extends Tracer[FieldObject](
     })
   }
 
-  val visible_width  = property("visible_width",  Renderer.width - Blamer.right_messages_width)
-  val visible_height = property("visible_height", Renderer.height - IngameMessages.bottom_messages_height)
+  val field_visible_width  = property("field.visible.width",  Renderer.width - Blamer.right_messages_width)
+  val field_visible_height = property("field.visible.height", Renderer.height - BottomMessages.bottom_messages_height)
 
-  private val half_visible_N_x:Int = visible_width/h_x/2
-  private val half_visible_N_y:Int = visible_height/h_y/2
+  private val half_visible_N_x:Int = field_visible_width/h_x/2
+  private val half_visible_N_y:Int = field_visible_height/h_y/2
   private def drawGray(player_point:Vec) = {
     val from_x = math.max(0,     player_point.ix - half_visible_N_x)
     val to_x   = math.min(N_x-1, player_point.ix + half_visible_N_x)

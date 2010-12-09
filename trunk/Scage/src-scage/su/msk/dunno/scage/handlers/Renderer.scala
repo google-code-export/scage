@@ -5,7 +5,7 @@ import org.lwjgl.opengl.{DisplayMode, Display, GL11}
 import org.lwjgl.util.glu.GLU
 import org.newdawn.slick.opengl.{TextureLoader, Texture}
 import java.io.{FileInputStream, InputStream}
-import su.msk.dunno.scage.support.{Color, Vec}
+import su.msk.dunno.scage.support.{ScageColor, Vec}
 import su.msk.dunno.scage.support.ScageProperties._
 
 object Renderer {
@@ -85,9 +85,9 @@ object Renderer {
     Display.destroy
   }
 
-  def setBackground(c:Color) = GL11.glClearColor(c.red, c.green, c.blue, 0)
+  def setBackground(c:ScageColor) = GL11.glClearColor(c.red, c.green, c.blue, 0)
 
-  def setColor(c:Color) = GL11.glColor3f(c.red, c.green, c.blue)
+  def setColor(c:ScageColor) = GL11.glColor3f(c.red, c.green, c.blue)
   def drawLine(v1:Vec, v2:Vec) = {
     GL11.glDisable(GL11.GL_TEXTURE_2D);
     	GL11.glBegin(GL11.GL_LINES);

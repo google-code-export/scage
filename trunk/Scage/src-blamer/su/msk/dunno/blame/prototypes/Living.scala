@@ -3,8 +3,8 @@ package su.msk.dunno.blame.prototypes
 import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.screens.support.tracer.State
 import su.msk.dunno.blame.field.{FieldTracer, FieldObject}
-import su.msk.dunno.scage.support.Color
-abstract class Living(val point:Vec, symbol:Int, color:Color) {
+import su.msk.dunno.scage.support.ScageColor
+abstract class Living(val point:Vec, symbol:Int, color:ScageColor) {
   val trace = FieldTracer.addTrace(new FieldObject {
     def getCoord = FieldTracer.pointCenter(point)
     def getSymbol = symbol

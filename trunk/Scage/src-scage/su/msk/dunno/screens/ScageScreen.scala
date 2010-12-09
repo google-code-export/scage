@@ -1,7 +1,7 @@
 package su.msk.dunno.screens
 
 import handlers.controller.Controller
-import handlers.Renderer
+import handlers.{Idler, Renderer}
 import org.apache.log4j.Logger
 import prototypes.{Renderable, ActionHandler}
 import su.msk.dunno.scage.support.{Vec, ScageProperties}
@@ -39,10 +39,8 @@ class ScageScreen(val screen_name:String, val is_main_screen:Boolean = false, pr
   def center = renderer.center
   def center_= (coord: => Vec) = renderer.center = coord
 
-  def fps = renderer.fps
-
   var onPause:Boolean = false
-  def switchPause() = onPause = !onPause
+  def switchPause = onPause = !onPause
 
   private var is_running = false
   def isRunning = is_running

@@ -2,9 +2,9 @@ package su.msk.dunno.screens.support
 
 import su.msk.dunno.screens.handlers.{Idler, Renderer}
 import su.msk.dunno.screens.ScageScreen
-import su.msk.dunno.scage.support.{Color, Vec, ScageProperties, Colors}
+import su.msk.dunno.scage.support.{ScageColor, Vec, ScageProperties, ScageColors}
 
-object ScageLibrary extends Colors {
+object ScageLibrary extends ScageColors {
   implicit def rangeToPairs(range:Range) = {
     new ScalaObject {
       def foreachpair(doIt:(Int, Int) => Unit) = {
@@ -27,7 +27,7 @@ object ScageLibrary extends Colors {
   lazy val height = Renderer.height
   
   def drawDisplayList(list_code:Int, coord:Vec) = Renderer.drawDisplayList(list_code:Int, coord:Vec)
-  def drawDisplayList(list_code:Int, coord:Vec, color:Color) = Renderer.drawDisplayList(list_code:Int, coord:Vec, color:Color)
+  def drawDisplayList(list_code:Int, coord:Vec, color:ScageColor) = Renderer.drawDisplayList(list_code:Int, coord:Vec, color:ScageColor)
 
   lazy val framerate = Idler.framerate
 

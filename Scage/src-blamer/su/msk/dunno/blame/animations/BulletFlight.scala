@@ -1,9 +1,9 @@
 package su.msk.dunno.blame.animations
 
 import su.msk.dunno.screens.ScageScreen
-import su.msk.dunno.blame.support.IngameMessages
+import su.msk.dunno.blame.support.BottomMessages
 import su.msk.dunno.blame.screens.Blamer
-import su.msk.dunno.scage.support.{Color, Vec}
+import su.msk.dunno.scage.support.{ScageColor, Vec}
 import su.msk.dunno.screens.prototypes.{ActionHandler, Renderable}
 import su.msk.dunno.blame.field.{FieldObject, FieldTracer}
 import su.msk.dunno.screens.support.tracer.State
@@ -11,7 +11,7 @@ import su.msk.dunno.blame.support.MyFont._
 import su.msk.dunno.screens.support.ScageLibrary._
 import su.msk.dunno.screens.handlers.Renderer
 
-class BulletFlight(val start_point:Vec, val end_point:Vec, val color:Color, val delay:Long = 30)
+class BulletFlight(val start_point:Vec, val end_point:Vec, val color:ScageColor, val delay:Long = 30)
 extends ScageScreen("Bullet Flight") {
   private val line = FieldTracer.line(end_point, start_point).toArray
   private var count = 0
@@ -51,13 +51,13 @@ extends ScageScreen("Bullet Flight") {
   windowCenter = Vec((width - 200)/2, 100 + (height - 100)/2)
   center = FieldTracer.pointCenter(Blamer.currentPlayer.point)
 
-  Renderer.backgroundColor(BLACK)  
+  Renderer.backgroundColor = BLACK  
 
   addRender(new Renderable {
-    override def render = FieldTracer.draw(Blamer.currentPlayer.point)
+    override def render = FieldTracer.drawField(Blamer.currentPlayer.point)
 
     override def interface {
-      IngameMessages.showBottomMessages
+      BottomMessages.showBottomMessages
       Blamer.drawInterface
     }
   })

@@ -1,8 +1,8 @@
 package su.msk.dunno.screens.support.tracer
 
-import su.msk.dunno.scage.support.Vec
 import org.apache.log4j.Logger
 import su.msk.dunno.screens.support.ScageLibrary._
+import su.msk.dunno.scage.support.{Vec}
 
 object Tracer {
   private val log = Logger.getLogger(this.getClass);
@@ -17,23 +17,26 @@ object Tracer {
 
 import Tracer._
 
-class Tracer[T <: Trace](val game_from_x:Int = 0, val game_to_x:Int = 800,
-                         val game_from_y:Int = 0, val game_to_y:Int = 600,
-                         val N_x:Int = 20, val N_y:Int = 15,
+class Tracer[T <: Trace](val field_from_x:Int = property("field.from.x", 0), 
+                         val field_to_x:Int = property("field.to.x", 800),
+                         val field_from_y:Int = property("field.from.y", 0), 
+                         val field_to_y:Int = property("field.to.y", 600),
+                         val N_x:Int = property("N_x", 16), 
+                         val N_y:Int = property("N_y", 12),
                          val are_solid_edges:Boolean = true) {
   protected val log = Logger.getLogger(this.getClass);
 
   log.info("using tracer "+this.getClass.getName)
 
-  val game_width = game_to_x - game_from_x
-  val game_height = game_to_y - game_from_y
+  val field_width = field_to_x - field_from_x
+  val field_height = field_to_y - field_from_y
 
   private var coord_matrix = Array.ofDim[List[T]](N_x, N_y)
   (0 to N_x-1).foreachpair(0 to N_y-1) ((i, j) => coord_matrix(i)(j) = Nil)
   def matrix = coord_matrix
 
-  val h_x = game_width/N_x
-	val h_y = game_height/N_y
+  val h_x = field_width/N_x
+	val h_y = field_height/N_y
 
   def addTrace(t:T) = {
     val p = point(t.getCoord())
@@ -53,10 +56,10 @@ class Tracer[T <: Trace](val game_from_x:Int = 0, val game_to_x:Int = 800,
     matrix(point.ix)(point.iy) = matrix(point.ix)(point.iy).filterNot(_.id == trace_id)
   }
 
-  def point(v:Vec):Vec = Vec(((v.x - game_from_x)/game_width*N_x).toInt,
-                              ((v.y - game_from_y)/game_height*N_y).toInt)
-  def pointCenter(p:Vec):Vec = Vec(game_from_x + p.x*h_x + h_x/2, game_from_y + p.y*h_y + h_y/2)
-  def pointCenter(x:Int, y:Int):Vec = Vec(game_from_x + x*h_x + h_x/2, game_from_y + y*h_y + h_y/2)
+  def point(v:Vec):Vec = Vec(((v.x - field_from_x)/field_width*N_x).toInt,
+                              ((v.y - field_from_y)/field_height*N_y).toInt)
+  def pointCenter(p:Vec):Vec = Vec(field_from_x + p.x*h_x + h_x/2, field_from_y + p.y*h_y + h_y/2)
+  def pointCenter(x:Int, y:Int):Vec = Vec(field_from_x + x*h_x + h_x/2, field_from_y + y*h_y + h_y/2)
 
   def getNeighbours(coord:Vec, range:Range):List[T] = {
     val p = point(coord)
@@ -138,13 +141,13 @@ class Tracer[T <: Trace](val game_from_x:Int = 0, val game_to_x:Int = 800,
       else if(c < from) checkC(c + dist, from, to)
       else c
     }
-    val x = checkC(coord.x, game_from_x, game_to_x)
-    val y = checkC(coord.y, game_from_y, game_to_y)
+    val x = checkC(coord.x, field_from_x, field_to_x)
+    val y = checkC(coord.y, field_from_y, field_to_y)
     Vec(x, y)
   }
 
   def isCoordOnArea(coord:Vec) = {
-    coord.x >= game_from_x && coord.x < game_to_x && coord.y >= game_from_y && coord.y < game_to_y
+    coord.x >= field_from_x && coord.x < field_to_x && coord.y >= field_from_y && coord.y < field_to_y
   }
 
   def isPointOnArea(point:Vec) = point.x >= 0 && point.x < N_x && point.y >= 0 && point.y < N_y

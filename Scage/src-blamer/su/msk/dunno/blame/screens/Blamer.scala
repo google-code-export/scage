@@ -1,7 +1,7 @@
 package su.msk.dunno.blame.screens
 
 import su.msk.dunno.screens.ScageScreen
-import su.msk.dunno.scage.support.messages.Message
+import su.msk.dunno.scage.support.messages.ScageMessage
 import su.msk.dunno.screens.support.ScageLibrary._
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.support.Vec
@@ -10,12 +10,12 @@ import su.msk.dunno.blame.field.tiles.{Door, Wall, Floor}
 import su.msk.dunno.screens.prototypes.Renderable
 import su.msk.dunno.blame.prototypes.Decision
 import su.msk.dunno.screens.handlers.Renderer
-import su.msk.dunno.blame.support.{IngameMessages, TimeUpdater, GenLib}
+import su.msk.dunno.blame.support.{BottomMessages, TimeUpdater, GenLib}
 import su.msk.dunno.blame.livings.{SiliconCreature, Cibo, Killy}
 import su.msk.dunno.blame.decisions.{Shoot, CloseDoor, OpenDoor, Move}
 
 object Blamer extends ScageScreen("Blamer", is_main_screen = true, "blame-properties.txt") {
-  val right_messages_width = 200
+  val right_messages_width = property("rightmessages.width", 200)
   
   // map
   private val maze = GenLib.CreateStandardDunegon(FieldTracer.N_x, FieldTracer.N_y)
@@ -96,26 +96,26 @@ object Blamer extends ScageScreen("Blamer", is_main_screen = true, "blame-proper
   windowCenter = Vec((width - 200)/2, 100 + (height - 100)/2)
   center = FieldTracer.pointCenter(currentPlayer.point)
   
-  Renderer.backgroundColor(BLACK)
+  Renderer.backgroundColor = BLACK
 
   def drawInterface = {
-    Message.print(currentPlayer.stat("name"),          width - right_messages_width, height-25, WHITE)
-    Message.print("FPS: "+fps,                         width - right_messages_width, height-45, WHITE)
-    Message.print("time: "+TimeUpdater.time,           width - right_messages_width, height-65, WHITE)
-    Message.print("HP: "+currentPlayer.stat("health"), width - right_messages_width, height-85, WHITE)
+    BottomMessages.showBottomMessages
+
+    //messages on the right side of the screen
+    ScageMessage.print(currentPlayer.stat("name"),          width - right_messages_width, height-25, WHITE)
+    ScageMessage.print("FPS: "+Renderer.fps,                width - right_messages_width, height-45, WHITE)
+    ScageMessage.print("time: "+TimeUpdater.time,           width - right_messages_width, height-65, WHITE)
+    ScageMessage.print("HP: "+currentPlayer.stat("health"), width - right_messages_width, height-85, WHITE)
   } 
 
   addRender(new Renderable {
-    override def render = FieldTracer.draw(currentPlayer.point)
+    override def render = FieldTracer.drawField(currentPlayer.point)
 
-    override def interface {
-      IngameMessages.showBottomMessages
-      drawInterface
-    }
+    override def interface = drawInterface
   })
   
   // initial message
-  IngameMessages.addBottomPropMessage("greetings.helloworld", currentPlayer.stat("name"))
+  BottomMessages.addBottomPropMessage("greetings.helloworld", currentPlayer.stat("name"))
   
   def main(args:Array[String]):Unit = run
 }

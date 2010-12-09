@@ -2,7 +2,7 @@ package su.msk.dunno.blame.prototypes
 
 import collection.mutable.HashMap
 import su.msk.dunno.screens.handlers.Renderer
-import su.msk.dunno.scage.support.messages.Message
+import su.msk.dunno.scage.support.messages.ScageMessage
 
 class Inventory(val owner:Living) {
   private var items:HashMap[String, List[Item]] = new HashMap[String, List[Item]]()
@@ -39,12 +39,12 @@ class Inventory(val owner:Living) {
   }
 
   def show = {
-    Message.print(Message.xml("inventory.ownership", owner.stat("name")), 20, Renderer.height-20)
+    ScageMessage.print(ScageMessage.xml("inventory.ownership", owner.stat("name")), 20, Renderer.height-20)
     if(item_selector == -1) {
       var h = Renderer.height-60
       var count = 1
       for(key <- items.keys) {
-        Message.print(count + ". " + key + " (" + items(key).size+")", 20, h)
+        ScageMessage.print(count + ". " + key + " (" + items(key).size+")", 20, h)
         count += 1
         h -= 20
       }
@@ -52,7 +52,7 @@ class Inventory(val owner:Living) {
     else if(item_selector >= 1 && item_selector <= item_positions.size &&
             !items(item_positions(item_selector-1)).isEmpty) {
       var selected_item = items(item_positions(item_selector-1)).head
-      Message.print(selected_item.stat("name")+":\n"+selected_item.stat("description"), 20, Renderer.height-60)
+      ScageMessage.print(selected_item.stat("name")+":\n"+selected_item.stat("description"), 20, Renderer.height-60)
     }
   }
 }

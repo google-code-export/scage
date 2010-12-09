@@ -1,28 +1,48 @@
 package su.msk.dunno.screens.handlers
 
-import su.msk.dunno.scage.support.ScageProperties._
+import su.msk.dunno.scage.support.ScageProperties
+
 object Idler {
-  val framerate = property("framerate", 100)
-}
+  val framerate = ScageProperties.property("framerate", 100)
 
-class Idler {
-    var fps:Int = 0
+  private var _fps:Int = 0
+  def fps = _fps
 
-    private var msek = System.currentTimeMillis
-    private var frames:Int = 0
-    private def countFPS() = {
-      frames += 1
-      if(System.currentTimeMillis - msek >= 1000) {
-        fps = frames
-        frames = 0
-        msek = System.currentTimeMillis
-      }
-    }
-
-    private val sleep:Long = if(Idler.framerate != 0) 1000/Idler.framerate else 10
-    def idle = {
-      countFPS
-      Thread.sleep(sleep)
+  private var msek = System.currentTimeMillis
+  private var frames:Int = 0
+  private def countFPS() = {
+    frames += 1
+    if(System.currentTimeMillis - msek >= 1000) {
+      _fps = frames
+      frames = 0
+      msek = System.currentTimeMillis
     }
   }
+  
+  /*
+   * Best sync method that works reliably. From lwjgl library.
+   *
+   * @param fps The desired frame rate, in frames per second
+   */
+  /*def sync = {
+    var timeNow:Long
+    var gapTo:Long
+    var savedTimeLate:Long
+    
+    gapTo = Sys.getTimerResolution() / framerate + timeThen
+    timeNow = Sys.getTime
+    savedTimeLate = timeLate
 
+    try {
+      while ( gapTo > timeNow + savedTimeLate ) {
+        Thread.sleep(1)
+	timeNow = Sys.getTime
+      }
+    } catch {
+      case e:InterruptedException => Thread.currentThread.interrupt
+    }
+    if(gapTo < timeNow) timeLate = timeNow - gapTo;
+    else timeLate = 0
+    timeThen = timeNow
+  }*/
+}

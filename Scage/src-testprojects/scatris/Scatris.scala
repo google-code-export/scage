@@ -2,7 +2,7 @@ package scatris
 
 import figures._
 import su.msk.dunno.scage.support.tracer.{Trace, State, StandardTracer}
-import su.msk.dunno.scage.support.messages.Message
+import su.msk.dunno.scage.support.messages.ScageMessage
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.support.ScageLibrary._
 
@@ -64,11 +64,11 @@ object Scatris extends Application {
   }
   
   interface {
-    Message.print("FPS: "+fps, 200, height-25)
-    Message.print("Score: "+score, 20, height-25)
-    Message.print("Speed: x"+(300.0f/gameSpeed), 20, height-45)
-    if(is_game_finished) Message.print("Game Over", 20, height-65)
-    if(onPause) Message.print("PAUSE", width/2-20, height/2+60)
+    ScageMessage.print("FPS: "+fps, 200, height-25)
+    ScageMessage.print("Score: "+score, 20, height-25)
+    ScageMessage.print("Speed: x"+(300.0f/gameSpeed), 20, height-45)
+    if(is_game_finished) ScageMessage.print("Game Over", 20, height-65)
+    if(onPause) ScageMessage.print("PAUSE", width/2-20, height/2+60)
   }
 
   // game pause

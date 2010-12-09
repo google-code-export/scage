@@ -4,8 +4,8 @@ import su.msk.dunno.blame.prototypes.{Living, Decision}
 import su.msk.dunno.blame.field.FieldTracer
 import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.screens.support.tracer.State
-import su.msk.dunno.blame.support.{IngameMessages, TimeUpdater}
-import su.msk.dunno.scage.support.Colors._
+import su.msk.dunno.blame.support.{BottomMessages, TimeUpdater}
+import su.msk.dunno.scage.support.ScageColors._
 import su.msk.dunno.blame.animations.BulletFlight
 class Move(val step:Vec, living:Living) extends Decision(living) {
   override val action_period = 2
@@ -46,7 +46,7 @@ class Shoot(target_point:Vec, living:Living) extends Decision(living) {
       val kickback_delta = Vec(if(math.abs(kickback.x) > 0.3) math.signum(kickback.x) else 0, if(math.abs(kickback.y) > 0.3) math.signum(kickback.y) else 0)
       TimeUpdater.addDecision(new Move(kickback_delta, living))
       val objects = FieldTracer.objectsAtPoint(target_point)
-      IngameMessages.addBottomPropMessage("decision.shoot", living.stat("name"))
+      BottomMessages.addBottomPropMessage("decision.shoot", living.stat("name"))
       objects.foreach(_.changeState(new State("damage", 10)))
       was_executed = true
     }

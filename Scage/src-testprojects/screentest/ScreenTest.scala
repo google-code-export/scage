@@ -4,7 +4,7 @@ import su.msk.dunno.screens.ScageScreen
 import org.lwjgl.input.Keyboard
 object ScreenTest extends ScageScreen("Main ScageScreen") {
   /*interface {
-    Message.print("Press Esc to\nExit", width/2, height/2)
+    ScageMessage.print("Press Esc to\nExit", width/2, height/2)
   }*/
 
   keyListener(Keyboard.KEY_ESCAPE, onKeyDown = stop)

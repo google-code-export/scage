@@ -2,19 +2,19 @@ name = Blamer
 version = 0.1
 
 width = 800
-height = 650
+height = 600
 
-#visible_width = 200
-#visible_height = 200
+#field.visible.width = 200
+#field.visible.height = 200
 
-symbol_width = 12
-symbol_height = 24
+symbol.width = 12
+symbol.height = 24
 
-game_from_x = 0
-game_to_x = 1600
+field.from.x = 0
+field.to.x = 1600
 
-game_from_y = 0
-game_to_y = 2000
+field.from.y = 0
+field.to.y = 2000
 
 N_x = 100
 N_y = 100

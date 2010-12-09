@@ -6,7 +6,7 @@ import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.screens.handlers.Renderer
 import su.msk.dunno.screens.prototypes.Renderable
 import su.msk.dunno.blame.field.FieldTracer
-import su.msk.dunno.blame.support.IngameMessages
+import su.msk.dunno.blame.support.BottomMessages
 import su.msk.dunno.screens.support.ScageLibrary._
 import su.msk.dunno.blame.support.MyFont._
 import su.msk.dunno.blame.prototypes.Living
@@ -65,16 +65,16 @@ class SelectTarget(val stop_key:Int, val living:Living) extends ScageScreen("Tar
   windowCenter = Vec((width - 200)/2, 100 + (height - 100)/2)
   center = FieldTracer.pointCenter(living.point)
   
-  Renderer.backgroundColor(BLACK)  
+  Renderer.backgroundColor = BLACK  
   
   addRender(new Renderable {
     override def render = {
-      FieldTracer.draw(Blamer.currentPlayer.point)
+      FieldTracer.drawField(Blamer.currentPlayer.point)
       drawSelectLine
     }
     
     override def interface {
-      IngameMessages.showBottomMessages
+      BottomMessages.showBottomMessages
       Blamer.drawInterface
     }
   })

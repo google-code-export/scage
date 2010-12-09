@@ -1,8 +1,8 @@
 package su.msk.dunno.blame.prototypes
 
 import su.msk.dunno.screens.support.tracer.State
-import su.msk.dunno.scage.support.Color
-class Item(val name:String, val description:String, val symbol:Int, val color:Color) {
+import su.msk.dunno.scage.support.ScageColor
+class Item(val name:String, val description:String, val symbol:Int, val color:ScageColor) {
   // stats
   protected val stats = new State
   def boolStat(key:String):Boolean = stats.getBool(key)

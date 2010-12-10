@@ -70,7 +70,7 @@ class DropItem(item:Option[Item], living:Living) extends Decision(living) {
   }
 }
 
-class PickUpItem(living:Living) extends Decision(living) {
+/*class PickUpItem(living:Living) extends Decision(living) {
   override val action_period = 2
   
   def doAction = {
@@ -82,4 +82,4 @@ class PickUpItem(living:Living) extends Decision(living) {
       case None =>
     }
   }
-}
+}*/

@@ -21,7 +21,7 @@ class OpenDoor(living:Living) extends Decision(living) {
   override val action_period = 1
 
   def doAction = {
-    FieldTracer.neighboursOfPoint(living.trace, living.point, -1 to 1)
+    FieldTracer.neighboursOfPoint(living.trace, living.point, 1)
                .foreach(_.changeState(new State("door_open", living.stat("name"))))
     was_executed = true
   }
@@ -31,7 +31,7 @@ class CloseDoor(living:Living) extends Decision(living) {
   override val action_period = 1
 
   def doAction = {
-    FieldTracer.neighboursOfPoint(living.trace, living.point, -1 to 1)
+    FieldTracer.neighboursOfPoint(living.trace, living.point, 1)
                .foreach(_.changeState(new State("door_close", living.stat("name"))))
     was_executed = true
   }

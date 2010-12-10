@@ -10,18 +10,18 @@ object BottomMessages {
   val bottom_messages_height = 
     ScageProperties.property("bottommessages.height", (ScageMessage.font_size + 5)*bottom_messages_capacity)
   
-  def addBottomMessage(message:String, is_on_same_string:Boolean = false) = {
+  def addMessage(message:String, is_on_same_string:Boolean = false) = {
     if(is_on_same_string) bottom_messages = bottom_messages.head+" "+message :: bottom_messages.tail
     else bottom_messages = message :: bottom_messages
     if(bottom_messages.length > bottom_messages_capacity)
       bottom_messages = bottom_messages.init
   }
   
-  def addBottomPropMessage(message_code:String, parameters:String*) = {
-    addBottomMessage(ScageMessage.xml(message_code, parameters:_*), false)
+  def addPropMessage(message_code:String, parameters:String*) = {
+    addMessage(ScageMessage.xml(message_code, parameters:_*), is_on_same_string = false)
   }
-  def addBottomPropMessageSameString(message_code:String, parameters:String*) = {
-    addBottomMessage(ScageMessage.xml(message_code, parameters:_*), true)
+  def addPropMessageSameString(message_code:String, parameters:String*) = {
+    addMessage(ScageMessage.xml(message_code, parameters:_*), is_on_same_string = true)
   }
   
   def showBottomMessages = {

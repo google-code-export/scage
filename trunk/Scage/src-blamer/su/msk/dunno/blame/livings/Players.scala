@@ -7,6 +7,8 @@ import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.blame.prototypes.Living
 import su.msk.dunno.scage.support.messages.ScageMessage
 import su.msk.dunno.blame.items.TestItem
+import su.msk.dunno.screens.support.tracer.State
+import su.msk.dunno.blame.support.BottomMessages
 
 class Killy(point:Vec) extends Living(point, PLAYER, RED) {
   setStat("name", ScageMessage.xml("player.killy"))
@@ -18,6 +20,12 @@ class Killy(point:Vec) extends Living(point, PLAYER, RED) {
   inventory.addItem(new TestItem)
   inventory.addItem(new TestItem)
   inventory.addItem(new TestItem)
+  
+  override def changeStatus(s:State) = {
+    if(s.contains("damage")) {
+      BottomMessages.addPropMessageSameString("changestatus.damage", stat("name"), s.getString("damage"))
+    }
+  }
 }
 
 class Cibo(point:Vec) extends Living(point, PLAYER, BLUE) {
@@ -26,4 +34,10 @@ class Cibo(point:Vec) extends Living(point, PLAYER, BLUE) {
   setStat("dov", 5)
   
   FieldTracer.addLightSource(point, intStat("dov"), trace)
+  
+  override def changeStatus(s:State) = {
+    if(s.contains("damage")) {
+      BottomMessages.addPropMessageSameString("changestatus.damage", stat("name"), s.getString("damage"))
+    }
+  }
 }

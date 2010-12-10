@@ -26,7 +26,7 @@ object ScageMessage extends ScageColors {
   val glyph_to = ScageProperties.property("glyph.to", 1279)
   private val font = new SlickUnicodeFont(font_path, font_size, glyph_from, glyph_to)
 
-  def xml(message_code:String, parameters:String*) = {
+  def xml(message_code:String, parameters:String*):String = {
     val xml_message = try {
       xmlmh.xml_messages(message_code)
     }
@@ -39,10 +39,10 @@ object ScageMessage extends ScageColors {
         }
         else ""
         xmlmh.xml_messages += (message_code -> default)
-        default
+        return default
       }
     }
-    parameters.foldLeft(xml_message)((message, parameter) =>
+    return parameters.foldLeft(xml_message)((message, parameter) =>
       message.replaceFirst("\\?", parameter))
   }
 
@@ -51,7 +51,7 @@ object ScageMessage extends ScageColors {
   }
 
   private[ScageMessage] class XMLMessageHandler extends DefaultHandler {
-    var xml_messages = new HashMap[String,String]
+    var xml_messages = new HashMap[String, String]
 
     private var current_message_key = ""
     private var current_message_text = new StringBuilder

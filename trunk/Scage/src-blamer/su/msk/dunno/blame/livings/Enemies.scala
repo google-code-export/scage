@@ -19,9 +19,9 @@ class SiliconCreature(point:Vec) extends Npc(point, SILICON_CREATURE, CYAN) {
     val dov = intStat("dov")
     FieldTracer.neighboursOfPoint(trace, point, dov).foreach(neighbour => {
       if(neighbour.getState.getBool("is_player")) {
-        if((point dist neighbour.getPoint) > 3) {
-          val step = FieldTracer.direction(point, neighbour.getPoint)        
-          if(FieldTracer.isDirectionPassable(point, step))
+        if((point dist neighbour.getPoint) > 3) {       
+    	  val step = FieldTracer.direction(point, neighbour.getPoint)
+          if(FieldTracer.isPointPassable(point+step)) 
             return new Move(step, this)
           else return new Move(randomDir, living = this)
         }
@@ -34,7 +34,7 @@ class SiliconCreature(point:Vec) extends Npc(point, SILICON_CREATURE, CYAN) {
   override def changeStatus(s:State) = {
     if(s.contains("damage")) {
       changeStat("health", -s.getInt("damage"))
-      BottomMessages.addBottomPropMessageSameString("changestatus.damage", stat("name"), s.getString("damage"))
+      BottomMessages.addPropMessageSameString("changestatus.damage", stat("name"), s.getString("damage"))
     }
   }
 }

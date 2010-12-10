@@ -50,11 +50,11 @@ class Door(x:Int, y:Int) extends Tile(x, y) {
     def changeState(s:State) = {
       if(s.contains("door_open")) {
         is_open = true
-        BottomMessages.addBottomPropMessage("door.open", s.getString("door_open"))
+        BottomMessages.addPropMessage("door.open", s.getString("door_open"))
       }
       else if(s.contains("door_close")) {
         is_open = false
-        BottomMessages.addBottomPropMessage("door.close", s.getString("door_close"))
+        BottomMessages.addPropMessage("door.close", s.getString("door_close"))
       }
     }
   })

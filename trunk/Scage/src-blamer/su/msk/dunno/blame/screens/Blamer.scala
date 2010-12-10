@@ -12,7 +12,7 @@ import su.msk.dunno.blame.prototypes.Decision
 import su.msk.dunno.screens.handlers.Renderer
 import su.msk.dunno.blame.support.{BottomMessages, TimeUpdater, GenLib}
 import su.msk.dunno.blame.livings.{SiliconCreature, Cibo, Killy}
-import su.msk.dunno.blame.decisions.{Shoot, CloseDoor, OpenDoor, Move}
+import su.msk.dunno.blame.decisions._
 
 object Blamer extends ScageScreen("Blamer", is_main_screen = true, "blame-properties.txt") {
   val right_messages_width = property("rightmessages.width", 200)
@@ -86,8 +86,11 @@ object Blamer extends ScageScreen("Blamer", is_main_screen = true, "blame-proper
   keyListener(Keyboard.KEY_O, onKeyDown = TimeUpdater.addDecision(new OpenDoor(currentPlayer)))
   keyListener(Keyboard.KEY_C, onKeyDown = TimeUpdater.addDecision(new CloseDoor(currentPlayer)))
   keyListener(Keyboard.KEY_F, onKeyDown =
-          TimeUpdater.addDecision(new Shoot(new SelectTarget(Keyboard.KEY_F, currentPlayer).targetPoint, currentPlayer)))
-  keyListener(Keyboard.KEY_I, onKeyDown = new InventoryScreen(currentPlayer.inventory))
+          TimeUpdater.addDecision(new Shoot(currentPlayer.selectTarget(Keyboard.KEY_F), currentPlayer)))
+  keyListener(Keyboard.KEY_I, onKeyDown = currentPlayer.inventory.showInventory)
+  keyListener(Keyboard.KEY_D, onKeyDown = {
+    TimeUpdater.addDecision(new DropItem(currentPlayer.inventory.selectItem, currentPlayer))    
+  })
   
   keyListener(Keyboard.KEY_TAB, onKeyDown = is_play_cibo = !is_play_cibo)  
   keyListener(Keyboard.KEY_ESCAPE, onKeyDown = allStop)
@@ -116,7 +119,7 @@ object Blamer extends ScageScreen("Blamer", is_main_screen = true, "blame-proper
   })
   
   // initial message
-  BottomMessages.addBottomPropMessage("greetings.helloworld", currentPlayer.stat("name"))
+  BottomMessages.addPropMessage("greetings.helloworld", currentPlayer.stat("name"))
   
   def main(args:Array[String]):Unit = run
 }

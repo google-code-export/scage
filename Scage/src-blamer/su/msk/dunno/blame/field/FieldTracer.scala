@@ -46,9 +46,9 @@ object FieldTracer extends Tracer[FieldObject] {
     x >= 0 && x < N_x && y >= 0 && y < N_y
   }
 
-  def isPointPassable(x:Int, y:Int):Boolean = 
-    isPointOnArea(x, y) && (matrix(x)(y).length == 0 || matrix(x)(y).forall(_.isPassable))
-  def isPointPassable(point:Vec):Boolean = isPointPassable(point.ix, point.iy)
+  def isPointPassable(x:Int, y:Int, trace_id:Int):Boolean = 
+    isPointOnArea(x, y) && (matrix(x)(y).length == 0 || matrix(x)(y).filter(_.id != trace_id).forall(_.isPassable))
+  def isPointPassable(point:Vec, trace_id:Int = -1):Boolean = isPointPassable(point.ix, point.iy, trace_id)
   
   def isPointTransparent(x:Int, y:Int) = {
     isPointOnArea(x, y) && (matrix(x)(y).length == 0 || matrix(x)(y).forall(_.isTransparent))
@@ -56,7 +56,7 @@ object FieldTracer extends Tracer[FieldObject] {
   
   def isLocationPassable(coord:Vec) = {
     val p = point(coord)
-    isPointPassable(p.ix, p.iy)
+    isPointPassable(p.ix, p.iy, -1)
   }
 
   def randomPassablePoint(from:Vec = Vec(0, 0), to:Vec = Vec(N_x, N_y)):Vec = {
@@ -67,13 +67,13 @@ object FieldTracer extends Tracer[FieldObject] {
 
     val max_count = 10
     var count = max_count
-    while(!isPointPassable(x, y) && count > 0) {
+    while(!isPointPassable(x, y, -1) && count > 0) {
       x = (from.x + math.random*(to.x - from.x)).toInt
       y = (from.y + math.random*(to.y - from.y)).toInt
 
       count -= 1
     }
-    if(count == 0 && !isPointPassable(x, y))
+    if(count == 0 && !isPointPassable(x, y, -1))
       log.warn("warning: cannot locate random passable point within "+max_count+" tries")
 
     Vec(x, y)
@@ -84,12 +84,12 @@ object FieldTracer extends Tracer[FieldObject] {
     Vec(math.signum(diff.x), math.signum(diff.y))
   }
   
-  def isDirectionPassable(point:Vec, direction:Vec) = {
-    isPointPassable(point + direction)  
+  def isDirectionPassable(from:Vec, to:Vec) = {
+    isPointPassable(from + direction(from, to))
   }
   
   def move2PointIfPassable(trace_id:Int, old_point:Vec, new_point:Vec) = {
-    if(isPointPassable(new_point)) {
+    if(isPointPassable(new_point, trace_id)) {
       updatePointLocation(trace_id, old_point, new_point)
     }
     else false
@@ -100,6 +100,8 @@ object FieldTracer extends Tracer[FieldObject] {
       isVisible(point, fieldObject.getPoint, dov))
   }
   def objectsAtPoint(point:Vec) = matrix(point.ix)(point.iy)
+
+  def isNearPlayer(point:Vec) = (Blamer.currentPlayer.point dist point) < visibility_distance
 
   private val lineView = new ILosBoard {
     def contains(x:Int, y:Int):Boolean = isPointOnArea(x, y)    
@@ -139,18 +141,20 @@ object FieldTracer extends Tracer[FieldObject] {
     drawGray(player_point)
     drawEnlighted(player_point)
   }
-  private val distance_from_player = math.min(N_x/2, N_y/2)*math.min(N_x/2, N_y/2)
-  private def drawEnlighted(player_point:Vec) = {
-    light_sources.filter(source => (source._1() dist2 player_point) < distance_from_player).foreach(source => {
-      pp.visitFieldOfView(drawView, source._1().ix, source._1().iy, source._2())
-    })
-  }
 
   val field_visible_width  = property("field.visible.width",  Renderer.width - Blamer.right_messages_width)
   val field_visible_height = property("field.visible.height", Renderer.height - BottomMessages.bottom_messages_height)
 
   private val half_visible_N_x:Int = field_visible_width/h_x/2
   private val half_visible_N_y:Int = field_visible_height/h_y/2
+
+  val visibility_distance = math.min(half_visible_N_x, half_visible_N_y)*math.min(half_visible_N_x, half_visible_N_y)
+  private def drawEnlighted(player_point:Vec) = {
+    light_sources.filter(source => (source._1() dist2 player_point) < visibility_distance).foreach(source => {
+      pp.visitFieldOfView(drawView, source._1().ix, source._1().iy, source._2())
+    })
+  }
+
   private def drawGray(player_point:Vec) = {
     val from_x = math.max(0,     player_point.ix - half_visible_N_x)
     val to_x   = math.min(N_x-1, player_point.ix + half_visible_N_x)

@@ -7,6 +7,7 @@ import su.msk.dunno.blame.support.{BottomMessages, TimeUpdater}
 import su.msk.dunno.scage.support.ScageColors._
 import su.msk.dunno.blame.animations.BulletFlight
 import su.msk.dunno.blame.prototypes.{Item, Living, Decision}
+import su.msk.dunno.blame.screens.Blamer
 
 class Move(val step:Vec, living:Living) extends Decision(living) {
   override val action_period = 2
@@ -42,22 +43,43 @@ class Shoot(target_point:Vec, living:Living) extends Decision(living) {
 
   def doAction = {
     if(target_point != living.point) {
-      new BulletFlight(living.point, target_point, YELLOW)
+      if(FieldTracer.isNearPlayer(living.point)) new BulletFlight(living.point, target_point, YELLOW)
       val kickback = (living.point - target_point).n
-      val kickback_delta = Vec(if(math.abs(kickback.x) > 0.3) math.signum(kickback.x) else 0, if(math.abs(kickback.y) > 0.3) math.signum(kickback.y) else 0)
+      val kickback_delta = Vec(if(math.abs(kickback.x) > 0.3) math.signum(kickback.x) else 0,
+                               if(math.abs(kickback.y) > 0.3) math.signum(kickback.y) else 0)
       TimeUpdater.addDecision(new Move(kickback_delta, living))
       val objects = FieldTracer.objectsAtPoint(target_point)
-      BottomMessages.addBottomPropMessage("decision.shoot", living.stat("name"))
+      BottomMessages.addPropMessage("decision.shoot", living.stat("name"))
       objects.foreach(_.changeState(new State("damage", 10)))
       was_executed = true
     }
   }
 }
 
-class DropItem(living:Living, item:Item) extends Decision(living) {
+class DropItem(item:Option[Item], living:Living) extends Decision(living) {
   override val action_period = 2
   
   def doAction = {
-    living.inventory.removeItem(item)
+    item match {
+      case Some(item_to_drop) => {
+        living.inventory.removeItem(item_to_drop)
+        item_to_drop.drop(living.point)  
+      }
+      case None =>
+    }
+  }
+}
+
+class PickUpItem(living:Living) extends Decision(living) {
+  override val action_period = 2
+  
+  def doAction = {
+    item match {
+      case Some(item_to_drop) => {
+        living.inventory.removeItem(item_to_drop)
+        item_to_drop.drop(living.point)  
+      }
+      case None =>
+    }
   }
 }

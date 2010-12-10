@@ -10,6 +10,8 @@ trait HaveStats {
   def floatStat(key:String):Float = stats.getFloat(key)
   def stat(key:String):String = stats.getString(key)
 
+  def setStat(key:String) = stats.put(key)
+  
   def setStat[A](key:String, value:A)(implicit m:Manifest[A]) = {
     m.toString match {
       case "Int" => stats.put(key, value.asInstanceOf[Int])

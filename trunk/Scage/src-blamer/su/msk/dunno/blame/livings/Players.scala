@@ -11,8 +11,9 @@ import su.msk.dunno.blame.items.TestItem
 class Killy(point:Vec) extends Living(point, PLAYER, RED) {
   setStat("name", ScageMessage.xml("player.killy"))
   setStat("is_player", true)
+  setStat("dov", 5)
   
-  FieldTracer.addLightSource(point)
+  FieldTracer.addLightSource(point, intStat("dov"), trace)
   
   inventory.addItem(new TestItem)
   inventory.addItem(new TestItem)
@@ -22,6 +23,7 @@ class Killy(point:Vec) extends Living(point, PLAYER, RED) {
 class Cibo(point:Vec) extends Living(point, PLAYER, BLUE) {
   setStat("name", ScageMessage.xml("player.cibo"))
   setStat("is_player", true)
+  setStat("dov", 5)
   
-  FieldTracer.addLightSource(point)
+  FieldTracer.addLightSource(point, intStat("dov"), trace)
 }

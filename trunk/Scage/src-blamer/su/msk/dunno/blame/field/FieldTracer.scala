@@ -35,11 +35,11 @@ object FieldTracer extends Tracer[FieldObject] {
   override def removeTraceFromPoint(trace_id:Int, p:Vec) = {
     matrix(p.ix)(p.iy).find(_.id == trace_id) match {
       case Some(fieldObject) => {
-        light_sources = light_sources.filterNot(source => pointCenter(source._1()) == fieldObject.getCoord)
         matrix(p.ix)(p.iy) = matrix(p.ix)(p.iy).filterNot(_ == fieldObject)
       }
       case None =>
     }
+    light_sources = light_sources.filterNot(_._3 == trace_id)
   }
 
   def isPointOnArea(x:Int, y:Int) = {
@@ -95,9 +95,9 @@ object FieldTracer extends Tracer[FieldObject] {
     else false
   }
   
-  def neighboursOfPoint(trace_id:Int, point:Vec, range:Range) = {
-    neighbours(trace_id, pointCenter(point), range, (fieldObject) => 
-      isVisible(point, fieldObject.getPoint, fieldObject.getState.getInt("dov")))
+  def neighboursOfPoint(trace_id:Int, point:Vec, dov:Int) = {
+    neighbours(trace_id, pointCenter(point), -dov to dov, (fieldObject) =>
+      isVisible(point, fieldObject.getPoint, dov))
   }
   def objectsAtPoint(point:Vec) = matrix(point.ix)(point.iy)
 
@@ -122,8 +122,9 @@ object FieldTracer extends Tracer[FieldObject] {
   def allowDraw(point:Vec) =
     if(!matrix(point.ix)(point.iy).isEmpty) matrix(point.ix)(point.iy).foreach(_.allowDraw)  
 
-  private var light_sources:List[(() => Vec, () => Int)] = Nil
-  def addLightSource(point: => Vec, dov: => Int = 5) = light_sources = (() => point, () => dov) :: light_sources
+  private var light_sources:List[(() => Vec, () => Int, Int)] = Nil
+  def addLightSource(point: => Vec, dov: => Int = 5, trace_id:Int) = 
+    light_sources = (() => point, () => dov, trace_id) :: light_sources
   
   private val pp = new PrecisePermissive();  
   private val drawView = new ILosBoard() {

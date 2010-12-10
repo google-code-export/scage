@@ -17,7 +17,7 @@ class SiliconCreature(point:Vec) extends Npc(point, SILICON_CREATURE, CYAN) {
   def livingAI:Decision = {
     def randomDir:Vec = Vec((math.random*3).toInt - 1, (math.random*3).toInt - 1)
     val dov = intStat("dov")
-    FieldTracer.neighboursOfPoint(trace, point, -dov to dov).foreach(neighbour => {
+    FieldTracer.neighboursOfPoint(trace, point, dov).foreach(neighbour => {
       if(neighbour.getState.getBool("is_player")) {
         if((point dist neighbour.getPoint) > 3) {
           val step = FieldTracer.direction(point, neighbour.getPoint)        

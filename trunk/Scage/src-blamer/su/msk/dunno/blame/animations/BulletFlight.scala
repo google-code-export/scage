@@ -27,7 +27,7 @@ extends ScageScreen("Bullet Flight") {
     def changeState(s:State) = {}
   })
 
-  FieldTracer.addLightSource(line(count))
+  FieldTracer.addLightSource(line(count), 5, trace)
 
   private var last_move_time = System.currentTimeMillis
   addHandler(new ActionHandler {

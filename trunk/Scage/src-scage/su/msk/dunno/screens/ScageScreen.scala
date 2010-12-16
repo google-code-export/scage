@@ -3,7 +3,7 @@ package su.msk.dunno.screens
 import handlers.controller.Controller
 import handlers.{Idler, Renderer}
 import org.apache.log4j.Logger
-import prototypes.{Renderable, ActionHandler}
+import prototypes.{ScageRender, ScageAction}
 import su.msk.dunno.scage.support.{Vec, ScageProperties}
 
 object ScageScreen {
@@ -18,8 +18,8 @@ class ScageScreen(val screen_name:String, val is_main_screen:Boolean = false, pr
 
   if(!"".equals(properties)) ScageProperties.properties = properties
   
-  private var handlers:List[ActionHandler] = Nil
-  def addHandler(handler:ActionHandler, period:Long = 0) = 
+  private var handlers:List[ScageAction] = Nil
+  def addAction(handler:ScageAction, period:Long = 0) =
     if(period > 0) handlers = new ActionWaiter(period, handler) :: handlers
     else handlers = handler :: handlers
 
@@ -28,7 +28,7 @@ class ScageScreen(val screen_name:String, val is_main_screen:Boolean = false, pr
     controller.keyListener(key, repeatTime, onKeyDown, onKeyUp)
 
   val renderer = if(is_main_screen) new Renderer(main_screen = this) else new Renderer
-  def addRender(render:Renderable) = renderer.addRender(render)
+  def addRender(render:ScageRender) = renderer.addRender(render)
 
   def scale = renderer.scale
   def scale_= (value:Float) = renderer.scale = value
@@ -61,7 +61,7 @@ class ScageScreen(val screen_name:String, val is_main_screen:Boolean = false, pr
     else is_running = false 
   }
 
-  private[ScageScreen] class ActionWaiter(val period:Long, private val action_handler:ActionHandler) extends ActionHandler {
+  private[ScageScreen] class ActionWaiter(val period:Long, private val action_handler:ScageAction) extends ScageAction {
     private var last_action_time:Long = 0
 
     override def action {

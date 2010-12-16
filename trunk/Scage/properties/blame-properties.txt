@@ -1,8 +1,8 @@
-name = Blamer
-version = 0.1
+app.name = Blamer
+app.version = 0.1
 
-width = 800
-height = 600
+screen.width = 800
+screen.height = 600
 
 #field.visible.width = 200
 #field.visible.height = 200
@@ -16,10 +16,10 @@ field.to.x = 1600
 field.from.y = 0
 field.to.y = 2000
 
-N_x = 100
-N_y = 100
+field.N_x = 100
+field.N_y = 100
 
 framerate = 60
 
 strings.base = res/strings/blamer_strings
-lang = ru
+strings.lang = ru

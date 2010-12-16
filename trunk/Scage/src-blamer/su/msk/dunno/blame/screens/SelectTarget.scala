@@ -4,7 +4,7 @@ import su.msk.dunno.screens.ScageScreen
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.screens.handlers.Renderer
-import su.msk.dunno.screens.prototypes.Renderable
+import su.msk.dunno.screens.prototypes.ScageRender
 import su.msk.dunno.blame.field.FieldTracer
 import su.msk.dunno.blame.support.BottomMessages
 import su.msk.dunno.screens.support.ScageLibrary._
@@ -76,7 +76,7 @@ class SelectTarget(val living:Living) extends ScageScreen("Target Selector") {
   
   Renderer.backgroundColor = BLACK  
   
-  addRender(new Renderable {
+  addRender(new ScageRender {
     override def render = {
       FieldTracer.drawField(Blamer.currentPlayer.point)
       drawSelectLine

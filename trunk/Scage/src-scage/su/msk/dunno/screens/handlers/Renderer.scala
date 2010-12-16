@@ -8,12 +8,12 @@ import org.lwjgl.util.glu.GLU
 import su.msk.dunno.scage.support.ScageProperties._
 import su.msk.dunno.scage.support.{ScageColor, ScageColors, Vec}
 import su.msk.dunno.scage.support.messages.ScageMessage._
-import su.msk.dunno.screens.prototypes.{ActionHandler, Renderable}
+import su.msk.dunno.screens.prototypes.{ScageAction, ScageRender}
 import org.lwjgl.BufferUtils
 
 object Renderer {
-  val width = property("width", 800)
-  val height = property("height", 600)
+  val width = property("screen.width", 800)
+  val height = property("screen.height", 600)
   
   val framerate = property("framerate", 100)
 
@@ -39,7 +39,7 @@ object Renderer {
 
   lazy val initgl = {
     Display.setDisplayMode(new DisplayMode(width, height));
-    Display.setTitle(property("name", "Scage")+" - "+stringProperty("version"));
+    Display.setTitle(property("app.name", "Scage")+" - "+stringProperty("app.version"));
     Display.setVSyncEnabled(true);
     Display.create();
 
@@ -176,7 +176,7 @@ object Renderer {
 class Renderer {
   def this(main_screen:ScageScreen) = {
     this()
-    main_screen.addHandler(new ActionHandler {
+    main_screen.addAction(new ScageAction {
       override def exit = {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
         print(xml("message.exiting", "Exiting..."), 20, Renderer.height-25, ScageColors.GREEN)
@@ -201,8 +201,8 @@ class Renderer {
   def center = central_coord()
   def center_= (coord: => Vec) = central_coord = () => coord
   
-  private var render_list:List[Renderable] = Nil
-  def addRender(render:Renderable) = render_list = render :: render_list
+  private var render_list:List[ScageRender] = Nil
+  def addRender(render:ScageRender) = render_list = render :: render_list
 
   def render = {
     if(Display.isCloseRequested()) ScageScreen.allStop

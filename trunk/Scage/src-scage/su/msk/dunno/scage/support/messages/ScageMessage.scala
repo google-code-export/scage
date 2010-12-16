@@ -11,7 +11,7 @@ import org.apache.log4j.Logger
 object ScageMessage extends ScageColors {
   private val log = Logger.getLogger(this.getClass)
   
-  val lang = ScageProperties.property("lang", "en")
+  val lang = ScageProperties.property("strings.lang", "en")
   val messages_base = ScageProperties.property("strings.base", "strings")
   val messages_file = messages_base + "_" + lang + ".xml"
 

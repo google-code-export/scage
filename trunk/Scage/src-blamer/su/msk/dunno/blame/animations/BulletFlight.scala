@@ -4,7 +4,7 @@ import su.msk.dunno.screens.ScageScreen
 import su.msk.dunno.blame.support.BottomMessages
 import su.msk.dunno.blame.screens.Blamer
 import su.msk.dunno.scage.support.{ScageColor, Vec}
-import su.msk.dunno.screens.prototypes.{ActionHandler, Renderable}
+import su.msk.dunno.screens.prototypes.{ScageAction, ScageRender}
 import su.msk.dunno.blame.field.{FieldObject, FieldTracer}
 import su.msk.dunno.screens.support.tracer.State
 import su.msk.dunno.blame.support.MyFont._
@@ -30,7 +30,7 @@ extends ScageScreen("Bullet Flight") {
   FieldTracer.addLightSource(line(count), 5, trace)
 
   private var last_move_time = System.currentTimeMillis
-  addHandler(new ActionHandler {
+  addAction(new ScageAction {
     override def action = {
       if(System.currentTimeMillis - last_move_time > delay) {
         if(count < line.length-1) {
@@ -54,7 +54,7 @@ extends ScageScreen("Bullet Flight") {
 
   Renderer.backgroundColor = BLACK  
 
-  addRender(new Renderable {
+  addRender(new ScageRender {
     override def render = FieldTracer.drawField(Blamer.currentPlayer.point)
 
     override def interface {

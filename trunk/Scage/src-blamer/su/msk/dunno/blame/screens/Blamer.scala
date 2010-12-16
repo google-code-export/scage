@@ -7,7 +7,7 @@ import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.blame.field.FieldTracer
 import su.msk.dunno.blame.field.tiles.{Door, Wall, Floor}
-import su.msk.dunno.screens.prototypes.Renderable
+import su.msk.dunno.screens.prototypes.ScageRender
 import su.msk.dunno.blame.prototypes.Decision
 import su.msk.dunno.screens.handlers.Renderer
 import su.msk.dunno.blame.support.{BottomMessages, TimeUpdater, GenLib}
@@ -112,7 +112,7 @@ object Blamer extends ScageScreen("Blamer", is_main_screen = true, "blame-proper
     ScageMessage.print("HP: "+currentPlayer.stat("health"), width - right_messages_width, height-85, WHITE)
   } 
 
-  addRender(new Renderable {
+  addRender(new ScageRender {
     override def render = FieldTracer.drawField(currentPlayer.point)
 
     override def interface = drawInterface

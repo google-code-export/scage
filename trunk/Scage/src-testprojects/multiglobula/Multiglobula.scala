@@ -1,0 +1,5 @@
+package multiglobula
+
+object Multiglobula {
+
+}

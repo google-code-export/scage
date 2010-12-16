@@ -4,7 +4,7 @@ import collection.mutable.HashMap
 import su.msk.dunno.screens.handlers.Renderer
 import su.msk.dunno.scage.support.messages.ScageMessage
 import org.lwjgl.input.Keyboard
-import su.msk.dunno.screens.prototypes.Renderable
+import su.msk.dunno.screens.prototypes.ScageRender
 import su.msk.dunno.screens.ScageScreen
 
 class Inventory(val owner:Living) {
@@ -57,7 +57,7 @@ class Inventory(val owner:Living) {
   }
 
   private lazy val inventory_screen = new ScageScreen("Inventory Screen") {
-    addRender(new Renderable {
+    addRender(new ScageRender {
       override def interface = {
         ScageMessage.print(ScageMessage.xml("inventory.ownership", owner.stat("name")), 20, Renderer.height-20)
         if(item_selector == -1) {

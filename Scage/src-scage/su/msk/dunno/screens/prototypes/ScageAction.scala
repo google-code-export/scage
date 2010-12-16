@@ -1,6 +1,6 @@
 package su.msk.dunno.screens.prototypes
 
-trait ActionHandler {
+trait ScageAction {
   def init = {}
   def action = {}
   def exit = {}

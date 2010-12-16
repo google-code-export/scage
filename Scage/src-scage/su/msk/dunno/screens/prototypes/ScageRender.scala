@@ -1,6 +1,6 @@
 package su.msk.dunno.screens.prototypes
 
-trait Renderable {
+trait ScageRender {
   def render = {}
   def interface = {}
 }

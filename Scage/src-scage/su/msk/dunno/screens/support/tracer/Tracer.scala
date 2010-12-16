@@ -21,9 +21,9 @@ class Tracer[T <: Trace](val field_from_x:Int = property("field.from.x", 0),
                          val field_to_x:Int = property("field.to.x", 800),
                          val field_from_y:Int = property("field.from.y", 0), 
                          val field_to_y:Int = property("field.to.y", 600),
-                         val N_x:Int = property("N_x", 16), 
-                         val N_y:Int = property("N_y", 12),
-                         val are_solid_edges:Boolean = true) {
+                         val N_x:Int = property("field.N_x", 16),
+                         val N_y:Int = property("field.N_y", 12),
+                         val are_solid_edges:Boolean = property("field.solid_edges", true)) {
   protected val log = Logger.getLogger(this.getClass);
 
   log.info("using tracer "+this.getClass.getName)

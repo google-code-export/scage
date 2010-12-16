@@ -13,7 +13,7 @@ object HelloWorld extends Application {
     Renderer.color = ScageColors.CYAN
     println(Renderer.color)
 
-    /*addRender(new Renderable {
+    /*addRender(new ScageRender {
       override def interface = {
          print(xml("hello.world"), Renderer.width/2, Renderer.height/2)
          Renderer.drawCircle(Vec(Renderer.width/2, Renderer.height/2), 5)         

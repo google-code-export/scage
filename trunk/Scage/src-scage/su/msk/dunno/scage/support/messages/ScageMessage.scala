@@ -8,19 +8,28 @@ import java.io.FileInputStream
 import javax.xml.parsers.SAXParserFactory
 import org.apache.log4j.Logger
 
-object ScageMessage extends ScageColors {
+object ScageMessage {
   private val log = Logger.getLogger(this.getClass)
   
   val lang = ScageProperties.property("strings.lang", "en")
-  val messages_base = ScageProperties.property("strings.base", "strings")
+  val messages_base = ScageProperties.property("strings.base", "/res/strings/strings")
   val messages_file = messages_base + "_" + lang + ".xml"
 
   private val xmlmh = new XMLMessageHandler
   private val parser = SAXParserFactory.newInstance.newSAXParser
-  private val fis = new FileInputStream(messages_file)
-  parser.parse(fis, xmlmh)
+  private var fis:FileInputStream = null
+  try {
+    fis = new FileInputStream(messages_file)
+    parser.parse(fis, xmlmh)
+  }
+  catch {
+    case e:Exception => {
+      log.error("failed to parse file "+messages_file+":\n"+e.getLocalizedMessage)
+    }
+  }
 
-  val font_path = ScageProperties.property("font.name", "res/fonts/DroidSans.ttf")
+
+  val font_path = ScageProperties.property("font.file", "res/fonts/DroidSans.ttf")
   val font_size = ScageProperties.property("font.size", 18)
   val glyph_from = ScageProperties.property("glyph.from", 1024)
   val glyph_to = ScageProperties.property("glyph.to", 1279)
@@ -46,7 +55,7 @@ object ScageMessage extends ScageColors {
       message.replaceFirst("\\?", parameter))
   }
 
-  def print(message:Any, x:Float, y:Float, color:ScageColor = WHITE) = {
+  def print(message:Any, x:Float, y:Float, color:ScageColor = ScageColors.WHITE) = {
     font.drawString(x,y,message.toString, new org.newdawn.slick.Color(color.red, color.green, color.blue))
   }
 

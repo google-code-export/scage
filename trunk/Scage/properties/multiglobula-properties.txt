@@ -1,0 +1,20 @@
+app.name = Multiglobula
+app.version = 0.1
+
+screen.width = 640
+screen.height = 480
+
+field.from.x = 0
+field.to.x = 640
+
+field.from.y = 0
+field.to.y = 480
+
+field.N_x = 32
+field.N_y = 24
+
+field.solid_edges = false
+
+framerate = 60
+
+#dt = 0.5

@@ -121,7 +121,7 @@ class Tracer[T <: Trace](val field_from_x:Int = property("field.from.x", 0),
     }
   }
 
-  def checkEdges(coord:Vec):Vec = {
+  private def checkEdges(coord:Vec):Vec = {
     def checkC(c:Float, from:Float, to:Float):Float = {
       val dist = to - from
       if(c >= to) checkC(c - dist, from, to)

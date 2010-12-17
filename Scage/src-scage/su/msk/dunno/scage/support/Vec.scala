@@ -52,5 +52,12 @@ case class Vec(private var _x:Float, private var _y:Float) {
     _y = v.y
   }
 
+  def is(v:(Float, Float)) = {
+    _x = v._1
+    _y = v._2
+  }
+
+  def copy = new Vec(x, y)
+
   override def toString() = x+" : "+y
 }

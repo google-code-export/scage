@@ -23,27 +23,28 @@ case class Vec(private var _x:Float, private var _y:Float) {
 
   def **(v:Vec) = Vec(x*v.x, y*v.y)
 
-  def /(k:Float) = if(k == 0)Vec(x*1000, y*1000) else Vec(x/k, y/k)
+  def /(k:Float) = if(k == 0) Vec(x*1000, y*1000) else Vec(x/k, y/k)
   def /(k:Double):Float = this/k.toFloat
   def /(k:Int):Float = this/k.toFloat
 
   def norma2():Float = x*x + y*y
-  def norma() = Math.sqrt(norma2).toFloat
+  def norma() = math.sqrt(norma2).toFloat
   def n() = this/norma
 
   def dist2(v:Vec) = (x - v.x)*(x - v.x) + (y - v.y)*(y - v.y)
-  def dist(v:Vec) = Math.sqrt(dist2(v)).toFloat
+  def dist(v:Vec) = math.sqrt(dist2(v)).toFloat
 
   def notZero() = x != 0 || y != 0
+  def isZero = _x == 0 && _y == 0
   def ==(v:Vec) = x == v.x && y == v.y
   def !=(v:Vec) = null == v || x != v.x || y != v.y
 
-  def deg(v:Vec) = (180/Math.Pi*Math.acos(n * v.n)).toFloat
-  def rad(v:Vec) = (Math.acos(n * v.n)).toFloat
-  def rotateRad(ang:Double) = Vec((x * Math.cos(ang) - y * Math.sin(ang)).toFloat,
-                                  (x * Math.sin(ang) + y * Math.cos(ang)).toFloat)
+  def deg(v:Vec) = (180/math.Pi*math.acos(n * v.n)).toFloat
+  def rad(v:Vec) = (math.acos(n * v.n)).toFloat
+  def rotateRad(ang:Double) = Vec((x * math.cos(ang) - y * math.sin(ang)).toFloat,
+                                  (x * math.sin(ang) + y * math.cos(ang)).toFloat)
   def rotate(ang:Double) = rotateRad(ang)
-  def rotateDeg(ang:Double) = rotateRad(ang/180*Math.Pi)
+  def rotateDeg(ang:Double) = rotateRad(ang/180*math.Pi)
 
   def ::(o:Vec) = o :: List[Vec](this)
 

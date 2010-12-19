@@ -30,10 +30,6 @@ object ProteinTracer extends Tracer[NodeTrace] {
     }
     Some(coord)
   }
-
-  def reflectFromEdge(coord:Int) = {
-
-  }
 }
 
 class Node(screen:ScageScreen, val coord:Vec, val velocity:Vec, val radius:Int = 5, val mass:Float = 1) {
@@ -75,6 +71,13 @@ class Node(screen:ScageScreen, val coord:Vec, val velocity:Vec, val radius:Int =
         new_velocity is n*u1_x + n_ortho*v1_y
       }
     })
+
+    // reflect from edges
+    val out_coord = coord + velocity*Multiglobula.dt
+    if(out_coord.x < ProteinTracer.field_from_x ||
+       out_coord.x >= ProteinTracer.field_to_x) new_velocity is (-velocity.x, velocity.y)
+    if(out_coord.y < ProteinTracer.field_from_y ||
+       out_coord.y >= ProteinTracer.field_to_y) new_velocity is (velocity.x, -velocity.y)
   }
 
   def updateVelocity = {

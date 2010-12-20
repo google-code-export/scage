@@ -32,6 +32,17 @@ trait FieldObject extends Trace {
 }
 
 object FieldTracer extends Tracer[FieldObject] {
+  /*def addTraceSecondToLast(fo:FieldObject) = {
+    val p = fo.getPoint
+    if(isPointOnArea(p)) {
+      matrix(p.ix)(p.iy) = coord_matrix(p.ix)(p.iy) = coord_matrix(p.ix)(p.iy).head :: fo :: coord_matrix(p.ix)(p.iy).tail
+      fo._id = nextTraceID
+      log.debug("added new trace #"+fo.id+" in coord ("+fo.getCoord+")")
+    }
+    else log.error("failed to add trace: coord ("+fo.getCoord+") is out of area")
+    fo.id
+  }*/
+
   override def removeTraceFromPoint(trace_id:Int, p:Vec) = {
     matrix(p.ix)(p.iy).find(_.id == trace_id) match {
       case Some(fieldObject) => {

@@ -4,6 +4,14 @@ import org.apache.log4j.Logger
 import su.msk.dunno.screens.support.ScageLibrary._
 import su.msk.dunno.scage.support.{Vec}
 
+trait Trace {
+  private[tracer] var _id = -1
+  def id = _id
+  def getCoord():Vec
+  def getState():State
+  def changeState(state:State):Unit
+}
+
 object Tracer {
   private val log = Logger.getLogger(this.getClass);
 

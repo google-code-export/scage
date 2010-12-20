@@ -1,6 +1,5 @@
 package su.msk.dunno.blame.decisions
 
-import su.msk.dunno.blame.field.FieldTracer
 import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.screens.support.tracer.State
 import su.msk.dunno.blame.support.{BottomMessages, TimeUpdater}
@@ -8,6 +7,7 @@ import su.msk.dunno.scage.support.ScageColors._
 import su.msk.dunno.blame.animations.BulletFlight
 import su.msk.dunno.blame.prototypes.{Item, Living, Decision}
 import su.msk.dunno.blame.screens.Blamer
+import su.msk.dunno.blame.field.{FieldObject, FieldTracer}
 
 class Move(val step:Vec, living:Living) extends Decision(living) {
   override val action_period = 2
@@ -56,30 +56,31 @@ class Shoot(target_point:Vec, living:Living) extends Decision(living) {
   }
 }
 
-class DropItem(item:Option[Item], living:Living) extends Decision(living) {
+class DropItem(item:Option[FieldObject], living:Living) extends Decision(living) {
   override val action_period = 2
   
   def doAction = {
     item match {
       case Some(item_to_drop) => {
         living.inventory.removeItem(item_to_drop)
-        item_to_drop.drop(living.point)  
+        item_to_drop.changeState(new State("location", living.point))
+        FieldTracer.addTrace(item_to_drop)
       }
       case None =>
     }
   }
 }
 
-/*class PickUpItem(living:Living) extends Decision(living) {
+class PickUpItem(living:Living) extends Decision(living) {
   override val action_period = 2
   
   def doAction = {
-    item match {
-      case Some(item_to_drop) => {
-        living.inventory.removeItem(item_to_drop)
-        item_to_drop.drop(living.point)  
+    FieldTracer.objectsAtPoint(living.point).find(_.getState.contains("item")) match {
+      case Some(item) => {
+        living.inventory.addItem(item)
+        FieldTracer.removeTraceFromPoint(item.id, item.getPoint)
       }
       case None =>
     }
   }
-}*/
+}

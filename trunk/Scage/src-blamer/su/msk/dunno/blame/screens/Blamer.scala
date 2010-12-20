@@ -91,6 +91,9 @@ object Blamer extends ScageScreen("Blamer", is_main_screen = true, "blame-proper
   keyListener(Keyboard.KEY_D, onKeyDown = {
     TimeUpdater.addDecision(new DropItem(currentPlayer.inventory.selectItem, currentPlayer))    
   })
+  keyListener(Keyboard.KEY_COMMA, onKeyDown = {
+    TimeUpdater.addDecision(new PickUpItem(currentPlayer))
+  })
   
   keyListener(Keyboard.KEY_TAB, onKeyDown = is_play_cibo = !is_play_cibo)  
   keyListener(Keyboard.KEY_ESCAPE, onKeyDown = allStop)

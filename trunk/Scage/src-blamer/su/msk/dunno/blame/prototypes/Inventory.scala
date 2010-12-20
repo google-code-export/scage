@@ -6,9 +6,10 @@ import su.msk.dunno.scage.support.messages.ScageMessage
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.screens.prototypes.ScageRender
 import su.msk.dunno.screens.ScageScreen
+import su.msk.dunno.blame.field.FieldObject
 
 class Inventory(val owner:Living) {
-  private var items:HashMap[String, List[Item]] = new HashMap[String, List[Item]]()
+  private var items:HashMap[String, List[FieldObject]] = new HashMap[String, List[FieldObject]]()
   private var item_positions:List[String] = Nil
     
   private var item_selector:Int = -1
@@ -19,14 +20,14 @@ class Inventory(val owner:Living) {
     if(is_item_selection) inventory_screen.stop
   }
   
-  def selectedItem:Option[Item] = {
+  def selectedItem:Option[FieldObject] = {
     if(item_selector >= 1 && item_selector <= item_positions.size &&
        !items(item_positions(item_selector-1)).isEmpty) Some(items(item_positions(item_selector-1)).head)
     else None
   }
   
   private var is_item_selection = false
-  def selectItem:Option[Item] = {
+  def selectItem:Option[FieldObject] = {
     item_selector = -1
     is_item_selection = true
     inventory_screen.run
@@ -39,17 +40,17 @@ class Inventory(val owner:Living) {
     inventory_screen.run
   }
 
-  def addItem(item:Item) = {
+  def addItem(item:FieldObject) = {
     if(items.keys.size < 10) {
-      val name = item.stat("name")
+      val name = item.getState.getString("name")
       if(items.contains(name)) items(name) = item :: items(name)
       else items += (name -> List(item))
       if(!item_positions.contains(name)) item_positions = name :: item_positions
     }
   }
 
-  def removeItem(item:Item) = {
-    val name = item.stat("name")
+  def removeItem(item:FieldObject) = {
+    val name = item.getState.getString("name")
     if(items.contains(name)) {
       items(name) = items(name).tail
       if(items(name).size == 0) item_positions = item_positions.filterNot(_ == name)
@@ -72,7 +73,8 @@ class Inventory(val owner:Living) {
         else if(item_selector >= 1 && item_selector <= item_positions.size &&
                 !items(item_positions(item_selector-1)).isEmpty) {
           var selected_item = items(item_positions(item_selector-1)).head
-          ScageMessage.print(selected_item.stat("name")+":\n"+selected_item.stat("description"), 20, Renderer.height-60)
+          ScageMessage.print(selected_item.getState.getString("name")+":\n"+
+                             selected_item.getState.getString("description"), 20, Renderer.height-60)
         }
       }
     })

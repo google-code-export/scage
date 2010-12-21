@@ -14,7 +14,10 @@ import su.msk.dunno.blame.support.{BottomMessages, TimeUpdater, GenLib}
 import su.msk.dunno.blame.livings.{SiliconCreature, Cibo, Killy}
 import su.msk.dunno.blame.decisions._
 
-object Blamer extends ScageScreen("Blamer", is_main_screen = true, "blame-properties.txt") {
+object Blamer extends ScageScreen(
+  screen_name = "Blamer",
+  is_main_screen = true,
+  properties = "blame-properties.txt") {
   val right_messages_width = property("rightmessages.width", 200)
   
   // map
@@ -31,12 +34,31 @@ object Blamer extends ScageScreen("Blamer", is_main_screen = true, "blame-proper
   
   // players
   private var is_play_cibo = false
-  val killy = new Killy(FieldTracer.randomPassablePoint())
-  val cibo = new Cibo(FieldTracer.randomPassablePoint(killy.point - Vec(2,2), killy.point + Vec(2,2)))
+  val killy = FieldTracer.randomPassablePoint() match {
+    case Some(point) => new Killy(point)
+    case None => {
+      log.error("failed to place killy to the field, the programm will exit")
+      System.exit(1)
+      null
+    }
+  }
+  val cibo = FieldTracer.randomPassablePoint(killy.point - Vec(2,2), killy.point + Vec(2,2)) match {
+    case Some(point) => new Cibo(point)
+    case None => {
+      log.error("failed to place cibo to the field, the programm will exit")
+      System.exit(1)
+      null
+    }
+  }
   def currentPlayer = if(is_play_cibo) cibo else killy
   
   // enemies
-  (1 to 50).foreach(i => new SiliconCreature(FieldTracer.randomPassablePoint()))
+  (1 to 50).foreach(i => {
+    FieldTracer.randomPassablePoint() match {
+      case Some(point) => new SiliconCreature(point)
+      case None =>
+    }
+  })
 
   // controls on main screen
   private var is_key_pressed = false

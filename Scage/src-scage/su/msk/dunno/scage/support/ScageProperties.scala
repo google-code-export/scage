@@ -63,7 +63,7 @@ object ScageProperties {
     }
   }
   private def defaultValue[A](key:String, default:A) = {
-    log.info("default value for "+key+" is "+(if("".equals(default.toString)) "empty string" else default))
+    log.info("default value for property "+key+" is "+(if("".equals(default.toString)) "empty string" else default))
     default
   }
 
@@ -81,8 +81,8 @@ object ScageProperties {
               else if(p.equalsIgnoreCase("no")    || p.equalsIgnoreCase("0") ||
                       p.equalsIgnoreCase("false") || p.equalsIgnoreCase("off")) false.asInstanceOf[A]
               else {
-                log.info("boolean property "+p+" unsupported")
-                log.info("supported boolean properties: yes/no, 1/0, true/false, on/off")
+                log.info("boolean property "+p+" is unsupported")
+                log.info("supported boolean properties are: yes/no, 1/0, true/false, on/off")
                 defaultValue(key, default)
               }
             case _ => p.asInstanceOf[A]

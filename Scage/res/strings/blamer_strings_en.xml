@@ -39,4 +39,24 @@
     <message code="inventory.ownership">
         ?'s Inventory
     </message>
+
+    <message code="item.drop">
+        ? drops ? to the floor
+    </message>
+
+    <message code="item.pickup">
+        ? picks up ? from the floor
+    </message>
+
+    <message code="item.nopickup">
+        ? tries to find something on the floor, but fails
+    </message>
+
+    <message code="testitem.name">
+        Test Item
+    </message>
+
+    <message code="testitem.description">
+        Item for test purposes
+    </message>
 </messages>

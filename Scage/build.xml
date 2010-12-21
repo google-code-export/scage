@@ -38,7 +38,7 @@
                         <copy toDir="builds/projects/${project.name}-${project.version}-${os.type}/lib">
                                 <fileset dir="lib/logging" />
                         </copy>
-            <copy toDir="builds/projects/${project.name}-${project.version}-${os.type}/lib" file="lib/scala/scala-library.jar" />
+            <copy toDir="builds/projects/${project.name}-${project.version}-${os.type}/lib" file="lib/scala280final/scala-library.jar" />
                         <copy toDir="builds/projects/${project.name}-${project.version}-${os.type}/lib" file="lib/lwjgl/jar/jinput.jar" />
                         <copy toDir="builds/projects/${project.name}-${project.version}-${os.type}/lib" file="lib/lwjgl/jar/lwjgl.jar" />
                         <copy toDir="builds/projects/${project.name}-${project.version}-${os.type}/lib" file="lib/lwjgl/jar/lwjgl_util.jar" />

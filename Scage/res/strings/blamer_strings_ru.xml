@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <messages>
-    <message code="message.loading">
+    <message code="renderer.loading">
         Начинаем загрузку, пожалуйста, подождите...
     </message>
 
-    <message code="message.exiting">
+    <message code="renderer.exiting">
         Приложение заканчивает работу...
     </message>
 
@@ -25,11 +25,11 @@
     </message>
 
     <message code="door.open">
-        ? открыл дверь
+        ? открывает дверь
     </message>
 
     <message code="door.close">
-        ? закрыл дверь
+        ? закрывает дверь
     </message>
 
     <message code="move.wrong">
@@ -45,10 +45,30 @@
     </message>
 
     <message code="changestatus.damage">
-        ? получил ? единиц урона
+        ? получает ? единиц урона
     </message>
 
     <message code="inventory.ownership">
         Снаряжение ?
+    </message>
+
+    <message code="item.drop">
+        ? выкидывает ? на пол
+    </message>
+
+    <message code="item.pickup">
+        ? поднимает ?
+    </message>
+
+    <message code="item.nopickup">
+        ? обшаривает глазами пол, но ничего не находит
+    </message>
+
+    <message code="testitem.name">
+        Тестовый предмет
+    </message>
+
+    <message code="testitem.description">
+        Предмет для тестов
     </message>
 </messages>

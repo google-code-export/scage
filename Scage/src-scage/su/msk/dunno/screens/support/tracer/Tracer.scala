@@ -4,26 +4,30 @@ import org.apache.log4j.Logger
 import su.msk.dunno.screens.support.ScageLibrary._
 import su.msk.dunno.scage.support.{Vec}
 
+object Tracer {
+  private val log = Logger.getLogger(this.getClass);
+
+  private var next_trace_id = 0
+  /*private[tracer] */def nextTraceID:Int = {
+    try {
+      next_trace_id
+    }
+    finally {
+      next_trace_id += 1
+    }
+
+  }
+}
+
+import Tracer._
+
 trait Trace {
-  private[tracer] var _id = -1
+  private val _id = nextTraceID
   def id = _id
   def getCoord():Vec
   def getState():State
   def changeState(state:State):Unit
 }
-
-object Tracer {
-  private val log = Logger.getLogger(this.getClass);
-
-  private var next_trace_id = 0
-  private[tracer] def nextTraceID = {
-    val trace_id = next_trace_id
-    next_trace_id += 1
-    trace_id
-  }
-}
-
-import Tracer._
 
 class Tracer[T <: Trace](val field_from_x:Int = property("field.from.x", 0), 
                          val field_to_x:Int = property("field.to.x", 800),
@@ -39,7 +43,7 @@ class Tracer[T <: Trace](val field_from_x:Int = property("field.from.x", 0),
   val field_width = field_to_x - field_from_x
   val field_height = field_to_y - field_from_y
 
-  private var coord_matrix = Array.ofDim[List[T]](N_x, N_y)
+  protected var coord_matrix = Array.ofDim[List[T]](N_x, N_y)
   (0 to N_x-1).foreachpair(0 to N_y-1) ((i, j) => coord_matrix(i)(j) = Nil)
   def matrix = coord_matrix
 
@@ -50,11 +54,11 @@ class Tracer[T <: Trace](val field_from_x:Int = property("field.from.x", 0),
     val p = point(t.getCoord())
     if(isPointOnArea(p)) {
       coord_matrix(p.ix)(p.iy) = t :: coord_matrix(p.ix)(p.iy)
-      t._id = nextTraceID
       log.debug("added new trace #"+t.id+" in coord ("+t.getCoord+")")
     }
     else log.error("failed to add trace: coord ("+t.getCoord+") is out of area")
     t.id
+
   }
   def removeTrace(trace_id:Int, coord:Vec) = {
     val p = point(coord)

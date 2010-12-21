@@ -8,6 +8,7 @@ import su.msk.dunno.blame.animations.BulletFlight
 import su.msk.dunno.blame.prototypes.{Item, Living, Decision}
 import su.msk.dunno.blame.screens.Blamer
 import su.msk.dunno.blame.field.{FieldObject, FieldTracer}
+import su.msk.dunno.scage.support.messages.ScageMessage
 
 class Move(val step:Vec, living:Living) extends Decision(living) {
   override val action_period = 2
@@ -64,10 +65,12 @@ class DropItem(item:Option[FieldObject], living:Living) extends Decision(living)
       case Some(item_to_drop) => {
         living.inventory.removeItem(item_to_drop)
         item_to_drop.changeState(new State("location", living.point))
-        FieldTracer.addTrace(item_to_drop)
+        FieldTracer.addTraceSecondToLast(item_to_drop)
+        BottomMessages.addPropMessage("item.drop", living.stat("name"), item_to_drop.getState.getString("name"))
       }
       case None =>
     }
+    was_executed = true
   }
 }
 
@@ -79,8 +82,10 @@ class PickUpItem(living:Living) extends Decision(living) {
       case Some(item) => {
         living.inventory.addItem(item)
         FieldTracer.removeTraceFromPoint(item.id, item.getPoint)
+        BottomMessages.addPropMessage("item.pickup", living.stat("name"), item.getState.getString("name"))
       }
-      case None =>
+      case None => BottomMessages.addPropMessage("item.nopickup", living.stat("name"))
     }
+    was_executed = true
   }
 }

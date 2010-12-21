@@ -32,16 +32,17 @@ trait FieldObject extends Trace {
 }
 
 object FieldTracer extends Tracer[FieldObject] {
-  /*def addTraceSecondToLast(fo:FieldObject) = {
+  def addTraceSecondToLast(fo:FieldObject) = {
     val p = fo.getPoint
     if(isPointOnArea(p)) {
-      matrix(p.ix)(p.iy) = coord_matrix(p.ix)(p.iy) = coord_matrix(p.ix)(p.iy).head :: fo :: coord_matrix(p.ix)(p.iy).tail
-      fo._id = nextTraceID
+      if(coord_matrix(p.ix)(p.iy).size > 0)
+        coord_matrix(p.ix)(p.iy) = coord_matrix(p.ix)(p.iy).head :: fo :: coord_matrix(p.ix)(p.iy).tail
+      else coord_matrix(p.ix)(p.iy) = fo :: coord_matrix(p.ix)(p.iy)
       log.debug("added new trace #"+fo.id+" in coord ("+fo.getCoord+")")
     }
     else log.error("failed to add trace: coord ("+fo.getCoord+") is out of area")
     fo.id
-  }*/
+  }
 
   override def removeTraceFromPoint(trace_id:Int, p:Vec) = {
     matrix(p.ix)(p.iy).find(_.id == trace_id) match {
@@ -70,7 +71,7 @@ object FieldTracer extends Tracer[FieldObject] {
     isPointPassable(p.ix, p.iy, -1)
   }
 
-  def randomPassablePoint(from:Vec = Vec(0, 0), to:Vec = Vec(N_x, N_y)):Vec = {
+  def randomPassablePoint(from:Vec = Vec(0, 0), to:Vec = Vec(N_x, N_y)):Option[Vec] = {
     log.debug("looking for new random passable point")
 
     var x = -1
@@ -84,10 +85,11 @@ object FieldTracer extends Tracer[FieldObject] {
 
       count -= 1
     }
-    if(count == 0 && !isPointPassable(x, y, -1))
+    if(count == 0 && !isPointPassable(x, y, -1)) {
       log.warn("warning: cannot locate random passable point within "+max_count+" tries")
-
-    Vec(x, y)
+      None
+    }
+    else Some(Vec(x, y))
   }
   
   def direction(from:Vec, to:Vec) = {

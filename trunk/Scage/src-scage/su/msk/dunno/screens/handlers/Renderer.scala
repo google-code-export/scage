@@ -58,7 +58,7 @@ object Renderer {
     GL11.glMatrixMode(GL11.GL_MODELVIEW);
     GL11.glLoadIdentity();
 
-    print(xml("message.loading", "Loading..."), 20, Renderer.height-25, ScageColors.GREEN)
+    print(xmlOrDefault("renderer.loading", "Loading..."), 20, Renderer.height-25, ScageColors.GREEN)
     update
 
     GL11.glNewList(CIRCLE, GL11.GL_COMPILE);
@@ -178,8 +178,9 @@ class Renderer {
     this()
     main_screen.addAction(new ScageAction {
       override def exit = {
+        Renderer.backgroundColor = ScageColors.BLACK
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
-        print(xml("message.exiting", "Exiting..."), 20, Renderer.height-25, ScageColors.GREEN)
+        print(xmlOrDefault("renderer.exiting", "Exiting..."), 20, Renderer.height-25, ScageColors.GREEN)
         Renderer.update
 
         Thread.sleep(1000)

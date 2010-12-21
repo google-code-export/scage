@@ -28,7 +28,6 @@ object ScageMessage {
     }
   }
 
-
   val font_path = ScageProperties.property("font.file", "res/fonts/DroidSans.ttf")
   val font_size = ScageProperties.property("font.size", 18)
   val glyph_from = ScageProperties.property("glyph.from", 1024)
@@ -42,17 +41,26 @@ object ScageMessage {
     catch {
       case e:Exception => {
         log.error("failed to find string with code "+message_code+" in file "+messages_file)
-        val default = if(!parameters.isEmpty) {
-          log.error("using string \""+parameters(0)+"\" as default for code "+message_code)
-          parameters(0)
-        }
-        else ""
-        xmlmh.xml_messages += (message_code -> default)
-        return default
+        xmlmh.xml_messages += (message_code -> "")
+        ""
       }
     }
-    return parameters.foldLeft(xml_message)((message, parameter) =>
+    parameters.foldLeft(xml_message)((message, parameter) =>
       message.replaceFirst("\\?", parameter))
+  }
+
+  def xmlOrDefault(message_code:String, parameters:String*):String = {
+    xml(message_code, parameters.tail:_*) match {
+      case "" => {
+        if(parameters.size > 0) {
+          log.info("default value for string code "+message_code+" is "+parameters.head)
+          xmlmh.xml_messages += (message_code -> parameters.head)
+          parameters.tail.foldLeft(parameters.head)((message, parameter) => message.replaceFirst("\\?", parameter))
+        }
+        else ""
+      }
+      case s:String => s
+    }
   }
 
   def print(message:Any, x:Float, y:Float, color:ScageColor = ScageColors.WHITE) = {

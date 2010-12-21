@@ -13,8 +13,8 @@ object ScageScreen {
 }
 
 class ScageScreen(val screen_name:String, val is_main_screen:Boolean = false, properties:String = "") {
-  private val log = Logger.getLogger(this.getClass);
-  log.info("starting "+screen_name+"...")
+  protected val log = Logger.getLogger(this.getClass);
+  if(is_main_screen) log.info("starting "+screen_name+"...")
 
   if(!"".equals(properties)) ScageProperties.properties = properties
   
@@ -45,6 +45,7 @@ class ScageScreen(val screen_name:String, val is_main_screen:Boolean = false, pr
   private var is_running = false
   def isRunning = is_running
   def run = {
+    if(!is_main_screen) log.info("starting "+screen_name+"...")
     handlers.foreach(handler => handler.init)
     is_running = true
     while(is_running && !ScageScreen.isAllScreensStop) {

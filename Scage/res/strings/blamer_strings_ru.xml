@@ -71,4 +71,12 @@
     <message code="testitem.description">
         Предмет для тестов
     </message>
+
+    <message code="secondtestitem.name">
+        Еще один тестовый предмет
+    </message>
+
+    <message code="secondtestitem.description">
+        Этот предмет тоже служит для тестов
+    </message>
 </messages>

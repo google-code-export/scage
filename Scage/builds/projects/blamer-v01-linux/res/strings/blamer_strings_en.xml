@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<messages>
+    <message code="player.killy">
+        Killy
+    </message>
+
+    <message code="player.cibo">
+        Cibo
+    </message>
+
+    <message code="greetings.helloworld">
+        Hello, World! - said ?
+    </message>
+
+    <message code="door.open">
+        ? opened a door
+    </message>
+
+    <message code="door.close">
+        ? closed a door
+    </message>
+    
+    <message code="move.wrong">
+        ? can't go there!
+    </message>
+    
+    <message code="selecttarget.helpmessage">
+        Choose your target with arrow or numpad keys
+    </message>
+
+    <message code="decision.shoot">
+        ? shoots!
+    </message>
+
+    <message code="changestatus.damage">
+        ? received ? damage
+    </message>
+
+    <message code="inventory.ownership">
+        ?'s Inventory
+    </message>
+
+    <message code="item.drop">
+        ? drops ? to the floor
+    </message>
+
+    <message code="item.pickup">
+        ? picks up ? from the floor
+    </message>
+
+    <message code="item.nopickup">
+        ? tries to find something on the floor, but fails
+    </message>
+
+    <message code="testitem.name">
+        Test Item
+    </message>
+
+    <message code="testitem.description">
+        Item for test purposes
+    </message>
+</messages>

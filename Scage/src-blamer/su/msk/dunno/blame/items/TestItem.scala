@@ -9,6 +9,4 @@ class TestItem extends Item(
   name = xml("testitem.name"),
   description = xml("testitem.description"),
   symbol = MyFont.BULLET,
-  color = RED) {
-
-}
+  color = RED) {}

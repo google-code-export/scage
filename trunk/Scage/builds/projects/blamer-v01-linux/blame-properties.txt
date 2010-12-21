@@ -1,0 +1,25 @@
+app.name = Blamer
+app.version = 0.1
+
+screen.width = 800
+screen.height = 600
+
+#field.visible.width = 200
+#field.visible.height = 200
+
+symbol.width = 12
+symbol.height = 24
+
+field.from.x = 0
+field.to.x = 1600
+
+field.from.y = 0
+field.to.y = 2000
+
+field.N_x = 100
+field.N_y = 100
+
+framerate = 60
+
+strings.base = res/strings/blamer_strings
+strings.lang = ru

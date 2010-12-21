@@ -6,9 +6,9 @@ import su.msk.dunno.scage.support.ScageColors._
 import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.blame.prototypes.Living
 import su.msk.dunno.scage.support.messages.ScageMessage
-import su.msk.dunno.blame.items.TestItem
 import su.msk.dunno.screens.support.tracer.State
 import su.msk.dunno.blame.support.BottomMessages
+import su.msk.dunno.blame.items.{SecondTestItem, TestItem}
 
 class Killy(point:Vec) extends Living(point, PLAYER, RED) {
   setStat("name", ScageMessage.xml("player.killy"))
@@ -34,6 +34,9 @@ class Cibo(point:Vec) extends Living(point, PLAYER, BLUE) {
   setStat("dov", 5)
   
   FieldTracer.addLightSource(point, intStat("dov"), trace)
+
+  inventory.addItem(new SecondTestItem)
+  inventory.addItem(new SecondTestItem)
   
   override def changeStatus(s:State) = {
     if(s.contains("damage")) {

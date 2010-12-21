@@ -22,9 +22,21 @@ object HelloWorld extends Application {
     run*/
   }*/
 
+  implicit def toObjectWithForeachI[A](l:List[A]) = new ScalaObject {
+    def foreachi(func:(A, Int) => Unit) = {
+      var index = 0
+      l.foreach(value => {
+        func(value, index)
+        index += 1
+      })
+    }
+  }
+
   var mylist = List[Float](1)
   mylist = mylist.head :: 1.5f :: mylist.tail
   println(mylist)
+
+  mylist.foreachi((value, index) => println(value+index))
 
   var mymap = Map(1 -> "one", 2 -> "two", 3 -> "three")
   println(mymap)

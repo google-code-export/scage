@@ -10,7 +10,7 @@ import su.msk.dunno.blame.field.FieldObject
 
 class Inventory(val owner:Living) {
   private var items:HashMap[String, List[FieldObject]] = new HashMap[String, List[FieldObject]]()
-  private var item_positions:List[String] = Nil
+  private var item_positions:List[(String)] = Nil
     
   private var item_selector:Int = -1
   def itemSelector:Int = item_selector
@@ -58,21 +58,28 @@ class Inventory(val owner:Living) {
   }
 
   private lazy val inventory_screen = new ScageScreen("Inventory Screen") {
+    private implicit def toObjectWithForeachI[A](l:List[A]) = new ScalaObject {
+      def foreachi(func:(A, Int) => Unit) = {
+        var index = 0
+        l.foreach(value => {
+          func(value, index)
+          index += 1
+        })
+      }
+    }
+
     addRender(new ScageRender {
       override def interface = {
         ScageMessage.print(ScageMessage.xml("inventory.ownership", owner.stat("name")), 20, Renderer.height-20)
         if(item_selector == -1) {
-          var h = Renderer.height-60
-          var count = 1
-          for(key <- items.keys) {
-            ScageMessage.print(count + ". " + key + " (" + items(key).size+")", 20, h)
-            count += 1
-            h -= 20
-          }
+          item_positions.foreachi((key, i) => {
+            ScageMessage.print((i+1) + ". " + key + " (" + items(key).size+")",
+              20, Renderer.height-60 - i*20)
+          })
         }
         else if(item_selector >= 1 && item_selector <= item_positions.size &&
                 !items(item_positions(item_selector-1)).isEmpty) {
-          var selected_item = items(item_positions(item_selector-1)).head
+          val selected_item = items(item_positions(item_selector-1)).head
           ScageMessage.print(selected_item.getState.getString("name")+":\n"+
                              selected_item.getState.getString("description"), 20, Renderer.height-60)
         }

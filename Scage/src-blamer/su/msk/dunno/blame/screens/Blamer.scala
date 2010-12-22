@@ -110,6 +110,7 @@ object Blamer extends ScageScreen(
   keyListener(Keyboard.KEY_F, onKeyDown =
           TimeUpdater.addDecision(new Shoot(currentPlayer.selectTarget(Keyboard.KEY_F), currentPlayer)))
   keyListener(Keyboard.KEY_I, onKeyDown = currentPlayer.inventory.showInventory)
+  keyListener(Keyboard.KEY_W, onKeyDown = currentPlayer.weapon.showWeapon)
   keyListener(Keyboard.KEY_D, onKeyDown = {
     TimeUpdater.addDecision(new DropItem(currentPlayer.inventory.selectItem, currentPlayer))    
   })

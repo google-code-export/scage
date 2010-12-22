@@ -74,8 +74,8 @@ public class TestJavaRendering
       }
 
       GL11.glColor3f(0,0,0);
-      TrueTypeFont.instance().drawString("FPS: "+fps, 200, height-25);
-      TrueTypeFont.instance().drawString("Time: "+(System.currentTimeMillis() - start_time), 200, height-40);
+      /*TrueTypeFont.instance().drawString("FPS: "+fps, 200, height-25);
+      TrueTypeFont.instance().drawString("Time: "+(System.currentTimeMillis() - start_time), 200, height-40);*/
       start_time = System.currentTimeMillis();
       Display.sync(75);
       Display.update();

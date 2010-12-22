@@ -7,6 +7,7 @@ import org.xml.sax.helpers.DefaultHandler
 import java.io.FileInputStream
 import javax.xml.parsers.SAXParserFactory
 import org.apache.log4j.Logger
+import unicode.UnicodeFont
 
 object ScageMessage {
   private val log = Logger.getLogger(this.getClass)
@@ -32,7 +33,7 @@ object ScageMessage {
   val font_size = ScageProperties.property("font.size", 18)
   val glyph_from = ScageProperties.property("glyph.from", 1024)
   val glyph_to = ScageProperties.property("glyph.to", 1279)
-  private val font = new SlickUnicodeFont(font_path, font_size, glyph_from, glyph_to)
+  private val font = new UnicodeFont(font_path, font_size, glyph_from, glyph_to)
 
   def xml(message_code:String, parameters:String*):String = {
     val xml_message = try {

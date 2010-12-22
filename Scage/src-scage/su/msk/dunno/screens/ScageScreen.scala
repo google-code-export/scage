@@ -4,7 +4,8 @@ import handlers.controller.Controller
 import handlers.{Idler, Renderer}
 import org.apache.log4j.Logger
 import prototypes.{ScageRender, ScageAction}
-import su.msk.dunno.scage.support.{Vec, ScageProperties}
+import su.msk.dunno.scage.support.{Vec}
+import su.msk.dunno.scage.support.ScageProperties
 
 object ScageScreen {
   private var isAllScreensStop = false
@@ -14,8 +15,8 @@ object ScageScreen {
 
 class ScageScreen(val screen_name:String, val is_main_screen:Boolean = false, properties:String = "") {
   protected val log = Logger.getLogger(this.getClass);
-  if(is_main_screen) log.info("starting "+screen_name+"...")
 
+  if(is_main_screen) log.info("starting "+screen_name+"...")
   if(!"".equals(properties)) ScageProperties.properties = properties
   
   private var handlers:List[ScageAction] = Nil

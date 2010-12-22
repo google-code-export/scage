@@ -6,7 +6,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
-import su.msk.dunno.scage.support.messages.TrueTypeFont;
 
 import java.io.FileInputStream;
 import java.io.IOException;

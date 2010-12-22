@@ -5,10 +5,8 @@ import su.msk.dunno.screens.support.tracer.State
 import su.msk.dunno.blame.support.{BottomMessages, TimeUpdater}
 import su.msk.dunno.scage.support.ScageColors._
 import su.msk.dunno.blame.animations.BulletFlight
-import su.msk.dunno.blame.prototypes.{Item, Living, Decision}
-import su.msk.dunno.blame.screens.Blamer
+import su.msk.dunno.blame.prototypes.{Living, Decision}
 import su.msk.dunno.blame.field.{FieldObject, FieldTracer}
-import su.msk.dunno.scage.support.messages.ScageMessage
 
 class Move(val step:Vec, living:Living) extends Decision(living) {
   override val action_period = 2
@@ -23,8 +21,12 @@ class OpenDoor(living:Living) extends Decision(living) {
   override val action_period = 1
 
   def doAction = {
-    FieldTracer.neighboursOfPoint(living.trace, living.point, 1)
-               .foreach(_.changeState(new State("door_open", living.stat("name"))))
+    FieldTracer.neighboursOfPoint(living.trace, living.point, 1).find(fo => {
+      fo.getPoint != living.point && fo.getState.contains("door") && "close" == fo.getState.getString("door")
+    }) match {
+      case Some(door) => door.changeState(new State("door_open", living.stat("name")))
+      case None =>
+    }
     was_executed = true
   }
 }
@@ -33,8 +35,12 @@ class CloseDoor(living:Living) extends Decision(living) {
   override val action_period = 1
 
   def doAction = {
-    FieldTracer.neighboursOfPoint(living.trace, living.point, 1)
-               .foreach(_.changeState(new State("door_close", living.stat("name"))))
+    FieldTracer.neighboursOfPoint(living.trace, living.point, 1).find(possible_door => {
+      possible_door.getPoint != living.point && possible_door.getState.contains("door") && "open" == possible_door.getState.getString("door")
+    }) match {
+      case Some(door) => door.changeState(new State("door_close", living.stat("name")))
+      case None =>
+    }
     was_executed = true
   }
 }

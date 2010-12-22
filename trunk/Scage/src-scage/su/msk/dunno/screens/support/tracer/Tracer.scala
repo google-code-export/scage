@@ -45,7 +45,7 @@ class Tracer[T <: Trace](val field_from_x:Int = property("field.from.x", 0),
 
   protected var coord_matrix = Array.ofDim[List[T]](N_x, N_y)
   (0 to N_x-1).foreachpair(0 to N_y-1) ((i, j) => coord_matrix(i)(j) = Nil)
-  def matrix = coord_matrix
+  //def matrix = coord_matrix
 
   val h_x = field_width/N_x
 	val h_y = field_height/N_y
@@ -62,10 +62,10 @@ class Tracer[T <: Trace](val field_from_x:Int = property("field.from.x", 0),
   }
   def removeTrace(trace_id:Int, coord:Vec) = {
     val p = point(coord)
-    matrix(p.ix)(p.iy) = matrix(p.ix)(p.iy).filterNot(_.id == trace_id)
+    coord_matrix(p.ix)(p.iy) = coord_matrix(p.ix)(p.iy).filterNot(_.id == trace_id)
   }
   def removeTraceFromPoint(trace_id:Int, point:Vec) = {
-    matrix(point.ix)(point.iy) = matrix(point.ix)(point.iy).filterNot(_.id == trace_id)
+    coord_matrix(point.ix)(point.iy) = coord_matrix(point.ix)(point.iy).filterNot(_.id == trace_id)
   }
 
   def point(v:Vec):Vec = Vec(((v.x - field_from_x)/field_width*N_x).toInt,

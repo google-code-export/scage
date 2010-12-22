@@ -45,9 +45,9 @@ object FieldTracer extends Tracer[FieldObject] {
   }
 
   override def removeTraceFromPoint(trace_id:Int, p:Vec) = {
-    matrix(p.ix)(p.iy).find(_.id == trace_id) match {
+    coord_matrix(p.ix)(p.iy).find(_.id == trace_id) match {
       case Some(fieldObject) => {
-        matrix(p.ix)(p.iy) = matrix(p.ix)(p.iy).filterNot(_ == fieldObject)
+        coord_matrix(p.ix)(p.iy) = coord_matrix(p.ix)(p.iy).filterNot(_ == fieldObject)
       }
       case None =>
     }
@@ -59,11 +59,11 @@ object FieldTracer extends Tracer[FieldObject] {
   }
 
   def isPointPassable(x:Int, y:Int, trace_id:Int):Boolean = 
-    isPointOnArea(x, y) && (matrix(x)(y).length == 0 || matrix(x)(y).filter(_.id != trace_id).forall(_.isPassable))
+    isPointOnArea(x, y) && (coord_matrix(x)(y).length == 0 || coord_matrix(x)(y).filter(_.id != trace_id).forall(_.isPassable))
   def isPointPassable(point:Vec, trace_id:Int = -1):Boolean = isPointPassable(point.ix, point.iy, trace_id)
   
   def isPointTransparent(x:Int, y:Int) = {
-    isPointOnArea(x, y) && (matrix(x)(y).length == 0 || matrix(x)(y).forall(_.isTransparent))
+    isPointOnArea(x, y) && (coord_matrix(x)(y).length == 0 || coord_matrix(x)(y).forall(_.isTransparent))
   }
   
   def isLocationPassable(coord:Vec) = {
@@ -112,7 +112,7 @@ object FieldTracer extends Tracer[FieldObject] {
     neighbours(trace_id, pointCenter(point), -dov to dov, (fieldObject) =>
       isVisible(point, fieldObject.getPoint, dov))
   }
-  def objectsAtPoint(point:Vec) = matrix(point.ix)(point.iy)
+  def objectsAtPoint(point:Vec) = coord_matrix(point.ix)(point.iy)
 
   def isNearPlayer(point:Vec) = (Blamer.currentPlayer.point dist point) < visibility_distance
 
@@ -133,9 +133,9 @@ object FieldTracer extends Tracer[FieldObject] {
   }
   
   def preventDraw(point:Vec) =
-    if(!matrix(point.ix)(point.iy).isEmpty) matrix(point.ix)(point.iy).foreach(_.preventDraw)
+    if(!coord_matrix(point.ix)(point.iy).isEmpty) coord_matrix(point.ix)(point.iy).foreach(_.preventDraw)
   def allowDraw(point:Vec) =
-    if(!matrix(point.ix)(point.iy).isEmpty) matrix(point.ix)(point.iy).foreach(_.allowDraw)  
+    if(!coord_matrix(point.ix)(point.iy).isEmpty) coord_matrix(point.ix)(point.iy).foreach(_.allowDraw)
 
   private var light_sources:List[(() => Vec, () => Int, Int)] = Nil
   def addLightSource(point: => Vec, dov: => Int = 5, trace_id:Int) = 
@@ -146,7 +146,7 @@ object FieldTracer extends Tracer[FieldObject] {
     def contains(x:Int, y:Int):Boolean = isPointOnArea(x, y)    
     def isObstacle(x:Int, y:Int):Boolean = !isPointTransparent(x, y)
     def visit(x:Int, y:Int) = {
-      if(matrix(x)(y).length > 0) matrix(x)(y).head.draw
+      if(coord_matrix(x)(y).length > 0) coord_matrix(x)(y).head.draw
     }   
   }
 
@@ -175,9 +175,9 @@ object FieldTracer extends Tracer[FieldObject] {
     val to_y   = math.min(N_y-1, player_point.iy + half_visible_N_y)
     for(x <- from_x to to_x) {
       for(y <- from_y to to_y) {
-        if(matrix(x)(y).length > 0) {
-          val tile = matrix(x)(y).last
-          if(tile.wasDrawed && tile.getSymbol != MyFont.FLOOR) matrix(x)(y).head.drawGray
+        if(coord_matrix(x)(y).length > 0) {
+          val tile = coord_matrix(x)(y).last
+          if(tile.wasDrawed && tile.getSymbol != MyFont.FLOOR) coord_matrix(x)(y).head.drawGray
         }
       }
     }

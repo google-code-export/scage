@@ -124,6 +124,14 @@ public class UnicodeFont implements org.newdawn.slick.Font {
 		}
 	};
 
+    public UnicodeFont(String font_path, int size, int glyph_from, int glyph_to) throws SlickException {
+        this(font_path , size, false, false);
+        addAsciiGlyphs();
+        addGlyphs(glyph_from, glyph_to);     // other alphabets (cyrillic by default)
+        effects.add(new ColorEffect(java.awt.Color.WHITE));
+        loadGlyphs();
+    }
+
 	/**
 	 * Create a new unicode font based on a TTF file
 	 *

@@ -4,14 +4,16 @@ import su.msk.dunno.screens.support.tracer.State
 import su.msk.dunno.blame.field.{FieldObject, FieldTracer}
 import su.msk.dunno.scage.support.{Vec, ScageColor}
 
-class Item(val name:String, val description:String, val symbol:Int, val color:ScageColor)
+class Item(val name:String,
+           val description:String,
+           private val symbol:Int,
+           private val color:ScageColor)
 extends FieldObject with HaveStats {
   setStat("item")
   setStat("name", name)
   setStat("description", description)
 
   private val _point = Vec(0,0)
-  private var _trace = -1
 
   override def getPoint = _point
   def getCoord = FieldTracer.pointCenter(_point)

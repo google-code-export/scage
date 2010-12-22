@@ -79,4 +79,8 @@
     <message code="secondtestitem.description">
         Этот предмет тоже служит для тестов
     </message>
+
+    <message code="weapon.ownership">
+        Оружие ?
+    </message>
 </messages>

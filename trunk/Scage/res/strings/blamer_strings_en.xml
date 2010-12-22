@@ -59,4 +59,8 @@
     <message code="testitem.description">
         Item for test purposes
     </message>
+
+    <message code="weapon.ownership">
+        ?'s Weapon
+    </message>
 </messages>

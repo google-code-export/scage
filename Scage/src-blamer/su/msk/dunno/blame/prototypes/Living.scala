@@ -1,10 +1,9 @@
 package su.msk.dunno.blame.prototypes
 
-import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.screens.support.tracer.State
 import su.msk.dunno.blame.field.{FieldTracer, FieldObject}
-import su.msk.dunno.scage.support.ScageColor
 import su.msk.dunno.blame.screens.SelectTarget
+import su.msk.dunno.scage.support.{ScageProperties, Vec, ScageColor}
 
 abstract class Living(val name:String,
                       val description:String,
@@ -20,7 +19,7 @@ extends FieldObject with HaveStats {
   def isPassable = false
 
   def getState = stats
-  def changeState(s:State) = changeStatus(s)
+  def changeState(s:State) = {}
 
   val trace = FieldTracer.addTrace(this)
   
@@ -39,5 +38,6 @@ extends FieldObject with HaveStats {
   setStat("living")
   setStat("name", name)
   setStat("description", description)
+  setStat("dov", ScageProperties.property("dov.default", 5))
   setStat("health", 100)
 }

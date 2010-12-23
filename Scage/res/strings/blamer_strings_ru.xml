@@ -12,12 +12,28 @@
         Привет, Мир!
     </message>
 
-    <message code="player.killy">
+    <message code="player.killy.name">
         Килли
     </message>
 
-    <message code="player.cibo">
+    <message code="player.killy.description">
+
+    </message>
+
+    <message code="player.cibo.name">
         Сибо
+    </message>
+
+    <message code="player.cibo.description">
+
+    </message>
+
+    <message code="enemy.siliconcreature.name">
+        Силиконовое устройство
+    </message>
+
+    <message code="enemy.siliconcreature.description">
+
     </message>
 
     <message code="greetings.helloworld">

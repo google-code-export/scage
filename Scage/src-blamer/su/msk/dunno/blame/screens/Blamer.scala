@@ -42,7 +42,7 @@ object Blamer extends ScageScreen(
       null
     }
   }
-  val cibo = FieldTracer.randomPassablePoint(killy.point - Vec(2,2), killy.point + Vec(2,2)) match {
+  val cibo = FieldTracer.randomPassablePoint(killy.getPoint - Vec(2,2), killy.getPoint + Vec(2,2)) match {
     case Some(point) => new Cibo(point)
     case None => {
       log.error("failed to place cibo to the field, the programm will exit")
@@ -124,7 +124,7 @@ object Blamer extends ScageScreen(
   // render on main screen
   windowCenter = Vec((width - right_messages_width)/2, 
   		     BottomMessages.bottom_messages_height + (height - BottomMessages.bottom_messages_height)/2)
-  center = FieldTracer.pointCenter(currentPlayer.point)
+  center = FieldTracer.pointCenter(currentPlayer.getPoint)
   
   Renderer.backgroundColor = BLACK
 
@@ -139,7 +139,7 @@ object Blamer extends ScageScreen(
   } 
 
   addRender(new ScageRender {
-    override def render = FieldTracer.drawField(currentPlayer.point)
+    override def render = FieldTracer.drawField(currentPlayer.getPoint)
 
     override def interface = drawInterface
   })

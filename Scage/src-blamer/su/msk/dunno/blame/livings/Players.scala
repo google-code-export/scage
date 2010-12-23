@@ -10,10 +10,11 @@ import su.msk.dunno.screens.support.tracer.State
 import su.msk.dunno.blame.support.BottomMessages
 import su.msk.dunno.blame.items.{SecondTestItem, TestItem}
 
-class Killy(point:Vec) extends Living(point, PLAYER, RED) {
-  setStat("name", ScageMessage.xml("player.killy"))
+class Killy(point:Vec)
+extends Living(name = ScageMessage.xml("player.killy.name"),
+               description = ScageMessage.xml("player.killy.description"),
+               point, PLAYER, RED) {
   setStat("is_player", true)
-  setStat("dov", 5)
   
   FieldTracer.addLightSource(point, intStat("dov"), trace)
   
@@ -21,24 +22,25 @@ class Killy(point:Vec) extends Living(point, PLAYER, RED) {
   inventory.addItem(new TestItem)
   inventory.addItem(new TestItem)
   
-  override def changeStatus(s:State) = {
+  override def changeState(s:State) = {
     if(s.contains("damage")) {
       BottomMessages.addPropMessageSameString("changestatus.damage", stat("name"), s.getString("damage"))
     }
   }
 }
 
-class Cibo(point:Vec) extends Living(point, PLAYER, BLUE) {
-  setStat("name", ScageMessage.xml("player.cibo"))
+class Cibo(point:Vec)
+extends Living(name = ScageMessage.xml("player.cibo.name"),
+               description = ScageMessage.xml("player.cibo.description"),
+               point, PLAYER, BLUE) {
   setStat("is_player", true)
-  setStat("dov", 5)
   
   FieldTracer.addLightSource(point, intStat("dov"), trace)
 
   inventory.addItem(new SecondTestItem)
   inventory.addItem(new SecondTestItem)
   
-  override def changeStatus(s:State) = {
+  override def changeState(s:State) = {
     if(s.contains("damage")) {
       BottomMessages.addPropMessageSameString("changestatus.damage", stat("name"), s.getString("damage"))
     }

@@ -5,7 +5,8 @@ import su.msk.dunno.blame.screens.Blamer
 import su.msk.dunno.scage.support.{ScageColor, Vec}
 import su.msk.dunno.blame.support.TimeUpdater
 
-abstract class Npc(point:Vec, symbol:Int, color:ScageColor) extends Living(point, symbol, color) {
+abstract class Npc(name:String, description:String, point:Vec, symbol:Int, color:ScageColor)
+extends Living(name, description, point, symbol, color) {
   protected var last_decision:Decision = null
   Blamer.addAction(new ScageAction {
     override def action = {

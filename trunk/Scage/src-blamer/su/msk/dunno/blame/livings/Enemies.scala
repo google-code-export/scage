@@ -8,12 +8,12 @@ import su.msk.dunno.blame.support.BottomMessages
 import su.msk.dunno.blame.field.FieldTracer
 import su.msk.dunno.blame.decisions.{Shoot, Move}
 import su.msk.dunno.blame.prototypes.{Decision, Npc}
+import su.msk.dunno.scage.support.messages.ScageMessage
 
-class SiliconCreature(point:Vec) extends Npc(point, SILICON_CREATURE, CYAN) {
-  setStat("name", "Sillicon Creature")
-  setStat("health", 100)
-  setStat("dov", 5)
-  
+class SiliconCreature(point:Vec)
+extends Npc(name = ScageMessage.xml("enemy.siliconcreature.name"),
+            description = ScageMessage.xml("enemy.siliconcreature.description"),
+            point, SILICON_CREATURE, CYAN) {
   def livingAI:Decision = {
     def randomDir:Vec = Vec((math.random*3).toInt - 1, (math.random*3).toInt - 1)
     val dov = intStat("dov")
@@ -31,7 +31,7 @@ class SiliconCreature(point:Vec) extends Npc(point, SILICON_CREATURE, CYAN) {
     return new Move(randomDir, living = this)
   }
 
-  override def changeStatus(s:State) = {
+  override def changeState(s:State) = {
     if(s.contains("damage")) {
       changeStat("health", -s.getInt("damage"))
       BottomMessages.addPropMessageSameString("changestatus.damage", stat("name"), s.getString("damage"))

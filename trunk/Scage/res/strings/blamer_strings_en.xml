@@ -1,11 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <messages>
-    <message code="player.killy">
+    <message code="player.killy.name">
         Killy
     </message>
 
-    <message code="player.cibo">
+    <message code="player.killy.description">
+
+    </message>
+
+    <message code="player.cibo.name">
         Cibo
+    </message>
+
+    <message code="player.cibo.description">
+
+    </message>
+
+    <message code="enemy.siliconcreature.name">
+        Silicon Creature
+    </message>
+
+    <message code="enemy.siliconcreature.description">
+
     </message>
 
     <message code="greetings.helloworld">

@@ -64,6 +64,7 @@ object ScageProperties {
   }
   private def defaultValue[A](key:String, default:A) = {
     log.info("default value for property "+key+" is "+(if("".equals(default.toString)) "empty string" else default))
+    props.put(key, default.toString)
     default
   }
 

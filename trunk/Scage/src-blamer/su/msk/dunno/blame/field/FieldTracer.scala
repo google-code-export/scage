@@ -114,7 +114,7 @@ object FieldTracer extends Tracer[FieldObject] {
   }
   def objectsAtPoint(point:Vec) = coord_matrix(point.ix)(point.iy)
 
-  def isNearPlayer(point:Vec) = (Blamer.currentPlayer.point dist point) < visibility_distance
+  def isNearPlayer(point:Vec) = (Blamer.currentPlayer.getPoint dist point) < visibility_distance
 
   private val lineView = new ILosBoard {
     def contains(x:Int, y:Int):Boolean = isPointOnArea(x, y)    

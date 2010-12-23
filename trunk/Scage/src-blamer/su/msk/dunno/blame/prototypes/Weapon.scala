@@ -8,12 +8,17 @@ import su.msk.dunno.screens.handlers.Renderer
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.screens.support.ScageLibrary._
 import su.msk.dunno.screens.support.tracer.State
+import su.msk.dunno.scage.support.Vec
+import su.msk.dunno.blame.support.MyFont._
 
 class RestrictedPlace extends FieldObject {
   def getCoord = Vec(0,0)
   def getColor = GRAY
   def getState = new State("restricted")
   def changeState(s:State) = {}
+  def getSymbol = BULLET
+  def isPassable = true
+  def isTransparent = true
 }
 
 class FreeSocket extends FieldObject {
@@ -21,6 +26,9 @@ class FreeSocket extends FieldObject {
   def getColor = DARK_GRAY
   def getState = new State("free")
   def changeState(s:State) = {}
+  def getSymbol = BULLET
+  def isPassable = true
+  def isTransparent = true
 }
 
 class Weapon(val owner:Living) {

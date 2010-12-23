@@ -24,7 +24,7 @@ class RestrictedPlace extends FieldObject {
 class FreeSocket extends FieldObject {
   def getCoord = Vec(0,0)
   def getColor = DARK_GRAY
-  def getState = new State("free")
+  def getState = new State("socket")
   def changeState(s:State) = {}
   def getSymbol = BULLET
   def isPassable = true

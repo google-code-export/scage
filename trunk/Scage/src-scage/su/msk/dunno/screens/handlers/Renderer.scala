@@ -74,7 +74,7 @@ object Renderer {
 
   private var next_displaylist_key = 10000
   val CIRCLE = nextDisplayListKey           
-  private def nextDisplayListKey() = {
+  /*private */def nextDisplayListKey() = {
     val next_key = next_displaylist_key
     next_displaylist_key += 1
     next_key

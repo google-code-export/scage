@@ -3,6 +3,8 @@ package helloworld
 import su.msk.dunno.screens.ScageScreen
 import su.msk.dunno.screens.handlers.Renderer
 import su.msk.dunno.scage.support.ScageColors
+import su.msk.dunno.screens.support.tracer.{Trace, Tracer}
+import su.msk.dunno.scage.support.{Vec}
 
 object HelloWorld extends Application {
   /*val myScreen = new ScageScreen("My Screen", is_main_screen = true, "blame-properties.txt") {
@@ -22,7 +24,7 @@ object HelloWorld extends Application {
     run*/
   }*/
 
-  implicit def toObjectWithForeachI[A](l:List[A]) = new ScalaObject {
+  /*implicit def toObjectWithForeachI[A](l:List[A]) = new ScalaObject {
     def foreachi(func:(A, Int) => Unit) = {
       var index = 0
       l.foreach(value => {
@@ -43,5 +45,18 @@ object HelloWorld extends Application {
   mymap += (2 -> "twotwo")
   println(mymap)
   mymap(2) = "twotwotwo"
-  println(mymap)
+  println(mymap)*/
+
+  /*class TestClass(_param:Int) {
+    val param = _param
+  }
+
+  val test = new TestClass(5)
+  println(test.param)*/
+
+  class MyTracer extends Tracer[Trace]
+
+  val mytracer = new MyTracer
+  val point = Vec(0,1)
+  println(mytracer.point(mytracer.pointCenter(point)))
 }

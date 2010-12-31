@@ -53,12 +53,12 @@ object Blamer extends ScageScreen(
   def currentPlayer = if(is_play_cibo) cibo else killy
   
   // enemies
-  (1 to 50).foreach(i => {
+  /*(1 to 50).foreach(i => {
     FieldTracer.randomPassablePoint() match {
       case Some(point) => new SiliconCreature(point)
       case None =>
     }
-  })
+  })*/
 
   // controls on main screen
   private var is_key_pressed = false

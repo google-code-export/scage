@@ -24,7 +24,7 @@ import Tracer._
 trait Trace {
   private val _id = nextTraceID
   def id = _id
-  def getCoord():Vec
+  def getCoord(tracer:Tracer[Trace]):Vec
   def getState():State
   def changeState(state:State):Unit
 }
@@ -51,12 +51,12 @@ class Tracer[T <: Trace](val field_from_x:Int = property("field.from.x", 0),
 	val h_y = field_height/N_y
 
   def addTrace(t:T) = {
-    val p = point(t.getCoord())
+    val p = point(t.getCoord(this))
     if(isPointOnArea(p)) {
       coord_matrix(p.ix)(p.iy) = t :: coord_matrix(p.ix)(p.iy)
-      log.debug("added new trace #"+t.id+" in coord ("+t.getCoord+")")
+      log.debug("added new trace #"+t.id+" in coord ("+t.getCoord(this)+")")
     }
-    else log.error("failed to add trace: coord ("+t.getCoord+") is out of area")
+    else log.error("failed to add trace: coord ("+t.getCoord(this)+") is out of area")
     t.id
 
   }
@@ -68,9 +68,16 @@ class Tracer[T <: Trace](val field_from_x:Int = property("field.from.x", 0),
     coord_matrix(point.ix)(point.iy) = coord_matrix(point.ix)(point.iy).filterNot(_.id == trace_id)
   }
 
-  def point(v:Vec):Vec = Vec(((v.x - field_from_x)/field_width*N_x).toInt,
-                              ((v.y - field_from_y)/field_height*N_y).toInt)
-  def pointCenter(p:Vec):Vec = Vec(field_from_x + p.x*h_x + h_x/2, field_from_y + p.y*h_y + h_y/2)
+  def point(v:Vec):Vec = {
+    val x = ((v.x - field_from_x)*N_x/field_width).toInt
+    val y = ((v.y - field_from_y)*N_y/field_height).toInt
+    Vec(x,y)
+  }
+  def pointCenter(p:Vec):Vec = {
+    val x = field_from_x + p.x*h_x + h_x/2
+    val y = field_from_y + p.y*h_y + h_y/2
+    Vec(x,y)
+  }
   def pointCenter(x:Int, y:Int):Vec = Vec(field_from_x + x*h_x + h_x/2, field_from_y + y*h_y + h_y/2)
 
   def neighbours(trace_id:Int, coord:Vec, range:Range, condition:(T) => Boolean):List[T] = {
@@ -157,7 +164,7 @@ class Tracer[T <: Trace](val field_from_x:Int = property("field.from.x", 0),
       val coord_edges_affected = checkEdges(coord)
       val min_dist2 = min_dist*min_dist
       neighbours(trace_id, coord_edges_affected, range, condition).exists(neighbour =>
-        (neighbour.getCoord dist2 coord_edges_affected) < min_dist2)
+        (neighbour.getCoord(this) dist2 coord_edges_affected) < min_dist2)
     }
   }
 }

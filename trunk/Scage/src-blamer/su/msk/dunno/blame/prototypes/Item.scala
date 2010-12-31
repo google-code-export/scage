@@ -1,8 +1,8 @@
 package su.msk.dunno.blame.prototypes
 
-import su.msk.dunno.screens.support.tracer.State
 import su.msk.dunno.blame.field.{FieldObject, FieldTracer}
 import su.msk.dunno.scage.support.{Vec, ScageColor}
+import su.msk.dunno.screens.support.tracer.{Trace, Tracer, State}
 
 class Item(val name:String,
            val description:String,
@@ -16,7 +16,7 @@ extends FieldObject with HaveStats {
   private val _point = Vec(0,0)
 
   override def getPoint = _point
-  def getCoord = FieldTracer.pointCenter(_point)
+  def getCoord(tracer:Tracer[FieldObject]) = tracer.pointCenter(_point)
   def getSymbol = symbol
   def getColor = color
   def isTransparent = true
@@ -24,6 +24,6 @@ extends FieldObject with HaveStats {
 
   def getState = stats
   def changeState(s:State) = {
-    if(s.contains("location")) _point is s.getVec("location")
+    if(s.contains("point")) _point is s.getVec("point")
   }
 }

@@ -11,7 +11,7 @@ import su.msk.dunno.blame.support.{BottomMessages, MyFont}
 import su.msk.dunno.blame.screens.Blamer
 
 trait FieldObject extends Trace {
-  def getPoint = FieldTracer.point(getCoord)
+  def getPoint(tracer:Tracer[FieldObject]) = tracer.point(getCoord(tracer))
   def getSymbol:Int
   def getColor:ScageColor
   def isTransparent:Boolean
@@ -24,11 +24,12 @@ trait FieldObject extends Trace {
   def preventDraw = is_draw_prevented = true
   def allowDraw= is_draw_prevented = false
   
-  def draw = {
-    if(!is_draw_prevented) Renderer.drawDisplayList(getSymbol, getCoord, getColor)
+  def draw(tracer:Tracer[FieldObject]) = {
+    if(!is_draw_prevented) Renderer.drawDisplayList(getSymbol, getCoord(tracer), getColor)
     was_drawed = true
   }
-  def drawGray = if(!is_draw_prevented) Renderer.drawDisplayList(getSymbol, getCoord, ScageColors.GRAY)
+  def drawGray(tracer:Tracer[FieldObject]) =
+    if(!is_draw_prevented) Renderer.drawDisplayList(getSymbol, getCoord(tracer), ScageColors.GRAY)
 }
 
 object FieldTracer extends Tracer[FieldObject] {
@@ -38,9 +39,9 @@ object FieldTracer extends Tracer[FieldObject] {
       if(coord_matrix(p.ix)(p.iy).size > 0)
         coord_matrix(p.ix)(p.iy) = coord_matrix(p.ix)(p.iy).head :: fo :: coord_matrix(p.ix)(p.iy).tail
       else coord_matrix(p.ix)(p.iy) = fo :: coord_matrix(p.ix)(p.iy)
-      log.debug("added new trace #"+fo.id+" in coord ("+fo.getCoord+")")
+      log.debug("added new trace #"+fo.id+" in coord ("+fo.getCoord(this)+")")
     }
-    else log.error("failed to add trace: coord ("+fo.getCoord+") is out of area")
+    else log.error("failed to add trace: coord ("+fo.getCoord(this)+") is out of area")
     fo.id
   }
 

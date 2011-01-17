@@ -33,14 +33,14 @@ class SelectTarget(val living:Living) extends ScageScreen("Target Selector") {
     select_line = FieldTracer.line(living.getPoint, target_point)
     if(select_line.size > 1) select_line = select_line.init
     select_line.foreach(FieldTracer.preventDraw(_))
-    target_point = select_line.head
+    target_point = select_line.last
   }
   private def drawSelectLine = {
     if(!select_line.isEmpty) {
-      select_line.tail.foreach(point => {
+      select_line.init.foreach(point => {
         Renderer.drawDisplayList(MINOR_SELECTOR, FieldTracer.pointCenter(point), WHITE)
       })
-      Renderer.drawDisplayList(MAIN_SELECTOR, FieldTracer.pointCenter(select_line.head), WHITE)
+      Renderer.drawDisplayList(MAIN_SELECTOR, FieldTracer.pointCenter(select_line.last), WHITE)
     }
   }  
   

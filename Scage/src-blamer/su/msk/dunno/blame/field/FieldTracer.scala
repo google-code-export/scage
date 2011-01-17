@@ -124,7 +124,7 @@ object FieldTracer extends PointTracer[FieldObject] {
   }
   def line(p1:Vec, p2:Vec):List[Vec] = {
     bresenham.existsLineOfSight(lineView, p1.ix, p1.iy, p2.ix, p2.iy, true)
-    JavaConversions.asBuffer(bresenham.getProjectPath).foldLeft(List[Vec]())((line, point) => new Vec(point.x, point.y) :: line)
+    JavaConversions.asBuffer(bresenham.getProjectPath).foldLeft(List[Vec]())((line, point) => new Vec(point.x, point.y) :: line).reverse
   }
   
   def preventDraw(point:Vec) =

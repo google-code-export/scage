@@ -7,12 +7,10 @@ import su.msk.dunno.scage.support.{ScageProperties, Vec, ScageColor}
 
 abstract class Living(val name:String,
                       val description:String,
-                      private val point:Vec,
+                      point:Vec,
                       private val symbol:Int,
                       private val color:ScageColor)
-extends FieldObject with HaveStats {
-  def getCoord = FieldTracer.pointCenter(point)
-  override def getPoint = point
+extends FieldObject(point) with HaveStats {
   def getSymbol = symbol
   def getColor = color
   def isTransparent = true

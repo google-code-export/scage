@@ -8,15 +8,11 @@ class Item(val name:String,
            val description:String,
            private val symbol:Int,
            private val color:ScageColor)
-extends FieldObject with HaveStats {
+extends FieldObject(Vec(0,0)) with HaveStats {
   setStat("item")
   setStat("name", name)
   setStat("description", description)
 
-  private val _point = Vec(0,0)
-
-  override def getPoint = _point
-  def getCoord = FieldTracer.pointCenter(_point)
   def getSymbol = symbol
   def getColor = color
   def isTransparent = true
@@ -24,6 +20,6 @@ extends FieldObject with HaveStats {
 
   def getState = stats
   def changeState(s:State) = {
-    if(s.contains("location")) _point is s.getVec("location")
+    if(s.contains("point")) point is s.getVec("point")
   }
 }

@@ -11,13 +11,13 @@ import su.msk.dunno.blame.support.MyFont._
 import su.msk.dunno.screens.support.ScageLibrary._
 import su.msk.dunno.screens.handlers.Renderer
 
-class BulletFlight(val start_point:Vec, val end_point:Vec, val color:ScageColor, val delay:Long = 30)
+class BulletFlight(val start_point:Vec, val end_point:Vec, val color:ScageColor, val delay:Long = 1000)
 extends ScageScreen("Bullet Flight") {
-  private val line = FieldTracer.line(end_point, start_point).toArray
+  private val current_point = start_point.copy
+  private val line = FieldTracer.line(end_point, start_point)
   private var count = 0
 
-  val trace = FieldTracer.addTrace(new FieldObject {
-    def getCoord = FieldTracer.pointCenter(line(count))
+  val trace = FieldTracer.addTrace(new FieldObject(current_point) {
     def getSymbol = BULLET
     def getColor = color
     def isTransparent = true
@@ -27,14 +27,14 @@ extends ScageScreen("Bullet Flight") {
     def changeState(s:State) = {}
   })
 
-  FieldTracer.addLightSource(line(count), 5, trace)
+  FieldTracer.addLightSource(current_point, 5, trace)
 
   private var last_move_time = System.currentTimeMillis
   addAction(new ScageAction {
     override def action = {
       if(System.currentTimeMillis - last_move_time > delay) {
         if(count < line.length-1) {
-          FieldTracer.updatePointLocation(trace, line(count), line(count+1))
+          FieldTracer.updatePointLocation(trace, current_point, line(count+1))
           count += 1
           last_move_time = System.currentTimeMillis
         }
@@ -43,7 +43,7 @@ extends ScageScreen("Bullet Flight") {
     }
 
     override def exit = {
-      FieldTracer.removeTraceFromPoint(trace, line(count))
+      FieldTracer.removeTraceFromPoint(trace, current_point)
     }
   })
 

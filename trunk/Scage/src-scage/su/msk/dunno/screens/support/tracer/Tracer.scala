@@ -24,8 +24,8 @@ import Tracer._
 trait Trace {
   private val _id = nextTraceID
   def id = _id
-  def getCoord():Vec
-  def getState():State
+  def getCoord:Vec
+  def getState:State
   def changeState(state:State):Unit
 }
 
@@ -51,18 +51,17 @@ class Tracer[T <: Trace](val field_from_x:Int = property("field.from.x", 0),
 	val h_y = field_height/N_y
 
   def addTrace(t:T) = {
-    val p = point(t.getCoord())
+    val p = point(t.getCoord)
     if(isPointOnArea(p)) {
       coord_matrix(p.ix)(p.iy) = t :: coord_matrix(p.ix)(p.iy)
       log.debug("added new trace #"+t.id+" in coord ("+t.getCoord+")")
     }
     else log.error("failed to add trace: coord ("+t.getCoord+") is out of area")
     t.id
-
   }
+
   def removeTrace(trace_id:Int, coord:Vec) = {
-    val p = point(coord)
-    coord_matrix(p.ix)(p.iy) = coord_matrix(p.ix)(p.iy).filterNot(_.id == trace_id)
+    removeTraceFromPoint(trace_id, point(coord))
   }
   def removeTraceFromPoint(trace_id:Int, point:Vec) = {
     coord_matrix(point.ix)(point.iy) = coord_matrix(point.ix)(point.iy).filterNot(_.id == trace_id)
@@ -86,15 +85,6 @@ class Tracer[T <: Trace](val field_from_x:Int = property("field.from.x", 0),
     neighbours
   }
 
-  private def checkPointEdges(p:Vec):Vec = {
-    def checkC(c:Float, dist:Int):Float = {
-      if(c >= dist) checkC(c - dist, dist)
-      else if(c < 0) checkC(c + dist, dist)
-      else c
-    }
-    Vec(checkC(p.x, N_x), checkC(p.y, N_y))
-  }
-
   def updateLocation(trace_id:Int, old_coord:Vec, new_coord:Vec):Boolean = {
     if(are_solid_edges && !isCoordOnArea(new_coord)) false
     else {
@@ -106,34 +96,18 @@ class Tracer[T <: Trace](val field_from_x:Int = property("field.from.x", 0),
           case Some(target_trace) => {
             coord_matrix(old_p.ix)(old_p.iy) = coord_matrix(old_p.ix)(old_p.iy).filter(trace => trace.id != trace_id)
             coord_matrix(new_p.ix)(new_p.iy) = target_trace :: coord_matrix(new_p.ix)(new_p.iy)
+
+            old_coord is new_coord_edges_affected
+            true
           }
-          case _ =>
+          case None => false
         }
       }
-      old_coord is new_coord_edges_affected
-      true
+      else true
     }
   }
 
-  def updatePointLocation(trace_id:Int, old_point:Vec, new_point:Vec):Boolean = {
-    if(are_solid_edges && !isPointOnArea(new_point)) false
-    else {
-      val new_point_edges_affected = checkPointEdges(new_point)
-      if(old_point != new_point_edges_affected) {
-        coord_matrix(old_point.ix)(old_point.iy).find(trace => trace.id == trace_id) match {
-          case Some(target_trace) => {
-            coord_matrix(old_point.ix)(old_point.iy) = coord_matrix(old_point.ix)(old_point.iy).filter(trace => trace.id != trace_id)
-            coord_matrix(new_point.ix)(new_point.iy) = target_trace :: coord_matrix(new_point.ix)(new_point.iy)
-          }
-          case _ =>
-        }
-      }
-      old_point is new_point_edges_affected
-      true
-    }
-  }
-
-  private def checkEdges(coord:Vec):Vec = {
+  protected def checkEdges(coord:Vec):Vec = {
     def checkC(c:Float, from:Float, to:Float):Float = {
       val dist = to - from
       if(c >= to) checkC(c - dist, from, to)
@@ -149,8 +123,6 @@ class Tracer[T <: Trace](val field_from_x:Int = property("field.from.x", 0),
     coord.x >= field_from_x && coord.x < field_to_x && coord.y >= field_from_y && coord.y < field_to_y
   }
 
-  def isPointOnArea(point:Vec) = point.x >= 0 && point.x < N_x && point.y >= 0 && point.y < N_y
-
   def hasCollisions(trace_id:Int, coord:Vec, range:Range, min_dist:Float, condition:(T) => Boolean) = {
     if(are_solid_edges && !isCoordOnArea(coord)) true
     else {
@@ -159,5 +131,19 @@ class Tracer[T <: Trace](val field_from_x:Int = property("field.from.x", 0),
       neighbours(trace_id, coord_edges_affected, range, condition).exists(neighbour =>
         (neighbour.getCoord dist2 coord_edges_affected) < min_dist2)
     }
+  }
+
+  def isPointOnArea(point:Vec):Boolean = isPointOnArea(point.ix, point.iy)
+  def isPointOnArea(x:Int, y:Int) = {
+    x >= 0 && x < N_x && y >= 0 && y < N_y
+  }
+
+  protected def checkPointEdges(point:Vec):Vec = {
+    def checkC(c:Float, dist:Int):Float = {
+      if(c >= dist) checkC(c - dist, dist)
+      else if(c < 0) checkC(c + dist, dist)
+      else c
+    }
+    Vec(checkC(point.x, N_x), checkC(point.y, N_y))
   }
 }

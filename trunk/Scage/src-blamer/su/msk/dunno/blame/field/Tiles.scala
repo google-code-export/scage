@@ -6,13 +6,8 @@ import su.msk.dunno.screens.support.tracer.State
 import su.msk.dunno.scage.support.ScageColors._
 import su.msk.dunno.blame.support.BottomMessages
 
-private[tiles] abstract class Tile(x:Int, y:Int) {
-  protected val coord = FieldTracer.pointCenter(x, y)
-}
-
-class Wall(x:Int, y:Int) extends Tile(x, y) {
-  FieldTracer.addTrace(new FieldObject {
-    def getCoord = coord
+class Wall(x:Int, y:Int) {
+  FieldTracer.addTrace(new FieldObject(x, y) {
     def getSymbol = WALL
     def getColor = WHITE
     def isTransparent = false
@@ -23,9 +18,8 @@ class Wall(x:Int, y:Int) extends Tile(x, y) {
   })
 }
 
-class Floor(x:Int, y:Int) extends Tile(x, y) {
-  FieldTracer.addTrace(new FieldObject {
-    def getCoord = coord
+class Floor(x:Int, y:Int) {
+  FieldTracer.addTrace(new FieldObject(x, y) {
     def getSymbol = FLOOR
     def getColor = WHITE
     def isTransparent = true
@@ -36,11 +30,10 @@ class Floor(x:Int, y:Int) extends Tile(x, y) {
   })
 }
 
-class Door(x:Int, y:Int) extends Tile(x, y) {
+class Door(x:Int, y:Int) {
   private var is_open = false
 
-  FieldTracer.addTrace(new FieldObject {
-    def getCoord = coord
+  FieldTracer.addTrace(new FieldObject(x, y) {
     def getSymbol = if(is_open) DOOR_OPEN else DOOR_CLOSE
     def getColor = WHITE
     def isTransparent = is_open

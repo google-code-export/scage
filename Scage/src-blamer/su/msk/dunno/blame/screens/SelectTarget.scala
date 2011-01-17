@@ -62,10 +62,6 @@ class SelectTarget(val living:Living) extends ScageScreen("Target Selector") {
     clearSelectLine
     stop
   })
-  keyListener(Keyboard.KEY_NUMPAD5, onKeyDown = {
-    clearSelectLine
-    stop
-  })
 
   keyListener(Keyboard.KEY_ESCAPE, onKeyDown = {
     target_point = living.getPoint

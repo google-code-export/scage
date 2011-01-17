@@ -25,7 +25,7 @@ extends Npc(name = ScageMessage.xml("enemy.siliconcreature.name"),
             return new Move(step, this)
           else return new Move(randomDir, living = this)
         }
-        else return new Shoot(FieldTracer.point(neighbour.getCoord), this)
+        else return new Shoot(neighbour.getPoint, this)
       }
     })    
     return new Move(randomDir, living = this)

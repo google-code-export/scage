@@ -1,17 +1,18 @@
 package su.msk.dunno.blame.field
 
-import su.msk.dunno.screens.support.tracer.{Tracer, Trace}
 import su.msk.dunno.screens.handlers.Renderer
 import su.msk.dunno.scage.support.{ScageColors, Vec, ScageColor}
 import su.msk.dunno.scage.support.ScageProperties._
 import rlforj.los.{BresLos, ILosBoard, PrecisePermissive}
 import collection.JavaConversions
-import su.msk.dunno.scage.support.messages.ScageMessage
 import su.msk.dunno.blame.support.{BottomMessages, MyFont}
 import su.msk.dunno.blame.screens.Blamer
+import su.msk.dunno.screens.support.tracer.{PointTracer, PointTrace, Tracer, Trace}
 
-trait FieldObject extends Trace {
-  def getPoint = FieldTracer.point(getCoord)
+abstract class FieldObject(protected val point:Vec) extends PointTrace {
+  def this(x:Int, y:Int) = this(Vec(x,y))
+
+  def getPoint:Vec = point
   def getSymbol:Int
   def getColor:ScageColor
   def isTransparent:Boolean
@@ -24,51 +25,45 @@ trait FieldObject extends Trace {
   def preventDraw = is_draw_prevented = true
   def allowDraw= is_draw_prevented = false
   
-  def draw = {
-    if(!is_draw_prevented) Renderer.drawDisplayList(getSymbol, getCoord, getColor)
+  def draw[T <: Trace](tracer:Tracer[T]) = {
+    if(!is_draw_prevented) Renderer.drawDisplayList(getSymbol, tracer.pointCenter(point), getColor)
     was_drawed = true
   }
-  def drawGray = if(!is_draw_prevented) Renderer.drawDisplayList(getSymbol, getCoord, ScageColors.GRAY)
+  def drawGray[T <: Trace](tracer:Tracer[T]) =
+    if(!is_draw_prevented) Renderer.drawDisplayList(getSymbol, tracer.pointCenter(point), ScageColors.GRAY)
 }
 
-object FieldTracer extends Tracer[FieldObject] {
+object FieldTracer extends PointTracer[FieldObject] {
   def addTraceSecondToLast(fo:FieldObject) = {
     val p = fo.getPoint
     if(isPointOnArea(p)) {
       if(coord_matrix(p.ix)(p.iy).size > 0)
         coord_matrix(p.ix)(p.iy) = coord_matrix(p.ix)(p.iy).head :: fo :: coord_matrix(p.ix)(p.iy).tail
       else coord_matrix(p.ix)(p.iy) = fo :: coord_matrix(p.ix)(p.iy)
-      log.debug("added new trace #"+fo.id+" in coord ("+fo.getCoord+")")
+      log.debug("added new field trace #"+fo.id+" in point ("+fo.getPoint+")")
     }
-    else log.error("failed to add trace: coord ("+fo.getCoord+") is out of area")
+    else log.error("failed to add field trace: point ("+fo.getPoint+") is out of area")
     fo.id
   }
 
   override def removeTraceFromPoint(trace_id:Int, p:Vec) = {
-    coord_matrix(p.ix)(p.iy).find(_.id == trace_id) match {
+    /*coord_matrix(p.ix)(p.iy).find(_.id == trace_id) match {
       case Some(fieldObject) => {
         coord_matrix(p.ix)(p.iy) = coord_matrix(p.ix)(p.iy).filterNot(_ == fieldObject)
       }
       case None =>
-    }
-    light_sources = light_sources.filterNot(_._3 == trace_id)
-  }
-
-  def isPointOnArea(x:Int, y:Int) = {
-    x >= 0 && x < N_x && y >= 0 && y < N_y
+    }*/
+    super.removeTraceFromPoint(trace_id, p)
+    removeLightSource(trace_id)
   }
 
   def isPointPassable(x:Int, y:Int, trace_id:Int):Boolean = 
     isPointOnArea(x, y) && (coord_matrix(x)(y).length == 0 || coord_matrix(x)(y).filter(_.id != trace_id).forall(_.isPassable))
   def isPointPassable(point:Vec, trace_id:Int = -1):Boolean = isPointPassable(point.ix, point.iy, trace_id)
-  
+  def isCoordPassable(coord:Vec) = isPointPassable(point(coord), -1)
+
   def isPointTransparent(x:Int, y:Int) = {
     isPointOnArea(x, y) && (coord_matrix(x)(y).length == 0 || coord_matrix(x)(y).forall(_.isTransparent))
-  }
-  
-  def isLocationPassable(coord:Vec) = {
-    val p = point(coord)
-    isPointPassable(p.ix, p.iy, -1)
   }
 
   def randomPassablePoint(from:Vec = Vec(0, 0), to:Vec = Vec(N_x, N_y)):Option[Vec] = {
@@ -140,13 +135,14 @@ object FieldTracer extends Tracer[FieldObject] {
   private var light_sources:List[(() => Vec, () => Int, Int)] = Nil
   def addLightSource(point: => Vec, dov: => Int = 5, trace_id:Int) = 
     light_sources = (() => point, () => dov, trace_id) :: light_sources
+  def removeLightSource(trace_id:Int) = light_sources = light_sources.filterNot(_._3 == trace_id)
   
   private val pp = new PrecisePermissive();  
   private val drawView = new ILosBoard() {
     def contains(x:Int, y:Int):Boolean = isPointOnArea(x, y)    
     def isObstacle(x:Int, y:Int):Boolean = !isPointTransparent(x, y)
     def visit(x:Int, y:Int) = {
-      if(coord_matrix(x)(y).length > 0) coord_matrix(x)(y).head.draw
+      if(coord_matrix(x)(y).length > 0) coord_matrix(x)(y).head.draw(FieldTracer)
     }   
   }
 
@@ -177,7 +173,7 @@ object FieldTracer extends Tracer[FieldObject] {
       for(y <- from_y to to_y) {
         if(coord_matrix(x)(y).length > 0) {
           val tile = coord_matrix(x)(y).last
-          if(tile.wasDrawed && tile.getSymbol != MyFont.FLOOR) coord_matrix(x)(y).head.drawGray
+          if(tile.wasDrawed && tile.getSymbol != MyFont.FLOOR) coord_matrix(x)(y).head.drawGray(this)
         }
       }
     }

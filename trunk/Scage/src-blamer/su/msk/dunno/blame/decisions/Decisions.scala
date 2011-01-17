@@ -70,7 +70,7 @@ class DropItem(item:Option[FieldObject], living:Living) extends Decision(living)
     item match {
       case Some(item_to_drop) => {
         living.inventory.removeItem(item_to_drop)
-        item_to_drop.changeState(new State("point", living.getPoint))
+        item_to_drop.changeState(new State("location", living.getPoint))
         FieldTracer.addTraceSecondToLast(item_to_drop)
         BottomMessages.addPropMessage("item.drop", living.stat("name"), item_to_drop.getState.getString("name"))
       }

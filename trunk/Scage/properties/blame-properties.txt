@@ -23,3 +23,12 @@ framerate = 60
 
 strings.base = res/strings/blamer_strings
 strings.lang = ru
+
+weapon.from.x = 0
+weapon.to.x =200
+
+weapon.from.y = 0
+weapon.to.y = 200
+
+weapon.N_x = 10
+weapon.N_y = 10

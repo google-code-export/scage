@@ -129,7 +129,7 @@ object Renderer {
   }
 
   def createDisplayList(texture:Texture, game_width:Float, game_height:Float, start_x:Float, start_y:Float, real_width:Float, real_height:Float):Int = {
-	  	val list_name = nextDisplayListKey()
+	  val list_name = nextDisplayListKey()
 
 		val t_width:Float = texture.getTextureWidth
 		val t_height:Float = texture.getTextureHeight

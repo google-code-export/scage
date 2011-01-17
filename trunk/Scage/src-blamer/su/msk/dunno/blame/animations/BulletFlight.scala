@@ -14,8 +14,7 @@ import su.msk.dunno.screens.handlers.Renderer
 class BulletFlight(val start_point:Vec, val end_point:Vec, val color:ScageColor, val delay:Long = 1000)
 extends ScageScreen("Bullet Flight") {
   private val current_point = start_point.copy
-  private val line = FieldTracer.line(end_point, start_point)
-  private var count = 0
+  private val line = FieldTracer.line(start_point, end_point)
 
   val trace = FieldTracer.addTrace(new FieldObject(current_point) {
     def getSymbol = BULLET
@@ -29,13 +28,13 @@ extends ScageScreen("Bullet Flight") {
 
   FieldTracer.addLightSource(current_point, 5, trace)
 
+  private var count = 0
   private var last_move_time = System.currentTimeMillis
   addAction(new ScageAction {
     override def action = {
       if(System.currentTimeMillis - last_move_time > delay) {
         if(count < line.length-1) {
-          FieldTracer.updatePointLocation(trace, current_point, line(count+1))
-          count += 1
+          FieldTracer.updatePointLocation(trace, current_point, line({count+=1; count}))
           last_move_time = System.currentTimeMillis
         }
         else stop

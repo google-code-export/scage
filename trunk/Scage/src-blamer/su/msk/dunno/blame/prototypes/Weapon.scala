@@ -10,12 +10,13 @@ import su.msk.dunno.screens.support.ScageLibrary._
 import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.blame.support.MyFont._
 import su.msk.dunno.screens.support.tracer.{PointTracer, Trace, Tracer, State}
+import org.lwjgl.opengl.GL11
 
 class RestrictedPlace extends Item(
   name = "Restricted Place",
   description = "The place in weapon that is restricted to use",
   symbol = BULLET,
-  color = GRAY
+  color = DARK_GRAY
 ) {
   setStat("restricted")
 }
@@ -24,9 +25,18 @@ class FreeSocket extends Item(
   name = "Free Socket",
   description = "The socket of the weapon that can be used to insert some imp",
   symbol = BULLET,
-  color = DARK_GRAY
+  color = GRAY
 ) {
   setStat("socket")
+}
+
+private class WeaponCursor extends Item(
+  name = "Weapon Cursor",
+  description = "Element to navigate through weapon",
+  symbol = MAIN_SELECTOR,
+  color = WHITE
+) {
+  setStat("cursor")
 }
 
 class WeaponTracer extends PointTracer[FieldObject] (
@@ -48,42 +58,77 @@ class WeaponTracer extends PointTracer[FieldObject] (
     fo.id
   }
 
-  def drawWeapon = {
+  def init = {
     for(x <- 0 to N_x-1) {
       for(y <- 0 to N_y-1) {
-        if(coord_matrix(x)(y).length > 0) {
-          coord_matrix(x)(y).last.draw(this)
-        }
-      }
-    }
-    //System.exit(0)
-  }
-}
-
-class Weapon(val owner:Living) {
-  protected val weapon_tracer = new WeaponTracer
-  for(x <- 0 to weapon_tracer.N_x-1) {
-      for(y <- 0 to weapon_tracer.N_y-1) {
-        weapon_tracer.addTrace({
+        addTrace({
           val fs = new FreeSocket
           fs.changeState(new State("point", Vec(x, y)))
-/*          println(fs.getPoint)
-          println(fs.getCoord)*/
           fs
         })
       }
+    }
   }
+  init
 
-  def showWeapon = weapon_screen.run
+  private val cursor = new WeaponCursor
+  private var is_show_cursor = false
+  def isShowCursor = is_show_cursor
+  def drawWeapon = {
+    for(x <- 0 to N_x-1) {
+          for(y <- 0 to N_y-1) {
+            if(is_show_cursor && cursor.getPoint == Vec(x,y)) cursor.draw(this)
+            else {
+              if(coord_matrix(x)(y).length > 0) {
+                val coord = pointCenter(x, y)
+                GL11.glDisable(GL11.GL_TEXTURE_2D);
+                GL11.glPushMatrix();
+                Renderer.color = coord_matrix(x)(y).last.getColor
+                GL11.glTranslatef(coord.x, coord.y, 0.0f);
+                GL11.glRectf(-h_x/2+0.5f, -h_y/2+0.5f, h_x/2-0.5f, h_y/2-0.5f);
+                GL11.glPopMatrix();
+                GL11.glEnable(GL11.GL_TEXTURE_2D);
+              }
+            }
+          }
+       }
+  }
+  def moveCursor(delta:Vec) = {
+    is_show_cursor = true
+    cursor.changeState(new State("point", cursor.getPoint+delta))
+  }
+  def disableCursor = is_show_cursor = false
+}
 
+class Weapon(owner:Living) {
+  private val weapon_tracer = new WeaponTracer
   private lazy val weapon_screen = new ScageScreen("Weapon Screen") {
+    center = Vec((weapon_tracer.field_to_x - weapon_tracer.field_from_x)/2,
+                 (weapon_tracer.field_to_y - weapon_tracer.field_from_y)/2)
     addRender(new ScageRender {
+      override def render = weapon_tracer.drawWeapon
+
       override def interface ={
-        weapon_tracer.drawWeapon
         ScageMessage.print(ScageMessage.xml("weapon.ownership", owner.stat("name")), 20, Renderer.height-20)
       }
     })
 
-    keyListener(Keyboard.KEY_ESCAPE, onKeyDown = stop)
+    keyListener(Keyboard.KEY_UP, onKeyDown = {
+      weapon_tracer.moveCursor(Vec(0,1))
+    })
+    keyListener(Keyboard.KEY_DOWN, onKeyDown = {
+      weapon_tracer.moveCursor(Vec(0,-1))
+    })
+    keyListener(Keyboard.KEY_RIGHT, onKeyDown = {
+      weapon_tracer.moveCursor(Vec(1,0))
+    })
+    keyListener(Keyboard.KEY_LEFT, onKeyDown = {
+      weapon_tracer.moveCursor(Vec(-1,0))
+    })
+    keyListener(Keyboard.KEY_ESCAPE, onKeyDown = {
+      if(weapon_tracer.isShowCursor) weapon_tracer.disableCursor
+      else stop
+    })
   }
+  def showWeapon = weapon_screen.run
 }

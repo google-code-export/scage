@@ -31,7 +31,7 @@ class SelectTarget(val living:Living) extends ScageScreen("Target Selector") {
     target_point += delta
     clearSelectLine
     select_line = FieldTracer.line(living.getPoint, target_point)
-    if(select_line.size > 1) select_line = select_line.init
+    if(select_line.size > 1) select_line = select_line.tail
     select_line.foreach(FieldTracer.preventDraw(_))
     target_point = select_line.last
   }

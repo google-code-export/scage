@@ -84,6 +84,14 @@
         This item is also purposed for tests
     </message>
 
+    <message code="item.extender.name">
+        Socket Extender
+    </message>
+
+    <message code="item.extender.description">
+        Enlarges number of free sockets in weapon
+    </message>
+
     <message code="weapon.ownership">
         ?'s Weapon
     </message>

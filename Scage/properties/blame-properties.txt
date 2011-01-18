@@ -25,10 +25,10 @@ strings.base = res/strings/blamer_strings
 strings.lang = ru
 
 weapon.from.x = 0
-weapon.to.x =200
+weapon.to.x =800
 
 weapon.from.y = 0
-weapon.to.y = 200
+weapon.to.y = 400
 
-weapon.N_x = 10
-weapon.N_y = 10
+weapon.N_x = 40
+weapon.N_y = 20

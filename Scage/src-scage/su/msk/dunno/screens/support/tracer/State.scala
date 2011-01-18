@@ -1,7 +1,8 @@
 package su.msk.dunno.screens.support.tracer
 
 import collection.mutable.HashMap
-import su.msk.dunno.scage.support.Vec
+import su.msk.dunno.scage.support.{ScageColor, Vec}
+import su.msk.dunno.scage.support.ScageColors._
 
 class State() {
   private val args:HashMap[String, StateData] = new HashMap[String, StateData]()
@@ -70,6 +71,17 @@ class State() {
     if(!args.contains(key)) false
     else args(key).bool
   }
+
+  def this(key:String, col:ScageColor) = {this(); args += key -> new StateData(col)}
+  def put(key:String, col:ScageColor):State = {
+    if(args.contains(key)) args(key).color = col
+    else args += key -> new StateData(col);
+    this
+  }
+  def getColor(key:String) = {
+    if(!args.contains(key)) BLACK
+    else args(key).color
+  }
   
   def contains(key:String):Boolean = args.contains(key)
   
@@ -98,5 +110,10 @@ class State() {
     def this(b:Boolean) = {this(); this.b = b;}
     def bool = b
     def bool_= (new_b:Boolean) = b = new_b
+
+    private var col = BLACK
+    def this(col:ScageColor) = {this(); this.col = col;}
+    def color = col
+    def color_= (new_col:ScageColor) = col = new_col
   }
 }

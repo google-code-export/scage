@@ -96,6 +96,14 @@
         Этот предмет тоже служит для тестов
     </message>
 
+    <message code="item.extender.name">
+        Увеличитель количества свободных сокетов
+    </message>
+
+    <message code="item.extender.description">
+        Увеличивает количество свободных сокетов в оружии
+    </message>
+
     <message code="weapon.ownership">
         Оружие ?
     </message>

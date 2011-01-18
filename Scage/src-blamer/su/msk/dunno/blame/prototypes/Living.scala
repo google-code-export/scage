@@ -4,6 +4,7 @@ import su.msk.dunno.screens.support.tracer.State
 import su.msk.dunno.blame.field.{FieldTracer, FieldObject}
 import su.msk.dunno.blame.screens.SelectTarget
 import su.msk.dunno.scage.support.{ScageProperties, Vec, ScageColor}
+import su.msk.dunno.blame.support.BottomMessages
 
 abstract class Living(val name:String,
                       val description:String,
@@ -17,7 +18,12 @@ extends FieldObject(point) with HaveStats {
   def isPassable = false
 
   def getState = stats
-  def changeState(s:State) = {}
+  def changeState(s:State) = {
+    if(s.contains("damage")) {
+      changeStat("health", -s.getInt("damage"))
+      BottomMessages.addPropMessageSameString("changestatus.damage", stat("name"), s.getString("damage"))
+    }
+  }
 
   val trace = FieldTracer.addTrace(this)
   

@@ -12,7 +12,7 @@ import su.msk.dunno.blame.support.MyFont._
 import su.msk.dunno.screens.support.tracer.{PointTracer, Trace, Tracer, State}
 import org.lwjgl.opengl.GL11
 
-class RestrictedPlace extends Item(
+private class RestrictedPlace extends Item(
   name = "Restricted Place",
   description = "The place in weapon that is restricted to use",
   symbol = BULLET,
@@ -21,7 +21,7 @@ class RestrictedPlace extends Item(
   setStat("restricted")
 }
 
-class FreeSocket extends Item(
+private class FreeSocket extends Item(
   name = "Free Socket",
   description = "The socket of the weapon that can be used to insert some imp",
   symbol = BULLET,
@@ -39,7 +39,7 @@ private class WeaponCursor extends Item(
   setStat("cursor")
 }
 
-class WeaponTracer extends PointTracer[FieldObject] (
+class WeaponTracer(val owner:Living) extends PointTracer[FieldObject] (
   field_from_x = property("weapon.from.x", 0),
   field_to_x = property("weapon.to.x", 800),
   field_from_y = property("weapon.from.y", 0),
@@ -77,31 +77,60 @@ class WeaponTracer extends PointTracer[FieldObject] (
   def drawWeapon = {
     for(x <- 0 to N_x-1) {
           for(y <- 0 to N_y-1) {
-            if(is_show_cursor && cursor.getPoint == Vec(x,y)) cursor.draw(this)
-            else {
-              if(coord_matrix(x)(y).length > 0) {
-                val coord = pointCenter(x, y)
+            val coord = pointCenter(x, y)
+            if(coord_matrix(x)(y).length > 0) {
                 GL11.glDisable(GL11.GL_TEXTURE_2D);
                 GL11.glPushMatrix();
                 Renderer.color = coord_matrix(x)(y).last.getColor
                 GL11.glTranslatef(coord.x, coord.y, 0.0f);
-                GL11.glRectf(-h_x/2+0.5f, -h_y/2+0.5f, h_x/2-0.5f, h_y/2-0.5f);
+                GL11.glRectf(-h_x/2+1, -h_y/2+1, h_x/2-1, h_y/2-1);
                 GL11.glPopMatrix();
                 GL11.glEnable(GL11.GL_TEXTURE_2D);
-              }
+            }
+            if(is_show_cursor && cursor.getPoint == Vec(x,y)) {
+              GL11.glDisable(GL11.GL_TEXTURE_2D);
+              GL11.glPushMatrix();
+              Renderer.color = YELLOW
+              GL11.glTranslatef(coord.x, coord.y, 0.0f);
+              GL11.glBegin(GL11.GL_LINE_LOOP)
+                GL11.glVertex2f(-h_x/2, -h_y/2)
+                GL11.glVertex2f(-h_x/2, h_y/2)
+                GL11.glVertex2f(h_x/2, h_y/2)
+                GL11.glVertex2f(h_x/2, -h_y/2)
+              GL11.glEnd
+              GL11.glPopMatrix();
+              GL11.glEnable(GL11.GL_TEXTURE_2D);
             }
           }
        }
   }
   def moveCursor(delta:Vec) = {
     is_show_cursor = true
-    cursor.changeState(new State("point", cursor.getPoint+delta))
+    val new_point = cursor.getPoint + delta
+    if(this.isPointOnArea(new_point)) cursor.changeState(new State("point", new_point))
   }
   def disableCursor = is_show_cursor = false
+
+  def objectsAtCursor = coord_matrix(cursor.getPoint.ix)(cursor.getPoint.iy)
+  def removeItemAtCursor(item:FieldObject) = {
+    val cursor_point = cursor.getPoint
+    coord_matrix(cursor_point.ix)(cursor_point.iy) = coord_matrix(cursor_point.ix)(cursor_point.iy).filterNot(_.id == item.id)
+    owner.inventory.addItem(item)
+  }
+  def insertItemAtCursor = {
+    val cursor_point = cursor.getPoint
+    owner.inventory.selectItem match {
+      case Some(item) => {
+        coord_matrix(cursor_point.ix)(cursor_point.iy) = coord_matrix(cursor_point.ix)(cursor_point.iy) ::: List(item)
+        owner.inventory.removeItem(item)
+      }
+      case None =>
+    }
+  }
 }
 
-class Weapon(owner:Living) {
-  private val weapon_tracer = new WeaponTracer
+class Weapon(val owner:Living) {
+  private val weapon_tracer = new WeaponTracer(owner)
   private lazy val weapon_screen = new ScageScreen("Weapon Screen") {
     center = Vec((weapon_tracer.field_to_x - weapon_tracer.field_from_x)/2,
                  (weapon_tracer.field_to_y - weapon_tracer.field_from_y)/2)
@@ -125,6 +154,15 @@ class Weapon(owner:Living) {
     keyListener(Keyboard.KEY_LEFT, onKeyDown = {
       weapon_tracer.moveCursor(Vec(-1,0))
     })
+    keyListener(Keyboard.KEY_RETURN, onKeyDown = {
+      weapon_tracer.objectsAtCursor.find(item => {
+        !item.getState.contains("socket") && !item.getState.contains("restricted")
+      }) match {
+        case Some(item) => weapon_tracer.removeItemAtCursor(item)
+        case None => weapon_tracer.insertItemAtCursor
+        }
+      }
+    )
     keyListener(Keyboard.KEY_ESCAPE, onKeyDown = {
       if(weapon_tracer.isShowCursor) weapon_tracer.disableCursor
       else stop

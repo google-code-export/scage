@@ -47,6 +47,9 @@ class Inventory(val owner:Living) {
       else items += (name -> List(item))
       if(!item_positions.contains(name)) item_positions = name :: item_positions
     }
+    else {
+      //TODO: drop item on the ground!
+    }
   }
 
   def removeItem(item:FieldObject) = {
@@ -74,14 +77,14 @@ class Inventory(val owner:Living) {
         if(item_selector == -1) {
           item_positions.foreachi((key, i) => {
             ScageMessage.print((i+1) + ". " + key + " (" + items(key).size+")",
-              20, Renderer.height-60 - i*20)
+              20, Renderer.height-60 - i*20, items(key).head.getColor)
           })
         }
         else if(item_selector >= 1 && item_selector <= item_positions.size &&
                 !items(item_positions(item_selector-1)).isEmpty) {
           val selected_item = items(item_positions(item_selector-1)).head
           ScageMessage.print(selected_item.getState.getString("name")+":\n"+
-                             selected_item.getState.getString("description"), 20, Renderer.height-60)
+                             selected_item.getState.getString("description"), 20, Renderer.height-60, selected_item.getColor)
         }
       }
     })

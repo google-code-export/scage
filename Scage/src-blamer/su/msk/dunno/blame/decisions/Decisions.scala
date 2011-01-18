@@ -56,7 +56,7 @@ class Shoot(target_point:Vec, living:Living) extends Decision(living) {
   override val action_period = 2
 
   def doAction = {
-    if(target_point != living.getPoint/* && FieldTracer.isPointPassable(target_point, living.trace)*/) {
+    if(target_point != living.getPoint) {
       if(FieldTracer.isNearPlayer(living.getPoint)) new BulletFlight(living.getPoint, target_point, YELLOW)
       val kickback = (living.getPoint - target_point).n
       val kickback_delta = Vec(if(math.abs(kickback.x) > 0.3) math.signum(kickback.x) else 0,

@@ -6,41 +6,49 @@ import su.msk.dunno.screens.support.tracer.State
 import su.msk.dunno.scage.support.ScageColors._
 import su.msk.dunno.blame.support.BottomMessages
 
+private trait ColorChanger {
+  protected var color = WHITE
+  def changeColorState(state:State) = {
+    if(state.contains("color")) color = state.getColor("color")
+  }
+}
+
 class Wall(x:Int, y:Int) {
-  FieldTracer.addTrace(new FieldObject(x, y) {
+  FieldTracer.addTrace(new FieldObject(x, y) with ColorChanger {
     def getSymbol = WALL
-    def getColor = WHITE
+    def getColor = color
     def isTransparent = false
     def isPassable = false
 
     def getState = new State
-    def changeState(s:State) = {}
+    def changeState(s:State) = changeColorState(s)
   })
 }
 
 class Floor(x:Int, y:Int) {
-  FieldTracer.addTrace(new FieldObject(x, y) {
+  FieldTracer.addTrace(new FieldObject(x, y) with ColorChanger {
     def getSymbol = FLOOR
-    def getColor = WHITE
+    def getColor = color
     def isTransparent = true
     def isPassable = true
 
     def getState = new State
-    def changeState(s:State) = {}
+    def changeState(s:State) = changeColorState(s)
   })
 }
 
 class Door(x:Int, y:Int) {
   private var is_open = false
 
-  FieldTracer.addTrace(new FieldObject(x, y) {
+  FieldTracer.addTrace(new FieldObject(x, y) with ColorChanger {
     def getSymbol = if(is_open) DOOR_OPEN else DOOR_CLOSE
-    def getColor = WHITE
+    def getColor = color
     def isTransparent = is_open
     def isPassable = is_open
 
     def getState = new State("door", if(is_open) "open" else "close")
     def changeState(s:State) = {
+      changeColorState(s)
       if(s.contains("door_open")) {
         if(!is_open) {
           is_open = true

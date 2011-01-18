@@ -30,11 +30,4 @@ extends Npc(name = ScageMessage.xml("enemy.siliconcreature.name"),
     })    
     return new Move(randomDir, living = this)
   }
-
-  override def changeState(s:State) = {
-    if(s.contains("damage")) {
-      changeStat("health", -s.getInt("damage"))
-      BottomMessages.addPropMessageSameString("changestatus.damage", stat("name"), s.getString("damage"))
-    }
-  }
 }

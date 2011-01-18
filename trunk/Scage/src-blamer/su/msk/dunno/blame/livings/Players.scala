@@ -8,7 +8,7 @@ import su.msk.dunno.blame.prototypes.Living
 import su.msk.dunno.scage.support.messages.ScageMessage
 import su.msk.dunno.screens.support.tracer.State
 import su.msk.dunno.blame.support.BottomMessages
-import su.msk.dunno.blame.items.{SecondTestItem, TestItem}
+import su.msk.dunno.blame.items.{SocketExtender, SecondTestItem, TestItem}
 
 class Killy(point:Vec)
 extends Living(name = ScageMessage.xml("player.killy.name"),
@@ -21,12 +21,10 @@ extends Living(name = ScageMessage.xml("player.killy.name"),
   inventory.addItem(new TestItem)
   inventory.addItem(new TestItem)
   inventory.addItem(new TestItem)
-  
-  override def changeState(s:State) = {
-    if(s.contains("damage")) {
-      BottomMessages.addPropMessageSameString("changestatus.damage", stat("name"), s.getString("damage"))
-    }
-  }
+  inventory.addItem(new SocketExtender)
+  inventory.addItem(new SocketExtender)
+  inventory.addItem(new SocketExtender)
+  inventory.addItem(new SocketExtender)
 }
 
 class Cibo(point:Vec)

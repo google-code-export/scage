@@ -15,9 +15,10 @@ class Inventory(val owner:Living) {
   private var item_selector:Int = -1
   def itemSelector:Int = item_selector
   def itemSelector_= (new_num:Int):Unit = {
-    if((new_num >= 1 && new_num <= item_positions.size) || new_num == -1)
+    if((new_num >= 1 && new_num <= item_positions.size) || new_num == -1) {
       item_selector = new_num
-    if(is_item_selection) inventory_screen.stop
+      if(is_item_selection) inventory_screen.stop
+    }
   }
   
   def selectedItem:Option[FieldObject] = {

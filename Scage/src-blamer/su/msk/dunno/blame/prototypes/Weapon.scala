@@ -113,15 +113,17 @@ class WeaponTracer(val owner:Living) extends PointTracer[FieldObject] (
 
   def objectsAtCursor = coord_matrix(cursor.getPoint.ix)(cursor.getPoint.iy)
   def removeItemAtCursor(item:FieldObject) = {
-    val cursor_point = cursor.getPoint
-    coord_matrix(cursor_point.ix)(cursor_point.iy) = coord_matrix(cursor_point.ix)(cursor_point.iy).filterNot(_.id == item.id)
+    removeTraceFromPoint(item.id, cursor.getPoint)
     owner.inventory.addItem(item)
   }
   def insertItemAtCursor = {
     val cursor_point = cursor.getPoint
     owner.inventory.selectItem match {
       case Some(item) => {
-        coord_matrix(cursor_point.ix)(cursor_point.iy) = coord_matrix(cursor_point.ix)(cursor_point.iy) ::: List(item)
+        addPointTrace({
+          item.changeState(new State("point", cursor.getPoint))
+          item
+        })
         owner.inventory.removeItem(item)
       }
       case None =>
@@ -155,14 +157,14 @@ class Weapon(val owner:Living) {
       weapon_tracer.moveCursor(Vec(-1,0))
     })
     keyListener(Keyboard.KEY_RETURN, onKeyDown = {
-      weapon_tracer.objectsAtCursor.find(item => {
-        !item.getState.contains("socket") && !item.getState.contains("restricted")
-      }) match {
-        case Some(item) => weapon_tracer.removeItemAtCursor(item)
-        case None => weapon_tracer.insertItemAtCursor
+      val objects_at_cursor = weapon_tracer.objectsAtCursor
+      if(objects_at_cursor.exists(_.getState.contains("socket"))) {
+        objects_at_cursor.find(item => !item.getState.contains("socket")) match {
+          case Some(item) => weapon_tracer.removeItemAtCursor(item)
+          case None => weapon_tracer.insertItemAtCursor
         }
       }
-    )
+    })
     keyListener(Keyboard.KEY_ESCAPE, onKeyDown = {
       if(weapon_tracer.isShowCursor) weapon_tracer.disableCursor
       else stop

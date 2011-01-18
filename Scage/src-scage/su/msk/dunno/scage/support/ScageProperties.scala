@@ -52,10 +52,14 @@ object ScageProperties {
     }
   }
 
+  private var props_already_read:List[String] = Nil
   private def getProperty(key:String) = {
     if(props == null) null else props.getProperty(key) match {
       case p:String =>
-        log.info("read property "+key+": "+p)
+        if(!props_already_read.contains(key)) {
+          log.info("read property "+key+": "+p)
+          props_already_read = key :: props_already_read
+        }
         p.trim
       case _ =>
         log.error("failed to find property "+key)
@@ -65,6 +69,7 @@ object ScageProperties {
   private def defaultValue[A](key:String, default:A) = {
     log.info("default value for property "+key+" is "+(if("".equals(default.toString)) "empty string" else default))
     props.put(key, default.toString)
+    props_already_read = key :: props_already_read
     default
   }
 
@@ -74,6 +79,7 @@ object ScageProperties {
         try {
           m.toString match {
             case "Int" => p.toInt.asInstanceOf[A]
+            case "Long" => p.toLong.asInstanceOf[A]
             case "Float" => p.toFloat.asInstanceOf[A]
             case "Double" => p.toDouble.asInstanceOf[A]
             case "Boolean" =>

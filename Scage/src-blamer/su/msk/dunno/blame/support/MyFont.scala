@@ -7,7 +7,7 @@ import org.apache.log4j.Logger
 
 object MyFont {
   private val log = Logger.getLogger(this.getClass)
-  log.info("generating new font...")
+  log.info("generating new ingame font...")
 
   val font_file = "res/images/font.png"
   log.info("image file for the font is "+font_file)

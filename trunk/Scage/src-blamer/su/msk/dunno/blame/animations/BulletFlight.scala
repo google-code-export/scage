@@ -11,7 +11,7 @@ import su.msk.dunno.blame.support.MyFont._
 import su.msk.dunno.screens.support.ScageLibrary._
 import su.msk.dunno.screens.handlers.Renderer
 
-class BulletFlight(val start_point:Vec, val end_point:Vec, val color:ScageColor, val delay:Long = 1000)
+class BulletFlight(val start_point:Vec, val end_point:Vec, val color:ScageColor, val delay:Long = property("animation.bulletflight.delay", 30.toLong))
 extends ScageScreen("Bullet Flight") {
   private val current_point = start_point.copy
   private val line = FieldTracer.line(start_point, end_point)

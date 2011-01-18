@@ -29,11 +29,11 @@
     </message>
 
     <message code="door.open">
-        ? opened a door
+        ? opens a door
     </message>
 
     <message code="door.close">
-        ? closed a door
+        ? closes a door
     </message>
     
     <message code="move.wrong">
@@ -49,7 +49,7 @@
     </message>
 
     <message code="changestatus.damage">
-        ? received ? damage
+        ? receives ? damage
     </message>
 
     <message code="inventory.ownership">
@@ -74,6 +74,14 @@
 
     <message code="testitem.description">
         Item for test purposes
+    </message>
+
+    <message code="secondtestitem.name">
+        Yet another test item
+    </message>
+
+    <message code="secondtestitem.description">
+        This item is also purposed for tests
     </message>
 
     <message code="weapon.ownership">

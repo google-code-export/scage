@@ -25,6 +25,14 @@ extends Living(name = ScageMessage.xml("player.killy.name"),
   inventory.addItem(new SocketExtender)
   inventory.addItem(new SocketExtender)
   inventory.addItem(new SocketExtender)
+  inventory.addItem(new SocketExtender)
+  inventory.addItem(new SocketExtender)
+  inventory.addItem(new SocketExtender)
+  inventory.addItem(new SocketExtender)
+  inventory.addItem(new SocketExtender)
+  inventory.addItem(new SocketExtender)
+  inventory.addItem(new SocketExtender)
+  inventory.addItem(new SocketExtender)
 }
 
 class Cibo(point:Vec)

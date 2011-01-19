@@ -129,8 +129,6 @@ object Blamer extends ScageScreen(
   Renderer.backgroundColor = BLACK
 
   def drawInterface = {
-    BottomMessages.showBottomMessages
-
     //messages on the right side of the screen
     ScageMessage.print(currentPlayer.stat("name"),          width - right_messages_width, height-25, WHITE)
     ScageMessage.print("FPS: "+Renderer.fps,                width - right_messages_width, height-45, WHITE)
@@ -141,7 +139,10 @@ object Blamer extends ScageScreen(
   addRender(new ScageRender {
     override def render = FieldTracer.drawField(currentPlayer.getPoint)
 
-    override def interface = drawInterface
+    override def interface = {
+      BottomMessages.showBottomMessages(0)
+      drawInterface
+    }
   })
   
   // initial message

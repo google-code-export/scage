@@ -24,8 +24,10 @@ object BottomMessages {
     addMessage(ScageMessage.xml(message_code, parameters:_*), is_on_same_string = true)
   }
   
-  def showBottomMessages = {
-    var h = bottom_messages_height - (ScageMessage.font_size + 5)
-    bottom_messages.foreach(message => {ScageMessage.print(message, 10, h, WHITE); h -= 20})
+  def showBottomMessages(skip_lines:Int) = {
+    var h = bottom_messages_height - (ScageMessage.font_size + 5) - (ScageMessage.font_size + 5)*skip_lines
+    if(skip_lines == 0 || skip_lines+bottom_messages.size <= bottom_messages_capacity)
+      bottom_messages.foreach(message => {ScageMessage.print(message, 10, h, WHITE); h -= 20})
+    else bottom_messages.dropRight(skip_lines).foreach(message => {ScageMessage.print(message, 10, h, WHITE); h -= 20})
   }
 }

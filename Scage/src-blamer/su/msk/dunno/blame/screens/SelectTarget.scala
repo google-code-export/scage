@@ -10,6 +10,7 @@ import su.msk.dunno.blame.support.BottomMessages
 import su.msk.dunno.screens.support.ScageLibrary._
 import su.msk.dunno.blame.support.MyFont._
 import su.msk.dunno.blame.prototypes.Living
+import su.msk.dunno.scage.support.messages.ScageMessage
 
 class SelectTarget(val living:Living) extends ScageScreen("Target Selector") {
   private var _stop_key = -1
@@ -83,6 +84,9 @@ class SelectTarget(val living:Living) extends ScageScreen("Target Selector") {
     }
     
     override def interface {
+      ScageMessage.print(ScageMessage.xml("selecttarget.helpmessage"),
+        10, BottomMessages.bottom_messages_height - (ScageMessage.font_size + 5))
+      BottomMessages.showBottomMessages(1)
       Blamer.drawInterface
     }
   })

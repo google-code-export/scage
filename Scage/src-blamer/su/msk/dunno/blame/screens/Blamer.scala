@@ -53,12 +53,12 @@ object Blamer extends ScageScreen(
   def currentPlayer = if(is_play_cibo) cibo else killy
   
   // enemies
-  /*(1 to 50).foreach(i => {
+  (1 to 50).foreach(i => {
     FieldTracer.randomPassablePoint() match {
       case Some(point) => new SiliconCreature(point)
       case None =>
     }
-  })*/
+  })
 
   // controls on main screen
   private var is_key_pressed = false
@@ -112,7 +112,7 @@ object Blamer extends ScageScreen(
   keyListener(Keyboard.KEY_I, onKeyDown = currentPlayer.inventory.showInventory)
   keyListener(Keyboard.KEY_W, onKeyDown = currentPlayer.weapon.showWeapon)
   keyListener(Keyboard.KEY_D, onKeyDown = {
-    TimeUpdater.addDecision(new DropItem(currentPlayer.inventory.selectItem, currentPlayer))    
+    TimeUpdater.addDecision(new DropItem(currentPlayer.inventory.selectItem(ScageMessage.xml("decision.drop.selection")), currentPlayer))
   })
   keyListener(Keyboard.KEY_COMMA, onKeyDown = {
     TimeUpdater.addDecision(new PickUpItem(currentPlayer))
@@ -133,7 +133,7 @@ object Blamer extends ScageScreen(
     ScageMessage.print(currentPlayer.stat("name"),          width - right_messages_width, height-25, WHITE)
     ScageMessage.print("FPS: "+Renderer.fps,                width - right_messages_width, height-45, WHITE)
     ScageMessage.print("time: "+TimeUpdater.time,           width - right_messages_width, height-65, WHITE)
-    ScageMessage.print("HP: "+currentPlayer.stat("health"), width - right_messages_width, height-85, WHITE)
+    ScageMessage.print("HP: "+currentPlayer.intStat("health"), width - right_messages_width, height-85, WHITE)
   } 
 
   addRender(new ScageRender {

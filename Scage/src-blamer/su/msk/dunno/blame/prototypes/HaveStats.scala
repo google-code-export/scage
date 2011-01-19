@@ -5,6 +5,7 @@ import su.msk.dunno.screens.support.tracer.State
 trait HaveStats {
   // stats
   protected val stats = new State
+  def haveStat(key:String):Boolean = stats.contains(key)
   def boolStat(key:String):Boolean = stats.getBool(key)
   def intStat(key:String):Int = stats.getInt(key)
   def floatStat(key:String):Float = stats.getFloat(key)

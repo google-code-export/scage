@@ -10,7 +10,8 @@ extends Living(name, description, point, symbol, color) {
   protected var last_decision:Decision = null
   Blamer.addAction(new ScageAction {
     override def action = {
-      if(last_decision == null || TimeUpdater.time - lastActionTime >= last_decision.action_period) {
+      if(isAlive &&
+         (last_decision == null || TimeUpdater.time - lastActionTime >= last_decision.action_period)) {
         last_decision = livingAI
         if(last_decision != null) TimeUpdater.addDecision(last_decision)
       }

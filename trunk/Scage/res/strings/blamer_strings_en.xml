@@ -41,7 +41,24 @@
     </message>
     
     <message code="selecttarget.helpmessage">
-        Choose your target with arrow or numpad keys
+        [Arrow keys, Numpad keys] - Select target [Esc] - Cancel
+    </message>
+
+    <message code="inventory.selection.helpmessage">
+        [Digits] - Select item [Esc] - Cancel
+    </message>
+
+    <message code="inventory.show.helpmessage">
+        [Digits] - Open item's description [Esc] - Exit
+    </message>
+
+    <message code="weapon.helpmessage">
+[Arrow keys, Numpad keys] - Select socket [Enter] - Insert/Remove modifier
+[Esc] - Cancel/Exit
+    </message>
+
+    <message code="weapon.selectmodifier">
+        Select modifier you want to insert to weapon:
     </message>
 
     <message code="decision.shoot">
@@ -56,15 +73,19 @@
         ?'s Inventory
     </message>
 
-    <message code="item.drop">
+    <message code="decision.drop">
         ? drops ? to the floor
     </message>
 
-    <message code="item.pickup">
+    <message code="decision.drop.selection">
+        Select item you want to drop:
+    </message>
+
+    <message code="decision.pickup">
         ? picks up ? from the floor
     </message>
 
-    <message code="item.nopickup">
+    <message code="decision.pickup.failed">
         ? tries to find something on the floor, but fails
     </message>
 
@@ -85,11 +106,23 @@
     </message>
 
     <message code="item.extender.name">
-        Socket Extender
+        Converter
     </message>
 
     <message code="item.extender.description">
         Enlarges number of free sockets in weapon
+    </message>
+
+    <message code="item.freesocket.name">
+        Free socket
+    </message>
+
+    <message code="item.basepart.name">
+        Base part
+    </message>
+
+    <message code="item.restricted.name">
+        Restricted socket
     </message>
 
     <message code="weapon.ownership">

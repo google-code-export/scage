@@ -53,7 +53,24 @@
     </message>
 
     <message code="selecttarget.helpmessage">
-        Выберите цель с помощью стрелок или  клавиш цифровой клавиатуры
+        [Стрелки, Цифровые клавиши] - Выбрать цель [Esc] - Отмена
+    </message>
+
+    <message code="inventory.selection.helpmessage">
+        [Цифровые клавиши] - Выбрать предмет [Esc] - Отмена
+    </message>
+
+    <message code="inventory.show.helpmessage">
+        [Цифровые клавиши] - Открыть описание предмета [Esc] - Выход
+    </message>
+
+    <message code="weapon.helpmessage">
+[Стрелки, Цифровые клавиши] - Выбрать слот [Enter] - Установить/вынуть модификатор
+[Esc] - Отмена/Выход
+    </message>
+
+    <message code="weapon.selectmodifier">
+        Выберите модификатор, который вы хотите вставить в оружие:
     </message>
 
     <message code="decision.shoot">
@@ -68,15 +85,19 @@
         Снаряжение ?
     </message>
 
-    <message code="item.drop">
+    <message code="decision.drop">
         ? выкидывает ? на пол
     </message>
 
-    <message code="item.pickup">
+    <message code="decision.drop.selection">
+        Выберите предмет, который вы хотите выбросить:
+    </message>
+
+    <message code="decision.pickup">
         ? поднимает ?
     </message>
 
-    <message code="item.nopickup">
+    <message code="decision.pickup.failed">
         ? обшаривает глазами пол, но ничего не находит
     </message>
 
@@ -97,11 +118,23 @@
     </message>
 
     <message code="item.extender.name">
-        Увеличитель количества свободных сокетов
+        Преобразователь
     </message>
 
     <message code="item.extender.description">
-        Увеличивает количество свободных сокетов в оружии
+        Увеличивает количество свободных слотов в оружии
+    </message>
+
+    <message code="item.freesocket.name">
+        Свободный слот
+    </message>
+
+    <message code="item.basepart.name">
+        Базовая часть
+    </message>
+
+    <message code="item.restricted.name">
+        Закрытый слот
     </message>
 
     <message code="weapon.ownership">

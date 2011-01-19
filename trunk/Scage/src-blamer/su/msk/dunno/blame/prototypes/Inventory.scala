@@ -7,6 +7,7 @@ import org.lwjgl.input.Keyboard
 import su.msk.dunno.screens.prototypes.ScageRender
 import su.msk.dunno.screens.ScageScreen
 import su.msk.dunno.blame.field.FieldObject
+import su.msk.dunno.blame.support.BottomMessages
 
 class Inventory(val owner:Living) {
   private var items:HashMap[String, List[FieldObject]] = new HashMap[String, List[FieldObject]]()
@@ -28,9 +29,11 @@ class Inventory(val owner:Living) {
   }
   
   private var is_item_selection = false
-  def selectItem:Option[FieldObject] = {
+  private var purpose = ""
+  def selectItem(_purpose:String):Option[FieldObject] = {
     item_selector = -1
     is_item_selection = true
+    purpose = _purpose
     inventory_screen.run
     selectedItem
   }
@@ -75,10 +78,12 @@ class Inventory(val owner:Living) {
     addRender(new ScageRender {
       override def interface = {
         ScageMessage.print(ScageMessage.xml("inventory.ownership", owner.stat("name")), 20, Renderer.height-20)
+        if(is_item_selection)
+          ScageMessage.print(purpose, 20, Renderer.height-20-ScageMessage.row_height)
         if(item_selector == -1) {
           item_positions.foreachi((key, i) => {
             ScageMessage.print((i+1) + ". " + key + " (" + items(key).size+")",
-              20, Renderer.height-60 - i*20, items(key).head.getColor)
+              20, Renderer.height-ScageMessage.row_height*4-i*ScageMessage.row_height, items(key).head.getColor)
           })
         }
         else if(item_selector >= 1 && item_selector <= item_positions.size &&
@@ -87,6 +92,12 @@ class Inventory(val owner:Living) {
           ScageMessage.print(selected_item.getState.getString("name")+":\n"+
                              selected_item.getState.getString("description"), 20, Renderer.height-60, selected_item.getColor)
         }
+        if(is_item_selection) {
+          ScageMessage.print(ScageMessage.xml("inventory.selection.helpmessage"),
+            10, BottomMessages.bottom_messages_height - ScageMessage.row_height)
+        }
+        else ScageMessage.print(ScageMessage.xml("inventory.show.helpmessage"),
+              10, BottomMessages.bottom_messages_height - ScageMessage.row_height)
       }
     })
 
@@ -100,6 +111,18 @@ class Inventory(val owner:Living) {
     keyListener(Keyboard.KEY_8, onKeyDown = itemSelector = 8)
     keyListener(Keyboard.KEY_9, onKeyDown = itemSelector = 9)
     keyListener(Keyboard.KEY_0, onKeyDown = itemSelector = 10)
+
+    keyListener(Keyboard.KEY_NUMPAD1, onKeyDown = itemSelector = 1)
+    keyListener(Keyboard.KEY_NUMPAD2, onKeyDown = itemSelector = 2)
+    keyListener(Keyboard.KEY_NUMPAD3, onKeyDown = itemSelector = 3)
+    keyListener(Keyboard.KEY_NUMPAD4, onKeyDown = itemSelector = 4)
+    keyListener(Keyboard.KEY_NUMPAD5, onKeyDown = itemSelector = 5)
+    keyListener(Keyboard.KEY_NUMPAD6, onKeyDown = itemSelector = 6)
+    keyListener(Keyboard.KEY_NUMPAD7, onKeyDown = itemSelector = 7)
+    keyListener(Keyboard.KEY_NUMPAD8, onKeyDown = itemSelector = 8)
+    keyListener(Keyboard.KEY_NUMPAD9, onKeyDown = itemSelector = 9)
+    keyListener(Keyboard.KEY_NUMPAD0, onKeyDown = itemSelector = 10)
+
     keyListener(Keyboard.KEY_ESCAPE, onKeyDown = {
       if(itemSelector != -1) itemSelector = -1
       else stop

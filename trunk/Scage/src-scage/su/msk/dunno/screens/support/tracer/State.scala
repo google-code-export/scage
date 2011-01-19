@@ -10,19 +10,6 @@ class State() {
   def this(key:String) = {this(); args += key -> new StateData()}
   def put(key:String) = {args += key -> new StateData()}
 
-  def this(key:String, int_num:Int) = {this(); args += key -> new StateData(int_num)}
-  def put(key:String, int_num:Int):State = {
-    if(args.contains(key)) args(key).int = int_num
-    else args += key -> new StateData(int_num);
-    this
-  }
-  def getInt(key:String) = {
-    if(!args.contains(key)) 0
-    else if(args(key).int != 0) args(key).int
-    else if(args(key).float != 0) args(key).float.toInt
-    else 0
-  }
-
   def this(key:String, float_num:Float) = {this(); args += key -> new StateData(float_num)}
   def put(key:String, float_num:Float):State = {
     if(args.contains(key)) args(key).float = float_num
@@ -32,9 +19,9 @@ class State() {
   def getFloat(key:String) = {
     if(!args.contains(key)) 0
     else if(args(key).float != 0) args(key).float
-    else if(args(key).int != 0) args(key).int
     else 0
   }
+  def getInt(key:String) = getFloat(key).toInt
 
   def this(key:String, message:String) = {this(); args += key -> new StateData(message)}
   def put(key:String, message:String):State = {
@@ -44,10 +31,16 @@ class State() {
   }
   def getString(key:String) = {
     if(!args.contains(key)) ""
-    else if(args(key).string != "") args(key).string
-    else if(args(key).int != 0) args(key).int.toString
-    else if(args(key).float != 0) args(key).float.toString
-    else ""
+    else args(key).string
+  }
+  def getNumAsString(key:String) = {
+    if(!args.contains(key)) ""
+    else {
+      val float_num = args(key).float
+      val int_num = args(key).float.toInt
+      if(int_num == float_num) int_num.toString
+      else float_num.toString
+    }
   }
 
   def this(key:String, vec:Vec) = {this(); args += key -> new StateData(vec)}
@@ -82,25 +75,20 @@ class State() {
     if(!args.contains(key)) BLACK
     else args(key).color
   }
-  
+
   def contains(key:String):Boolean = args.contains(key)
-  
+
   private[State] class StateData() {
-	  private var i = 0
-	  def this(i:Int) = {this(); this.i = i;}
-	  def int = i
-    def int_= (new_i:Int) = i = new_i
-	
 	  private var f = 0.0f
 	  def this(f:Float) = {this(); this.f = f;}
 	  def float = f
     def float_= (new_f:Float) = f = new_f
-	
+
 	  private var s = ""
 	  def this(s:String) = {this(); this.s = s;}
 	  def string = s
     def string_= (new_s:String) = s = new_s
-	
+
 	  private var v = Vec(0,0)
 	  def this(v:Vec) = {this(); this.v = v;}
 	  def vec = v

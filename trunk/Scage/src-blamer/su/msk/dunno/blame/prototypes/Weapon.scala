@@ -11,9 +11,10 @@ import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.blame.support.MyFont._
 import su.msk.dunno.screens.support.tracer.{PointTracer, Trace, Tracer, State}
 import org.lwjgl.opengl.GL11
+import su.msk.dunno.blame.support.BottomMessages
 
 private class RestrictedPlace extends Item(
-  name = "Restricted Place",
+  name = ScageMessage.xml("item.restricted.name"),
   description = "The place in weapon that is restricted to use",
   symbol = BULLET,
   color = DARK_GRAY
@@ -22,7 +23,7 @@ private class RestrictedPlace extends Item(
 }
 
 private class FreeSocket extends Item(
-  name = "Free Socket",
+  name = ScageMessage.xml("item.freesocket.name"),
   description = "The socket of the weapon that can be used to insert some imp",
   symbol = BULLET,
   color = GRAY
@@ -31,7 +32,7 @@ private class FreeSocket extends Item(
 }
 
 private class BasePart extends Item(
-  name = "Base Part",
+  name = ScageMessage.xml("item.basepart.name"),
   description = "The unremovable part of the weapon",
   symbol = BULLET,
   color = WHITE
@@ -54,21 +55,24 @@ class Weapon(val owner:Living) extends PointTracer[FieldObject] (
     }
   }
 
-  protected def init = {
+  private def init = {
     for(x <- N_x/2-2 to N_x/2+2) {
       for(y <- N_y/2-2 to N_y/2+2) {
-        val cur_point = Vec(x,y)
-        removeAllTracesFromPoint(cur_point)
-        addTrace({
-          val fs = new BasePart
-          fs.changeState(new State("point", cur_point))
-          fs
-        })
-        addSockets(cur_point)
+        addBasePart(Vec(x,y))
       }
     }
   }
   init
+
+  private def addBasePart(point:Vec) = {
+    removeAllTracesFromPoint(point)
+    addTrace({
+      val fs = new BasePart
+      fs.changeState(new State("point", point))
+      fs
+    })
+    addSockets(point)
+  }
 
   private def addSockets(point:Vec) = {
     val points = List(Vec(-1,0)+point, Vec(1,0)+point, Vec(0,-1)+point, Vec(0,1)+point)
@@ -151,7 +155,7 @@ class Weapon(val owner:Living) extends PointTracer[FieldObject] (
             if(is_show_cursor && cursor == Vec(x,y)) {
               GL11.glDisable(GL11.GL_TEXTURE_2D);
               GL11.glPushMatrix();
-              Renderer.color = YELLOW
+              Renderer.color = GREEN
               GL11.glTranslatef(coord.x, coord.y, 0.0f);
               GL11.glBegin(GL11.GL_LINE_LOOP)
                 GL11.glVertex2f(-h_x/2, -h_y/2)
@@ -168,21 +172,30 @@ class Weapon(val owner:Living) extends PointTracer[FieldObject] (
 
       override def interface ={
         ScageMessage.print(ScageMessage.xml("weapon.ownership", owner.stat("name")), 20, Renderer.height-20)
+        if(is_show_cursor) {
+          if(!coord_matrix(cursor.ix)(cursor.iy).isEmpty)
+              ScageMessage.print(coord_matrix(cursor.ix)(cursor.iy).head.getState.getString("name"),
+                    10, BottomMessages.bottom_messages_height - (ScageMessage.row_height))
+        }
+        ScageMessage.print(ScageMessage.xml("weapon.helpmessage"),
+            10, BottomMessages.bottom_messages_height - (ScageMessage.row_height)*2)
       }
     })
 
-    keyListener(Keyboard.KEY_UP, onKeyDown = {
-      moveCursor(Vec(0,1))
-    })
-    keyListener(Keyboard.KEY_DOWN, onKeyDown = {
-      moveCursor(Vec(0,-1))
-    })
-    keyListener(Keyboard.KEY_RIGHT, onKeyDown = {
-      moveCursor(Vec(1,0))
-    })
-    keyListener(Keyboard.KEY_LEFT, onKeyDown = {
-      moveCursor(Vec(-1,0))
-    })
+    keyListener(Keyboard.KEY_UP,    100, onKeyDown = moveCursor(Vec(0,1)))
+    keyListener(Keyboard.KEY_DOWN,  100, onKeyDown = moveCursor(Vec(0,-1)))
+    keyListener(Keyboard.KEY_RIGHT, 100, onKeyDown = moveCursor(Vec(1,0)))
+    keyListener(Keyboard.KEY_LEFT,  100, onKeyDown = moveCursor(Vec(-1,0)))
+
+    keyListener(Keyboard.KEY_NUMPAD9, 100, onKeyDown = moveCursor(Vec(1,1)))
+    keyListener(Keyboard.KEY_NUMPAD8, 100, onKeyDown = moveCursor(Vec(0,1)))
+    keyListener(Keyboard.KEY_NUMPAD7, 100, onKeyDown = moveCursor(Vec(-1,1)))
+    keyListener(Keyboard.KEY_NUMPAD6, 100, onKeyDown = moveCursor(Vec(1,0)))
+    keyListener(Keyboard.KEY_NUMPAD4, 100, onKeyDown = moveCursor(Vec(-1,0)))
+    keyListener(Keyboard.KEY_NUMPAD3, 100, onKeyDown = moveCursor(Vec(1,-1)))
+    keyListener(Keyboard.KEY_NUMPAD2, 100, onKeyDown = moveCursor(Vec(0,-1)))
+    keyListener(Keyboard.KEY_NUMPAD1, 100, onKeyDown = moveCursor(Vec(-1,-1)))
+
     keyListener(Keyboard.KEY_RETURN, onKeyDown = {
       val objects_at_cursor = coord_matrix(cursor.ix)(cursor.iy)
       if(objects_at_cursor.exists(item => item.getState.contains("socket"))) {
@@ -193,7 +206,7 @@ class Weapon(val owner:Living) extends PointTracer[FieldObject] (
             owner.inventory.addItem(item)
           }
           case None => {
-            owner.inventory.selectItem match {
+            owner.inventory.selectItem(ScageMessage.xml("weapon.selectmodifier")) match {
               case Some(item) => {
                 owner.inventory.removeItem(item)
                 addPointTrace({

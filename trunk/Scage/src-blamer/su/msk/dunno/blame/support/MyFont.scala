@@ -23,6 +23,7 @@ object MyFont {
   val MINOR_SELECTOR   = symbol('x')
   val MAIN_SELECTOR    = symbol('X')
   val BULLET           = symbol('*')
+  val CORPSE           = symbol('%')
 
   private def charCoord(ch:Char):Vec = {
     val code = ch.toInt

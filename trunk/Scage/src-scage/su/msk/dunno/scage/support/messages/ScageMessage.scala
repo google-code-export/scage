@@ -31,6 +31,7 @@ object ScageMessage {
 
   val font_path = ScageProperties.property("font.file", "res/fonts/DroidSans.ttf")
   val font_size = ScageProperties.property("font.size", 18)
+  val row_height = ScageProperties.property("font.row.height", font_size+2)
   val glyph_from = ScageProperties.property("glyph.from", 1024)
   val glyph_to = ScageProperties.property("glyph.to", 1279)
   private val font = new UnicodeFont(font_path, font_size, glyph_from, glyph_to)

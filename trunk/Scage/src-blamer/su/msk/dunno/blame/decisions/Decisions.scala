@@ -78,7 +78,7 @@ class DropItem(item:Option[FieldObject], living:Living) extends Decision(living)
         living.inventory.removeItem(item_to_drop)
         item_to_drop.changeState(new State("point", living.getPoint))
         FieldTracer.addTraceSecondToLast(item_to_drop)
-        BottomMessages.addPropMessage("item.drop", living.stat("name"), item_to_drop.getState.getString("name"))
+        BottomMessages.addPropMessage("decision.drop", living.stat("name"), item_to_drop.getState.getString("name"))
         was_executed = true
       }
       case None =>
@@ -94,9 +94,9 @@ class PickUpItem(living:Living) extends Decision(living) {
       case Some(item) => {
         living.inventory.addItem(item)
         FieldTracer.removeTraceFromPoint(item.id, item.getPoint)
-        BottomMessages.addPropMessage("item.pickup", living.stat("name"), item.getState.getString("name"))
+        BottomMessages.addPropMessage("decision.pickup", living.stat("name"), item.getState.getString("name"))
       }
-      case None => BottomMessages.addPropMessage("item.nopickup", living.stat("name"))
+      case None => BottomMessages.addPropMessage("decision.pickup.failed", living.stat("name"))
     }
     was_executed = true
   }

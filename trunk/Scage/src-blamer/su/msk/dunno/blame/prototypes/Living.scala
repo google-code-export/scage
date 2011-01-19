@@ -4,7 +4,8 @@ import su.msk.dunno.screens.support.tracer.State
 import su.msk.dunno.blame.field.{FieldTracer, FieldObject}
 import su.msk.dunno.blame.screens.SelectTarget
 import su.msk.dunno.scage.support.{ScageProperties, Vec, ScageColor}
-import su.msk.dunno.blame.support.BottomMessages
+import su.msk.dunno.blame.support.{BottomMessages}
+import su.msk.dunno.blame.support.MyFont._
 
 abstract class Living(val name:String,
                       val description:String,
@@ -12,10 +13,10 @@ abstract class Living(val name:String,
                       private val symbol:Int,
                       private val color:ScageColor)
 extends FieldObject(point) with HaveStats {
-  def getSymbol = symbol
+  def getSymbol = if(isAlive) symbol else CORPSE
   def getColor = color
   def isTransparent = true
-  def isPassable = false
+  def isPassable = if(isAlive) false else true
 
   def getState = stats
   def changeState(s:State) = {
@@ -44,4 +45,6 @@ extends FieldObject(point) with HaveStats {
   setStat("description", description)
   setStat("dov", ScageProperties.property("dov.default", 5))
   setStat("health", 100)
+
+  def isAlive = intStat("health") > 0
 }

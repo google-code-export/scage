@@ -57,7 +57,7 @@ extends ScageScreen("Bullet Flight") {
     override def render = FieldTracer.drawField(Blamer.currentPlayer.getPoint)
 
     override def interface {
-      BottomMessages.showBottomMessages
+      BottomMessages.showBottomMessages(0)
       Blamer.drawInterface
     }
   })

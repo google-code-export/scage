@@ -89,7 +89,7 @@ class Weapon(val owner:Living) extends PointTracer[FieldObject] (
   private def removeSockets(point:Vec):Unit = {
     val points = List(Vec(-1,0)+point, Vec(1,0)+point, Vec(0,-1)+point, Vec(0,1)+point)
     for(cur_point <- points) {
-      if(isPointOnArea(cur_point) && isNoExtenderOrBasePartNear(cur_point)) {
+      if(isPointOnArea(cur_point) && isNoBasePartConnection(cur_point)) {
         coord_matrix(cur_point.ix)(cur_point.iy).filterNot(_.getState.contains("restricted")).foreach(item => {
           removeTraceFromPoint(item.id, item.getPoint)
           if(!item.getState.contains("socket")) owner.inventory.addItem(item)
@@ -99,17 +99,28 @@ class Weapon(val owner:Living) extends PointTracer[FieldObject] (
     }
   }
 
-  private def isNoExtenderOrBasePartNear(point:Vec) = {
-    val point1 = checkPointEdges(point + Vec(-1,0))
-    val point2 = checkPointEdges(point + Vec(1,0))
-    val point3 = checkPointEdges(point + Vec(0,-1))
-    val point4 = checkPointEdges(point + Vec(0,1))
+  private def isNoBasePartConnection(point:Vec):Boolean = {
+    def _isNoExtenderOrBasePartNear(point:Vec, excluded:List[FieldObject]):Boolean = {
+      val point1 = checkPointEdges(point + Vec(-1,0))
+      val point2 = checkPointEdges(point + Vec(1,0))
+      val point3 = checkPointEdges(point + Vec(0,-1))
+      val point4 = checkPointEdges(point + Vec(0,1))
 
-    val items:List[FieldObject] = coord_matrix(point1.ix)(point1.iy) :::
-                                  coord_matrix(point2.ix)(point2.iy) :::
-                                  coord_matrix(point3.ix)(point3.iy) :::
-                                  coord_matrix(point4.ix)(point4.iy)
-    !items.exists(item => item.getState.contains("extender") || item.getState.contains("base"))
+      val items:List[FieldObject] = coord_matrix(point1.ix)(point1.iy) :::
+                                    coord_matrix(point2.ix)(point2.iy) :::
+                                    coord_matrix(point3.ix)(point3.iy) :::
+                                    coord_matrix(point4.ix)(point4.iy)
+      items.find(_.getState.contains("base")) match {
+        case Some(item) => false
+        case None => {
+          items.find(item => item.getState.contains("extender") && !excluded.contains(item)) match {
+            case Some(item) => _isNoExtenderOrBasePartNear(item.getPoint, item :: excluded)
+            case None => true
+          }
+        }
+      }
+    }
+    _isNoExtenderOrBasePartNear(point, Nil)
   }
 
   private lazy val weapon_screen = new ScageScreen("Weapon Screen") {

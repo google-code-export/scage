@@ -57,14 +57,13 @@ class Shoot(target_point:Vec, living:Living) extends Decision(living) {
 
   def doAction = {
     if(target_point != living.getPoint) {
+      BottomMessages.addPropMessage("decision.shoot", living.stat("name"))
       if(FieldTracer.isNearPlayer(living.getPoint)) new BulletFlight(living.getPoint, target_point, YELLOW)
       val kickback = (living.getPoint - target_point).n
       val kickback_delta = Vec(if(math.abs(kickback.x) > 0.3) math.signum(kickback.x) else 0,
                                if(math.abs(kickback.y) > 0.3) math.signum(kickback.y) else 0)
       TimeUpdater.addDecision(new Move(kickback_delta, living))
-      val objects = FieldTracer.objectsAtPoint(target_point)
-      BottomMessages.addPropMessage("decision.shoot", living.stat("name"))
-      objects.foreach(_.changeState(new State("damage", 10)))
+      FieldTracer.objectsAtPoint(target_point).foreach(_.changeState(new State("damage", 10)))
       was_executed = true
     }
   }

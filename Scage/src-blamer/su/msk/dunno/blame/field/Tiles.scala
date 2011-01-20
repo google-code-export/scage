@@ -5,6 +5,7 @@ import su.msk.dunno.blame.support.MyFont._
 import su.msk.dunno.screens.support.tracer.State
 import su.msk.dunno.scage.support.ScageColors._
 import su.msk.dunno.blame.support.BottomMessages
+import su.msk.dunno.scage.support.messages.ScageMessage
 
 private trait ColorChanger {
   protected var color = WHITE
@@ -20,7 +21,7 @@ class Wall(x:Int, y:Int) {
     def isTransparent = false
     def isPassable = false
 
-    def getState = new State
+    def getState = new State("name", ScageMessage.xml("tile.wall"))
     def changeState(s:State) = changeColorState(s)
   })
 }
@@ -32,7 +33,7 @@ class Floor(x:Int, y:Int) {
     def isTransparent = true
     def isPassable = true
 
-    def getState = new State
+    def getState = new State("name", ScageMessage.xml("tile.floor"))
     def changeState(s:State) = changeColorState(s)
   })
 }
@@ -46,7 +47,8 @@ class Door(x:Int, y:Int) {
     def isTransparent = is_open
     def isPassable = is_open
 
-    def getState = new State("door", if(is_open) "open" else "close")
+    def getState = new State("door", if(is_open) "open" else "close").
+                  put("name", if(is_open) ScageMessage.xml("tile.door.open") else ScageMessage.xml("tile.door.close"))
     def changeState(s:State) = {
       changeColorState(s)
       if(s.contains("door_open")) {

@@ -5,12 +5,12 @@ import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.screens.handlers.Renderer
 import su.msk.dunno.screens.prototypes.ScageRender
-import su.msk.dunno.blame.field.FieldTracer
 import su.msk.dunno.blame.support.BottomMessages
 import su.msk.dunno.screens.support.ScageLibrary._
 import su.msk.dunno.blame.support.MyFont._
 import su.msk.dunno.blame.prototypes.Living
-import su.msk.dunno.scage.support.messages.ScageMessage
+import su.msk.dunno.scage.support.messages.ScageMessage._
+import su.msk.dunno.blame.field.{FieldObject, FieldTracer}
 
 class SelectTarget(val living:Living) extends ScageScreen("Target Selector") {
   private var _stop_key = -1
@@ -84,9 +84,14 @@ class SelectTarget(val living:Living) extends ScageScreen("Target Selector") {
     }
     
     override def interface {
-      ScageMessage.print(ScageMessage.xml("selecttarget.helpmessage"),
-        10, BottomMessages.bottom_messages_height - (ScageMessage.row_height), GREEN)
-      BottomMessages.showBottomMessages(1)
+      FieldTracer.objectsAtPoint(target_point) match {
+        case head :: tail => print(xml("selecttarget.target")+" "+head.getState.getString("name"),
+                                10, BottomMessages.bottom_messages_height - row_height)
+        case _ =>
+      }
+      print(xml("selecttarget.helpmessage"),
+        10, BottomMessages.bottom_messages_height - (row_height*2), GREEN)
+      BottomMessages.showBottomMessages(2)
       Blamer.drawInterface
     }
   })

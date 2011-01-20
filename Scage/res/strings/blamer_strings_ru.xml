@@ -48,12 +48,12 @@
         ? закрывает дверь
     </message>
 
-    <message code="move.wrong">
-        ? не может пойти туда!
-    </message>
-
     <message code="selecttarget.helpmessage">
         [Стрелки, Цифровые клавиши] - Выбрать цель [Esc] - Отмена
+    </message>
+
+    <message code="selecttarget.target">
+        Цель:
     </message>
 
     <message code="inventory.ownership">
@@ -81,8 +81,8 @@
         Выберите модификатор, который вы хотите вставить в оружие:
     </message>
 
-    <message code="decision.shoot">
-        ? стреляет!
+    <message code="weapon.ownership">
+        Оружие ?
     </message>
 
     <message code="changestatus.damage">
@@ -91,6 +91,10 @@
 
     <message code="changestatus.dead">
         ? умирает
+    </message>
+
+    <message code="decision.shoot">
+        ? стреляет!
     </message>
 
     <message code="decision.drop">
@@ -107,6 +111,10 @@
 
     <message code="decision.pickup.failed">
         ? обшаривает глазами пол, но ничего не находит
+    </message>
+
+    <message code="decision.move.wrong">
+        ? не может пойти туда!
     </message>
 
     <message code="testitem.name">
@@ -145,7 +153,19 @@
         Закрытый слот
     </message>
 
-    <message code="weapon.ownership">
-        Оружие ?
+    <message code="tile.wall">
+        Стена
+    </message>
+
+    <message code="tile.floor">
+        Пол
+    </message>
+
+    <message code="tile.door.open">
+        Открытая дверь
+    </message>
+
+    <message code="tile.door.close">
+        Закрытая дверь
     </message>
 </messages>

@@ -11,7 +11,7 @@ import su.msk.dunno.scage.support.messages.ScageMessage
 import su.msk.dunno.blame.screens.Blamer
 import org.lwjgl.input.Keyboard
 
-class Move(val step:Vec, living:Living) extends Decision(living) {
+class Move(living:Living, val step:Vec) extends Decision(living) {
   override val action_period = 2
 
   def doAction = {
@@ -55,8 +55,8 @@ class CloseDoor(living:Living) extends Decision(living) {
   }
 }
 
-class Shoot(private val defined_target:Vec, living:Living) extends Decision(living) {
-  def this(living:Living) = this(Vec(-1,-1), living)
+class Shoot(living:Living, private val defined_target:Vec = Vec(-1,-1)) extends Decision(living) {
+  //def this(living:Living) = this(Vec(-1,-1), living)
   override val action_period = 2
 
   def doAction = {

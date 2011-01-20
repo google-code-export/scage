@@ -70,50 +70,37 @@ object Blamer extends ScageScreen(
     }
     else 300
   }
-  private def press(decision:Decision) = {
+  private def move(point:Vec) = {
     if(!is_key_pressed) {
       is_key_pressed = true
       pressed_start_time = System.currentTimeMillis
     }
-    TimeUpdater.addDecision(decision)
+    TimeUpdater.addDecision(new Move(currentPlayer, point))
   }
   
-  keyListener(Keyboard.KEY_NUMPAD9, repeatTime, 
-    onKeyDown = press(new Move(Vec(1,1), currentPlayer)), onKeyUp = is_key_pressed = false)
-  keyListener(Keyboard.KEY_UP,      repeatTime, 
-    onKeyDown = press(new Move(Vec(0,1), currentPlayer)), onKeyUp = is_key_pressed = false)
-  keyListener(Keyboard.KEY_NUMPAD8, repeatTime, 
-    onKeyDown = press(new Move(Vec(0,1), currentPlayer)),   onKeyUp = is_key_pressed = false)
-  keyListener(Keyboard.KEY_NUMPAD7, repeatTime, 
-    onKeyDown = press(new Move(Vec(-1,1), currentPlayer)),  onKeyUp = is_key_pressed = false)
-  keyListener(Keyboard.KEY_RIGHT,   repeatTime, 
-    onKeyDown = press(new Move(Vec(1,0), currentPlayer)),   onKeyUp = is_key_pressed = false)
-  keyListener(Keyboard.KEY_NUMPAD6, repeatTime, 
-    onKeyDown = press(new Move(Vec(1,0), currentPlayer)),   onKeyUp = is_key_pressed = false)
-  keyListener(Keyboard.KEY_NUMPAD5, repeatTime,
-    onKeyDown = press(new Move(Vec(0,0), currentPlayer)),   onKeyUp = is_key_pressed = false)
-  keyListener(Keyboard.KEY_LEFT,    repeatTime, 
-    onKeyDown = press(new Move(Vec(-1,0), currentPlayer)),  onKeyUp = is_key_pressed = false)
-  keyListener(Keyboard.KEY_NUMPAD4, repeatTime, 
-    onKeyDown = press(new Move(Vec(-1,0), currentPlayer)),  onKeyUp = is_key_pressed = false)
-  keyListener(Keyboard.KEY_NUMPAD3, repeatTime, 
-    onKeyDown = press(new Move(Vec(1,-1), currentPlayer)),  onKeyUp = is_key_pressed = false)
-  keyListener(Keyboard.KEY_DOWN,    repeatTime, 
-    onKeyDown = press(new Move(Vec(0,-1), currentPlayer)),  onKeyUp = is_key_pressed = false)
-  keyListener(Keyboard.KEY_NUMPAD2, repeatTime, 
-    onKeyDown = press(new Move(Vec(0,-1), currentPlayer)),  onKeyUp = is_key_pressed = false)
-  keyListener(Keyboard.KEY_NUMPAD1, repeatTime, 
-    onKeyDown = press(new Move(Vec(-1,-1), currentPlayer)), onKeyUp = is_key_pressed = false)
+  keyListener(Keyboard.KEY_NUMPAD9, repeatTime, onKeyDown = move(Vec(1,1)),   onKeyUp = is_key_pressed = false)
+  keyListener(Keyboard.KEY_UP,      repeatTime, onKeyDown = move(Vec(0,1)),   onKeyUp = is_key_pressed = false)
+  keyListener(Keyboard.KEY_NUMPAD8, repeatTime, onKeyDown = move(Vec(0,1)),   onKeyUp = is_key_pressed = false)
+  keyListener(Keyboard.KEY_NUMPAD7, repeatTime, onKeyDown = move(Vec(-1,1)),  onKeyUp = is_key_pressed = false)
+  keyListener(Keyboard.KEY_RIGHT,   repeatTime, onKeyDown = move(Vec(1,0)),   onKeyUp = is_key_pressed = false)
+  keyListener(Keyboard.KEY_NUMPAD6, repeatTime, onKeyDown = move(Vec(1,0)),   onKeyUp = is_key_pressed = false)
+  keyListener(Keyboard.KEY_NUMPAD5, repeatTime, onKeyDown = move(Vec(0,0)),   onKeyUp = is_key_pressed = false)
+  keyListener(Keyboard.KEY_LEFT,    repeatTime, onKeyDown = move(Vec(-1,0)),  onKeyUp = is_key_pressed = false)
+  keyListener(Keyboard.KEY_NUMPAD4, repeatTime, onKeyDown = move(Vec(-1,0)),  onKeyUp = is_key_pressed = false)
+  keyListener(Keyboard.KEY_NUMPAD3, repeatTime, onKeyDown = move(Vec(1,-1)),  onKeyUp = is_key_pressed = false)
+  keyListener(Keyboard.KEY_DOWN,    repeatTime, onKeyDown = move(Vec(0,-1)),  onKeyUp = is_key_pressed = false)
+  keyListener(Keyboard.KEY_NUMPAD2, repeatTime, onKeyDown = move(Vec(0,-1)),  onKeyUp = is_key_pressed = false)
+  keyListener(Keyboard.KEY_NUMPAD1, repeatTime, onKeyDown = move(Vec(-1,-1)), onKeyUp = is_key_pressed = false)
   
-  keyListener(Keyboard.KEY_O, onKeyDown = TimeUpdater.addDecision(new OpenDoor(currentPlayer)))
-  keyListener(Keyboard.KEY_C, onKeyDown = TimeUpdater.addDecision(new CloseDoor(currentPlayer)))
-  keyListener(Keyboard.KEY_F, onKeyDown = TimeUpdater.addDecision(new Shoot(currentPlayer)))
-  keyListener(Keyboard.KEY_I, onKeyDown = TimeUpdater.addDecision(new OpenInventory(currentPlayer)))
-  keyListener(Keyboard.KEY_W, onKeyDown = TimeUpdater.addDecision(new OpenWeapon(currentPlayer)))
-  keyListener(Keyboard.KEY_D, onKeyDown = TimeUpdater.addDecision(new DropItem(currentPlayer)))
+  keyListener(Keyboard.KEY_O,     onKeyDown = TimeUpdater.addDecision(new OpenDoor(currentPlayer)))
+  keyListener(Keyboard.KEY_C,     onKeyDown = TimeUpdater.addDecision(new CloseDoor(currentPlayer)))
+  keyListener(Keyboard.KEY_F,     onKeyDown = TimeUpdater.addDecision(new Shoot(currentPlayer)))
+  keyListener(Keyboard.KEY_I,     onKeyDown = TimeUpdater.addDecision(new OpenInventory(currentPlayer)))
+  keyListener(Keyboard.KEY_W,     onKeyDown = TimeUpdater.addDecision(new OpenWeapon(currentPlayer)))
+  keyListener(Keyboard.KEY_D,     onKeyDown = TimeUpdater.addDecision(new DropItem(currentPlayer)))
   keyListener(Keyboard.KEY_COMMA, onKeyDown = TimeUpdater.addDecision(new PickUpItem(currentPlayer)))
   
-  keyListener(Keyboard.KEY_TAB, onKeyDown = is_play_cibo = !is_play_cibo)  
+  keyListener(Keyboard.KEY_TAB,    onKeyDown = is_play_cibo = !is_play_cibo)
   keyListener(Keyboard.KEY_ESCAPE, onKeyDown = allStop)
 
   // render on main screen

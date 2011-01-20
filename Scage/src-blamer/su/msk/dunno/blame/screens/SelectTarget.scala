@@ -85,7 +85,7 @@ class SelectTarget(val living:Living) extends ScageScreen("Target Selector") {
     
     override def interface {
       ScageMessage.print(ScageMessage.xml("selecttarget.helpmessage"),
-        10, BottomMessages.bottom_messages_height - (ScageMessage.row_height))
+        10, BottomMessages.bottom_messages_height - (ScageMessage.row_height), GREEN)
       BottomMessages.showBottomMessages(1)
       Blamer.drawInterface
     }

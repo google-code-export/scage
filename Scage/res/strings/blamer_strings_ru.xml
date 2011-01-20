@@ -56,12 +56,20 @@
         [Стрелки, Цифровые клавиши] - Выбрать цель [Esc] - Отмена
     </message>
 
+    <message code="inventory.ownership">
+        Снаряжение ?
+    </message>
+
     <message code="inventory.selection.helpmessage">
         [Цифровые клавиши] - Выбрать предмет [Esc] - Отмена
     </message>
 
     <message code="inventory.show.helpmessage">
         [Цифровые клавиши] - Открыть описание предмета [Esc] - Выход
+    </message>
+
+    <message code="inventory.description.helpmessage">
+        [Esc] - Вернуться к списку предметов
     </message>
 
     <message code="weapon.helpmessage">
@@ -81,8 +89,8 @@
         ? получает ? единиц урона
     </message>
 
-    <message code="inventory.ownership">
-        Снаряжение ?
+    <message code="changestatus.dead">
+        ? умирает
     </message>
 
     <message code="decision.drop">

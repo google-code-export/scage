@@ -65,6 +65,10 @@
         ? shoots!
     </message>
 
+    <message code="changestatus.dead">
+        ? dies
+    </message>
+
     <message code="changestatus.damage">
         ? receives ? damage
     </message>

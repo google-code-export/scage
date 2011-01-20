@@ -44,6 +44,10 @@
         [Arrow keys, Numpad keys] - Select target [Esc] - Cancel
     </message>
 
+    <message code="selecttarget.target">
+        Target:
+    </message>
+
     <message code="inventory.selection.helpmessage">
         [Digits] - Select item [Esc] - Cancel
     </message>
@@ -131,5 +135,21 @@
 
     <message code="weapon.ownership">
         ?'s Weapon
+    </message>
+
+    <message code="tile.wall">
+        Wall
+    </message>
+
+    <message code="tile.floor">
+        Floor
+    </message>
+
+    <message code="tile.door.open">
+        Open door
+    </message>
+
+    <message code="tile.door.close">
+        Closed door
     </message>
 </messages>

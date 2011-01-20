@@ -56,11 +56,21 @@ class Weapon(val owner:Living) extends PointTracer[FieldObject] (
   }
 
   private def init = {
-    for(x <- N_x/2-2 to N_x/2+2) {
-      for(y <- N_y/2-2 to N_y/2+2) {
-        addBasePart(Vec(x,y))
-      }
-    }
+    val points = List(Vec(-5,0), Vec(-4,0), Vec(-3,0), Vec(-2,0), Vec(-1,0), Vec(0,0), Vec(1,0), Vec(2,0), Vec(3,0), Vec(4,0), Vec(5,0), Vec(6,0)) :::
+                 List(Vec(-4,-1), Vec(-3,-1), Vec(-2,-1), Vec(-1,-1), Vec(0,-1)) :::
+                 List(Vec(-4,-2), Vec(-3,-2)) :::
+                 List(Vec(-4,-3), Vec(-3,-3))
+    val restricted_points = List(Vec(-5,-1), Vec(-5,-2), Vec(-5,-3), Vec(-2, -2), Vec(-2,-3))
+    points.foreach(point => addBasePart(point + Vec(N_x/2, N_y/2)))
+    restricted_points.foreach(point => {
+      val restricted_point = point + Vec(N_x/2, N_y/2)
+      removeAllTracesFromPoint(restricted_point)
+      addTrace({
+        val rp = new RestrictedPlace
+        rp.changeState(new State("point", restricted_point))
+        rp
+      })
+    })
   }
   init
 
@@ -117,10 +127,13 @@ class Weapon(val owner:Living) extends PointTracer[FieldObject] (
       items.find(_.getState.contains("base")) match {
         case Some(item) => false
         case None => {
-          items.find(item => item.getState.contains("extender") && !excluded.contains(item)) match {
+          items.filter(item => item.getState.contains("extender") && !excluded.contains(item)).foldLeft(true)((result, extender) => {
+            result && _isNoExtenderOrBasePartNear(extender.getPoint, extender :: excluded)
+          })
+          /*items.find(item => item.getState.contains("extender") && !excluded.contains(item)) match {
             case Some(item) => _isNoExtenderOrBasePartNear(item.getPoint, item :: excluded)
             case None => true
-          }
+          }*/
         }
       }
     }
@@ -144,13 +157,15 @@ class Weapon(val owner:Living) extends PointTracer[FieldObject] (
           for(y <- 0 to N_y-1) {
             val coord = pointCenter(x, y)
             if(coord_matrix(x)(y).length > 0) {
-                GL11.glDisable(GL11.GL_TEXTURE_2D);
-                GL11.glPushMatrix();
-                Renderer.color = coord_matrix(x)(y).head.getColor
-                GL11.glTranslatef(coord.x, coord.y, 0.0f);
-                GL11.glRectf(-h_x/2+1, -h_y/2+1, h_x/2-1, h_y/2-1);
-                GL11.glPopMatrix();
-                GL11.glEnable(GL11.GL_TEXTURE_2D);
+                if(is_show_cursor || (!coord_matrix(x)(y).head.getState.contains("socket") && !coord_matrix(x)(y).head.getState.contains("restricted"))) {
+                  GL11.glDisable(GL11.GL_TEXTURE_2D);
+                  GL11.glPushMatrix();
+                  Renderer.color = coord_matrix(x)(y).head.getColor
+                  GL11.glTranslatef(coord.x, coord.y, 0.0f);
+                  GL11.glRectf(-h_x/2+1, -h_y/2+1, h_x/2-1, h_y/2-1);
+                  GL11.glPopMatrix();
+                  GL11.glEnable(GL11.GL_TEXTURE_2D);
+                }
             }
             if(is_show_cursor && cursor == Vec(x,y)) {
               GL11.glDisable(GL11.GL_TEXTURE_2D);

@@ -107,16 +107,11 @@ object Blamer extends ScageScreen(
   
   keyListener(Keyboard.KEY_O, onKeyDown = TimeUpdater.addDecision(new OpenDoor(currentPlayer)))
   keyListener(Keyboard.KEY_C, onKeyDown = TimeUpdater.addDecision(new CloseDoor(currentPlayer)))
-  keyListener(Keyboard.KEY_F, onKeyDown =
-          TimeUpdater.addDecision(new Shoot(currentPlayer.selectTarget(Keyboard.KEY_F), currentPlayer)))
-  keyListener(Keyboard.KEY_I, onKeyDown = currentPlayer.inventory.showInventory)
-  keyListener(Keyboard.KEY_W, onKeyDown = currentPlayer.weapon.showWeapon)
-  keyListener(Keyboard.KEY_D, onKeyDown = {
-    TimeUpdater.addDecision(new DropItem(currentPlayer.inventory.selectItem(ScageMessage.xml("decision.drop.selection")), currentPlayer))
-  })
-  keyListener(Keyboard.KEY_COMMA, onKeyDown = {
-    TimeUpdater.addDecision(new PickUpItem(currentPlayer))
-  })
+  keyListener(Keyboard.KEY_F, onKeyDown = TimeUpdater.addDecision(new Shoot(currentPlayer)))
+  keyListener(Keyboard.KEY_I, onKeyDown = TimeUpdater.addDecision(new OpenInventory(currentPlayer)))
+  keyListener(Keyboard.KEY_W, onKeyDown = TimeUpdater.addDecision(new OpenWeapon(currentPlayer)))
+  keyListener(Keyboard.KEY_D, onKeyDown = TimeUpdater.addDecision(new DropItem(currentPlayer)))
+  keyListener(Keyboard.KEY_COMMA, onKeyDown = TimeUpdater.addDecision(new PickUpItem(currentPlayer)))
   
   keyListener(Keyboard.KEY_TAB, onKeyDown = is_play_cibo = !is_play_cibo)  
   keyListener(Keyboard.KEY_ESCAPE, onKeyDown = allStop)

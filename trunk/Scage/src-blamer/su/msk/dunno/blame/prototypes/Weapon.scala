@@ -171,14 +171,14 @@ class Weapon(val owner:Living) extends PointTracer[FieldObject] (
       }
 
       override def interface ={
-        ScageMessage.print(ScageMessage.xml("weapon.ownership", owner.stat("name")), 20, Renderer.height-20)
+        ScageMessage.print(ScageMessage.xml("weapon.ownership", owner.stat("name")), 10, Renderer.height-20)
         if(is_show_cursor) {
           if(!coord_matrix(cursor.ix)(cursor.iy).isEmpty)
               ScageMessage.print(coord_matrix(cursor.ix)(cursor.iy).head.getState.getString("name"),
                     10, BottomMessages.bottom_messages_height - (ScageMessage.row_height))
         }
         ScageMessage.print(ScageMessage.xml("weapon.helpmessage"),
-            10, BottomMessages.bottom_messages_height - (ScageMessage.row_height)*2)
+            10, BottomMessages.bottom_messages_height - (ScageMessage.row_height)*2, GREEN)
       }
     })
 

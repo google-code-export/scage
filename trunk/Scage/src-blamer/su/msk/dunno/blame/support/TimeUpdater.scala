@@ -21,7 +21,7 @@ object TimeUpdater {
           action.execute
           if(action.wasExecuted && action.living.haveStat("player")) _time += action.action_period
         })
-        decisions = decisions.filterNot(current_actions.contains(_))
+        decisions = decisions.filterNot(decision => current_actions.contains(decision) || !decision.living.isAlive)
         current_actions = decisions.filter(decision =>
           decision.living.isAlive &&
           (decision.living.lastActionTime + decision.action_period <= _time || decision.living.haveStat("player")))

@@ -7,6 +7,9 @@ import su.msk.dunno.scage.support.ScageColors._
 import su.msk.dunno.blame.animations.BulletFlight
 import su.msk.dunno.blame.prototypes.{Living, Decision}
 import su.msk.dunno.blame.field.{FieldObject, FieldTracer}
+import su.msk.dunno.scage.support.messages.ScageMessage
+import su.msk.dunno.blame.screens.Blamer
+import org.lwjgl.input.Keyboard
 
 class Move(val step:Vec, living:Living) extends Decision(living) {
   override val action_period = 2
@@ -52,10 +55,12 @@ class CloseDoor(living:Living) extends Decision(living) {
   }
 }
 
-class Shoot(target_point:Vec, living:Living) extends Decision(living) {
+class Shoot(private val defined_target:Vec, living:Living) extends Decision(living) {
+  def this(living:Living) = this(Vec(-1,-1), living)
   override val action_period = 2
 
   def doAction = {
+    val target_point = if(defined_target == Vec(-1, -1)) living.selectTarget(Keyboard.KEY_F) else defined_target
     if(target_point != living.getPoint) {
       BottomMessages.addPropMessage("decision.shoot", living.stat("name"))
       if(FieldTracer.isNearPlayer(living.getPoint)) new BulletFlight(living.getPoint, target_point, YELLOW)
@@ -69,11 +74,11 @@ class Shoot(target_point:Vec, living:Living) extends Decision(living) {
   }
 }
 
-class DropItem(item:Option[FieldObject], living:Living) extends Decision(living) {
+class DropItem(living:Living) extends Decision(living) {
   override val action_period = 2
   
   def doAction = {
-    item match {
+    living.inventory.selectItem(ScageMessage.xml("decision.drop.selection")) match {
       case Some(item_to_drop) => {
         living.inventory.removeItem(item_to_drop)
         item_to_drop.changeState(new State("point", living.getPoint))
@@ -99,5 +104,17 @@ class PickUpItem(living:Living) extends Decision(living) {
       case None => BottomMessages.addPropMessage("decision.pickup.failed", living.stat("name"))
     }
     was_executed = true
+  }
+}
+
+class OpenWeapon(living:Living) extends Decision(living) {
+  def doAction = {
+    living.weapon.showWeapon
+  }
+}
+
+class OpenInventory(living:Living) extends Decision(living) {
+  def doAction = {
+    living.inventory.showInventory
   }
 }

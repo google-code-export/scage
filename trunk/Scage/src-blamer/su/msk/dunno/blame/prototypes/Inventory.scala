@@ -3,6 +3,7 @@ package su.msk.dunno.blame.prototypes
 import collection.mutable.HashMap
 import su.msk.dunno.screens.handlers.Renderer
 import su.msk.dunno.scage.support.messages.ScageMessage
+import su.msk.dunno.scage.support.ScageColors._
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.screens.prototypes.ScageRender
 import su.msk.dunno.screens.ScageScreen
@@ -77,27 +78,28 @@ class Inventory(val owner:Living) {
 
     addRender(new ScageRender {
       override def interface = {
-        ScageMessage.print(ScageMessage.xml("inventory.ownership", owner.stat("name")), 20, Renderer.height-20)
-        if(is_item_selection)
-          ScageMessage.print(purpose, 20, Renderer.height-20-ScageMessage.row_height)
+        ScageMessage.print(ScageMessage.xml("inventory.ownership", owner.stat("name")), 10, Renderer.height-20)
         if(item_selector == -1) {
           item_positions.foreachi((key, i) => {
             ScageMessage.print((i+1) + ". " + key + " (" + items(key).size+")",
-              20, Renderer.height-ScageMessage.row_height*4-i*ScageMessage.row_height, items(key).head.getColor)
+              10, Renderer.height-ScageMessage.row_height*4-i*ScageMessage.row_height, items(key).head.getColor)
           })
+          if(is_item_selection) {
+            ScageMessage.print(purpose, 10, Renderer.height-20-ScageMessage.row_height)
+            ScageMessage.print(ScageMessage.xml("inventory.selection.helpmessage"),
+              10, BottomMessages.bottom_messages_height - ScageMessage.row_height, GREEN)
+          }
+          else ScageMessage.print(ScageMessage.xml("inventory.show.helpmessage"),
+                10, BottomMessages.bottom_messages_height - ScageMessage.row_height, GREEN)
         }
         else if(item_selector >= 1 && item_selector <= item_positions.size &&
                 !items(item_positions(item_selector-1)).isEmpty) {
           val selected_item = items(item_positions(item_selector-1)).head
           ScageMessage.print(selected_item.getState.getString("name")+":\n"+
-                             selected_item.getState.getString("description"), 20, Renderer.height-60, selected_item.getColor)
+                             selected_item.getState.getString("description"), 10, Renderer.height-60, selected_item.getColor)
+          ScageMessage.print(ScageMessage.xml("inventory.description.helpmessage"),
+                10, BottomMessages.bottom_messages_height - ScageMessage.row_height, GREEN)
         }
-        if(is_item_selection) {
-          ScageMessage.print(ScageMessage.xml("inventory.selection.helpmessage"),
-            10, BottomMessages.bottom_messages_height - ScageMessage.row_height)
-        }
-        else ScageMessage.print(ScageMessage.xml("inventory.show.helpmessage"),
-              10, BottomMessages.bottom_messages_height - ScageMessage.row_height)
       }
     })
 

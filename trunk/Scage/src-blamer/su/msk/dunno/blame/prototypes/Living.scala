@@ -6,6 +6,7 @@ import su.msk.dunno.blame.screens.SelectTarget
 import su.msk.dunno.scage.support.{ScageProperties, Vec, ScageColor}
 import su.msk.dunno.blame.support.{BottomMessages}
 import su.msk.dunno.blame.support.MyFont._
+import su.msk.dunno.scage.support.ScageColors._
 
 abstract class Living(val name:String,
                       val description:String,
@@ -14,7 +15,7 @@ abstract class Living(val name:String,
                       private val color:ScageColor)
 extends FieldObject(point) with HaveStats {
   def getSymbol = if(isAlive) symbol else CORPSE
-  def getColor = color
+  def getColor = if(isAlive) color else WHITE
   def isTransparent = true
   def isPassable = if(isAlive) false else true
 
@@ -22,8 +23,9 @@ extends FieldObject(point) with HaveStats {
   def changeState(s:State) = {
     if(s.contains("damage")) {
       changeStat("health", -s.getInt("damage"))
-      BottomMessages.addPropMessageSameString("changestatus.damage", stat("name"), s.getString("damage"))
+      BottomMessages.addPropMessageSameString("changestatus.damage", stat("name"), s.getNumAsString("damage"))
     }
+    if(!isAlive) BottomMessages.addPropMessage("changestatus.dead", stat("name"))
   }
 
   val trace = FieldTracer.addTrace(this)

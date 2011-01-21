@@ -14,22 +14,23 @@ class SiliconCreature(point:Vec)
 extends Npc(name = ScageMessage.xml("enemy.siliconcreature.name"),
             description = ScageMessage.xml("enemy.siliconcreature.description"),
             point, SILICON_CREATURE, CYAN) {
+  setStat("enemy")
   setStat("health", 20)
 
   def livingAI:Decision = {
     def randomDir:Vec = Vec((math.random*3).toInt - 1, (math.random*3).toInt - 1)
     val dov = intStat("dov")
-    FieldTracer.neighboursOfPoint(trace, point, dov).foreach(neighbour => {
+    FieldTracer.objectsAroundPoint(trace, point, dov).foreach(neighbour => {
       if(neighbour.getState.contains("player") && neighbour.getState.getInt("health") > 0) {
         if((point dist neighbour.getPoint) > 3) {       
     	  val step = FieldTracer.direction(point, neighbour.getPoint)
           if(FieldTracer.isPointPassable(point+step)) 
-            return new Move(step, this)
-          else return new Move(randomDir, living = this)
+            return new Move(this, step)
+          else return new Move(living = this, randomDir)
         }
         else return new Shoot(this, neighbour.getPoint)
       }
     })    
-    return new Move(randomDir, living = this)
+    return new Move(living = this, randomDir)
   }
 }

@@ -103,11 +103,15 @@ object FieldTracer extends PointTracer[FieldObject] {
     else false
   }
   
-  def neighboursOfPoint(trace_id:Int, point:Vec, dov:Int) = {
+  def objectsAroundPoint(trace_id:Int, point:Vec, dov:Int) = {
     neighbours(trace_id, pointCenter(point), -dov to dov, (fieldObject) =>
       isVisible(point, fieldObject.getPoint, dov))
   }
-  def objectsAtPoint(point:Vec) = coord_matrix(point.ix)(point.iy)
+  def objectsAtPoint(point:Vec) = if(isPointOnArea(point)) coord_matrix(point.ix)(point.iy) else Nil
+  def livingsAroundPoint(trace_id:Int, point:Vec, dov:Int) = {
+    neighbours(trace_id, pointCenter(point), -dov to dov, (fieldObject) =>
+      isVisible(point, fieldObject.getPoint, dov) && fieldObject.getState.contains("living"))
+  }
 
   def isNearPlayer(point:Vec) = (Blamer.currentPlayer.getPoint dist point) < visibility_distance
 

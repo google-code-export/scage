@@ -18,11 +18,20 @@ class SelectTarget(val living:Living) extends ScageScreen("Target Selector") {
   private var select_line:List[Vec] = List(living.getPoint)
   def apply(new_key:Int):Vec = {
     _stop_key = new_key
-    target_point = living.getPoint
-    select_line = List(living.getPoint)
+    target_point = findTarget
+    select_line = FieldTracer.line(living.getPoint, target_point)
     run
     target_point
-  }  
+  }
+
+  private def findTarget:Vec = {
+    val dov = living.getState.getInt("dov")
+    FieldTracer.livingsAroundPoint(living.trace, living.getPoint, dov).find(obj =>
+      obj.getState.contains("enemy") && obj.getState.getInt("health") > 0) match {
+      case Some(enemy) => enemy.getPoint
+      case None => living.getPoint
+    }
+  }
 
   private def clearSelectLine = {
     select_line.foreach(FieldTracer.allowDraw(_))

@@ -1,7 +1,7 @@
 package su.msk.dunno.screens.support.tracer
 
 import su.msk.dunno.scage.support.Vec
-import su.msk.dunno.scage.support.ScageProperties._
+import su.msk.dunno.screens.support.ScageLibrary._
 
 trait PointTrace extends Trace {
   def getPoint:Vec
@@ -56,5 +56,17 @@ extends Tracer[PT](field_from_x,field_to_x,field_from_y,field_to_y,N_x,N_y,are_s
 
   override def removeTrace(trace_id:Int, point:Vec) = {
     removeTraceFromPoint(trace_id, point)
+  }
+
+  override def neighbours(trace_id:Int, point:Vec, range:Range, condition:(PT) => Boolean):List[PT] = {
+    var neighbours:List[PT] = Nil
+    range.foreachpair((i, j) => {
+      val near_point = checkPointEdges(point + Vec(i, j))
+    	neighbours = coord_matrix(near_point.ix)(near_point.iy).foldLeft(List[PT]())((acc, trace) => {
+    	  if(condition(trace) && trace.id != trace_id) trace :: acc
+    		else acc
+    	}) ::: neighbours
+    })
+    neighbours
   }
 }

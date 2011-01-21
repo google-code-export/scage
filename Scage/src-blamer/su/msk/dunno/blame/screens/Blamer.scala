@@ -1,14 +1,13 @@
 package su.msk.dunno.blame.screens
 
 import su.msk.dunno.screens.ScageScreen
-import su.msk.dunno.scage.support.messages.ScageMessage
+import su.msk.dunno.scage.support.messages.ScageMessage._
 import su.msk.dunno.screens.support.ScageLibrary._
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.blame.field.FieldTracer
 import su.msk.dunno.blame.field.tiles.{Door, Wall, Floor}
 import su.msk.dunno.screens.prototypes.ScageRender
-import su.msk.dunno.blame.prototypes.Decision
 import su.msk.dunno.screens.handlers.Renderer
 import su.msk.dunno.blame.support.{BottomMessages, TimeUpdater, GenLib}
 import su.msk.dunno.blame.livings.{SiliconCreature, Cibo, Killy}
@@ -103,6 +102,18 @@ object Blamer extends ScageScreen(
   keyListener(Keyboard.KEY_TAB,    onKeyDown = is_play_cibo = !is_play_cibo)
   keyListener(Keyboard.KEY_ESCAPE, onKeyDown = allStop)
 
+  private lazy val help_screen = new ScageScreen("Help Screen") {
+    keyListener(Keyboard.KEY_ESCAPE, onKeyDown = stop)
+
+    addRender(new ScageRender {
+      override def interface = {
+        print(xml("helpscreen.tutorial"),    10, Renderer.height-20)
+        print(xml("helpscreen.helpmessage"), 10, row_height, GREEN)
+      }
+    })
+  }
+  keyListener(Keyboard.KEY_F1, onKeyDown = help_screen.run)
+
   // render on main screen
   windowCenter = Vec((width - right_messages_width)/2, 
   		     BottomMessages.bottom_messages_height + (height - BottomMessages.bottom_messages_height)/2)
@@ -112,10 +123,10 @@ object Blamer extends ScageScreen(
 
   def drawInterface = {
     //messages on the right side of the screen
-    ScageMessage.print(currentPlayer.stat("name"),          width - right_messages_width, height-25, WHITE)
-    ScageMessage.print("FPS: "+Renderer.fps,                width - right_messages_width, height-45, WHITE)
-    ScageMessage.print("time: "+TimeUpdater.time,           width - right_messages_width, height-65, WHITE)
-    ScageMessage.print("HP: "+currentPlayer.intStat("health"), width - right_messages_width, height-85, WHITE)
+    print(currentPlayer.stat("name"),          width - right_messages_width, height-25, WHITE)
+    print("FPS: "+Renderer.fps,                width - right_messages_width, height-45, WHITE)
+    print("time: "+TimeUpdater.time,           width - right_messages_width, height-65, WHITE)
+    print("HP: "+currentPlayer.intStat("health"), width - right_messages_width, height-85, WHITE)
   } 
 
   addRender(new ScageRender {

@@ -20,6 +20,10 @@
 
     </message>
 
+    <message code="player.killy.dead.name">
+        Мертвый Килли
+    </message>
+
     <message code="player.cibo.name">
         Сибо
     </message>
@@ -28,12 +32,20 @@
 
     </message>
 
+    <message code="player.cibo.dead.name">
+        Мертвая Сибо
+    </message>
+
     <message code="enemy.siliconcreature.name">
         Силиконовое устройство
     </message>
 
     <message code="enemy.siliconcreature.description">
 
+    </message>
+
+    <message code="enemy.siliconcreature.dead.name">
+        Мертвое силиконовое устройство
     </message>
 
     <message code="greetings.helloworld">
@@ -167,5 +179,22 @@
 
     <message code="tile.door.close">
         Закрытая дверь
+    </message>
+
+    <message code="helpscreen.tutorial">
+        Стрелки/Цифровая клавиатура - Перемещение
+        O   - Открыть дверь
+        C   - Закрыть дверь
+        F   - Выбрать цель и атаковать
+        I   - Открыть инвентарь
+        W   - Осмотреть оружие
+        D   - Выбросить предмет из инвентаря на землю
+        ,   - Поднять предмет с земли и положить его в инвентарь
+        Tab - Переключиться между Килли и Сибо
+        F1  - Открыть этот экран
+    </message>
+
+    <message code="helpscreen.helpmessage">
+        [ESC] - Выход
     </message>
 </messages>

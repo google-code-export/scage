@@ -21,11 +21,19 @@ extends FieldObject(point) with HaveStats {
 
   def getState = stats
   def changeState(s:State) = {
-    if(s.contains("damage")) {
-      changeStat("health", -s.getInt("damage"))
-      BottomMessages.addPropMessageSameString("changestatus.damage", stat("name"), s.getNumAsString("damage"))
+    if(isAlive) {
+      if(s.contains("damage")) {
+        changeStat("health", -s.getInt("damage"))
+        BottomMessages.addPropMessageSameString("changestatus.damage", stat("name"), s.getNumAsString("damage"))
+        FieldTracer.pourBlood(trace, point, colorStat("blood"))
+      }
+      if(!isAlive) onDeath
     }
-    if(!isAlive) BottomMessages.addPropMessage("changestatus.dead", stat("name"))
+  }
+
+  def onDeath = {
+    BottomMessages.addPropMessage("changestatus.dead", stat("name"))
+    if(FieldTracer.isLightSource(trace)) FieldTracer.removeLightSource(trace)
   }
 
   val trace = FieldTracer.addTrace(this)
@@ -47,6 +55,7 @@ extends FieldObject(point) with HaveStats {
   setStat("description", description)
   setStat("dov", ScageProperties.property("dov.default", 5))
   setStat("health", 100)
+  setStat("blood", RED)
 
   def isAlive = intStat("health") > 0
 }

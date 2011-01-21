@@ -8,6 +8,10 @@
 
     </message>
 
+    <message code="player.killy.dead.name">
+        Dead Killy
+    </message>
+
     <message code="player.cibo.name">
         Cibo
     </message>
@@ -16,12 +20,20 @@
 
     </message>
 
+    <message code="player.killy.dead.name">
+        Dead Cibo
+    </message>
+
     <message code="enemy.siliconcreature.name">
         Silicon Creature
     </message>
 
     <message code="enemy.siliconcreature.description">
 
+    </message>
+
+    <message code="enemy.siliconcreature.dead.name">
+        Dead Silicon Creature
     </message>
 
     <message code="greetings.helloworld">

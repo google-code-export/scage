@@ -3,7 +3,7 @@ package su.msk.dunno.blame.prototypes
 import su.msk.dunno.blame.field.FieldObject
 import su.msk.dunno.screens.ScageScreen
 import su.msk.dunno.screens.prototypes.ScageRender
-import su.msk.dunno.scage.support.messages.ScageMessage
+import su.msk.dunno.scage.support.messages.ScageMessage._
 import su.msk.dunno.screens.handlers.Renderer
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.screens.support.ScageLibrary._
@@ -14,7 +14,7 @@ import org.lwjgl.opengl.GL11
 import su.msk.dunno.blame.support.BottomMessages
 
 private class RestrictedPlace extends Item(
-  name = ScageMessage.xml("item.restricted.name"),
+  name = xml("item.restricted.name"),
   description = "The place in weapon that is restricted to use",
   symbol = BULLET,
   color = DARK_GRAY
@@ -23,7 +23,7 @@ private class RestrictedPlace extends Item(
 }
 
 private class FreeSocket extends Item(
-  name = ScageMessage.xml("item.freesocket.name"),
+  name = xml("item.freesocket.name"),
   description = "The socket of the weapon that can be used to insert some imp",
   symbol = BULLET,
   color = GRAY
@@ -32,7 +32,7 @@ private class FreeSocket extends Item(
 }
 
 private class BasePart extends Item(
-  name = ScageMessage.xml("item.basepart.name"),
+  name = xml("item.basepart.name"),
   description = "The unremovable part of the weapon",
   symbol = BULLET,
   color = WHITE
@@ -130,10 +130,6 @@ class Weapon(val owner:Living) extends PointTracer[FieldObject] (
           items.filter(item => item.getState.contains("extender") && !excluded.contains(item)).foldLeft(true)((result, extender) => {
             result && _isNoExtenderOrBasePartNear(extender.getPoint, extender :: excluded)
           })
-          /*items.find(item => item.getState.contains("extender") && !excluded.contains(item)) match {
-            case Some(item) => _isNoExtenderOrBasePartNear(item.getPoint, item :: excluded)
-            case None => true
-          }*/
         }
       }
     }
@@ -157,7 +153,9 @@ class Weapon(val owner:Living) extends PointTracer[FieldObject] (
           for(y <- 0 to N_y-1) {
             val coord = pointCenter(x, y)
             if(coord_matrix(x)(y).length > 0) {
-                if(is_show_cursor || (!coord_matrix(x)(y).head.getState.contains("socket") && !coord_matrix(x)(y).head.getState.contains("restricted"))) {
+                if(is_show_cursor ||
+                   (!coord_matrix(x)(y).head.getState.contains("socket") &&
+                   !coord_matrix(x)(y).head.getState.contains("restricted"))) {
                   GL11.glDisable(GL11.GL_TEXTURE_2D);
                   GL11.glPushMatrix();
                   Renderer.color = coord_matrix(x)(y).head.getColor
@@ -186,14 +184,13 @@ class Weapon(val owner:Living) extends PointTracer[FieldObject] (
       }
 
       override def interface ={
-        ScageMessage.print(ScageMessage.xml("weapon.ownership", owner.stat("name")), 10, Renderer.height-20)
+        print(xml("weapon.ownership", owner.stat("name")), 10, Renderer.height-20)
         if(is_show_cursor) {
           if(!coord_matrix(cursor.ix)(cursor.iy).isEmpty)
-              ScageMessage.print(coord_matrix(cursor.ix)(cursor.iy).head.getState.getString("name"),
-                    10, BottomMessages.bottom_messages_height - (ScageMessage.row_height))
+              print(coord_matrix(cursor.ix)(cursor.iy).head.getState.getString("name"),
+                    10, BottomMessages.bottom_messages_height - row_height)
         }
-        ScageMessage.print(ScageMessage.xml("weapon.helpmessage"),
-            10, BottomMessages.bottom_messages_height - (ScageMessage.row_height)*2, GREEN)
+        print(xml("weapon.helpmessage"), 10, row_height*2, GREEN)
       }
     })
 
@@ -221,7 +218,7 @@ class Weapon(val owner:Living) extends PointTracer[FieldObject] (
             owner.inventory.addItem(item)
           }
           case None => {
-            owner.inventory.selectItem(ScageMessage.xml("weapon.selectmodifier")) match {
+            owner.inventory.selectItem(xml("weapon.selectmodifier")) match {
               case Some(item) => {
                 owner.inventory.removeItem(item)
                 addPointTrace({

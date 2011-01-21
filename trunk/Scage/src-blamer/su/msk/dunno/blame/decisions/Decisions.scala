@@ -24,7 +24,7 @@ class OpenDoor(living:Living) extends Decision(living) {
   override val action_period = 1
 
   def doAction = {
-    FieldTracer.neighboursOfPoint(living.trace, living.getPoint, 1).find(fo => {
+    FieldTracer.objectsAroundPoint(living.trace, living.getPoint, 1).find(fo => {
       fo.getState.contains("door") &&
       "close" == fo.getState.getString("door")
     }) match {
@@ -41,7 +41,7 @@ class CloseDoor(living:Living) extends Decision(living) {
   override val action_period = 1
 
   def doAction = {
-    FieldTracer.neighboursOfPoint(living.trace, living.getPoint, 1).find(possible_door => {
+    FieldTracer.objectsAroundPoint(living.trace, living.getPoint, 1).find(possible_door => {
       possible_door.getState.contains("door") &&
       "open" == possible_door.getState.getString("door") &&
       !FieldTracer.objectsAtPoint(possible_door.getPoint).exists(_.getState.contains("living"))
@@ -67,7 +67,7 @@ class Shoot(living:Living, private val defined_target:Vec = Vec(-1,-1)) extends 
       val kickback = (living.getPoint - target_point).n
       val kickback_delta = Vec(if(math.abs(kickback.x) > 0.3) math.signum(kickback.x) else 0,
                                if(math.abs(kickback.y) > 0.3) math.signum(kickback.y) else 0)
-      TimeUpdater.addDecision(new Move(kickback_delta, living))
+      TimeUpdater.addDecision(new Move(living, kickback_delta))
       FieldTracer.objectsAtPoint(target_point).foreach(_.changeState(new State("damage", 10)))
       was_executed = true
     }

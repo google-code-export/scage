@@ -16,12 +16,12 @@ class State() {
     else args += key -> new StateData(float_num);
     this
   }
-  def getFloat(key:String) = {
+  def getFloat(key:String):Float = {
     if(!args.contains(key)) 0
     else if(args(key).float != 0) args(key).float
     else 0
   }
-  def getInt(key:String) = getFloat(key).toInt
+  def getInt(key:String):Int = getFloat(key).toInt
 
   def this(key:String, message:String) = {this(); args += key -> new StateData(message)}
   def put(key:String, message:String):State = {

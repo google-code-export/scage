@@ -1,6 +1,7 @@
 package su.msk.dunno.blame.prototypes
 
 import su.msk.dunno.screens.support.tracer.State
+import su.msk.dunno.scage.support.ScageColor
 
 trait HaveStats {
   // stats
@@ -9,6 +10,7 @@ trait HaveStats {
   def boolStat(key:String):Boolean = stats.getBool(key)
   def intStat(key:String):Int = stats.getInt(key)
   def floatStat(key:String):Float = stats.getFloat(key)
+  def colorStat(key:String):ScageColor = stats.getColor(key)
   def stat(key:String):String = stats.getString(key)
 
   def setStat(key:String) = stats.put(key)
@@ -18,6 +20,7 @@ trait HaveStats {
       case "Int" => stats.put(key, value.asInstanceOf[Int])
       case "Float" => stats.put(key, value.asInstanceOf[Float])
       case "Boolean" => stats.put(key, value.asInstanceOf[Boolean])
+      case "su.msk.dunno.scage.support.ScageColor" => stats.put(key, value.asInstanceOf[ScageColor])
       case _ => stats.put(key, value.asInstanceOf[String])
     }
   }

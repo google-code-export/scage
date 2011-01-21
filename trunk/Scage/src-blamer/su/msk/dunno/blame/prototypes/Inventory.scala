@@ -2,13 +2,14 @@ package su.msk.dunno.blame.prototypes
 
 import collection.mutable.HashMap
 import su.msk.dunno.screens.handlers.Renderer
-import su.msk.dunno.scage.support.messages.ScageMessage
+import su.msk.dunno.scage.support.messages.ScageMessage._
 import su.msk.dunno.scage.support.ScageColors._
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.screens.prototypes.ScageRender
 import su.msk.dunno.screens.ScageScreen
-import su.msk.dunno.blame.field.FieldObject
 import su.msk.dunno.blame.support.BottomMessages
+import su.msk.dunno.screens.support.tracer.State
+import su.msk.dunno.blame.field.{FieldTracer, FieldObject}
 
 class Inventory(val owner:Living) {
   private var items:HashMap[String, List[FieldObject]] = new HashMap[String, List[FieldObject]]()
@@ -53,7 +54,9 @@ class Inventory(val owner:Living) {
       if(!item_positions.contains(name)) item_positions = name :: item_positions
     }
     else {
-      //TODO: drop item on the ground!
+      item.changeState(new State("point", owner.getPoint))
+      FieldTracer.addTraceSecondToLast(item)
+      BottomMessages.addPropMessage("decision.drop", owner.stat("name"), item.getState.getString("name"))
     }
   }
 
@@ -78,27 +81,24 @@ class Inventory(val owner:Living) {
 
     addRender(new ScageRender {
       override def interface = {
-        ScageMessage.print(ScageMessage.xml("inventory.ownership", owner.stat("name")), 10, Renderer.height-20)
+        print(xml("inventory.ownership", owner.stat("name")), 10, Renderer.height-20)
         if(item_selector == -1) {
           item_positions.foreachi((key, i) => {
-            ScageMessage.print((i+1) + ". " + key + " (" + items(key).size+")",
-              10, Renderer.height-ScageMessage.row_height*4-i*ScageMessage.row_height, items(key).head.getColor)
+            print((i+1) + ". " + key + " (" + items(key).size+")",
+              10, Renderer.height-row_height*4-i*row_height, items(key).head.getColor)
           })
           if(is_item_selection) {
-            ScageMessage.print(purpose, 10, Renderer.height-20-ScageMessage.row_height)
-            ScageMessage.print(ScageMessage.xml("inventory.selection.helpmessage"),
-              10, BottomMessages.bottom_messages_height - ScageMessage.row_height, GREEN)
+            print(purpose, 10, Renderer.height-20-row_height)
+            print(xml("inventory.selection.helpmessage"), 10, row_height, GREEN)
           }
-          else ScageMessage.print(ScageMessage.xml("inventory.show.helpmessage"),
-                10, BottomMessages.bottom_messages_height - ScageMessage.row_height, GREEN)
+          else print(xml("inventory.show.helpmessage"), 10, row_height, GREEN)
         }
         else if(item_selector >= 1 && item_selector <= item_positions.size &&
                 !items(item_positions(item_selector-1)).isEmpty) {
           val selected_item = items(item_positions(item_selector-1)).head
-          ScageMessage.print(selected_item.getState.getString("name")+":\n"+
-                             selected_item.getState.getString("description"), 10, Renderer.height-60, selected_item.getColor)
-          ScageMessage.print(ScageMessage.xml("inventory.description.helpmessage"),
-                10, BottomMessages.bottom_messages_height - ScageMessage.row_height, GREEN)
+          print(selected_item.getState.getString("name")+":\n"+
+                selected_item.getState.getString("description"), 10, Renderer.height-60, selected_item.getColor)
+          print(xml("inventory.description.helpmessage"), 10, row_height, GREEN)
         }
       }
     })

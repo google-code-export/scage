@@ -7,7 +7,7 @@ import rlforj.los.{BresLos, ILosBoard, PrecisePermissive}
 import collection.JavaConversions
 import su.msk.dunno.blame.support.{BottomMessages, MyFont}
 import su.msk.dunno.blame.screens.Blamer
-import su.msk.dunno.screens.support.tracer.{PointTracer, PointTrace, Tracer, Trace}
+import su.msk.dunno.screens.support.tracer._
 
 abstract class FieldObject(protected val point:Vec) extends PointTrace {
   def this(x:Int, y:Int) = this(Vec(x,y))
@@ -104,16 +104,25 @@ object FieldTracer extends PointTracer[FieldObject] {
   }
   
   def objectsAroundPoint(trace_id:Int, point:Vec, dov:Int) = {
-    neighbours(trace_id, pointCenter(point), -dov to dov, (fieldObject) =>
+    neighbours(trace_id, point, -dov to dov, (fieldObject) =>
       isVisible(point, fieldObject.getPoint, dov))
   }
   def objectsAtPoint(point:Vec) = if(isPointOnArea(point)) coord_matrix(point.ix)(point.iy) else Nil
   def livingsAroundPoint(trace_id:Int, point:Vec, dov:Int) = {
-    neighbours(trace_id, pointCenter(point), -dov to dov, (fieldObject) =>
+    neighbours(trace_id, point, -dov to dov, (fieldObject) =>
       isVisible(point, fieldObject.getPoint, dov) && fieldObject.getState.contains("living"))
   }
 
   def isNearPlayer(point:Vec) = (Blamer.currentPlayer.getPoint dist point) < visibility_distance
+  def pourBlood(trace_id:Int, point:Vec, color:ScageColor) = {
+    neighbours(trace_id, point, -1 to 1, (fieldObject) => fieldObject.getState.contains("tile")) match {
+      case Nil =>
+      case tiles:List[FieldObject] => {
+        val random_pos = (math.random*tiles.size).toInt
+        tiles(random_pos).changeState(new State("color", color))
+      }
+    }
+  }
 
   private val lineView = new ILosBoard {
     def contains(x:Int, y:Int):Boolean = isPointOnArea(x, y)    
@@ -140,6 +149,7 @@ object FieldTracer extends PointTracer[FieldObject] {
   def addLightSource(point: => Vec, dov: => Int = 5, trace_id:Int) = 
     light_sources = (() => point, () => dov, trace_id) :: light_sources
   def removeLightSource(trace_id:Int) = light_sources = light_sources.filterNot(_._3 == trace_id)
+  def isLightSource(trace_id:Int) = light_sources.exists(_._3 == trace_id)
   
   private val pp = new PrecisePermissive();  
   private val drawView = new ILosBoard() {

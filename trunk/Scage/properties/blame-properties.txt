@@ -1,5 +1,5 @@
 app.name = Blamer
-app.version = 0.1
+app.version = 0.2
 
 screen.width = 800
 screen.height = 600

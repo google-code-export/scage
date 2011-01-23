@@ -107,7 +107,8 @@ object Blamer extends ScageScreen(
 
     addRender(new ScageRender {
       override def interface = {
-        print(xml("helpscreen.tutorial"),    10, Renderer.height-20)
+        print(xml("helpscreen.tutorial.keys"),           10,  Renderer.height-20)
+        print(xml("helpscreen.tutorial.description"),    300, Renderer.height-65)
         print(xml("helpscreen.helpmessage"), 10, row_height, GREEN)
       }
     })

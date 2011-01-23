@@ -164,4 +164,36 @@
     <message code="tile.door.close">
         Closed door
     </message>
+
+        <message code="helpscreen.tutorial.keys">
+Keybindings
+
+Arrows/Numpad
+O
+C
+F
+I
+W
+D
+,
+Tab
+F1
+    </message>
+
+    <message code="helpscreen.tutorial.description">
+Moving
+Open door
+Close door
+Select target and attack
+Open inventory
+Open weapon
+Drop item to the floor
+Pick up item from the floor and store it in the inventory
+Switch between Killy and Cibo
+Open this screen
+    </message>
+
+    <message code="helpscreen.helpmessage">
+        [ESC] - Exit
+    </message>
 </messages>

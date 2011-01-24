@@ -5,11 +5,11 @@ import su.msk.dunno.screens.support.tracer.State
 import su.msk.dunno.blame.support.{BottomMessages, TimeUpdater}
 import su.msk.dunno.scage.support.ScageColors._
 import su.msk.dunno.blame.animations.BulletFlight
-import su.msk.dunno.blame.prototypes.{Living, Decision}
 import su.msk.dunno.blame.field.{FieldObject, FieldTracer}
 import su.msk.dunno.scage.support.messages.ScageMessage
 import su.msk.dunno.blame.screens.Blamer
 import org.lwjgl.input.Keyboard
+import su.msk.dunno.blame.prototypes.{Player, Living, Decision}
 
 class Move(living:Living, val step:Vec) extends Decision(living) {
   override val action_period = 2
@@ -24,9 +24,8 @@ class OpenDoor(living:Living) extends Decision(living) {
   override val action_period = 1
 
   def doAction = {
-    FieldTracer.objectsAroundPoint(living.trace, living.getPoint, 1).find(fo => {
-      fo.getState.contains("door") &&
-      "close" == fo.getState.getString("door")
+    FieldTracer.findVisibleObject(living.trace, living.getPoint, 1, obj => {
+      obj.getState.contains("door") && obj.getState.contains("close")
     }) match {
       case Some(door) => {
         door.changeState(new State("door_open", living.stat("name")))
@@ -41,10 +40,9 @@ class CloseDoor(living:Living) extends Decision(living) {
   override val action_period = 1
 
   def doAction = {
-    FieldTracer.objectsAroundPoint(living.trace, living.getPoint, 1).find(possible_door => {
-      possible_door.getState.contains("door") &&
-      "open" == possible_door.getState.getString("door") &&
-      !FieldTracer.objectsAtPoint(possible_door.getPoint).exists(_.getState.contains("living"))
+    FieldTracer.findVisibleObject(living.trace, living.getPoint, 1, obj => {
+      obj.getState.contains("door") && obj.getState.contains("open") &&
+      !FieldTracer.objectsAtPoint(obj.getPoint).exists(_.getState.contains("living"))
     }) match {
       case Some(door) => {
         door.changeState(new State("door_close", living.stat("name")))
@@ -55,12 +53,11 @@ class CloseDoor(living:Living) extends Decision(living) {
   }
 }
 
-class Shoot(living:Living, private val defined_target:Vec = Vec(-1,-1)) extends Decision(living) {
-  //def this(living:Living) = this(Vec(-1,-1), living)
+class PlayerShoot(player:Player) extends Shoot(player, player.selectTarget(Keyboard.KEY_F))
+class Shoot(living:Living, private val target_point:Vec) extends Decision(living) {
   override val action_period = 2
 
   def doAction = {
-    val target_point = if(defined_target == Vec(-1, -1)) living.selectTarget(Keyboard.KEY_F) else defined_target
     if(target_point != living.getPoint) {
       BottomMessages.addPropMessage("decision.shoot", living.stat("name"))
       if(FieldTracer.isNearPlayer(living.getPoint)) new BulletFlight(living.getPoint, target_point, YELLOW)
@@ -95,7 +92,7 @@ class PickUpItem(living:Living) extends Decision(living) {
   override val action_period = 2
   
   def doAction = {
-    FieldTracer.objectsAtPoint(living.getPoint).find(_.getState.contains("item")) match {
+    FieldTracer.findObjectAtPoint(living.getPoint, "item") match {
       case Some(item) => {
         living.inventory.addItem(item)
         FieldTracer.removeTraceFromPoint(item.id, item.getPoint)
@@ -116,5 +113,11 @@ class OpenWeapon(living:Living) extends Decision(living) {
 class OpenInventory(living:Living) extends Decision(living) {
   def doAction = {
     living.inventory.showInventory
+  }
+}
+
+class GiveOrder(player:Player) extends Decision(player) {
+  def doAction = {
+
   }
 }

@@ -22,7 +22,7 @@ extends Tracer[PT](field_from_x,field_to_x,field_from_y,field_to_y,N_x,N_y,are_s
       coord_matrix(p.ix)(p.iy) = pt :: coord_matrix(p.ix)(p.iy)
       log.debug("added new field trace #"+pt.id+" in point ("+pt.getPoint+")")
     }
-    else log.error("failed to add field trace: point ("+pt.getPoint+") is out of area")
+    else log.warn("failed to add field trace: point ("+pt.getPoint+") is out of area")
     pt.id
   }
   override def addTrace(pt:PT) = addPointTrace(pt)

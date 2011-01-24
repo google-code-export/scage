@@ -5,7 +5,7 @@ import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.support.Vec
 import su.msk.dunno.screens.handlers.Renderer
 import su.msk.dunno.screens.prototypes.ScageRender
-import su.msk.dunno.blame.support.BottomMessages
+import su.msk.dunno.blame.support.BottomMessages._
 import su.msk.dunno.screens.support.ScageLibrary._
 import su.msk.dunno.blame.support.MyFont._
 import su.msk.dunno.blame.prototypes.Living
@@ -26,9 +26,10 @@ class SelectTarget(val living:Living) extends ScageScreen("Target Selector") {
 
   private def findTarget:Vec = {
     val dov = living.getState.getInt("dov")
-    FieldTracer.livingsAroundPoint(living.trace, living.getPoint, dov).find(obj =>
-      obj.getState.contains("enemy") && obj.getState.getInt("health") > 0) match {
-      case Some(enemy) => enemy.getPoint
+    FieldTracer.findVisibleObject(living.trace, living.getPoint, dov, obj => {
+      obj.getState.contains("enemy") && obj.getState.getInt("health") > 0
+    }) match {
+      case Some(live_enemy) => live_enemy.getPoint
       case None => living.getPoint
     }
   }
@@ -81,7 +82,7 @@ class SelectTarget(val living:Living) extends ScageScreen("Target Selector") {
 
   // render on main screen
   windowCenter = Vec((width - Blamer.right_messages_width)/2,
-  		            BottomMessages.bottom_messages_height + (height - BottomMessages.bottom_messages_height)/2)
+  		            bottom_messages_height + (height - bottom_messages_height)/2)
   center = FieldTracer.pointCenter(living.getPoint)
   
   Renderer.backgroundColor = BLACK  
@@ -95,12 +96,12 @@ class SelectTarget(val living:Living) extends ScageScreen("Target Selector") {
     override def interface {
       FieldTracer.objectsAtPoint(target_point) match {
         case head :: tail => print(xml("selecttarget.target")+" "+head.getState.getString("name"),
-                                10, BottomMessages.bottom_messages_height - row_height)
+                                10, bottom_messages_height - row_height)
         case _ =>
       }
       print(xml("selecttarget.helpmessage"),
-        10, BottomMessages.bottom_messages_height - (row_height*2), GREEN)
-      BottomMessages.showBottomMessages(2)
+        10, bottom_messages_height - (row_height*2), GREEN)
+      showBottomMessages(2)
       Blamer.drawInterface
     }
   })

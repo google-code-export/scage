@@ -42,7 +42,7 @@ object ScageMessage {
     }
     catch {
       case e:Exception => {
-        log.error("failed to find string with code "+message_code+" in file "+messages_file)
+        log.warn("failed to find string with code "+message_code+" in file "+messages_file)
         xmlmh.xml_messages += (message_code -> "")
         ""
       }

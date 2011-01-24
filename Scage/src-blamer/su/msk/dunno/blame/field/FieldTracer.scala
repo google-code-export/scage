@@ -8,6 +8,7 @@ import collection.JavaConversions
 import su.msk.dunno.blame.support.{BottomMessages, MyFont}
 import su.msk.dunno.blame.screens.Blamer
 import su.msk.dunno.screens.support.tracer._
+import org.newdawn.slick.util.pathfinding._
 
 abstract class FieldObject(protected val point:Vec) extends PointTrace {
   def this(x:Int, y:Int) = this(Vec(x,y))
@@ -42,7 +43,7 @@ object FieldTracer extends PointTracer[FieldObject] {
       else coord_matrix(p.ix)(p.iy) = fo :: coord_matrix(p.ix)(p.iy)
       log.debug("added new field trace #"+fo.id+" in point ("+fo.getPoint+")")
     }
-    else log.error("failed to add field trace: point ("+fo.getPoint+") is out of area")
+    else log.warn("failed to add field trace: point ("+fo.getPoint+") is out of area")
     fo.id
   }
 
@@ -103,15 +104,20 @@ object FieldTracer extends PointTracer[FieldObject] {
     else false
   }
   
-  def objectsAroundPoint(trace_id:Int, point:Vec, dov:Int) = {
-    neighbours(trace_id, point, -dov to dov, (fieldObject) =>
-      isVisible(point, fieldObject.getPoint, dov))
+  def visibleObjectsNear(trace_id:Int, point:Vec, dov:Int, condition:(FieldObject) => Boolean) = {
+    neighbours(trace_id, point, -dov to dov, (obj) => isVisible(point, obj.getPoint, dov) && condition(obj))
   }
-  def objectsAtPoint(point:Vec) = if(isPointOnArea(point)) coord_matrix(point.ix)(point.iy) else Nil
-  def livingsAroundPoint(trace_id:Int, point:Vec, dov:Int) = {
-    neighbours(trace_id, point, -dov to dov, (fieldObject) =>
-      isVisible(point, fieldObject.getPoint, dov) && fieldObject.getState.contains("living"))
+  def findVisibleObject(trace_id:Int, point:Vec, dov:Int, condition:(FieldObject) => Boolean) = {
+    neighbours(trace_id, point, -dov to dov, (obj) => isVisible(point, obj.getPoint, dov) && condition(obj)) match {
+      case head :: tail => Some(head)
+      case _ => None
+    }
   }
+
+  def objectsAtPoint(point:Vec) =
+    if(isPointOnArea(point)) coord_matrix(point.ix)(point.iy)
+    else Nil
+  def findObjectAtPoint(point:Vec, object_type:String) = objectsAtPoint(point).find(_.getState.contains(object_type))
 
   def isNearPlayer(point:Vec) = (Blamer.currentPlayer.getPoint dist point) < visibility_distance
   def pourBlood(trace_id:Int, point:Vec, color:ScageColor) = {
@@ -191,5 +197,33 @@ object FieldTracer extends PointTracer[FieldObject] {
         }
       }
     }
+  }
+
+  private lazy val path_finder:PathFinder = new AStarPathFinder(new TileBasedMap {
+    def getWidthInTiles  = N_x
+    def getHeightInTiles = N_y
+    def blocked(context:PathFindingContext, tx:Int, ty:Int) = {
+      findObjectAtPoint(Vec(tx,ty), "tile") match {
+        case Some(tile) => tile.getState.contains("wall")
+        case None => false
+      }
+    }
+    def getCost(context:PathFindingContext, tx:Int, ty:Int) = {
+      findObjectAtPoint(Vec(tx,ty), "door") match {
+        case Some(door) => {
+          if(door.getState.contains("close")) 3
+          else 1
+        }
+        case None => 1
+      }
+    }
+    def pathFinderVisited(x:Int, y:Int) = {}
+  }, 500, true)
+  def findPath(p1:Vec, p2:Vec):List[Vec] = {
+    val path = path_finder.findPath(new Mover{}, p1.ix, p1.iy, p2.ix, p2.iy)
+    if(path.getLength > 0)
+      (path.getLength-1 to 0).foldLeft(List[Vec]())((coord_list, index) =>
+        Vec(path.getX(index), path.getY(index)) :: coord_list)
+    else Nil
   }
 }

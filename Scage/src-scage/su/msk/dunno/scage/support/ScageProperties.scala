@@ -62,7 +62,7 @@ object ScageProperties {
         }
         p.trim
       case _ =>
-        log.error("failed to find property "+key)
+        log.warn("failed to find property "+key)
         null
     }
   }
@@ -97,7 +97,7 @@ object ScageProperties {
         }
         catch {
           case e:Exception =>
-            log.error("failed to use property ("+key+" : "+p+") as "+m)
+            log.warn("failed to use property ("+key+" : "+p+") as "+m)
             defaultValue(key, default)
         }
       case _ => defaultValue(key, default)

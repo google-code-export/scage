@@ -56,7 +56,7 @@ class Tracer[T <: Trace](val field_from_x:Int = property("field.from.x", 0),
       coord_matrix(p.ix)(p.iy) = t :: coord_matrix(p.ix)(p.iy)
       log.debug("added new trace #"+t.id+" in coord ("+t.getCoord+")")
     }
-    else log.error("failed to add trace: coord ("+t.getCoord+") is out of area")
+    else log.warn("failed to add trace: coord ("+t.getCoord+") is out of area")
     t.id
   }
 

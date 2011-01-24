@@ -5,8 +5,8 @@ import su.msk.dunno.blame.support.MyFont._
 import su.msk.dunno.blame.field.FieldTracer
 import su.msk.dunno.screens.support.tracer.State
 import su.msk.dunno.blame.screens.{Blamer, CommandScreen, SelectTarget}
-import su.msk.dunno.blame.support.TimeUpdater
 import su.msk.dunno.blame.decisions.{Shoot, Move}
+import su.msk.dunno.blame.support.BottomMessages
 
 abstract class Player(name:String, description:String, point:Vec, color:ScageColor)
 extends Npc(name, description, point, PLAYER, color) {
@@ -20,14 +20,11 @@ extends Npc(name, description, point, PLAYER, color) {
   }
 
   private lazy val command_screen = new CommandScreen(this)
+  def selectCommand = command_screen.selectCommand
 
-  private var is_attack_enemies = false
-  def isAttackEnemies = is_attack_enemies
-  private var is_follow_player = false
-  def isFollowPlayer = is_follow_player
   def livingAI:Decision = {
     if(!isCurrentPlayer) {
-      if(is_attack_enemies) {
+      if(boolStat("attack")) {
         FieldTracer.findVisibleObject(trace, point, intStat("dov"), obj => {
           obj.getState.contains("enemy") && obj.getState.getInt("health") > 0
         }) match {
@@ -35,13 +32,13 @@ extends Npc(name, description, point, PLAYER, color) {
           case None =>
         }
       }
-      if(is_follow_player) {
+      if(boolStat("follow")) {
         FieldTracer.findPath(point, Blamer.currentPlayer.getPoint) match {
-          case head :: tail => {
-            val step = FieldTracer.direction(point, head)
+          case step1 :: step2 :: tail => {
+            val step = FieldTracer.direction(point, step1)
             return new Move(this, step)
           }
-          case _ =>
+          case _ => return new Move(this, randomDir)
         }
       }
     }
@@ -55,6 +52,4 @@ extends Npc(name, description, point, PLAYER, color) {
     if(s.contains("attack")) setStat("attack", true)
     if(s.contains("noattack")) setStat("attack", false)
   }
-
-  protected def isCurrentPlayer = Blamer.currentPlayer.getPoint == point
 }

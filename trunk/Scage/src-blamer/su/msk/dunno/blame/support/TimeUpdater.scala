@@ -15,16 +15,16 @@ object TimeUpdater {
     override def action = {
       var current_actions = decisions.filter(decision =>
         decision.living.isAlive &&
-        (decision.living.lastActionTime + decision.action_period <= _time || decision.living.haveStat("player")))
+        (decision.living.lastActionTime + decision.action_period <= _time || decision.living.isCurrentPlayer))
       while(!current_actions.isEmpty) {
         current_actions.foreach(action => {
           action.execute
-          if(action.wasExecuted && action.living.haveStat("player")) _time += action.action_period
+          if(action.wasExecuted && action.living.isCurrentPlayer) _time += action.action_period
         })
         decisions = decisions.filterNot(decision => current_actions.contains(decision) || !decision.living.isAlive)
         current_actions = decisions.filter(decision =>
           decision.living.isAlive &&
-          (decision.living.lastActionTime + decision.action_period <= _time || decision.living.haveStat("player")))
+          (decision.living.lastActionTime + decision.action_period <= _time || decision.living.isCurrentPlayer))
       }
     }
   })

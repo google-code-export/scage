@@ -2,11 +2,11 @@ package su.msk.dunno.blame.prototypes
 
 import su.msk.dunno.screens.support.tracer.State
 import su.msk.dunno.blame.field.{FieldTracer, FieldObject}
-import su.msk.dunno.blame.screens.SelectTarget
 import su.msk.dunno.scage.support.{ScageProperties, Vec, ScageColor}
-import su.msk.dunno.blame.support.{BottomMessages}
+import su.msk.dunno.blame.support.BottomMessages
 import su.msk.dunno.blame.support.MyFont._
 import su.msk.dunno.scage.support.ScageColors._
+import su.msk.dunno.blame.screens.Blamer
 
 abstract class Living(val name:String,
                       val description:String,
@@ -53,4 +53,5 @@ extends FieldObject(point) with HaveStats {
   setStat("blood", RED)
 
   def isAlive = intStat("health") > 0
+  def isCurrentPlayer = haveStat("player") && point == Blamer.currentPlayer.getPoint
 }

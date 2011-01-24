@@ -114,19 +114,7 @@ object Blamer extends ScageScreen(
     })
   }
   keyListener(Keyboard.KEY_F1, onKeyDown = help_screen.run)
-
-  private lazy val command_screen = new ScageScreen("Command Screen") {
-    keyListener(Keyboard.KEY_1, onKeyDown = stop)
-    keyListener(Keyboard.KEY_2, onKeyDown = stop)
-    keyListener(Keyboard.KEY_3, onKeyDown = stop)
-    keyListener(Keyboard.KEY_ESCAPE, onKeyDown = stop)
-
-    addRender(new ScageRender {
-      override def interface = {
-
-      }
-    })
-  }
+  keyListener(Keyboard.KEY_T, onKeyDown = TimeUpdater.addDecision(new IssueCommand(currentPlayer)))
 
   // render on main screen
   windowCenter = Vec((width - right_messages_width)/2, 

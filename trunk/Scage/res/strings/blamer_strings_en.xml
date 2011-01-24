@@ -202,4 +202,15 @@ Exit program
     <message code="mainscreen.openhelp">
         F1 - Keybindings
     </message>
+
+    <message code="commands.list">
+1 - Follow me
+2 - Wait here
+3 - Shoot enemies on sight
+4 - Stop shooting
+    </message>
+
+    <message code="commands.helpmessage">
+        [1-4] - Issue Command [ESC] - Cancel
+    </message>
 </messages>

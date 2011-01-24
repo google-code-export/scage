@@ -4,22 +4,18 @@ import su.msk.dunno.blame.field.FieldTracer
 import su.msk.dunno.blame.support.MyFont._
 import su.msk.dunno.scage.support.ScageColors._
 import su.msk.dunno.scage.support.Vec
-import su.msk.dunno.blame.prototypes.Living
 import su.msk.dunno.scage.support.messages.ScageMessage._
 import su.msk.dunno.blame.items.{SocketExtender, SecondTestItem, TestItem}
+import su.msk.dunno.blame.prototypes.{Player, Living}
 
 class Killy(point:Vec)
-extends Living(name        = xml("player.killy.name"),
+extends Player(name        = xml("player.killy.name"),
                description = xml("player.killy.description"),
-               point, PLAYER, RED) {
-  override def getSymbol = PLAYER
+               point, RED) {
   override def onDeath = {
     super.onDeath
     setStat("name", xml("player.killy.dead.name"))
   }
-  setStat("player")
-  
-  FieldTracer.addLightSource(point, intStat("dov"), trace)
   
   inventory.addItem(new TestItem)
   inventory.addItem(new TestItem)
@@ -30,17 +26,13 @@ extends Living(name        = xml("player.killy.name"),
 }
 
 class Cibo(point:Vec)
-extends Living(name        = xml("player.cibo.name"),
+extends Player(name        = xml("player.cibo.name"),
                description = xml("player.cibo.description"),
-               point, PLAYER, BLUE) {
-  override def getSymbol = PLAYER
+               point, BLUE) {
   override def onDeath = {
     super.onDeath
     setStat("name", xml("player.cibo.dead.name"))
   }
-  setStat("player")
-  
-  FieldTracer.addLightSource(point, intStat("dov"), trace)
 
   inventory.addItem(new SecondTestItem)
   inventory.addItem(new SecondTestItem)

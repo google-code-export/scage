@@ -41,14 +41,9 @@ extends FieldObject(point) with HaveStats {
   protected var last_action_time = 0
   def lastActionTime = last_action_time
   def lastActionTime_=(action_time:Int) = last_action_time = action_time
-  
+
   val inventory = new Inventory(this)
   val weapon = new Weapon(this)
-
-  private lazy val target_selector = new SelectTarget(this)
-  def selectTarget(stop_key:Int):Vec = {
-    target_selector(stop_key)
-  }
 
   setStat("living")
   setStat("name", name)

@@ -61,7 +61,7 @@ class Tracer[S <: State] {
       t._id = nextTraceID
       log.debug("added new trace #"+t.id+" in coord ("+t.getCoord+")")
     }
-    else log.error("failed to add trace: coord ("+t.getCoord+") is out of area")
+    else log.warn("failed to add trace: coord ("+t.getCoord+") is out of area")
     t.id
   }
 

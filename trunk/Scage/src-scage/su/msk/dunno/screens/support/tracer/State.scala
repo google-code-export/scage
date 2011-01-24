@@ -8,7 +8,10 @@ class State() {
   private val args:HashMap[String, StateData] = new HashMap[String, StateData]()
 
   def this(key:String) = {this(); args += key -> new StateData()}
-  def put(key:String) = {args += key -> new StateData()}
+  def put(key:String) = {
+    args += key -> new StateData()
+    this
+  }
 
   def this(key:String, float_num:Float) = {this(); args += key -> new StateData(float_num)}
   def put(key:String, float_num:Float):State = {

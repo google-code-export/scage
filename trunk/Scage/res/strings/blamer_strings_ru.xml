@@ -218,4 +218,15 @@ ESC
      <message code="mainscreen.openhelp">
         F1 - Справка по управлению
     </message>
+
+     <message code="commands.list">
+1 - Следуй за мной
+2 - Оставайся на месте
+3 - Атакую противника на расстоянии поражения
+4 - Прекрати атаковать цели
+    </message>
+
+    <message code="commands.helpmessage">
+        [1-4] - Отдать приказ [ESC] - Отмена
+    </message>
 </messages>

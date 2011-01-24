@@ -20,7 +20,7 @@ object ScageColorTest extends Application {
   })
 
   var color_num = 1
-  val main_screen = new ScageScreen("Color Test", properties="colortest-properties.txt") {
+  val main_screen = new ScageScreen("Color Test", is_main_screen = true, properties="colortest-properties.txt") {
     addRender(new ScageRender {
       override def interface = {
         if(color_num >= 0 && color_num < fields.length) {
@@ -52,5 +52,6 @@ object ScageColorTest extends Application {
       }
       nextColorNumDec
     })
+    keyListener(Keyboard.KEY_ESCAPE, onKeyDown = stop)
   }.run
 }

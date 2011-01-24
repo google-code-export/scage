@@ -93,7 +93,7 @@ object Blamer extends ScageScreen(
   
   keyListener(Keyboard.KEY_O,     onKeyDown = TimeUpdater.addDecision(new OpenDoor(currentPlayer)))
   keyListener(Keyboard.KEY_C,     onKeyDown = TimeUpdater.addDecision(new CloseDoor(currentPlayer)))
-  keyListener(Keyboard.KEY_F,     onKeyDown = TimeUpdater.addDecision(new Shoot(currentPlayer)))
+  keyListener(Keyboard.KEY_F,     onKeyDown = TimeUpdater.addDecision(new PlayerShoot(currentPlayer)))
   keyListener(Keyboard.KEY_I,     onKeyDown = TimeUpdater.addDecision(new OpenInventory(currentPlayer)))
   keyListener(Keyboard.KEY_W,     onKeyDown = TimeUpdater.addDecision(new OpenWeapon(currentPlayer)))
   keyListener(Keyboard.KEY_D,     onKeyDown = TimeUpdater.addDecision(new DropItem(currentPlayer)))
@@ -115,6 +115,19 @@ object Blamer extends ScageScreen(
   }
   keyListener(Keyboard.KEY_F1, onKeyDown = help_screen.run)
 
+  private lazy val command_screen = new ScageScreen("Command Screen") {
+    keyListener(Keyboard.KEY_1, onKeyDown = stop)
+    keyListener(Keyboard.KEY_2, onKeyDown = stop)
+    keyListener(Keyboard.KEY_3, onKeyDown = stop)
+    keyListener(Keyboard.KEY_ESCAPE, onKeyDown = stop)
+
+    addRender(new ScageRender {
+      override def interface = {
+
+      }
+    })
+  }
+
   // render on main screen
   windowCenter = Vec((width - right_messages_width)/2, 
   		     BottomMessages.bottom_messages_height + (height - BottomMessages.bottom_messages_height)/2)
@@ -128,6 +141,8 @@ object Blamer extends ScageScreen(
     print("FPS: "+Renderer.fps,                   width - right_messages_width, height-45, WHITE)
     print("time: "+TimeUpdater.time,              width - right_messages_width, height-65, WHITE)
     print("HP: "+currentPlayer.intStat("health"), width - right_messages_width, height-85, WHITE)
+    print("Follow: "+currentPlayer.boolStat("follow"), width - right_messages_width, height-105, WHITE)
+    print("Attack: "+currentPlayer.boolStat("attack"), width - right_messages_width, height-125, WHITE)
   } 
 
   addRender(new ScageRender {
@@ -140,8 +155,8 @@ object Blamer extends ScageScreen(
   })
   
   // initial message
-  BottomMessages.addPropMessage("greetings.helloworld", currentPlayer.stat("name"))
   BottomMessages.addPropMessage("mainscreen.openhelp")
+  BottomMessages.addPropMessage("greetings.helloworld", currentPlayer.stat("name"))
   
   def main(args:Array[String]):Unit = run
 }

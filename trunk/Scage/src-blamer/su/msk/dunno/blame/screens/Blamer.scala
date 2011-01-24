@@ -124,9 +124,9 @@ object Blamer extends ScageScreen(
 
   def drawInterface = {
     //messages on the right side of the screen
-    print(currentPlayer.stat("name"),          width - right_messages_width, height-25, WHITE)
-    print("FPS: "+Renderer.fps,                width - right_messages_width, height-45, WHITE)
-    print("time: "+TimeUpdater.time,           width - right_messages_width, height-65, WHITE)
+    print(currentPlayer.stat("name"),             width - right_messages_width, height-25, WHITE)
+    print("FPS: "+Renderer.fps,                   width - right_messages_width, height-45, WHITE)
+    print("time: "+TimeUpdater.time,              width - right_messages_width, height-65, WHITE)
     print("HP: "+currentPlayer.intStat("health"), width - right_messages_width, height-85, WHITE)
   } 
 
@@ -141,6 +141,7 @@ object Blamer extends ScageScreen(
   
   // initial message
   BottomMessages.addPropMessage("greetings.helloworld", currentPlayer.stat("name"))
+  BottomMessages.addPropMessage("mainscreen.openhelp")
   
   def main(args:Array[String]):Unit = run
 }

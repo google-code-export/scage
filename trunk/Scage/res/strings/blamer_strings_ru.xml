@@ -194,6 +194,7 @@ D
 ,
 Tab
 F1
+ESC
     </message>
 
         <message code="helpscreen.tutorial.description">
@@ -204,12 +205,17 @@ F1
 Открыть инвентарь
 Осмотреть оружие
 Выбросить предмет из инвентаря на землю
-Поднять предмет с земли и положить его в инвентарь
+Поднять предмет и положить его в инвентарь
 Переключиться между Килли и Сибо
 Открыть этот экран
+Выйти из программы
     </message>
 
     <message code="helpscreen.helpmessage">
         [ESC] - Выход
+    </message>
+
+     <message code="mainscreen.openhelp">
+        F1 - Справка по управлению
     </message>
 </messages>

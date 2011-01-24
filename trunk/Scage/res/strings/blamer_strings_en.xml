@@ -178,6 +178,7 @@ D
 ,
 Tab
 F1
+ESC
     </message>
 
     <message code="helpscreen.tutorial.description">
@@ -191,9 +192,14 @@ Drop item to the floor
 Pick up item from the floor and store it in the inventory
 Switch between Killy and Cibo
 Open this screen
+Exit program
     </message>
 
     <message code="helpscreen.helpmessage">
         [ESC] - Exit
+    </message>
+
+    <message code="mainscreen.openhelp">
+        F1 - Keybindings
     </message>
 </messages>

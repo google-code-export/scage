@@ -17,7 +17,6 @@ extends Npc(name        = xml("enemy.siliconcreature.name"),
   //setStat("blood", CYAN)
 
   def livingAI:Decision = {
-    def randomDir:Vec = Vec((math.random*3).toInt - 1, (math.random*3).toInt - 1)
     val dov = intStat("dov")
     FieldTracer.visibleObjectsNear(trace, point, dov, obj => {
       obj.getState.contains("player") && obj.getState.getInt("health") > 0

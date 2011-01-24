@@ -18,31 +18,32 @@ class CommandScreen(living:Living) extends ScageScreen("Command Screen") {
       obj.getState.contains("player") && obj.getState.getInt("health") > 0
     })
 
+  private var command_num = -1
+  def selectCommand = {
+    command_num = -1
+    run
+    command_num
+  }
   keyListener(Keyboard.KEY_1, onKeyDown = {
-    findPlayer match {
-      case Some(player) => player.changeState(new State("follow"))
-      case None =>
-    }
+    command_num = 1
+    stop
   })
   keyListener(Keyboard.KEY_2, onKeyDown = {
-    findPlayer match {
-      case Some(player) => player.changeState(new State("stay"))
-      case None =>
-    }
+    command_num = 2
+    stop
   })
   keyListener(Keyboard.KEY_3, onKeyDown = {
-    findPlayer match {
-      case Some(player) => player.changeState(new State("attack"))
-      case None =>
-    }
+    command_num = 3
+    stop
   })
   keyListener(Keyboard.KEY_4, onKeyDown = {
-    findPlayer match {
-      case Some(player) => player.changeState(new State("noattack"))
-      case None =>
-    }
+    command_num = 4
+    stop
   })
-  keyListener(Keyboard.KEY_ESCAPE, onKeyDown = stop)
+  keyListener(Keyboard.KEY_ESCAPE, onKeyDown = {
+    command_num = -1
+    stop
+  })
 
   // render on main screen
   windowCenter = Vec((width - Blamer.right_messages_width)/2,
@@ -57,7 +58,8 @@ class CommandScreen(living:Living) extends ScageScreen("Command Screen") {
     }
 
     override def interface {
-      print(xml("commands.list"), 10, bottom_messages_height - (row_height*2), GREEN)
+      print(xml("commands.list"), 10, bottom_messages_height)
+      print(xml("commands.helpmessage"), 10, bottom_messages_height - (row_height*5), GREEN)
       Blamer.drawInterface
     }
   })

@@ -109,6 +109,22 @@
         ? tries to find something on the floor, but fails
     </message>
 
+    <message code="decision.followme">
+        ? asks ? to follow him
+    </message>
+
+    <message code="decision.stay">
+        ? asks ? to stay here
+    </message>
+
+    <message code="decision.attack">
+        ? asks ? to attack enemies on sight
+    </message>
+
+    <message code="decision.noattack">
+        ? asks ? to stop attacking targets
+    </message>
+
     <message code="testitem.name">
         Test Item
     </message>

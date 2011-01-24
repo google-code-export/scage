@@ -129,6 +129,22 @@
         ? не может пойти туда!
     </message>
 
+    <message code="decision.followme">
+        ? просит ? следовать за собой
+    </message>
+
+    <message code="decision.stay">
+        ? просит ? оставаться на месте
+    </message>
+
+    <message code="decision.attack">
+        ? просит ? атаковать всех, кого увидит
+    </message>
+
+    <message code="decision.noattack">
+        ? просит ? прекратить атаковать цели
+    </message>
+
     <message code="testitem.name">
         Тестовый предмет
     </message>
@@ -222,7 +238,7 @@ ESC
      <message code="commands.list">
 1 - Следуй за мной
 2 - Оставайся на месте
-3 - Атакую противника на расстоянии поражения
+3 - Атакуй противника на расстоянии поражения
 4 - Прекрати атаковать цели
     </message>
 

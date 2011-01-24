@@ -116,8 +116,44 @@ class OpenInventory(living:Living) extends Decision(living) {
   }
 }
 
-class GiveOrder(player:Player) extends Decision(player) {
-  def doAction = {
+class IssueCommand(player:Player) extends Decision(player) {
+  override val action_period = 1
 
+  private def findPlayer = FieldTracer.findVisibleObject(player.trace, player.getPoint, player.getState.getInt("dov"), obj => {
+    obj.getState.contains("player") && obj.getState.getInt("health") > 0
+  })
+
+  def doAction = {
+    player.selectCommand match {
+      case 1 => findPlayer match {
+        case Some(other_player) => {
+          other_player.changeState(new State("follow"))
+          BottomMessages.addPropMessage("decision.followme", player.getState.getString("name"), other_player.getState.getString("name"))
+        }
+        case None =>
+      }
+      case 2 => findPlayer match {
+        case Some(other_player) => {
+          other_player.changeState(new State("stay"))
+          BottomMessages.addPropMessage("decision.stay", player.getState.getString("name"), other_player.getState.getString("name"))
+        }
+        case None =>
+      }
+      case 3 => findPlayer match {
+        case Some(other_player) => {
+          other_player.changeState(new State("attack"))
+          BottomMessages.addPropMessage("decision.attack", player.getState.getString("name"), other_player.getState.getString("name"))
+        }
+        case None =>
+      }
+      case 4 => findPlayer match {
+        case Some(other_player) => {
+          other_player.changeState(new State("noattack"))
+          BottomMessages.addPropMessage("decision.noattack", player.getState.getString("name"), other_player.getState.getString("name"))
+        }
+        case None =>
+      }
+    }
+    was_executed = true
   }
 }

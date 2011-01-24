@@ -221,9 +221,9 @@ object FieldTracer extends PointTracer[FieldObject] {
   }, 500, true)
   def findPath(p1:Vec, p2:Vec):List[Vec] = {
     val path = path_finder.findPath(new Mover{}, p1.ix, p1.iy, p2.ix, p2.iy)
-    if(path.getLength > 0)
-      (path.getLength-1 to 0).foldLeft(List[Vec]())((coord_list, index) =>
-        Vec(path.getX(index), path.getY(index)) :: coord_list)
+    if(path.getLength > 2)
+    (path.getLength-2 to 1 by -1).foldLeft(List[Vec]())((coord_list, index) =>
+      Vec(path.getX(index), path.getY(index)) :: coord_list)
     else Nil
   }
 }

@@ -18,5 +18,6 @@ extends Living(name, description, point, symbol, color) {
     }
   })
 
+  def randomDir:Vec = Vec((math.random*3).toInt - 1, (math.random*3).toInt - 1)
   def livingAI:Decision
 }

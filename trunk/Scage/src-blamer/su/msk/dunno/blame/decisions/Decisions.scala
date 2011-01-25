@@ -123,7 +123,7 @@ class IssueCommand(player:Player) extends Decision(player) {
     obj.getState.contains("player") && obj.getState.getInt("health") > 0
   })
 
-  def doAction = {
+  def doAction:Unit = {
     player.selectCommand match {
       case 1 => findPlayer match {
         case Some(other_player) => {
@@ -153,6 +153,7 @@ class IssueCommand(player:Player) extends Decision(player) {
         }
         case None =>
       }
+      case _ => return
     }
     was_executed = true
   }

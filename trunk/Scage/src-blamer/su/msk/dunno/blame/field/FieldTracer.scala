@@ -137,7 +137,7 @@ object FieldTracer extends PointTracer[FieldObject] {
   }
   private val bresenham = new BresLos(false)  
   def isVisible(p1:Vec, p2:Vec, dov:Int) = {
-    if((p2 dist p1) > dov*dov) false
+    if((p2 dist p1) > (dov+1)*(dov+1)) false
     else if(p2 == p1) true
     else bresenham.existsLineOfSight(lineView, p1.ix, p1.iy, p2.ix, p2.iy, false)
   }

@@ -32,3 +32,5 @@ weapon.to.y = 380
 
 weapon.N_x = 40
 weapon.N_y = 19
+
+#dov.default = 1

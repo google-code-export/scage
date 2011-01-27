@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <project name="Scage">
     <property file="build.properties" />
-        <path id="classpath">
-                <fileset dir="lib" includes="**/*.jar"/>
-        </path>
+    <path id="classpath">
+        <fileset dir="lib" includes="**/*.jar"/>
+    </path>
 
     <taskdef resource="scala/tools/ant/antlib.xml" classpathref="classpath" />
 
@@ -104,7 +104,7 @@
              filesetmanifest="mergewithoutmain">
                   <manifest>
                         <attribute name="Main-Class" value="${project.entrypoint}"/>
-                        <attribute name="Class-Path" value="."/>
+                        <attribute name="Class-Path" value="${jar.classpath}"/>
                   </manifest>
             <fileset dir="builds/projects/${project.name}-${project.version}-${os.type}/bin"/>
         </jar>

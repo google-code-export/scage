@@ -1,0 +1,2 @@
+screen.width=640
+screen.height=480

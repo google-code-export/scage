@@ -13,7 +13,7 @@ object ScageMessage {
   private val log = Logger.getLogger(this.getClass)
   
   val lang = ScageProperties.property("strings.lang", "en")
-  val messages_base = ScageProperties.property("strings.base", "/res/strings/strings")
+  val messages_base = ScageProperties.property("strings.base", "/resources/strings/strings")
   val messages_file = messages_base + "_" + lang + ".xml"
 
   private val xmlmh = new XMLMessageHandler
@@ -29,7 +29,7 @@ object ScageMessage {
     }
   }
 
-  val font_path = ScageProperties.property("font.file", "res/fonts/DroidSans.ttf")
+  val font_path = ScageProperties.property("font.file", "resources/fonts/DroidSans.ttf")
   val font_size = ScageProperties.property("font.size", 18)
   val row_height = ScageProperties.property("font.row.height", font_size+2)
   val glyph_from = ScageProperties.property("glyph.from", 1024)

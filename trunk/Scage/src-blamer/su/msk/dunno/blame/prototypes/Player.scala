@@ -5,8 +5,8 @@ import su.msk.dunno.blame.support.MyFont._
 import su.msk.dunno.blame.field.FieldTracer
 import su.msk.dunno.screens.support.tracer.State
 import su.msk.dunno.blame.screens.{Blamer, CommandScreen, SelectTarget}
-import su.msk.dunno.blame.decisions.{Shoot, Move}
 import su.msk.dunno.blame.support.BottomMessages
+import su.msk.dunno.blame.decisions.{OpenDoor, Shoot, Move}
 
 abstract class Player(name:String, description:String, point:Vec, color:ScageColor)
 extends Npc(name, description, point, PLAYER, color) {
@@ -35,8 +35,10 @@ extends Npc(name, description, point, PLAYER, color) {
       if(boolStat("follow")) {
         FieldTracer.findPath(point, Blamer.currentPlayer.getPoint) match {
           case step1 :: step2 :: tail => {
-            val step = FieldTracer.direction(point, step1)
-            return new Move(this, step)
+            FieldTracer.findObjectAtPoint(step1, "door") match {
+              case Some(door) => if(door.getState.contains("close")) return new OpenDoor(this)
+              case None => return new Move(this, FieldTracer.direction(point, step1))
+            }
           }
           case _ => return new Move(this, randomDir)
         }

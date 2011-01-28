@@ -193,6 +193,9 @@
                              <mainClass>su.msk.dunno.blame.screens.Blamer</mainClass>
                           </manifest>
                        </archive>
+                       <excludes>
+                           <exclude>log4j.properties</exclude>
+                       </excludes>
                     </configuration>
                  </plugin>
         <plugin>
@@ -221,7 +224,7 @@
                 <version>2.2-beta-2</version>
                 <configuration>
                   <finalName>${artifactId}-${version}-${os.type}</finalName>
-			      <outputDirectory>builds</outputDirectory>
+			      <outputDirectory>${assembly.dir}</outputDirectory>
                     <descriptors>
                         <descriptor>src/main/assembly/blamer.xml</descriptor>
                     </descriptors>

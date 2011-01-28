@@ -37,8 +37,9 @@ extends Npc(name, description, point, PLAYER, color) {
           case step1 :: step2 :: tail => {
             FieldTracer.findObjectAtPoint(step1, "door") match {
               case Some(door) => if(door.getState.contains("close")) return new OpenDoor(this)
-              case None => return new Move(this, FieldTracer.direction(point, step1))
+              case None =>
             }
+            return new Move(this, FieldTracer.direction(point, step1))
           }
           case _ => return new Move(this, randomDir)
         }

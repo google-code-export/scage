@@ -21,7 +21,7 @@ field.N_y = 100
 
 framerate = 60
 
-strings.base = res/strings/blamer_strings
+strings.base = resources/strings/blamer_strings
 strings.lang = ru
 
 weapon.from.x = 0

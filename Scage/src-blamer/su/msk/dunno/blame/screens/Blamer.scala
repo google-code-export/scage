@@ -93,7 +93,7 @@ object Blamer extends ScageScreen(
   
   keyListener(Keyboard.KEY_O,     onKeyDown = TimeUpdater.addDecision(new OpenDoor(currentPlayer)))
   keyListener(Keyboard.KEY_C,     onKeyDown = TimeUpdater.addDecision(new CloseDoor(currentPlayer)))
-  keyListener(Keyboard.KEY_F,     onKeyDown = TimeUpdater.addDecision(new SelectAndShoot(currentPlayer)))
+  keyListener(Keyboard.KEY_F,     onKeyDown = TimeUpdater.addDecision(new PlayerShoot(currentPlayer)))
   keyListener(Keyboard.KEY_I,     onKeyDown = TimeUpdater.addDecision(new OpenInventory(currentPlayer)))
   keyListener(Keyboard.KEY_W,     onKeyDown = TimeUpdater.addDecision(new OpenWeapon(currentPlayer)))
   keyListener(Keyboard.KEY_D,     onKeyDown = TimeUpdater.addDecision(new DropItem(currentPlayer)))

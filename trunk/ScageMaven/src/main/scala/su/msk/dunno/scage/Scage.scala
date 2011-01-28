@@ -25,11 +25,11 @@ object Scage {
   private var is_running = false
   def isRunning = is_running
   def run = {
-    init_list.foreach(init_func => init_func())
+    init_list.foreach(init_func => init_func)
     is_running = true
     Idler
-    while(is_running) action_list.foreach(action_func => action_func())
-    exit_list.foreach(exit_func => exit_func())
+    while(is_running) action_list.foreach(action_func => action_func)
+    exit_list.foreach(exit_func => exit_func)
     log.info("app was stopped")
     System.exit(0)
   }

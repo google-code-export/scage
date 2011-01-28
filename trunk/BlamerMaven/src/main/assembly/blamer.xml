@@ -42,7 +42,7 @@
             <outputDirectory>/</outputDirectory>
         </file>
         <file>
-            <source>${project.build.sourceDirectory}/log4j.properties</source>
+            <source>log4j.properties</source>
             <outputDirectory>lib</outputDirectory>
             <filtered>true</filtered>
         </file>

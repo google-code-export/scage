@@ -18,10 +18,10 @@ object ScageMessage {
 
   private val xmlmh = new XMLMessageHandler
   private val parser = SAXParserFactory.newInstance.newSAXParser
-  private var fis:FileInputStream = null
   try {
-    fis = new FileInputStream(messages_file)
+    val fis = new FileInputStream(messages_file)
     parser.parse(fis, xmlmh)
+    log.info("successfully parsed strings file "+messages_file)
   }
   catch {
     case e:Exception => {
@@ -34,7 +34,17 @@ object ScageMessage {
   val row_height = ScageProperties.property("font.row.height", font_size+2)
   val glyph_from = ScageProperties.property("glyph.from", 1024)
   val glyph_to = ScageProperties.property("glyph.to", 1279)
-  private val font = new UnicodeFont(font_path, font_size, glyph_from, glyph_to)
+  private val font = try {
+    new UnicodeFont(font_path, font_size, glyph_from, glyph_to)
+  }
+  catch {
+    case e:Exception => {
+      log.error("failed to create font:\n"+e.getLocalizedMessage)
+      log.error("please provide the path to some unicode ttf font")
+      System.exit(1)
+      null
+    }
+  }
 
   def xml(message_code:String, parameters:String*):String = {
     val xml_message = try {
@@ -42,7 +52,7 @@ object ScageMessage {
     }
     catch {
       case e:Exception => {
-        log.warn("failed to find string with code "+message_code+" in file "+messages_file)
+        log.warn("failed to find string with code "+message_code)
         xmlmh.xml_messages += (message_code -> "")
         ""
       }

@@ -86,15 +86,15 @@
         	<mkdir dir="builds/projects/${project.name}-${project.version}-${os.type}/res" />
         	<mkdir dir="builds/projects/${project.name}-${project.version}-${os.type}/res/images" />
         	<copy toDir="builds/projects/${project.name}-${project.version}-${os.type}/res/images">
-        	        <fileset dir="res/images" />
+        	        <fileset dir="resources/images" />
                 </copy>
         	<mkdir dir="builds/projects/${project.name}-${project.version}-${os.type}/res/fonts" />
         	<copy toDir="builds/projects/${project.name}-${project.version}-${os.type}/res/fonts">
-        	        <fileset dir="res/fonts" />
+        	        <fileset dir="resources/fonts" />
                 </copy>                
         	<mkdir dir="builds/projects/${project.name}-${project.version}-${os.type}/res/strings" />
         	<copy toDir="builds/projects/${project.name}-${project.version}-${os.type}/res/strings">
-        	        <fileset dir="res/strings" />
+        	        <fileset dir="resources/strings" />
                 </copy>                
         </sequential>
     </macrodef>

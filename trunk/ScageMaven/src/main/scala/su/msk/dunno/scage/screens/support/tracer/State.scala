@@ -1,8 +1,8 @@
-package su.msk.dunno.screens.support.tracer
+package su.msk.dunno.scage.screens.support.tracer
 
 import collection.mutable.HashMap
-import su.msk.dunno.scage.support.{ScageColor, Vec}
-import su.msk.dunno.scage.support.ScageColors._
+import su.msk.dunno.scage.single.support.{ScageColor, Vec}
+import su.msk.dunno.scage.single.support.ScageColors._
 
 class State() {
   private val args:HashMap[String, StateData] = new HashMap[String, StateData]()

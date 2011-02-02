@@ -1,11 +1,11 @@
-package su.msk.dunno.screens
+package su.msk.dunno.scage.screens
 
 import handlers.controller.Controller
 import handlers.{Idler, Renderer}
 import org.apache.log4j.Logger
 import prototypes.{ScageRender, ScageAction}
-import su.msk.dunno.scage.support.{Vec}
-import su.msk.dunno.scage.support.ScageProperties
+import su.msk.dunno.scage.single.support.{Vec}
+import su.msk.dunno.scage.single.support.ScageProperties
 
 object ScageScreen {
   private var isAllScreensStop = false

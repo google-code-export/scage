@@ -1,13 +1,12 @@
-package su.msk.dunno.scage.support
-
-package colors2
+package su.msk.dunno.scage.screens.support
 
 import org.lwjgl.input.Keyboard
-import messages.ScageMessage._
-import su.msk.dunno.screens.ScageScreen
-import ScageColors._
-import su.msk.dunno.screens.prototypes.ScageRender
-import su.msk.dunno.screens.handlers.Renderer._
+import su.msk.dunno.scage.single.support.ScageColors._
+import su.msk.dunno.scage.single.support.{ScageColors, ScageColor}
+import su.msk.dunno.scage.screens.ScageScreen
+import su.msk.dunno.scage.screens.prototypes.ScageRender
+import su.msk.dunno.scage.screens.handlers.Renderer._
+import su.msk.dunno.scage.single.support.messages.ScageMessage._
 
 object ScageColorTest extends Application {
   val fields = ScageColors.getClass.getDeclaredFields
@@ -20,7 +19,7 @@ object ScageColorTest extends Application {
   })
 
   var color_num = 1
-  val main_screen = new ScageScreen("Color Test", is_main_screen = true, properties="colortest-properties.txt") {
+  val main_screen = new ScageScreen("Color Test", is_main_screen = true, properties="colortest-properties.tt") {
     addRender(new ScageRender {
       override def interface = {
         if(color_num >= 0 && color_num < fields.length) {

@@ -1,6 +1,6 @@
-package su.msk.dunno.scage.support.tracer
+package su.msk.dunno.scage.single.support.tracer
 
-import su.msk.dunno.scage.support.Vec
+import su.msk.dunno.scage.single.support.Vec
 
 trait Trace[S <: State] {
   private[tracer] var _id = -1

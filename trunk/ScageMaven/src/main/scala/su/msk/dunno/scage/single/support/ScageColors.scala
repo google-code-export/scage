@@ -1,4 +1,4 @@
-package su.msk.dunno.scage.support
+package su.msk.dunno.scage.single.support
 
 object ScageColors {
   val RED: ScageColor = new ScageColor(1, 0, 0)

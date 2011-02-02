@@ -1,4 +1,4 @@
-package su.msk.dunno.scage.support.messages.unicode;
+package su.msk.dunno.scage.single.support.messages.unicode;
 
 import java.util.List;
 

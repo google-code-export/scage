@@ -1,4 +1,4 @@
-package su.msk.dunno.screens.handlers.controller
+package su.msk.dunno.scage.screens.handlers.controller
 
 import org.lwjgl.input.Keyboard
 import collection.mutable.HashMap

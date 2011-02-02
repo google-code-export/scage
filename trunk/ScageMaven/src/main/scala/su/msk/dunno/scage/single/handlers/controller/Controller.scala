@@ -1,6 +1,6 @@
-package su.msk.dunno.scage.handlers.controller
+package su.msk.dunno.scage.single.handlers.controller
 
-import su.msk.dunno.scage.Scage
+import su.msk.dunno.scage.single.Scage
 
 object Controller {
   private var listeners = List[UIListener]()

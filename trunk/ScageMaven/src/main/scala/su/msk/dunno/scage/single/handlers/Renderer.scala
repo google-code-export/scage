@@ -1,12 +1,12 @@
-package su.msk.dunno.scage.handlers
+package su.msk.dunno.scage.single.handlers
 
-import su.msk.dunno.scage.Scage
+import su.msk.dunno.scage.single.Scage
 import org.lwjgl.opengl.{DisplayMode, Display, GL11}
 import org.lwjgl.util.glu.GLU
 import org.newdawn.slick.opengl.{TextureLoader, Texture}
 import java.io.{FileInputStream, InputStream}
-import su.msk.dunno.scage.support.{ScageColor, Vec}
-import su.msk.dunno.scage.support.ScageProperties._
+import su.msk.dunno.scage.single.support.{ScageColor, Vec}
+import su.msk.dunno.scage.single.support.ScageProperties._
 
 object Renderer {
   val CIRCLE = 1

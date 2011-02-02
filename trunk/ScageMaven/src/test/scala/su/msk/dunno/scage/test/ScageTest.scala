@@ -1,11 +1,11 @@
-package su.msk.dunno.scage;
+package su.msk.dunno.scage.test;
 
 import junit.framework._
-import su.msk.dunno.scage.support.ScageColors._
-import su.msk.dunno.screens.handlers.Renderer._
-import support.messages.ScageMessage
-import su.msk.dunno.screens.prototypes.ScageRender
-import su.msk.dunno.screens.ScageScreen
+import su.msk.dunno.scage.single.support.ScageColors._
+import su.msk.dunno.scage.screens.handlers.Renderer._
+import su.msk.dunno.scage.single.support.messages.ScageMessage
+import su.msk.dunno.scage.screens.prototypes.ScageRender
+import su.msk.dunno.scage.screens.ScageScreen
 ;
 import Assert._;
 

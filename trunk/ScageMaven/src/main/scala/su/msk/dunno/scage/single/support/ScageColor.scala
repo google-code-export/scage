@@ -1,4 +1,4 @@
-package su.msk.dunno.scage.support
+package su.msk.dunno.scage.single.support
 
 class ScageColor(r:Float, g:Float, b:Float) {
   val red:Float = if(r >= 0 && r <= 1)r else if(r > 1 && r < 256)r/256 else 0

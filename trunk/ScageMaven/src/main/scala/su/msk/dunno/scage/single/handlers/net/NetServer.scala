@@ -1,11 +1,11 @@
-package su.msk.dunno.scage.handlers.net
+package su.msk.dunno.scage.single.handlers.net
 
-import su.msk.dunno.scage.Scage
+import su.msk.dunno.scage.single.Scage
 import java.io.{BufferedReader, InputStreamReader, OutputStreamWriter, PrintWriter}
 import org.apache.log4j.Logger
 import java.net.{Socket, SocketException, ServerSocket}
 import org.json.{JSONException, JSONObject}
-import su.msk.dunno.scage.support.ScageProperties._
+import su.msk.dunno.scage.single.support.ScageProperties._
 
 object NetServer {
   private val log = Logger.getLogger(this.getClass)

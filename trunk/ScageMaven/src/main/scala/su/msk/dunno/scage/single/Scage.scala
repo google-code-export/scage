@@ -1,8 +1,8 @@
-package su.msk.dunno.scage
+package su.msk.dunno.scage.single
 
-import su.msk.dunno.scage.handlers.Idler
+import su.msk.dunno.scage.single.handlers.Idler
 import org.apache.log4j.Logger
-import su.msk.dunno.scage.support.ScageProperties
+import su.msk.dunno.scage.single.support.ScageProperties
 
 object Scage {
   private val log = Logger.getLogger(Scage.getClass);

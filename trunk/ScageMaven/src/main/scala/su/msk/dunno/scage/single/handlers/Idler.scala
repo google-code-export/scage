@@ -1,7 +1,7 @@
-package su.msk.dunno.scage.handlers
+package su.msk.dunno.scage.single.handlers
 
-import su.msk.dunno.scage.support.ScageProperties._
-import su.msk.dunno.scage.Scage
+import su.msk.dunno.scage.single.support.ScageProperties._
+import su.msk.dunno.scage.single.Scage
 
 object Idler {
   val framerate:Int = property("framerate", 100);

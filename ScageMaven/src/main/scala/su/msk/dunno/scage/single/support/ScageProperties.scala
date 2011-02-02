@@ -1,4 +1,4 @@
-package su.msk.dunno.scage.support
+package su.msk.dunno.scage.single.support
 
 import java.io.{FileInputStream, FileNotFoundException}
 import java.util.Properties
@@ -32,7 +32,7 @@ object ScageProperties {
 
   private lazy val fileNotFound = {
     log.error("failed to load properties: file "+_file+" not found")
-    null
+    new Properties
   }
   private def load:Properties = {
     try {
@@ -54,7 +54,7 @@ object ScageProperties {
 
   private var props_already_read:List[String] = Nil
   private def getProperty(key:String) = {
-    if(props == null) null else props.getProperty(key) match {
+    props.getProperty(key) match {
       case p:String =>
         if(!props_already_read.contains(key)) {
           log.info("read property "+key+": "+p)

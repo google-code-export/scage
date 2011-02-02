@@ -1,6 +1,6 @@
-package su.msk.dunno.screens.handlers
+package su.msk.dunno.scage.screens.handlers
 
-import su.msk.dunno.scage.support.ScageProperties
+import su.msk.dunno.scage.single.support.ScageProperties
 
 object Idler {
   val framerate = ScageProperties.property("framerate", 100)

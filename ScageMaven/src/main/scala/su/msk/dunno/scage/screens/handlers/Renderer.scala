@@ -1,14 +1,14 @@
-package su.msk.dunno.screens.handlers
+package su.msk.dunno.scage.screens.handlers
 
-import su.msk.dunno.screens.ScageScreen
+import su.msk.dunno.scage.screens.ScageScreen
 import java.io.{InputStream, FileInputStream}
 import org.newdawn.slick.opengl.{TextureLoader, Texture}
 import org.lwjgl.opengl.{DisplayMode, GL11, Display}
 import org.lwjgl.util.glu.GLU
-import su.msk.dunno.scage.support.ScageProperties._
-import su.msk.dunno.scage.support.{ScageColor, ScageColors, Vec}
-import su.msk.dunno.scage.support.messages.ScageMessage._
-import su.msk.dunno.screens.prototypes.{ScageAction, ScageRender}
+import su.msk.dunno.scage.single.support.ScageProperties._
+import su.msk.dunno.scage.single.support.{ScageColor, ScageColors, Vec}
+import su.msk.dunno.scage.single.support.messages.ScageMessage._
+import su.msk.dunno.scage.screens.prototypes.{ScageAction, ScageRender}
 import org.lwjgl.BufferUtils
 
 object Renderer {

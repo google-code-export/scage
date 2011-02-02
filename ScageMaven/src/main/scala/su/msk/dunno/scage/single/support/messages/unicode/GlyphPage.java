@@ -1,4 +1,4 @@
-package su.msk.dunno.scage.support.messages.unicode;
+package su.msk.dunno.scage.single.support.messages.unicode;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;

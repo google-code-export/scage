@@ -1,10 +1,10 @@
-package su.msk.dunno.scage.support
+package su.msk.dunno.scage.single.support
 
-import su.msk.dunno.scage.Scage
-import su.msk.dunno.scage.handlers.{Idler, Renderer}
+import su.msk.dunno.scage.single.Scage
+import su.msk.dunno.scage.single.handlers.{Idler, Renderer}
 import tracer.{State, Trace}
 import tracer.Tracer
-import su.msk.dunno.scage.handlers.controller.Controller
+import su.msk.dunno.scage.single.handlers.controller.Controller
 
 object ScageLibrary extends ScageColors {
   implicit def rangeToPairs(range:Range) = {

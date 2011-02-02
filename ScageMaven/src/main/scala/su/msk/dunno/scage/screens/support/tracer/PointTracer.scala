@@ -1,7 +1,7 @@
-package su.msk.dunno.screens.support.tracer
+package su.msk.dunno.scage.screens.support.tracer
 
-import su.msk.dunno.scage.support.Vec
-import su.msk.dunno.screens.support.ScageLibrary._
+import su.msk.dunno.scage.single.support.Vec
+import su.msk.dunno.scage.screens.support.ScageLibrary._
 
 trait PointTrace extends Trace {
   def getPoint:Vec

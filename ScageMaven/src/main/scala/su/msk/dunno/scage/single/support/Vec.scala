@@ -1,4 +1,4 @@
-package su.msk.dunno.scage.support
+package su.msk.dunno.scage.single.support
 
 import _root_.net.phys2d.math.ROVector2f
 case class Vec(private var _x:Float, private var _y:Float) {

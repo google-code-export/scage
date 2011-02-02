@@ -1,4 +1,4 @@
-package su.msk.dunno.screens.prototypes
+package su.msk.dunno.scage.screens.prototypes
 
 trait ScageRender {
   def render = {}

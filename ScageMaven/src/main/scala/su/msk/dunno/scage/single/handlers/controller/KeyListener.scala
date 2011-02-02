@@ -1,4 +1,4 @@
-package su.msk.dunno.scage.handlers.controller
+package su.msk.dunno.scage.single.handlers.controller
 
 import org.lwjgl.input.Keyboard
 

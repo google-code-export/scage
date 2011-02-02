@@ -1,4 +1,4 @@
-package su.msk.dunno.scage.handlers.controller
+package su.msk.dunno.scage.single.handlers.controller
 
 trait UIListener {
   protected[controller] var wasPressed:Boolean = false

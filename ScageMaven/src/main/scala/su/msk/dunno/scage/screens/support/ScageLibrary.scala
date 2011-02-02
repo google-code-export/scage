@@ -1,8 +1,8 @@
-package su.msk.dunno.screens.support
+package su.msk.dunno.scage.screens.support
 
-import su.msk.dunno.screens.handlers.{Idler, Renderer}
-import su.msk.dunno.screens.ScageScreen
-import su.msk.dunno.scage.support.{ScageColor, Vec, ScageProperties, ScageColors}
+import su.msk.dunno.scage.screens.handlers.{Idler, Renderer}
+import su.msk.dunno.scage.screens.ScageScreen
+import su.msk.dunno.scage.single.support.{ScageColor, Vec, ScageProperties, ScageColors}
 
 object ScageLibrary extends ScageColors {
   implicit def rangeToPairs(range:Range) = {

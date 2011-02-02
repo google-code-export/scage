@@ -1,9 +1,9 @@
-package su.msk.dunno.scage.support.tracer
+package su.msk.dunno.scage.single.support.tracer
 
-import su.msk.dunno.scage.handlers.Renderer
-import su.msk.dunno.scage.support.Vec
+import su.msk.dunno.scage.single.handlers.Renderer
+import su.msk.dunno.scage.single.support.Vec
 import org.apache.log4j.Logger
-import su.msk.dunno.scage.support.ScageLibrary._
+import su.msk.dunno.scage.single.support.ScageLibrary._
 
 object Tracer {
   private val log = Logger.getLogger(this.getClass);

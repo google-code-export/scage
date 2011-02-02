@@ -1,16 +1,16 @@
 package su.msk.dunno.blame.screens
 
-import su.msk.dunno.screens.ScageScreen
+import su.msk.dunno.scage.screens.ScageScreen
 import su.msk.dunno.blame.prototypes.{Living}
-import su.msk.dunno.screens.prototypes.ScageRender
-import su.msk.dunno.screens.handlers.Renderer._
+import su.msk.dunno.scage.screens.prototypes.ScageRender
+import su.msk.dunno.scage.screens.handlers.Renderer._
 import su.msk.dunno.blame.field.FieldTracer
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.blame.support.BottomMessages._
-import su.msk.dunno.scage.support.ScageColors._
-import su.msk.dunno.screens.support.tracer.State
-import su.msk.dunno.scage.support.messages.ScageMessage._
-import su.msk.dunno.scage.support.{Vec}
+import su.msk.dunno.scage.single.support.ScageColors._
+import su.msk.dunno.scage.screens.support.tracer.State
+import su.msk.dunno.scage.single.support.messages.ScageMessage._
+import su.msk.dunno.scage.single.support.{Vec}
 
 class CommandScreen(living:Living) extends ScageScreen("Command Screen") {
   def findPlayer =

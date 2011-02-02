@@ -70,7 +70,7 @@
     <dependency>
         <groupId>su.msk.dunno</groupId>
         <artifactId>scage</artifactId>
-        <version>0.3</version>
+        <version>0.3.1</version>
         <scope>compile</scope>
     </dependency>
     <dependency>

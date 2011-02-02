@@ -1,8 +1,8 @@
 package su.msk.dunno.blame.support
 
-import su.msk.dunno.scage.support.ScageColors._
-import su.msk.dunno.scage.support.messages.ScageMessage._
-import su.msk.dunno.scage.support.ScageProperties._
+import su.msk.dunno.scage.single.support.ScageColors._
+import su.msk.dunno.scage.single.support.messages.ScageMessage._
+import su.msk.dunno.scage.single.support.ScageProperties._
 
 object BottomMessages {
   private var bottom_messages:List[String] = Nil

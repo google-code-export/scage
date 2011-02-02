@@ -1,9 +1,9 @@
 package su.msk.dunno.blame.prototypes
 
-import su.msk.dunno.scage.support.{Vec, ScageColor}
+import su.msk.dunno.scage.single.support.{Vec, ScageColor}
 import su.msk.dunno.blame.support.MyFont._
 import su.msk.dunno.blame.field.FieldTracer
-import su.msk.dunno.screens.support.tracer.State
+import su.msk.dunno.scage.screens.support.tracer.State
 import su.msk.dunno.blame.screens.{Blamer, CommandScreen, SelectTarget}
 import su.msk.dunno.blame.support.BottomMessages
 import su.msk.dunno.blame.decisions.{OpenDoor, Shoot, Move}

@@ -1,14 +1,14 @@
 package su.msk.dunno.blame.prototypes
 
 import collection.mutable.HashMap
-import su.msk.dunno.screens.handlers.Renderer
-import su.msk.dunno.scage.support.messages.ScageMessage._
-import su.msk.dunno.scage.support.ScageColors._
+import su.msk.dunno.scage.screens.handlers.Renderer
+import su.msk.dunno.scage.single.support.messages.ScageMessage._
+import su.msk.dunno.scage.single.support.ScageColors._
 import org.lwjgl.input.Keyboard
-import su.msk.dunno.screens.prototypes.ScageRender
-import su.msk.dunno.screens.ScageScreen
+import su.msk.dunno.scage.screens.prototypes.ScageRender
+import su.msk.dunno.scage.screens.ScageScreen
 import su.msk.dunno.blame.support.BottomMessages
-import su.msk.dunno.screens.support.tracer.State
+import su.msk.dunno.scage.screens.support.tracer.State
 import su.msk.dunno.blame.field.{FieldTracer, FieldObject}
 
 class Inventory(val owner:Living) {

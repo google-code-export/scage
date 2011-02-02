@@ -2,10 +2,10 @@ package su.msk.dunno.blame.field.tiles
 
 import su.msk.dunno.blame.field.{FieldObject, FieldTracer}
 import su.msk.dunno.blame.support.MyFont._
-import su.msk.dunno.screens.support.tracer.State
-import su.msk.dunno.scage.support.ScageColors._
+import su.msk.dunno.scage.screens.support.tracer.State
+import su.msk.dunno.scage.single.support.ScageColors._
 import su.msk.dunno.blame.support.BottomMessages
-import su.msk.dunno.scage.support.messages.ScageMessage
+import su.msk.dunno.scage.single.support.messages.ScageMessage
 
 private trait ColorChanger {
   protected var color = WHITE

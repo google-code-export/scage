@@ -1,7 +1,7 @@
 package su.msk.dunno.blame.prototypes
 
-import su.msk.dunno.screens.support.tracer.State
-import su.msk.dunno.scage.support.ScageColor
+import su.msk.dunno.scage.screens.support.tracer.State
+import su.msk.dunno.scage.single.support.ScageColor
 
 trait HaveStats {
   // stats
@@ -20,7 +20,7 @@ trait HaveStats {
       case "Int" => stats.put(key, value.asInstanceOf[Int])
       case "Float" => stats.put(key, value.asInstanceOf[Float])
       case "Boolean" => stats.put(key, value.asInstanceOf[Boolean])
-      case "su.msk.dunno.scage.support.ScageColor" => stats.put(key, value.asInstanceOf[ScageColor])
+      case "su.msk.dunno.scage.single.support.ScageColor" => stats.put(key, value.asInstanceOf[ScageColor])
       case _ => stats.put(key, value.asInstanceOf[String])
     }
   }

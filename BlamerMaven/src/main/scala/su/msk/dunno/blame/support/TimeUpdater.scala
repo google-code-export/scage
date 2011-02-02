@@ -1,6 +1,6 @@
 package su.msk.dunno.blame.support
 
-import su.msk.dunno.screens.prototypes.ScageAction
+import su.msk.dunno.scage.screens.prototypes.ScageAction
 import su.msk.dunno.blame.prototypes.Decision
 import su.msk.dunno.blame.screens.Blamer
 

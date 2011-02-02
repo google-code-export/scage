@@ -1,8 +1,8 @@
 package su.msk.dunno.blame.support
 
-import su.msk.dunno.screens.handlers.Renderer
-import su.msk.dunno.scage.support.Vec
-import su.msk.dunno.scage.support.ScageProperties._
+import su.msk.dunno.scage.screens.handlers.Renderer
+import su.msk.dunno.scage.single.support.Vec
+import su.msk.dunno.scage.single.support.ScageProperties._
 import org.apache.log4j.Logger
 
 object MyFont {

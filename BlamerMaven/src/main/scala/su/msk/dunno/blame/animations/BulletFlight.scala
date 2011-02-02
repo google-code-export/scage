@@ -1,15 +1,15 @@
 package su.msk.dunno.blame.animations
 
-import su.msk.dunno.screens.ScageScreen
+import su.msk.dunno.scage.screens.ScageScreen
 import su.msk.dunno.blame.support.BottomMessages
 import su.msk.dunno.blame.screens.Blamer
-import su.msk.dunno.scage.support.{ScageColor, Vec}
-import su.msk.dunno.screens.prototypes.{ScageAction, ScageRender}
+import su.msk.dunno.scage.single.support.{ScageColor, Vec}
+import su.msk.dunno.scage.screens.prototypes.{ScageAction, ScageRender}
 import su.msk.dunno.blame.field.{FieldObject, FieldTracer}
-import su.msk.dunno.screens.support.tracer.State
+import su.msk.dunno.scage.screens.support.tracer.State
 import su.msk.dunno.blame.support.MyFont._
-import su.msk.dunno.screens.support.ScageLibrary._
-import su.msk.dunno.screens.handlers.Renderer
+import su.msk.dunno.scage.screens.support.ScageLibrary._
+import su.msk.dunno.scage.screens.handlers.Renderer
 
 class BulletFlight(val start_point:Vec, val end_point:Vec, val color:ScageColor, val delay:Long = property("animation.bulletflight.delay", 30.toLong))
 extends ScageScreen("Bullet Flight") {

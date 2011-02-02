@@ -1,14 +1,14 @@
 package su.msk.dunno.blame.screens
 
-import su.msk.dunno.screens.ScageScreen
-import su.msk.dunno.scage.support.messages.ScageMessage._
-import su.msk.dunno.screens.support.ScageLibrary._
+import su.msk.dunno.scage.screens.ScageScreen
+import su.msk.dunno.scage.single.support.messages.ScageMessage._
+import su.msk.dunno.scage.screens.support.ScageLibrary._
 import org.lwjgl.input.Keyboard
-import su.msk.dunno.scage.support.Vec
+import su.msk.dunno.scage.single.support.Vec
 import su.msk.dunno.blame.field.FieldTracer
 import su.msk.dunno.blame.field.tiles.{Door, Wall, Floor}
-import su.msk.dunno.screens.prototypes.ScageRender
-import su.msk.dunno.screens.handlers.Renderer
+import su.msk.dunno.scage.screens.prototypes.ScageRender
+import su.msk.dunno.scage.screens.handlers.Renderer
 import su.msk.dunno.blame.support.{BottomMessages, TimeUpdater, GenLib}
 import su.msk.dunno.blame.livings.{SiliconCreature, Cibo, Killy}
 import su.msk.dunno.blame.decisions._

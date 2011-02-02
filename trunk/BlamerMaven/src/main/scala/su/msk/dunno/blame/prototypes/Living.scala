@@ -1,11 +1,11 @@
 package su.msk.dunno.blame.prototypes
 
-import su.msk.dunno.screens.support.tracer.State
+import su.msk.dunno.scage.screens.support.tracer.State
 import su.msk.dunno.blame.field.{FieldTracer, FieldObject}
-import su.msk.dunno.scage.support.{ScageProperties, Vec, ScageColor}
+import su.msk.dunno.scage.single.support.{ScageProperties, Vec, ScageColor}
 import su.msk.dunno.blame.support.BottomMessages
 import su.msk.dunno.blame.support.MyFont._
-import su.msk.dunno.scage.support.ScageColors._
+import su.msk.dunno.scage.single.support.ScageColors._
 import su.msk.dunno.blame.screens.Blamer
 
 abstract class Living(val name:String,

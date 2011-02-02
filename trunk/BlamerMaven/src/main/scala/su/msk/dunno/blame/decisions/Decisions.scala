@@ -1,12 +1,12 @@
 package su.msk.dunno.blame.decisions
 
-import su.msk.dunno.scage.support.Vec
-import su.msk.dunno.screens.support.tracer.State
+import su.msk.dunno.scage.single.support.Vec
+import su.msk.dunno.scage.screens.support.tracer.State
 import su.msk.dunno.blame.support.{BottomMessages, TimeUpdater}
-import su.msk.dunno.scage.support.ScageColors._
+import su.msk.dunno.scage.single.support.ScageColors._
 import su.msk.dunno.blame.animations.BulletFlight
 import su.msk.dunno.blame.field.{FieldObject, FieldTracer}
-import su.msk.dunno.scage.support.messages.ScageMessage
+import su.msk.dunno.scage.single.support.messages.ScageMessage
 import su.msk.dunno.blame.screens.Blamer
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.blame.prototypes.{Player, Living, Decision}

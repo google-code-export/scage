@@ -1,13 +1,13 @@
 package su.msk.dunno.blame.field
 
-import su.msk.dunno.screens.handlers.Renderer
-import su.msk.dunno.scage.support.{ScageColors, Vec, ScageColor}
-import su.msk.dunno.scage.support.ScageProperties._
+import su.msk.dunno.scage.screens.handlers.Renderer
+import su.msk.dunno.scage.single.support.{ScageColors, Vec, ScageColor}
+import su.msk.dunno.scage.single.support.ScageProperties._
 import rlforj.los.{BresLos, ILosBoard, PrecisePermissive}
 import collection.JavaConversions
 import su.msk.dunno.blame.support.{BottomMessages, MyFont}
 import su.msk.dunno.blame.screens.Blamer
-import su.msk.dunno.screens.support.tracer._
+import su.msk.dunno.scage.screens.support.tracer._
 import org.newdawn.slick.util.pathfinding._
 
 abstract class FieldObject(protected val point:Vec) extends PointTrace {

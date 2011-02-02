@@ -2,9 +2,9 @@ package su.msk.dunno.blame.livings
 
 import su.msk.dunno.blame.field.FieldTracer
 import su.msk.dunno.blame.support.MyFont._
-import su.msk.dunno.scage.support.ScageColors._
-import su.msk.dunno.scage.support.Vec
-import su.msk.dunno.scage.support.messages.ScageMessage._
+import su.msk.dunno.scage.single.support.ScageColors._
+import su.msk.dunno.scage.single.support.Vec
+import su.msk.dunno.scage.single.support.messages.ScageMessage._
 import su.msk.dunno.blame.items.{SocketExtender, SecondTestItem, TestItem}
 import su.msk.dunno.blame.prototypes.{Player, Living}
 

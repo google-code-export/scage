@@ -1,8 +1,8 @@
 package su.msk.dunno.blame.prototypes
 
-import su.msk.dunno.screens.prototypes.ScageAction
+import su.msk.dunno.scage.screens.prototypes.ScageAction
 import su.msk.dunno.blame.screens.Blamer
-import su.msk.dunno.scage.support.{ScageColor, Vec}
+import su.msk.dunno.scage.single.support.{ScageColor, Vec}
 import su.msk.dunno.blame.support.TimeUpdater
 
 abstract class Npc(name:String, description:String, point:Vec, symbol:Int, color:ScageColor)

@@ -24,3 +24,43 @@ class SocketExtender extends Item(
   color = WHITE) {
   setStat("extender")
 }
+
+class EnergyItem extends Item(
+  name = xml("item.energy.name"),
+  description = xml("item.energy.description"),
+  symbol = BULLET,
+  color = YELLOW) {
+  setStat("max_energy")
+}
+
+class Health extends Item(
+  name = xml("item.health.name"),
+  description = xml("item.health.description"),
+  symbol = BULLET,
+  color = PINK) {
+  setStat("max_health")
+}
+
+class Shield extends Item(
+  name = xml("item.shield.name"),
+  description = xml("item.shield.description"),
+  symbol = BULLET,
+  color = CYAN) {
+  setStat("max_shield")
+}
+
+class Damage extends Item(
+  name = xml("item.damage.name"),
+  description = xml("item.damage.description"),
+  symbol = BULLET,
+  color = RED) {
+  setStat("damage")
+}
+
+class UniqueItem extends Item(
+  name = xml("item.unique.name"),
+  description = xml("item.unique.description"),
+  symbol = BULLET,
+  color = DARK_GREEN) {
+  setStat("unique")
+}

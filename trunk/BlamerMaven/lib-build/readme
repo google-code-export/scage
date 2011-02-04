@@ -1,0 +1,6 @@
+The libraries in this folder are not situated in any public maven repository (at least I didn't find any),
+so you have to install it to your own repository for the project being able to build.
+
+To do the trick use following commands:
+
+mvn install:install-file -Dfile=rlforj-nosources-0.2.jar -DgroupId=rlforj -DartifactId=rlforj -Dversion=0.2 -Dpackaging=jar

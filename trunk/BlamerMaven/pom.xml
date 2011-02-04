@@ -77,8 +77,8 @@
   		<groupId>rlforj</groupId>
   		<artifactId>rlforj</artifactId>
   		<version>0.2</version>
-  		<scope>system</scope>
-  		<systemPath>${basedir}/lib-build/rlforj-nosources-0.2.jar</systemPath>
+  		<scope>compile</scope>
+  		<!--<systemPath>${basedir}/lib-build/rlforj-nosources-0.2.jar</systemPath>-->
   	</dependency>
   </dependencies>
 

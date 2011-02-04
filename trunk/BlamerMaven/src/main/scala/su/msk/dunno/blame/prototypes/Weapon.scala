@@ -41,12 +41,12 @@ private class BasePart extends Item(
 }
 
 class Weapon(val owner:Living) extends PointTracer[FieldObject] (
-  field_from_x = property("weapon.from.x", 0),
-  field_to_x = property("weapon.to.x", 800),
-  field_from_y = property("weapon.from.y", 0),
-  field_to_y = property("weapon.to.y", 600),
-  N_x = property("weapon.N_x", 16),
-  N_y = property("weapon.N_y", 12),
+  field_from_x    = property("weapon.from.x", 0),
+  field_to_x      = property("weapon.to.x",   800),
+  field_from_y    = property("weapon.from.y", 0),
+  field_to_y      = property("weapon.to.y",   600),
+  N_x             = property("weapon.N_x",    16),
+  N_y             = property("weapon.N_y",    12),
   are_solid_edges = true
 ) {
   private def removeAllTracesFromPoint(point:Vec) = {

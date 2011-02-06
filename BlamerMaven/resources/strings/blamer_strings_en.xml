@@ -192,6 +192,7 @@ I
 W
 D
 ,
+T
 Tab
 F1
 ESC
@@ -206,6 +207,7 @@ Open inventory
 Open weapon
 Drop item to the floor
 Pick up item from the floor and store it in the inventory
+Ask partner to perform some task
 Switch between Killy and Cibo
 Open this screen
 Exit program

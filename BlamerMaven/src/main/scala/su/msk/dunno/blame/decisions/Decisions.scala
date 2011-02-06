@@ -5,9 +5,8 @@ import su.msk.dunno.scage.screens.support.tracer.State
 import su.msk.dunno.blame.support.{BottomMessages, TimeUpdater}
 import su.msk.dunno.scage.single.support.ScageColors._
 import su.msk.dunno.blame.animations.BulletFlight
-import su.msk.dunno.blame.field.{FieldObject, FieldTracer}
+import su.msk.dunno.blame.field.FieldTracer
 import su.msk.dunno.scage.single.support.messages.ScageMessage
-import su.msk.dunno.blame.screens.Blamer
 import org.lwjgl.input.Keyboard
 import su.msk.dunno.blame.prototypes.{Player, Living, Decision}
 
@@ -53,19 +52,20 @@ class CloseDoor(living:Living) extends Decision(living) {
   }
 }
 
-class PlayerShoot(player:Player) extends Shoot(player, player.selectTarget(Keyboard.KEY_F))
 class Shoot(living:Living, private val target_point:Vec) extends Decision(living) {
+  def this(living:Living) = this(living, Vec(-1,-1))
   override val action_period = 2
 
   def doAction = {
-    if(target_point != living.getPoint) {
+    val target = if(target_point != Vec(-1, -1)) target_point else living.selectTarget(Keyboard.KEY_F)
+    if(target != living.getPoint) {
       BottomMessages.addPropMessage("decision.shoot", living.stat("name"))
-      if(FieldTracer.isNearPlayer(living.getPoint)) new BulletFlight(living.getPoint, target_point, YELLOW)
-      val kickback = (living.getPoint - target_point).n
+      if(FieldTracer.isNearPlayer(living.getPoint)) new BulletFlight(living.getPoint, target, YELLOW)
+      val kickback = (living.getPoint - target).n
       val kickback_delta = Vec(if(math.abs(kickback.x) > 0.3) math.signum(kickback.x) else 0,
                                if(math.abs(kickback.y) > 0.3) math.signum(kickback.y) else 0)
       TimeUpdater.addDecision(new Move(living, kickback_delta))
-      FieldTracer.objectsAtPoint(target_point).foreach(_.changeState(new State("damage", 10)))
+      FieldTracer.objectsAtPoint(target).foreach(_.changeState(new State("damage", 10)))
       was_executed = true
     }
   }

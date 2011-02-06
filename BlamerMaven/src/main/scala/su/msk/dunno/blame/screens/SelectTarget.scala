@@ -12,22 +12,24 @@ import su.msk.dunno.blame.prototypes.Living
 import su.msk.dunno.scage.single.support.messages.ScageMessage._
 import su.msk.dunno.blame.field.{FieldObject, FieldTracer}
 
-class SelectTarget(val living:Living) extends ScageScreen("Target Selector") {
-  private var _stop_key = -1
-  private var target_point:Vec = living.getPoint
-  private var select_line:List[Vec] = List(living.getPoint)
-  def apply(new_key:Int):Vec = {
-    _stop_key = new_key
-    target_point = findTarget
+object SelectTarget {
+  private var living:Living = null
+  private var stop_key = -1
+  private var target_point:Vec = null
+  private var select_line:List[Vec] = Nil
+  def apply(_living:Living, new_key:Int, condition: FieldObject => Boolean = _.getState.contains("enemy")):Vec = {
+    living = _living
+    stop_key = new_key
+    target_point = findTarget(condition)
     select_line = FieldTracer.line(living.getPoint, target_point)
-    run
+    selector_screen.run
     target_point
   }
 
-  private def findTarget:Vec = {
+  private def findTarget(condition: FieldObject => Boolean):Vec = {
     val dov = living.getState.getInt("dov")
     FieldTracer.findVisibleObject(living.trace, living.getPoint, dov, obj => {
-      obj.getState.contains("enemy") && obj.getState.getInt("health") > 0
+      obj.getState.getInt("health") > 0 && condition(obj)
     }) match {
       case Some(live_enemy) => live_enemy.getPoint
       case None => living.getPoint
@@ -53,56 +55,58 @@ class SelectTarget(val living:Living) extends ScageScreen("Target Selector") {
       })
       Renderer.drawDisplayList(MAIN_SELECTOR, FieldTracer.pointCenter(select_line.last), WHITE)
     }
-  }  
-  
-  keyListener(Keyboard.KEY_NUMPAD9, 100, onKeyDown = buildSelectLine(Vec(1,1)))
-  keyListener(Keyboard.KEY_NUMPAD8, 100, onKeyDown = buildSelectLine(Vec(0,1)))
-  keyListener(Keyboard.KEY_NUMPAD7, 100, onKeyDown = buildSelectLine(Vec(-1,1)))
-  keyListener(Keyboard.KEY_NUMPAD6, 100, onKeyDown = buildSelectLine(Vec(1,0)))
-  keyListener(Keyboard.KEY_NUMPAD4, 100, onKeyDown = buildSelectLine(Vec(-1,0)))
-  keyListener(Keyboard.KEY_NUMPAD3, 100, onKeyDown = buildSelectLine(Vec(1,-1)))
-  keyListener(Keyboard.KEY_NUMPAD2, 100, onKeyDown = buildSelectLine(Vec(0,-1)))
-  keyListener(Keyboard.KEY_NUMPAD1, 100, onKeyDown = buildSelectLine(Vec(-1,-1)))
+  }
 
-  keyListener(Keyboard.KEY_UP,    100, onKeyDown = buildSelectLine(Vec(0,1)))
-  keyListener(Keyboard.KEY_RIGHT, 100, onKeyDown = buildSelectLine(Vec(1,0)))
-  keyListener(Keyboard.KEY_LEFT,  100, onKeyDown = buildSelectLine(Vec(-1,0)))
-  keyListener(Keyboard.KEY_DOWN,  100, onKeyDown = buildSelectLine(Vec(0,-1)))
+  private lazy val selector_screen = new ScageScreen("Target Selector") {
+    keyListener(Keyboard.KEY_NUMPAD9, 100, onKeyDown = buildSelectLine(Vec(1,1)))
+    keyListener(Keyboard.KEY_NUMPAD8, 100, onKeyDown = buildSelectLine(Vec(0,1)))
+    keyListener(Keyboard.KEY_NUMPAD7, 100, onKeyDown = buildSelectLine(Vec(-1,1)))
+    keyListener(Keyboard.KEY_NUMPAD6, 100, onKeyDown = buildSelectLine(Vec(1,0)))
+    keyListener(Keyboard.KEY_NUMPAD4, 100, onKeyDown = buildSelectLine(Vec(-1,0)))
+    keyListener(Keyboard.KEY_NUMPAD3, 100, onKeyDown = buildSelectLine(Vec(1,-1)))
+    keyListener(Keyboard.KEY_NUMPAD2, 100, onKeyDown = buildSelectLine(Vec(0,-1)))
+    keyListener(Keyboard.KEY_NUMPAD1, 100, onKeyDown = buildSelectLine(Vec(-1,-1)))
 
-  keyListener(_stop_key, onKeyDown = {
-    clearSelectLine
-    stop
-  })
+    keyListener(Keyboard.KEY_UP,    100, onKeyDown = buildSelectLine(Vec(0,1)))
+    keyListener(Keyboard.KEY_RIGHT, 100, onKeyDown = buildSelectLine(Vec(1,0)))
+    keyListener(Keyboard.KEY_LEFT,  100, onKeyDown = buildSelectLine(Vec(-1,0)))
+    keyListener(Keyboard.KEY_DOWN,  100, onKeyDown = buildSelectLine(Vec(0,-1)))
 
-  keyListener(Keyboard.KEY_ESCAPE, onKeyDown = {
-    target_point = living.getPoint
-    clearSelectLine
-    stop
-  })
+    keyListener(stop_key, onKeyDown = {
+      clearSelectLine
+      stop
+    })
 
-  // render on main screen
-  windowCenter = Vec((width - Blamer.right_messages_width)/2,
-  		            bottom_messages_height + (height - bottom_messages_height)/2)
-  center = FieldTracer.pointCenter(living.getPoint)
-  
-  Renderer.backgroundColor = BLACK  
-  
-  addRender(new ScageRender {
-    override def render = {
-      FieldTracer.drawField(Blamer.currentPlayer.getPoint)
-      drawSelectLine
-    }
-    
-    override def interface {
-      FieldTracer.objectsAtPoint(target_point) match {
-        case head :: tail => print(xml("selecttarget.target")+" "+head.getState.getString("name"),
-                                10, bottom_messages_height - row_height)
-        case _ =>
+    keyListener(Keyboard.KEY_ESCAPE, onKeyDown = {
+      target_point = living.getPoint
+      clearSelectLine
+      stop
+    })
+
+    // render on main screen
+    windowCenter = Vec((width - Blamer.right_messages_width)/2,
+                    bottom_messages_height + (height - bottom_messages_height)/2)
+    center = FieldTracer.pointCenter(living.getPoint)
+
+    Renderer.backgroundColor = BLACK
+
+    addRender(new ScageRender {
+      override def render = {
+        FieldTracer.drawField(Blamer.currentPlayer.getPoint)
+        drawSelectLine
       }
-      print(xml("selecttarget.helpmessage"),
-        10, bottom_messages_height - (row_height*2), GREEN)
-      showBottomMessages(2)
-      Blamer.drawInterface
-    }
-  })
+
+      override def interface {
+        FieldTracer.objectsAtPoint(target_point) match {
+          case head :: tail => print(xml("selecttarget.target")+" "+head.getState.getString("name"),
+                                  10, bottom_messages_height - row_height)
+          case _ =>
+        }
+        print(xml("selecttarget.helpmessage"),
+          10, bottom_messages_height - (row_height*2), GREEN)
+        showBottomMessages(2)
+        Blamer.drawInterface
+      }
+    })
+  }
 }

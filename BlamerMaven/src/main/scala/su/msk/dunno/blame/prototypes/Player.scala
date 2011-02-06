@@ -4,8 +4,7 @@ import su.msk.dunno.scage.single.support.{Vec, ScageColor}
 import su.msk.dunno.blame.support.MyFont._
 import su.msk.dunno.blame.field.FieldTracer
 import su.msk.dunno.scage.screens.support.tracer.State
-import su.msk.dunno.blame.screens.{Blamer, CommandScreen, SelectTarget}
-import su.msk.dunno.blame.support.BottomMessages
+import su.msk.dunno.blame.screens.{Blamer, CommandScreen}
 import su.msk.dunno.blame.decisions.{OpenDoor, Shoot, Move}
 
 abstract class Player(name:String, description:String, point:Vec, color:ScageColor)
@@ -13,11 +12,6 @@ extends Npc(name, description, point, PLAYER, color) {
   override def getSymbol = PLAYER
   setStat("player")
   FieldTracer.addLightSource(point, intStat("dov"), trace)
-
-  private lazy val target_selector = new SelectTarget(this)
-  def selectTarget(stop_key:Int):Vec = {
-    target_selector(stop_key)
-  }
 
   private lazy val command_screen = new CommandScreen(this)
   def selectCommand = command_screen.selectCommand

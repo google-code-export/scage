@@ -6,7 +6,7 @@ import su.msk.dunno.scage.single.support.{ScageProperties, Vec, ScageColor}
 import su.msk.dunno.blame.support.BottomMessages
 import su.msk.dunno.blame.support.MyFont._
 import su.msk.dunno.scage.single.support.ScageColors._
-import su.msk.dunno.blame.screens.Blamer
+import su.msk.dunno.blame.screens.{SelectTarget, Blamer}
 
 abstract class Living(val name:String,
                       val description:String,
@@ -44,6 +44,8 @@ extends FieldObject(point) with HaveStats {
 
   val inventory = new Inventory(this)
   val weapon = new Weapon(this)
+
+  def selectTarget(stop_key:Int):Vec = SelectTarget(this, stop_key)
 
   setStat("living")
   setStat("name", name)

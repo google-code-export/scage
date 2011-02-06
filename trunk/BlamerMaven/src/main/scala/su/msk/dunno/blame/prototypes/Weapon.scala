@@ -9,7 +9,7 @@ import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.screens.support.ScageLibrary._
 import su.msk.dunno.scage.single.support.Vec
 import su.msk.dunno.blame.support.MyFont._
-import su.msk.dunno.scage.screens.support.tracer.{PointTracer, Trace, Tracer, State}
+import su.msk.dunno.scage.screens.support.tracer.{PointTracer, State}
 import org.lwjgl.opengl.GL11
 import su.msk.dunno.blame.support.BottomMessages
 

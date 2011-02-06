@@ -32,10 +32,11 @@ class Inventory(val owner:Living) {
   
   private var is_item_selection = false
   private var purpose = ""
-  def selectItem(_purpose:String):Option[FieldObject] = {
+  def selectItem(_purpose:String, condition: FieldObject => Boolean = fo => true):Option[FieldObject] = {
     item_selector = -1
     is_item_selection = true
     purpose = _purpose
+    generateItemPositions(condition)
     inventory_screen.run
     selectedItem
   }
@@ -43,6 +44,7 @@ class Inventory(val owner:Living) {
   def showInventory = {
     item_selector = -1
     is_item_selection = false
+    generateItemPositions(fo => true)
     inventory_screen.run
   }
 
@@ -51,7 +53,7 @@ class Inventory(val owner:Living) {
       val name = item.getState.getString("name")
       if(items.contains(name)) items(name) = item :: items(name)
       else items += (name -> List(item))
-      if(!item_positions.contains(name)) item_positions = name :: item_positions
+      //if(!item_positions.contains(name)) item_positions = name :: item_positions
     }
     else {
       item.changeState(new State("point", owner.getPoint))
@@ -64,8 +66,16 @@ class Inventory(val owner:Living) {
     val name = item.getState.getString("name")
     if(items.contains(name)) {
       items(name) = items(name).tail
-      if(items(name).size == 0) item_positions = item_positions.filterNot(_ == name)
+      //if(items(name).size == 0) item_positions = item_positions.filterNot(_ == name)
     }
+  }
+
+  private def generateItemPositions(condition: FieldObject => Boolean) = {
+    item_positions = items.keys.filter(items(_).size > 0).foldLeft(List[String]())((positions, key) => {
+      val item = items(key).head
+      if(condition(item)) key :: positions
+      else positions
+    })
   }
 
   private lazy val inventory_screen = new ScageScreen("Inventory Screen") {

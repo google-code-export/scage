@@ -6,7 +6,7 @@ import su.msk.dunno.scage.single.support.ScageColors._
 import su.msk.dunno.blame.field.FieldTracer
 import su.msk.dunno.blame.decisions.{Shoot, Move}
 import su.msk.dunno.scage.single.support.messages.ScageMessage._
-import su.msk.dunno.blame.prototypes.{Living, Decision, Npc}
+import su.msk.dunno.blame.prototypes.{Decision, Npc}
 
 class SiliconCreature(point:Vec)
 extends Npc(name        = xml("enemy.siliconcreature.name"),

@@ -11,8 +11,6 @@ import org.lwjgl.input.Keyboard
 import su.msk.dunno.blame.prototypes.{Player, Living, Decision}
 
 class Move(living:Living, val step:Vec) extends Decision(living) {
-  override val action_period = 2
-
   def doAction = {
     val new_point = living.getPoint + step
     was_executed = FieldTracer.move2PointIfPassable(living.trace, living.getPoint, new_point)
@@ -20,8 +18,6 @@ class Move(living:Living, val step:Vec) extends Decision(living) {
 }
 
 class OpenDoor(living:Living) extends Decision(living) {
-  override val action_period = 1
-
   def doAction = {
     FieldTracer.findVisibleObject(living.trace, living.getPoint, 1, obj => {
       obj.getState.contains("door") && obj.getState.contains("close")
@@ -36,8 +32,6 @@ class OpenDoor(living:Living) extends Decision(living) {
 }
 
 class CloseDoor(living:Living) extends Decision(living) {
-  override val action_period = 1
-
   def doAction = {
     FieldTracer.findVisibleObject(living.trace, living.getPoint, 1, obj => {
       obj.getState.contains("door") && obj.getState.contains("open") &&
@@ -54,7 +48,6 @@ class CloseDoor(living:Living) extends Decision(living) {
 
 class Shoot(living:Living, private val target_point:Vec) extends Decision(living) {
   def this(living:Living) = this(living, Vec(-1,-1))
-  override val action_period = 2
 
   def doAction = {
     val target = if(target_point != Vec(-1, -1)) target_point else living.selectTarget(Keyboard.KEY_F)
@@ -72,8 +65,6 @@ class Shoot(living:Living, private val target_point:Vec) extends Decision(living
 }
 
 class DropItem(living:Living) extends Decision(living) {
-  override val action_period = 2
-  
   def doAction = {
     living.inventory.selectItem(ScageMessage.xml("decision.drop.selection")) match {
       case Some(item_to_drop) => {
@@ -89,8 +80,6 @@ class DropItem(living:Living) extends Decision(living) {
 }
 
 class PickUpItem(living:Living) extends Decision(living) {
-  override val action_period = 2
-  
   def doAction = {
     FieldTracer.findObjectAtPoint(living.getPoint, "item") match {
       case Some(item) => {
@@ -117,8 +106,6 @@ class OpenInventory(living:Living) extends Decision(living) {
 }
 
 class IssueCommand(player:Player) extends Decision(player) {
-  override val action_period = 1
-
   private def findPlayer = FieldTracer.findVisibleObject(player.trace, player.getPoint, player.getState.getInt("dov"), obj => {
     obj.getState.contains("player") && obj.getState.getInt("health") > 0
   })

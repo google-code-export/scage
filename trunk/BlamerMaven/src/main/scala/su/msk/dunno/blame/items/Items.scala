@@ -37,7 +37,7 @@ class Health extends Item(
   name = xml("item.health.name"),
   description = xml("item.health.description"),
   symbol = BULLET,
-  color = PINK) {
+  color = MAROON) {
   setStat("max_health")
 }
 

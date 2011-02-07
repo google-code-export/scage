@@ -8,7 +8,7 @@ import su.msk.dunno.scage.screens.prototypes.ScageRender
 import su.msk.dunno.scage.screens.handlers.Renderer._
 import su.msk.dunno.scage.single.support.messages.ScageMessage._
 
-object ScageColorTest extends Application {
+object ScageColorTest {
   val fields = ScageColors.getClass.getDeclaredFields
   val colors = fields.map(f => {
     f.setAccessible(true)
@@ -52,5 +52,7 @@ object ScageColorTest extends Application {
       nextColorNumDec
     })
     keyListener(Keyboard.KEY_ESCAPE, onKeyDown = stop)
-  }.run
+  }
+
+  def main(args:Array[String]) = main_screen.run
 }

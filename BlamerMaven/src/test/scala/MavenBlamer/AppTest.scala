@@ -2,6 +2,7 @@ package MavenBlamer;
 
 import junit.framework._
 import su.msk.dunno.blame.screens.Blamer
+import su.msk.dunno.scage.screens.support.ScageColorTest
 ;
 import Assert._;
 
@@ -26,6 +27,7 @@ class AppTest extends TestCase("app") {
      */
     def testOK() = {
       Blamer.run
+      //ScageColorTest.main_screen.run
       assertTrue(true)
     };
     //def testKO() = assertTrue(false);

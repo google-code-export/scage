@@ -22,7 +22,7 @@
     <orderEntry type="library" name="Maven: org.scala-lang:scala-library:2.8.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:3.8.1" level="project" />
     <orderEntry type="library" name="Maven: log4j:log4j:1.2.14" level="project" />
-    <orderEntry type="library" name="Maven: su.msk.dunno:scage:0.3.1" level="project" />
+    <orderEntry type="module" module-name="ScageMaven" />
     <orderEntry type="library" name="Maven: org.lwjgl:lwjgl:2.6" level="project" />
     <orderEntry type="library" name="Maven: org.lwjgl:lwjgl-jinput:2.6" level="project" />
     <orderEntry type="library" name="Maven: org.lwjgl:lwjgl-native:2.6" level="project" />

@@ -53,7 +53,6 @@ class Inventory(val owner:Living) {
       val name = item.getState.getString("name")
       if(items.contains(name)) items(name) = item :: items(name)
       else items += (name -> List(item))
-      //if(!item_positions.contains(name)) item_positions = name :: item_positions
     }
     else {
       item.changeState(new State("point", owner.getPoint))
@@ -66,7 +65,6 @@ class Inventory(val owner:Living) {
     val name = item.getState.getString("name")
     if(items.contains(name)) {
       items(name) = items(name).tail
-      //if(items(name).size == 0) item_positions = item_positions.filterNot(_ == name)
     }
   }
 

@@ -15,6 +15,7 @@ extends Npc(name        = xml("enemy.siliconcreature.name"),
   setStat("enemy")
   setStat("health", 20)
   //setStat("blood", CYAN)
+  setStat("speed", 4)
 
   def livingAI:Decision = {
     val dov = intStat("dov")

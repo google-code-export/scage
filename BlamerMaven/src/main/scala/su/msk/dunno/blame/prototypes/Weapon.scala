@@ -214,18 +214,28 @@ class Weapon(val owner:Living) extends PointTracer[FieldObject] (
         objects_at_cursor.find(!_.getState.contains("socket")) match {
           case Some(item) => {
             removeTraceFromPoint(item.id, cursor)
-            if(item.getState.contains("extender")) removeSockets(item.getPoint)
+            val state = item.getState
+            if(state.contains("effect") && state.contains(state.getString("effect"))) {
+              val effect_num = state.getInt(state.getString("effect"))
+              owner.changeStat(state.getString("effect"), -effect_num)
+            }
+            if(state.contains("extender")) removeSockets(item.getPoint)
             owner.inventory.addItem(item)
           }
           case None => {
-            owner.inventory.selectItem(xml("weapon.selectmodifier")) match {
+            owner.inventory.selectItem(xml("weapon.selectmodifier"), fo => fo.getState.contains("modifier")) match {
               case Some(item) => {
                 owner.inventory.removeItem(item)
                 addPointTrace({
                   item.changeState(new State("point", cursor))
                   item
                 })
-                if(item.getState.contains("extender")) addSockets(item.getPoint)
+                val state = item.getState
+                if(state.contains("effect") && state.contains(state.getString("effect"))) {
+                  val effect_num = state.getInt(state.getString("effect"))
+                  owner.changeStat(state.getString("effect"), effect_num)
+                }
+                if(state.contains("extender")) addSockets(item.getPoint)
               }
               case None =>
             }
@@ -238,5 +248,12 @@ class Weapon(val owner:Living) extends PointTracer[FieldObject] (
       else stop
     })
   }
+
   def showWeapon = weapon_screen.run
+  def shoot(target_point:Vec) = {
+    val state = new State("damage", owner.intStat("damage"))
+    if(owner.haveStat("kick")) state.put("kick")
+
+    state
+  }
 }

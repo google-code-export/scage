@@ -14,6 +14,7 @@ trait HaveStats {
   def stat(key:String):String = stats.getString(key)
 
   def setStat(key:String) = stats.put(key)
+  def removeStat(key:String) = stats.remove(key)
   
   def setStat[A](key:String, value:A)(implicit m:Manifest[A]) = {
     m.toString match {
@@ -28,5 +29,21 @@ trait HaveStats {
   def changeStat(key:String, delta:Float) = {
     val old_value = stats.getFloat(key)
     stats.put(key, old_value + delta)
+  }
+
+  private var temporary_effects = List[(String, Int)] = Nil
+  def addTemporaryEffect(effect:String, count:Int) = {
+    temporary_effects = (effect, count) :: temporary_effects
+  }
+  def processTemporaryEffects = {
+    temporary_effects = temporary_effects.foldLeft(List[(String, Int)]())((temp_effects, effect) => {
+      effect._2-1 match {
+        case 0 => {
+          owner.removeStat(effect._1)
+          temp_effects
+        }
+        case countdown:Int => (effect._1, countdown) :: temp_effects
+      }
+    })
   }
 }

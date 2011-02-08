@@ -13,6 +13,8 @@ class State() {
     this
   }
 
+  def remove(key:String) = args -= key
+
   def this(key:String, float_num:Float) = {this(); args += key -> new StateData(float_num)}
   def put(key:String, float_num:Float):State = {
     if(args.contains(key)) args(key).float = float_num
@@ -79,6 +81,17 @@ class State() {
     else args(key).color
   }
 
+  def this(key:String, st:State) = {this(); args += key -> new StateData(st)}
+  def put(key:String, st:State):State = {
+    if(args.contains(key)) args(key).state = st
+    else args += key -> new StateData(st);
+    this
+  }
+  def getState(key:String) = {
+    if(!args.contains(key)) new State
+    else args(key).state
+  }
+
   def contains(key:String):Boolean = args.contains(key)
 
   private[State] class StateData() {
@@ -106,5 +119,10 @@ class State() {
     def this(col:ScageColor) = {this(); this.col = col;}
     def color = col
     def color_= (new_col:ScageColor) = col = new_col
+
+    private var st = new State
+    def this(st:State) = {this(); this.st = st;}
+    def state = st
+    def state_= (new_st:State) = st = new_st
   }
 }

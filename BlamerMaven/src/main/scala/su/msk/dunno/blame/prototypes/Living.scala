@@ -30,7 +30,7 @@ extends FieldObject(point) with HaveStats {
       if(s.contains("temporary") && s.contains("temporary_period") && s.contains(s.getString("temporary"))) {
         val effect_name = s.getString(s.getString("temporary"))
         val count = s.getInt("temporary_period")
-        weapon.addTemporaryEffect(effect_name, count)
+        addTemporaryEffect(effect_name, count)
 
         val effect = s.getInt(effect_name)
         changeStat(effect_name, effect)

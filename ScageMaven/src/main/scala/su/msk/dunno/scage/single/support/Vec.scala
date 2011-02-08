@@ -60,5 +60,5 @@ case class Vec(private var _x:Float, private var _y:Float) {
 
   def copy = new Vec(x, y)
 
-  override def toString() = x+" : "+y
+  override def toString() = "{"+x+" : "+y+"}"
 }

@@ -31,7 +31,7 @@ trait HaveStats {
     stats.put(key, old_value + delta)
   }
 
-  private var temporary_effects = List[(String, Int)] = Nil
+  private var temporary_effects:List[(String, Int)] = Nil
   def addTemporaryEffect(effect:String, count:Int) = {
     temporary_effects = (effect, count) :: temporary_effects
   }
@@ -39,7 +39,7 @@ trait HaveStats {
     temporary_effects = temporary_effects.foldLeft(List[(String, Int)]())((temp_effects, effect) => {
       effect._2-1 match {
         case 0 => {
-          owner.removeStat(effect._1)
+          removeStat(effect._1)
           temp_effects
         }
         case countdown:Int => (effect._1, countdown) :: temp_effects

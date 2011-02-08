@@ -5,6 +5,7 @@ import su.msk.dunno.scage.single.support.ScageColor
 import su.msk.dunno.blame.support.MyFont._
 import su.msk.dunno.scage.single.support.ScageColors._
 import su.msk.dunno.scage.single.support.messages.ScageMessage._
+import su.msk.dunno.scage.screens.support.tracer.State
 
 abstract class Modifier(name:String, description:String, symbol:Int, color:ScageColor)
 extends Item(name, description, symbol, color) {
@@ -24,8 +25,7 @@ class EnergyItem extends Modifier(
   description = xml("item.energy.description"),
   symbol = BULLET,
   color = YELLOW) {
-  setStat("effect", "max_energy")
-  setStat("max_energy", 10)
+  setStat("max_energy", new State("effect", 10))
 }
 
 class Health extends Modifier(
@@ -33,8 +33,7 @@ class Health extends Modifier(
   description = xml("item.health.description"),
   symbol = BULLET,
   color = MAROON) {
-  setStat("effect", "max_health")
-  setStat("max_health", 10)
+  setStat("max_health", new State("effect", 10))
 }
 
 class Shield extends Modifier(
@@ -42,8 +41,7 @@ class Shield extends Modifier(
   description = xml("item.shield.description"),
   symbol = BULLET,
   color = CYAN) {
-  setStat("effect", "max_shield")
-  setStat("max_shield", 10)
+  setStat("max_shield", new State("effect", 10))
 }
 
 class Damage extends Modifier(
@@ -51,8 +49,7 @@ class Damage extends Modifier(
   description = xml("item.damage.description"),
   symbol = BULLET,
   color = RED) {
-  setStat("effect", "damage")
-  setStat("damage", 10)
+  setStat("damage", new State("effect", 10))
 }
 
 class UniqueItem extends Modifier(

@@ -5,14 +5,13 @@ import su.msk.dunno.scage.single.support.{ScageColor, Vec}
 import su.msk.dunno.scage.single.support.ScageColors._
 
 class State() {
-  private val args:HashMap[String, StateData] = new HashMap[String, StateData]()
+  protected val args:HashMap[String, StateData] = new HashMap[String, StateData]()
 
   def this(key:String) = {this(); args += key -> new StateData()}
   def put(key:String) = {
     args += key -> new StateData()
     this
   }
-
   def remove(key:String) = args -= key
 
   def this(key:String, float_num:Float) = {this(); args += key -> new StateData(float_num)}
@@ -94,35 +93,84 @@ class State() {
 
   def contains(key:String):Boolean = args.contains(key)
 
-  private[State] class StateData() {
-	  private var f = 0.0f
-	  def this(f:Float) = {this(); this.f = f;}
-	  def float = f
-    def float_= (new_f:Float) = f = new_f
+  override def toString = args.toString
 
-	  private var s = ""
-	  def this(s:String) = {this(); this.s = s;}
-	  def string = s
-    def string_= (new_s:String) = s = new_s
-
-	  private var v = Vec(0,0)
-	  def this(v:Vec) = {this(); this.v = v;}
-	  def vec = v
-    def vec_= (new_v:Vec) = v = new_v
-
-    private var b = false
-    def this(b:Boolean) = {this(); this.b = b;}
-    def bool = b
-    def bool_= (new_b:Boolean) = b = new_b
-
-    private var col = BLACK
-    def this(col:ScageColor) = {this(); this.col = col;}
-    def color = col
-    def color_= (new_col:ScageColor) = col = new_col
-
-    private var st = new State
-    def this(st:State) = {this(); this.st = st;}
-    def state = st
-    def state_= (new_st:State) = st = new_st
+  def put(key:String, value:StateData):State = {
+    if(args.contains(key)) args(key) = value
+    else args += key -> value
+    this
   }
+
+  class check {
+    private var current_key:String = ""
+
+    def int(key:String) = getInt(key)
+    def int = getInt(current_key)
+
+    def float(key:String) = getFloat(key)
+    def float = getFloat(current_key)
+
+    def string(key:String) = getString(key)
+    def string = getString(current_key)
+
+    def vec(key:String) = getVec(key)
+    def vec = getVec(current_key)
+
+    def color(key:String) = getColor(key)
+    def color = getColor(current_key)
+
+    def state(key:String) = getState(key)
+    def state = getState(current_key)
+
+    def key(key:String)(func: => Unit) = {
+      if(contains(key)) {
+        current_key = key
+        func
+      }
+    }
+  }
+
+  def filter(condition: String => Boolean):State = {
+    args.keys.foldLeft(new State)((state, key) => {
+      if(contains(key)) {
+        val value = args(key)
+        state.put(key, value)
+      }
+      else state
+    })
+  }
+}
+
+class StateData {
+	private var f = 0.0f
+	def this(f:Float) = {this(); this.f = f;}
+	def float = f
+  def float_= (new_f:Float) = f = new_f
+
+	private var s = ""
+	def this(s:String) = {this(); this.s = s;}
+	def string = s
+  def string_= (new_s:String) = s = new_s
+
+	private var v = Vec(0,0)
+	def this(v:Vec) = {this(); this.v = v;}
+	def vec = v
+  def vec_= (new_v:Vec) = v = new_v
+
+  private var b = false
+  def this(b:Boolean) = {this(); this.b = b;}
+  def bool = b
+  def bool_= (new_b:Boolean) = b = new_b
+
+  private var col = BLACK
+  def this(col:ScageColor) = {this(); this.col = col;}
+  def color = col
+  def color_= (new_col:ScageColor) = col = new_col
+
+  private var st = new State
+  def this(st:State) = {this(); this.st = st;}
+  def state = st
+  def state_= (new_st:State) = st = new_st
+
+  override def toString = "[float="+f+"; string="+s+"; vec="+vec+"; bool="+b+"; color="+col+"; state="+st+"]"
 }

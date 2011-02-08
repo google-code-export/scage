@@ -38,7 +38,7 @@ class Tracer[T <: Trace](val field_from_x:Int = property("field.from.x", 0),
                          val are_solid_edges:Boolean = property("field.solid_edges", true)) {
   protected val log = Logger.getLogger(this.getClass);
 
-  log.info("creating tracer "+this.getClass.getName)
+  log.debug("creating tracer "+this.getClass.getName)
 
   val field_width = field_to_x - field_from_x
   val field_height = field_to_y - field_from_y

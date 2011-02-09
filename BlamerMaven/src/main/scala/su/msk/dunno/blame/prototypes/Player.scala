@@ -5,7 +5,7 @@ import su.msk.dunno.blame.support.MyFont._
 import su.msk.dunno.blame.field.FieldTracer
 import su.msk.dunno.scage.screens.support.tracer.State
 import su.msk.dunno.blame.screens.{Blamer, CommandScreen}
-import su.msk.dunno.blame.decisions.{OpenDoor, Shoot, Move}
+import su.msk.dunno.blame.decisions.{DoNothing, OpenDoor, Shoot, Move}
 
 abstract class Player(name:String, description:String, point:Vec, color:ScageColor)
 extends Npc(name, description, point, PLAYER, color) {
@@ -38,6 +38,7 @@ extends Npc(name, description, point, PLAYER, color) {
           case _ => return new Move(this, randomDir)
         }
       }
+      return new DoNothing(this)
     }
     return null
   }

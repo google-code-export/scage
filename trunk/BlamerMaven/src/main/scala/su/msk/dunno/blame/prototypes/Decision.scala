@@ -11,6 +11,7 @@ abstract class Decision(val living:Living) {
   protected def doAction
   def execute = {
     doAction
+    living.processTemporaryEffects
     if(wasExecuted) living.lastActionTime += actionPeriod
   }
 }

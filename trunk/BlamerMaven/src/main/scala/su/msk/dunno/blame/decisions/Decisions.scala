@@ -145,3 +145,9 @@ class IssueCommand(player:Player) extends Decision(player) {
     was_executed = true
   }
 }
+
+class DoNothing(living:Living) extends Decision(living) {
+  def doAction = {
+    was_executed = true
+  }
+}

@@ -214,15 +214,14 @@ class Weapon(val owner:Living) extends PointTracer[FieldObject] (
         objects_at_cursor.find(!_.getState.contains("socket")) match {
           case Some(item) => {
             removeTraceFromPoint(item.id, cursor)
-            /*item.getState.filter(key => item.getState.getState(key).contains("effect")).keys.foreach(key => {
-              val effect_num = item.getState.getState(key).getInt("effect")
-              owner.changeStat(key, -effect_num)
-            })*/
             val state = item.getState
-            if(state.contains("effect") && state.contains(state.getString("effect"))) {
+            /*state.keys.foreach(key => {
+              owner.changeStat(key, -state.getState(key).getFloat("effect"))
+            })*/
+            /*if(state.contains("effect") && state.contains(state.getString("effect"))) {
               val effect_num = state.getInt(state.getString("effect"))
               owner.changeStat(state.getString("effect"), -effect_num)
-            }
+            }*/
             if(state.contains("extender")) removeSockets(item.getPoint)
             owner.inventory.addItem(item)
           }
@@ -235,10 +234,10 @@ class Weapon(val owner:Living) extends PointTracer[FieldObject] (
                   item
                 })
                 val state = item.getState
-                if(state.contains("effect") && state.contains(state.getString("effect"))) {
+                /*if(state.contains("effect") && state.contains(state.getString("effect"))) {
                   val effect_num = state.getInt(state.getString("effect"))
                   owner.changeStat(state.getString("effect"), effect_num)
-                }
+                }*/
                 if(state.contains("extender")) addSockets(item.getPoint)
               }
               case None =>

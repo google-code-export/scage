@@ -22,8 +22,7 @@ class State() {
   }
   def getFloat(key:String):Float = {
     if(!args.contains(key)) 0
-    else if(args(key).float != 0) args(key).float
-    else 0
+    else args(key).float
   }
   def getInt(key:String):Int = getFloat(key).toInt
 
@@ -121,6 +120,8 @@ class State() {
 
     def state(key:String) = getState(key)
     def state = getState(current_key)
+
+    def keys = args.keys
 
     def key(key:String)(func: => Unit) = {
       if(contains(key)) {

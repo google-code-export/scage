@@ -91,6 +91,7 @@ class State() {
   }
 
   def contains(key:String):Boolean = args.contains(key)
+  def keys = args.keys
 
   override def toString = args.toString
 

@@ -53,8 +53,9 @@ object ScageMessage {
     catch {
       case e:Exception => {
         log.warn("failed to find string with code "+message_code)
-        xmlmh.xml_messages += (message_code -> "")
-        ""
+        val warning_string = "no message provided under the code "+message_code
+        xmlmh.xml_messages += (message_code -> warning_string)
+        warning_string
       }
     }
     parameters.foldLeft(xml_message)((message, parameter) =>
@@ -62,17 +63,19 @@ object ScageMessage {
   }
 
   def xmlOrDefault(message_code:String, parameters:String*):String = {
-    xml(message_code, parameters.tail:_*) match {
-      case "" => {
-        if(parameters.size > 0) {
-          log.info("default value for string code "+message_code+" is "+parameters.head)
-          xmlmh.xml_messages += (message_code -> parameters.head)
-          parameters.tail.foldLeft(parameters.head)((message, parameter) => message.replaceFirst("\\?", parameter))
-        }
-        else ""
+    val message = xml(message_code, parameters.tail:_*)
+    if(message == "no message provided under the code "+message_code) {
+      if(parameters.size > 0) {
+        log.info("default value for string code "+message_code+" is "+parameters.head)
+        xmlmh.xml_messages += (message_code -> parameters.head)
+        parameters.tail.foldLeft(parameters.head)((message, parameter) => message.replaceFirst("\\?", parameter))
       }
-      case s:String => s
+      else {
+        log.error("no default message provided for the code "+message_code)
+        message
+      }
     }
+    else message
   }
 
   def print(message:Any, x:Float, y:Float, color:ScageColor = ScageColors.WHITE) = {

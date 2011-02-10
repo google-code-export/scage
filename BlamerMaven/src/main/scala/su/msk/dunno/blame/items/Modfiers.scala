@@ -26,6 +26,7 @@ class EnergyItem extends Modifier(
   symbol = BULLET,
   color = YELLOW) {
   setStat("max_energy", new State("effect", 10))
+  setStat("energy_increase_rate", new State("effect", 1))
 }
 
 class Health extends Modifier(
@@ -42,6 +43,7 @@ class Shield extends Modifier(
   symbol = BULLET,
   color = CYAN) {
   setStat("max_shield", new State("effect", 10))
+  setStat("shield_increase_rate", new State("effect", 1))
 }
 
 class Damage extends Modifier(

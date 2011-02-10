@@ -23,17 +23,18 @@ extends FieldObject(point) with HaveStats {
   def changeState(s:State) = {
     if(isAlive) {
       if(s.contains("damage")) {
-        changeStat("health", -s.getInt("damage"))
-        BottomMessages.addPropMessageSameString("changestatus.damage", stat("name"), s.getNumAsString("damage"))
+        val damage = s.getFloat("damage")
+        val shield = floatStat("shield")
+        if(shield > damage) {
+          changeStat("shield", -damage)
+          BottomMessages.addPropMessageSameString("changestatus.damage.shield", stat("name"), s.getNumAsString("damage"))
+        }
+        else {
+          setStat("shield", 0)
+          changeStat("health", -(damage - shield))
+        }
+        BottomMessages.addPropMessageSameString("changestatus.damage.noshield", stat("name"), s.getNumAsString("damage"))
         FieldTracer.pourBlood(trace, point, colorStat("blood"))
-      }
-      if(s.contains("temporary") && s.contains("temporary_period") && s.contains(s.getString("temporary"))) {
-        val effect_name = s.getString(s.getString("temporary"))
-        val count = s.getInt("temporary_period")
-        addTemporaryEffect(effect_name, count)
-
-        val effect = s.getInt(effect_name)
-        changeStat(effect_name, effect)
       }
       if(!isAlive) onDeath
     }
@@ -59,9 +60,30 @@ extends FieldObject(point) with HaveStats {
   setStat("name", name)
   setStat("description", description)
   setStat("dov", ScageProperties.property("dov.default", 5))
-  setStat("health", 100)
+  setStat("health", 100); setStat("max_health", 100);
   setStat("blood", RED)
 
   def isAlive = intStat("health") > 0
   def isCurrentPlayer = haveStat("player") && point == Blamer.currentPlayer.getPoint
+
+  def checkMax(effect_name:String, max_effect_name:String) = {
+    if(floatStat(effect_name) > floatStat(max_effect_name))
+      changeStat(effect_name, floatStat(max_effect_name))
+  }
+  def checkMax:Unit = {  // TODO: rename this one!!!
+    checkMax("energy", "max_energy")
+    checkMax("shield", "max_shield")
+    checkMax("health", "max_health")
+  }
+
+  def processTemporaryEffects = { // TODO: rename this one!!!
+    def _process(effect_name:String, max_effect_name:String, effect_increase_rate_name:String) = {
+      if(floatStat(effect_name) < floatStat(max_effect_name)) {
+        changeStat(effect_name, floatStat(effect_increase_rate_name))
+        checkMax(effect_name, max_effect_name)
+      }
+    }
+    _process("energy", "max_energy", "energy_increase_rate")
+    _process("shield", "max_shield", "shield_increase_rate")
+  }
 }

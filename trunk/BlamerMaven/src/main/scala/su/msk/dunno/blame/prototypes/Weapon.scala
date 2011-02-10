@@ -220,10 +220,7 @@ class Weapon(val owner:Living) extends PointTracer[FieldObject] (
                 owner.changeStat(key, -state.getState(key).getFloat("effect"))
               }
             })
-            if(owner.intStat("energy") > owner.intStat("max_energy"))
-              owner.setStat("energy", owner.intStat("max_energy"))
-            if(owner.intStat("shield") > owner.intStat("max_shield"))
-              owner.setStat("shield", owner.intStat("max_shield"))
+            owner.checkMax
             if(state.contains("extender")) removeSockets(item.getPoint)
             owner.inventory.addItem(item)
           }
@@ -257,11 +254,10 @@ class Weapon(val owner:Living) extends PointTracer[FieldObject] (
 
   def showWeapon = weapon_screen.run
   def shoot(target_point:Vec) = {
-    /*val owner_state = owner.getState
-    owner.getState.keys.foldLeft(new State("damage", owner.intStat("damage")))((state, key) => {
-      if(owner.stateStat(key).contains("unique")) state.put(key, )
-    })*/
-    val state = new State("damage", owner.intStat("damage"))
-    state
+    val damage = (math.random * owner.floatStat("damage")).toFloat
+    val energy_cost = math.max(damage/10f, 1)
+    val energy = owner.floatStat("energy")
+    if(energy > energy_cost) new State("damage", owner.intStat("damage"))
+    else new State
   }
 }

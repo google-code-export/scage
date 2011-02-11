@@ -19,7 +19,7 @@ object ScageColorTest {
   })
 
   var color_num = 1
-  val main_screen = new ScageScreen("Color Test", is_main_screen = true, properties="colortest-properties.tt") {
+  val main_screen = new ScageScreen("Color Test", is_main_screen = true, properties="colortest-properties.txt") {
     addRender(new ScageRender {
       override def interface = {
         if(color_num >= 0 && color_num < fields.length) {

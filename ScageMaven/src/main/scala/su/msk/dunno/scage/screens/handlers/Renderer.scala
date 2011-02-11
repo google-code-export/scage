@@ -39,9 +39,9 @@ object Renderer {
 
   lazy val initgl = {
     Display.setDisplayMode(new DisplayMode(width, height));
-    Display.setTitle(property("app.name", "Scage")+" - "+stringProperty("app.version"));
     Display.setVSyncEnabled(true);
     Display.create();
+    Display.setTitle(property("app.name", "Scage")+" - "+property("app.version", "Release"));
 
     GL11.glEnable(GL11.GL_TEXTURE_2D);
     GL11.glClearColor(0,0,0,0);

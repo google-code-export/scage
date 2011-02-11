@@ -136,6 +136,11 @@ class Weapon(val owner:Living) extends PointTracer[FieldObject] (
     _isNoExtenderOrBasePartNear(point, Nil)
   }
 
+  private var conditions:State = new State
+  private def checkConditions = {
+
+  }
+
   private lazy val weapon_screen = new ScageScreen("Weapon Screen") {
     private var cursor = new Vec(N_x/2, N_y/2)
     private var is_show_cursor = false
@@ -218,6 +223,9 @@ class Weapon(val owner:Living) extends PointTracer[FieldObject] (
             state.keys.foreach(key => {
               if(state.getState(key).contains("effect")) {
                 owner.changeStat(key, -state.getState(key).getFloat("effect"))
+              }
+              if(state.getState(key).contains("conditions")) {
+                conditions.put(key, state.getState(key).getState("conditions"))
               }
             })
             owner.checkMax

@@ -23,7 +23,7 @@ framerate = 60
 
 #font.file = resources/fonts/FreeMono.ttf
 
-strings.base = resources/strings/blamer_strings
+#strings.base = resources/strings/blamer_strings
 strings.lang = ru
 
 weapon.from.x = 0

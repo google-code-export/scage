@@ -54,10 +54,18 @@ class Damage extends Modifier(
   setStat("damage", new State("effect", 10))
 }
 
-class UniqueItem extends Modifier(
-  name = xml("item.unique.name"),
-  description = xml("item.unique.description"),
+abstract class UniqueItem(name:String, description:String, symbol:Int, color:ScageColor)
+extends Modifier(name, description, symbol, color) {
+  setStat("unique")
+}
+
+class KIck extends UniqueItem(
+  name = xml("item.kick.name"),
+  description = xml("item.kick.description"),
   symbol = BULLET,
   color = DARK_GREEN) {
-  setStat("unique")
+  setStat("kick",
+    new State("conditions",
+      new State().put(Vec(-1, 0), "damage")
+                 .put(Vec(1, 0),  "damage")))
 }

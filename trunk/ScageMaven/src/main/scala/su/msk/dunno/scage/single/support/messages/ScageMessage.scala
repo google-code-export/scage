@@ -1,6 +1,7 @@
 package su.msk.dunno.scage.single.support.messages
 
-import su.msk.dunno.scage.single.support.{ScageProperties, ScageColors, ScageColor}
+import su.msk.dunno.scage.single.support.{ScageColors, ScageColor}
+import su.msk.dunno.scage.single.support.ScageProperties._
 import collection.mutable.HashMap
 import org.xml.sax.Attributes
 import org.xml.sax.helpers.DefaultHandler
@@ -12,8 +13,8 @@ import unicode.UnicodeFont
 object ScageMessage {
   private val log = Logger.getLogger(this.getClass)
   
-  val lang = ScageProperties.property("strings.lang", "en")
-  val messages_base = ScageProperties.property("strings.base", "/resources/strings/strings")
+  val lang = property("strings.lang", "en")
+  val messages_base = property("strings.base", "resources/strings/"+stringProperty("app.name").toLowerCase+"_strings")
   val messages_file = messages_base + "_" + lang + ".xml"
 
   private val xmlmh = new XMLMessageHandler
@@ -29,11 +30,11 @@ object ScageMessage {
     }
   }
 
-  val font_path = ScageProperties.property("font.file", "resources/fonts/DroidSans.ttf")
-  val font_size = ScageProperties.property("font.size", 18)
-  val row_height = ScageProperties.property("font.row.height", font_size+2)
-  val glyph_from = ScageProperties.property("glyph.from", 1024)
-  val glyph_to = ScageProperties.property("glyph.to", 1279)
+  val font_path = property("font.file", "resources/fonts/DroidSans.ttf")
+  val font_size = property("font.size", 18)
+  val row_height = property("font.row.height", font_size+2)
+  val glyph_from = property("glyph.from", 1024)
+  val glyph_to = property("glyph.to", 1279)
   private val font = try {
     new UnicodeFont(font_path, font_size, glyph_from, glyph_to)
   }
@@ -46,36 +47,29 @@ object ScageMessage {
     }
   }
 
+  private def mergeMessage(xml_message:String, parameters:String*) = {
+    parameters.foldLeft(xml_message)((message, parameter) => message.replaceFirst("\\?", parameter))
+  }
+
   def xml(message_code:String, parameters:String*):String = {
-    val xml_message = try {
-      xmlmh.xml_messages(message_code)
+    val xml_message = if(xmlmh.xml_messages.contains(message_code)) xmlmh.xml_messages(message_code)
+    else {
+      log.warn("failed to find string with code "+message_code)
+      val warning_string = xmlOrDefault("error.nomessage","No message provided under the code ?", message_code)
+      xmlmh.xml_messages += (message_code -> warning_string)
+      warning_string
     }
-    catch {
-      case e:Exception => {
-        log.warn("failed to find string with code "+message_code)
-        val warning_string = "No message provided under the code "+message_code
-        xmlmh.xml_messages += (message_code -> warning_string)
-        warning_string
-      }
-    }
-    parameters.foldLeft(xml_message)((message, parameter) =>
-      message.replaceFirst("\\?", parameter))
+    mergeMessage(xml_message, parameters:_*)
   }
 
   def xmlOrDefault(message_code:String, parameters:String*):String = {
-    val message = xml(message_code, parameters.tail:_*)
-    if(message == "No message provided under the code "+message_code) {
-      if(parameters.size > 0) {
-        log.info("default value for string code "+message_code+" is "+parameters.head)
-        xmlmh.xml_messages += (message_code -> parameters.head)
-        parameters.tail.foldLeft(parameters.head)((message, parameter) => message.replaceFirst("\\?", parameter))
-      }
-      else {
-        log.error("No default message provided for the code "+message_code)
-        message
-      }
+    if(xmlmh.xml_messages.contains(message_code))
+      mergeMessage(xmlmh.xml_messages(message_code), parameters.tail:_*)
+    else {
+      log.info("default value for string code "+message_code+" is "+parameters.head)
+      xmlmh.xml_messages += (message_code -> parameters.head)
+      mergeMessage(parameters.head, parameters.tail:_*)
     }
-    else message
   }
 
   def print(message:Any, x:Float, y:Float, color:ScageColor = ScageColors.WHITE) = {

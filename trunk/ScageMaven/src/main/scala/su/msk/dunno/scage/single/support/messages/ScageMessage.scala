@@ -53,7 +53,7 @@ object ScageMessage {
     catch {
       case e:Exception => {
         log.warn("failed to find string with code "+message_code)
-        val warning_string = "no message provided under the code "+message_code
+        val warning_string = "No message provided under the code "+message_code
         xmlmh.xml_messages += (message_code -> warning_string)
         warning_string
       }
@@ -64,14 +64,14 @@ object ScageMessage {
 
   def xmlOrDefault(message_code:String, parameters:String*):String = {
     val message = xml(message_code, parameters.tail:_*)
-    if(message == "no message provided under the code "+message_code) {
+    if(message == "No message provided under the code "+message_code) {
       if(parameters.size > 0) {
         log.info("default value for string code "+message_code+" is "+parameters.head)
         xmlmh.xml_messages += (message_code -> parameters.head)
         parameters.tail.foldLeft(parameters.head)((message, parameter) => message.replaceFirst("\\?", parameter))
       }
       else {
-        log.error("no default message provided for the code "+message_code)
+        log.error("No default message provided for the code "+message_code)
         message
       }
     }

@@ -5,7 +5,7 @@ import su.msk.dunno.scage.single.support.{ScageColor, Vec}
 import su.msk.dunno.scage.single.support.ScageColors._
 
 class State() {
-  protected val args:HashMap[Any, StateData] = new HashMap[Any, StateData]()
+  protected val args:HashMap[String, StateData] = new HashMap[String, StateData]()
 
   def this(key:String) = {this(); args += key -> new StateData()}
   def put(key:String) = {
@@ -26,17 +26,17 @@ class State() {
   }
   def getInt(key:String):Int = getFloat(key).toInt
 
-  def this(key:Any, message:String) = {this(); args += key -> new StateData(message)}
-  def put(key:Any, message:String):State = {
+  def this(key:String, message:String) = {this(); args += key -> new StateData(message)}
+  def put(key:String, message:String):State = {
     if(args.contains(key)) args(key).string = message
     else args += key -> new StateData(message);
     this
   }
-  def getString(key:Any) = {
+  def getString(key:String) = {
     if(!args.contains(key)) ""
     else args(key).string
   }
-  def getNumAsString(key:Any) = {
+  def getNumAsString(key:String) = {
     if(!args.contains(key)) ""
     else {
       val float_num = args(key).float

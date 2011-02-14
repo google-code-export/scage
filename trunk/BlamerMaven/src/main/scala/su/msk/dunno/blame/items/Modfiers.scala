@@ -59,13 +59,13 @@ extends Modifier(name, description, symbol, color) {
   setStat("unique")
 }
 
-class KIck extends UniqueItem(
+class KickItem extends UniqueItem(
   name = xml("item.kick.name"),
   description = xml("item.kick.description"),
   symbol = BULLET,
   color = DARK_GREEN) {
   setStat("kick",
     new State("conditions",
-      new State().put(Vec(-1, 0), "damage")
-                 .put(Vec(1, 0),  "damage")))
+      new State().put("one", new State("damage", Vec(-1,0)))
+                 .put("two", new State("damage", Vec(1,0)))
 }

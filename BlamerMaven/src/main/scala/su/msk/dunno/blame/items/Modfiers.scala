@@ -6,6 +6,7 @@ import su.msk.dunno.blame.support.MyFont._
 import su.msk.dunno.scage.single.support.ScageColors._
 import su.msk.dunno.scage.single.support.messages.ScageMessage._
 import su.msk.dunno.scage.screens.support.tracer.State
+import su.msk.dunno.scage.single.support.Vec
 
 abstract class Modifier(name:String, description:String, symbol:Int, color:ScageColor)
 extends Item(name, description, symbol, color) {
@@ -68,4 +69,6 @@ class KickItem extends UniqueItem(
     new State("conditions",
       new State().put("one", new State("damage", Vec(-1,0)))
                  .put("two", new State("damage", Vec(1,0)))
+    )
+  )
 }

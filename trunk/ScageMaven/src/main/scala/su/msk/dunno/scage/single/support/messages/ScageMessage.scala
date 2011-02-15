@@ -66,9 +66,12 @@ object ScageMessage {
     if(xmlmh.xml_messages.contains(message_code))
       mergeMessage(xmlmh.xml_messages(message_code), parameters.tail:_*)
     else {
-      log.info("default value for string code "+message_code+" is "+parameters.head)
-      xmlmh.xml_messages += (message_code -> parameters.head)
-      mergeMessage(parameters.head, parameters.tail:_*)
+      if(parameters.size > 0) {
+        log.info("default value for string code "+message_code+" is "+parameters.head)
+        xmlmh.xml_messages += (message_code -> parameters.head)
+        mergeMessage(parameters.head, parameters.tail:_*)
+      }
+      else xmlOrDefault("error.nomessage","No message provided under the code ?", message_code)
     }
   }
 

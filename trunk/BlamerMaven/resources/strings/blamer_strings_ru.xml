@@ -247,4 +247,16 @@ ESC
     <message code="commands.helpmessage">
         [1-4] - Отдать приказ [ESC] - Отмена
     </message>
+
+    <message code="mainscreen.stats.energy">
+        Энергия: ?/? +?/ход
+    </message>
+
+    <message code="mainscreen.stats.shield">
+        Щит: ?/? +?/ход
+    </message>
+
+    <message code="mainscreen.stats.health">
+        Хитпоинты: ?/?
+    </message>
 </messages>

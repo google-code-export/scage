@@ -224,10 +224,10 @@ class Weapon(val owner:Living) extends PointTracer[FieldObject] (
               if(state.getState(key).contains("effect")) {
                 owner.changeStat(key, -state.getState(key).getFloat("effect"))
               }
+              if(state.getState(key).contains("conditions")) {
+                conditions.put(key, state.getState(key).getState("conditions"))
+              }
             })
-            if(state.getState(key).contains("conditions")) {
-              conditions.put(key, state.getState(key).getState("conditions"))
-            }
             checkConditions
             owner.checkMax
             if(state.contains("extender")) removeSockets(item.getPoint)
@@ -246,10 +246,10 @@ class Weapon(val owner:Living) extends PointTracer[FieldObject] (
                   if(state.getState(key).contains("effect")) {
                     owner.changeStat(key, state.getState(key).getFloat("effect"))
                   }
+                  if(state.getState(key).contains("conditions")) {
+                    conditions.remove(key)
+                  }
                 })
-                if(state.getState(key).contains("conditions")) {
-                  conditions.remove(key)
-                }
                 checkConditions
                 if(state.contains("extender")) addSockets(item.getPoint)
               }

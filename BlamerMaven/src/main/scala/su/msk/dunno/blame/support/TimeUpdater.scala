@@ -19,7 +19,6 @@ object TimeUpdater {
       while(!current_actions.isEmpty) {
         current_actions.foreach(action => {
           action.execute
-          action.living.processTemporaryEffects
           if(action.wasExecuted && action.living.isCurrentPlayer) _time += action.actionPeriod
         })
         decisions = decisions.filterNot(decision => current_actions.contains(decision) || !decision.living.isAlive)

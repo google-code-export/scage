@@ -3,8 +3,8 @@ package su.msk.dunno.blame.livings
 import su.msk.dunno.scage.single.support.ScageColors._
 import su.msk.dunno.scage.single.support.Vec
 import su.msk.dunno.scage.single.support.messages.ScageMessage._
-import su.msk.dunno.blame.items.{SocketExtender, SecondTestItem, TestItem, KickItem}
 import su.msk.dunno.blame.prototypes.Player
+import su.msk.dunno.blame.items._
 
 class Killy(point:Vec)
 extends Player(name        = xml("player.killy.name"),
@@ -19,6 +19,13 @@ extends Player(name        = xml("player.killy.name"),
   inventory.addItem(new TestItem)
   inventory.addItem(new TestItem)
   inventory.addItem(new KickItem)
+  inventory.addItem(new EnergyItem)
+  inventory.addItem(new EnergyItem)
+  inventory.addItem(new EnergyItem)
+  inventory.addItem(new EnergyItem)
+  inventory.addItem(new ShieldItem)
+  inventory.addItem(new ShieldItem)
+  inventory.addItem(new ShieldItem)
 
   for(i <- 1 to 100)
     inventory.addItem(new SocketExtender)

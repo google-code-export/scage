@@ -52,12 +52,12 @@ object Blamer extends ScageScreen(
   def currentPlayer = if(is_play_cibo) cibo else killy
   
   // enemies
-  /*(1 to 50).foreach(i => {
+  (1 to 50).foreach(i => {
     FieldTracer.randomPassablePoint() match {
       case Some(point) => new SiliconCreature(point)
       case None =>
     }
-  })*/
+  })
 
   // controls on main screen
   private var is_key_pressed = false
@@ -137,7 +137,7 @@ object Blamer extends ScageScreen(
     print("Last Action: "+currentPlayer.lastActionTime, width - right_messages_width, height-145, WHITE)
     print(xml("mainscreen.stats.energy", intStat("energy"), intStat("max_energy"), intStat("energy_increase_rate")),
       width - right_messages_width, height-165, WHITE)
-    print(xml("mainscreen.stats.shield", intStat("shield"), intStat("maxshield"), intStat("shield_increase_rate")),
+    print(xml("mainscreen.stats.shield", intStat("shield"), intStat("max_shield"), intStat("shield_increase_rate")),
       width - right_messages_width, height-185, WHITE)
   } 
 

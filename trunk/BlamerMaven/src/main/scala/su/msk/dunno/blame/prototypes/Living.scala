@@ -32,9 +32,9 @@ extends FieldObject(point) with HaveStats {
         else {
           setStat("shield", 0)
           changeStat("health", -(damage - shield))
+          BottomMessages.addPropMessageSameString("changestatus.damage.noshield", stat("name"), s.getNumAsString("damage"))
+          FieldTracer.pourBlood(trace, point, colorStat("blood"))
         }
-        BottomMessages.addPropMessageSameString("changestatus.damage.noshield", stat("name"), s.getNumAsString("damage"))
-        FieldTracer.pourBlood(trace, point, colorStat("blood"))
       }
       if(!isAlive) onDeath
     }
@@ -68,7 +68,7 @@ extends FieldObject(point) with HaveStats {
 
   def checkMax(effect_name:String, max_effect_name:String) = {
     if(floatStat(effect_name) > floatStat(max_effect_name))
-      changeStat(effect_name, floatStat(max_effect_name))
+      setStat(effect_name, floatStat(max_effect_name))
   }
   def checkMax:Unit = {  // TODO: rename this one!!!
     checkMax("energy", "max_energy")

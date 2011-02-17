@@ -38,7 +38,7 @@ class Health extends Modifier(
   setStat("max_health", new State("effect", 10))
 }
 
-class Shield extends Modifier(
+class ShieldItem extends Modifier(
   name = xml("item.shield.name"),
   description = xml("item.shield.description"),
   symbol = BULLET,

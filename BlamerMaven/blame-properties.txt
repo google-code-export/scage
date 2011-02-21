@@ -4,8 +4,10 @@ app.version = 0.2
 screen.width = 800
 screen.height = 600
 
-#field.visible.width = 200
-#field.visible.height = 200
+screen.splash = resources/images/blamer_0_6.png
+
+#field.visible.width = 600
+#field.visible.height = 495
 
 symbol.width = 12
 symbol.height = 24

@@ -55,9 +55,9 @@ object ScageMessage {
     val xml_message = if(xmlmh.xml_messages.contains(message_code)) xmlmh.xml_messages(message_code)
     else {
       log.warn("failed to find string with code "+message_code)
-      val warning_string = xmlOrDefault("error.nomessage","No message provided under the code ?", message_code)
-      xmlmh.xml_messages += (message_code -> warning_string)
-      warning_string
+      //val warning_string = xmlOrDefault("error.nomessage","No message provided under the code ?", message_code)
+      xmlmh.xml_messages += (message_code -> /*warning_string*/message_code)
+      /*warning_string*/message_code
     }
     mergeMessage(xml_message, parameters:_*)
   }
@@ -71,7 +71,12 @@ object ScageMessage {
         xmlmh.xml_messages += (message_code -> parameters.head)
         mergeMessage(parameters.head, parameters.tail:_*)
       }
-      else xmlOrDefault("error.nomessage","No message provided under the code ?", message_code)
+      else {
+        //xmlOrDefault("error.nomessage","No message provided under the code ?", message_code)
+        log.warn("failed to find default message for the code "+message_code)
+        xmlmh.xml_messages += (message_code -> message_code)
+        message_code
+      }
     }
   }
 

@@ -59,7 +59,14 @@ object Renderer {
     GL11.glLoadIdentity();
 
     print(xmlOrDefault("renderer.loading", "Loading..."), 20, Renderer.height-25, ScageColors.GREEN)
+    stringProperty("screen.splash") match {
+      case "" =>
+      case screen_splash_path:String =>
+        val splash_texture = getTexture(screen_splash_path)
+        drawDisplayList(createDisplayList(splash_texture, width, height, 0, 0, splash_texture.getImageWidth, splash_texture.getImageHeight), Vec(width/2, height/2))
+    }
     update
+    Thread.sleep(1000)
 
     GL11.glNewList(CIRCLE, GL11.GL_COMPILE);
       GL11.glBegin(GL11.GL_LINE_LOOP);

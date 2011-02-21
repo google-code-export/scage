@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>su.msk.dunno</groupId>
   <artifactId>blamer</artifactId>
-  <version>0.1</version>
+  <version>0.2</version>
   <inceptionYear>2008</inceptionYear>
 
   <name>Blamer</name>
@@ -70,7 +70,7 @@
     <dependency>
         <groupId>su.msk.dunno</groupId>
         <artifactId>scage</artifactId>
-        <version>0.3.2</version>
+        <version>0.3.3</version>
         <scope>compile</scope>
     </dependency>
     <dependency>

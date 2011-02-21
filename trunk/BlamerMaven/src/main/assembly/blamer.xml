@@ -19,13 +19,6 @@
             <outputDirectory>resources</outputDirectory>
         </fileSet>
         <fileSet>
-          <directory>${project.build.directory}</directory>
-          <outputDirectory>lib</outputDirectory>
-          <includes>
-            <include>*.jar</include>
-          </includes>
-        </fileSet>
-        <fileSet>
             <directory>run-scripts/${os.type}</directory>
             <outputDirectory>/</outputDirectory>
             <filtered>true</filtered>
@@ -33,6 +26,10 @@
         </fileSet>
     </fileSets>
     <files>
+        <file>
+            <source>${project.build.directory}/${artifactId}-${version}.jar</source>
+            <outputDirectory>lib</outputDirectory>
+        </file>
         <file>
             <source>${property.file}</source>
             <outputDirectory>/</outputDirectory>

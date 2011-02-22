@@ -26,6 +26,9 @@ extends Player(name        = xml("player.killy.name"),
   inventory.addItem(new ShieldItem)
   inventory.addItem(new ShieldItem)
   inventory.addItem(new ShieldItem)
+  inventory.addItem(new DamageItem)
+  inventory.addItem(new DamageItem)
+  inventory.addItem(new DamageItem)
 
   for(i <- 1 to 100)
     inventory.addItem(new SocketExtender)

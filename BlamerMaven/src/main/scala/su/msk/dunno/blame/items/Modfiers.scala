@@ -30,7 +30,7 @@ class EnergyItem extends Modifier(
   setStat("energy_increase_rate", new State("effect", 1))
 }
 
-class Health extends Modifier(
+class HealthItem extends Modifier(
   name = xml("item.health.name"),
   description = xml("item.health.description"),
   symbol = BULLET,
@@ -47,7 +47,7 @@ class ShieldItem extends Modifier(
   setStat("shield_increase_rate", new State("effect", 1))
 }
 
-class Damage extends Modifier(
+class DamageItem extends Modifier(
   name = xml("item.damage.name"),
   description = xml("item.damage.description"),
   symbol = BULLET,

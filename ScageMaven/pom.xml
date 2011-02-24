@@ -95,6 +95,14 @@
   </dependencies>
 
   <build>
+      <extensions>
+        <extension>
+         <groupId>org.apache.maven.wagon</groupId>
+         <artifactId>wagon-webdav</artifactId>
+         <version>1.0-beta-2</version>
+        </extension>
+       </extensions>
+
     <sourceDirectory>src/main/scala</sourceDirectory>
     <testSourceDirectory>src/test/scala</testSourceDirectory>
       <filters>
@@ -210,4 +218,12 @@
       </plugin>
     </plugins>
   </reporting>
+
+<distributionManagement>
+  <repository>
+   <id>googlecode.scage.repo</id>
+   <url>dav:https://scage.googlecode.com/svn/maven-repository/</url>
+  </repository>
+ </distributionManagement>
+
 </project>

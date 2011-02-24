@@ -33,6 +33,12 @@
       <name>lwjgl</name>
       <url>http://adterrasperaspera.com/lwjgl</url>
     </repository>
+
+    <repository>
+      <id>scage</id>
+      <name>Scage Maven Repo</name>
+      <url>http://scage.googlecode.com/svn/maven-repository</url>
+    </repository>
   </repositories>
 
   <pluginRepositories>
@@ -190,7 +196,7 @@
                        <archive>
                           <manifest>
                              <addClasspath>true</addClasspath>
-                             <mainClass>su.msk.dunno.blame.screens.Blamer</mainClass>
+                             <mainClass>${main.class}</mainClass>
                           </manifest>
                        </archive>
                        <excludes>

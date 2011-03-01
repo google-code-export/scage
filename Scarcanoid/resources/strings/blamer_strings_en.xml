@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<messages>
+    <message code="player.killy.name">
+        Killy
+    </message>
+
+    <message code="player.killy.description">
+
+    </message>
+
+    <message code="player.killy.dead.name">
+        Dead Killy
+    </message>
+
+    <message code="player.cibo.name">
+        Cibo
+    </message>
+
+    <message code="player.cibo.description">
+
+    </message>
+
+    <message code="player.killy.dead.name">
+        Dead Cibo
+    </message>
+
+    <message code="enemy.siliconcreature.name">
+        Silicon Creature
+    </message>
+
+    <message code="enemy.siliconcreature.description">
+
+    </message>
+
+    <message code="enemy.siliconcreature.dead.name">
+        Dead Silicon Creature
+    </message>
+
+    <message code="greetings.helloworld">
+        Hello, World! - said ?
+    </message>
+
+    <message code="door.open">
+        ? opens a door
+    </message>
+
+    <message code="door.close">
+        ? closes a door
+    </message>
+    
+    <message code="move.wrong">
+        ? can't go there!
+    </message>
+    
+    <message code="selecttarget.helpmessage">
+        [Arrow keys, Numpad keys] - Select target [Esc] - Cancel
+    </message>
+
+    <message code="selecttarget.target">
+        Target:
+    </message>
+
+    <message code="inventory.selection.helpmessage">
+        [Digits] - Select item [Esc] - Cancel
+    </message>
+
+    <message code="inventory.show.helpmessage">
+        [Digits] - Open item's description [Esc] - Exit
+    </message>
+
+    <message code="weapon.helpmessage">
+[Arrow keys, Numpad keys] - Select socket [Enter] - Insert/Remove modifier
+[Esc] - Cancel/Exit
+    </message>
+
+    <message code="weapon.selectmodifier">
+        Select modifier you want to insert to weapon:
+    </message>
+
+    <message code="decision.shoot">
+        ? shoots!
+    </message>
+
+    <message code="changestatus.dead">
+        ? dies
+    </message>
+
+    <message code="changestatus.damage">
+        ? receives ? damage
+    </message>
+
+    <message code="inventory.ownership">
+        ?'s Inventory
+    </message>
+
+    <message code="decision.drop">
+        ? drops ? to the floor
+    </message>
+
+    <message code="decision.drop.selection">
+        Select item you want to drop:
+    </message>
+
+    <message code="decision.pickup">
+        ? picks up ? from the floor
+    </message>
+
+    <message code="decision.pickup.failed">
+        ? tries to find something on the floor, but fails
+    </message>
+
+    <message code="decision.followme">
+        ? asks ? to follow him
+    </message>
+
+    <message code="decision.stay">
+        ? asks ? to stay here
+    </message>
+
+    <message code="decision.attack">
+        ? asks ? to attack enemies on sight
+    </message>
+
+    <message code="decision.noattack">
+        ? asks ? to stop attacking targets
+    </message>
+
+    <message code="testitem.name">
+        Test Item
+    </message>
+
+    <message code="testitem.description">
+        Item for test purposes
+    </message>
+
+    <message code="secondtestitem.name">
+        Yet another test item
+    </message>
+
+    <message code="secondtestitem.description">
+        This item is also purposed for tests
+    </message>
+
+    <message code="item.extender.name">
+        Converter
+    </message>
+
+    <message code="item.extender.description">
+        Enlarges number of free sockets in weapon
+    </message>
+
+    <message code="item.freesocket.name">
+        Free socket
+    </message>
+
+    <message code="item.basepart.name">
+        Base part
+    </message>
+
+    <message code="item.restricted.name">
+        Restricted socket
+    </message>
+
+    <message code="weapon.ownership">
+        ?'s Weapon
+    </message>
+
+    <message code="tile.wall">
+        Wall
+    </message>
+
+    <message code="tile.floor">
+        Floor
+    </message>
+
+    <message code="tile.door.open">
+        Open door
+    </message>
+
+    <message code="tile.door.close">
+        Closed door
+    </message>
+
+        <message code="helpscreen.tutorial.keys">
+Keybindings
+
+Arrows/Numpad
+O
+C
+F
+I
+W
+D
+,
+T
+Tab
+F1
+ESC
+    </message>
+
+    <message code="helpscreen.tutorial.description">
+Moving
+Open door
+Close door
+Select target and attack
+Open inventory
+Open weapon
+Drop item to the floor
+Pick up item from the floor and store it in the inventory
+Ask partner to perform some task
+Switch between Killy and Cibo
+Open this screen
+Exit program
+    </message>
+
+    <message code="helpscreen.helpmessage">
+        [ESC] - Exit
+    </message>
+
+    <message code="mainscreen.openhelp">
+        F1 - Keybindings
+    </message>
+
+    <message code="commands.list">
+1 - Follow me
+2 - Wait here
+3 - Shoot enemies on sight
+4 - Stop shooting
+    </message>
+
+    <message code="commands.helpmessage">
+        [1-4] - Issue Command [ESC] - Cancel
+    </message>
+</messages>

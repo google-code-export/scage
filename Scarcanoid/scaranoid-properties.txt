@@ -3,4 +3,4 @@ screen.height = 480
 
 dt = 5
 gravity = -5
-friction = 10000
+friction = 0

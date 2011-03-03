@@ -86,7 +86,7 @@
           </filters>
       <resources>
             <resource>
-              <directory>src/main/resources</directory>
+              <directory>src/main/assembly</directory>
               <filtering>true</filtering>
             </resource>
           </resources>
@@ -176,6 +176,63 @@
                     -Djava.library.path=${project.build.directory}/native/${os.type} -DLWJGL_DISABLE_XRANDR=true
                 </argLine>
             </configuration>
+      </plugin>
+      <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>2.3.1</version>
+                    <configuration>
+                       <archive>
+                          <manifest>
+                             <addClasspath>true</addClasspath>
+                             <mainClass>su.msk.dunno.scar.Scaranoid</mainClass>
+                          </manifest>
+                       </archive>
+                       <excludes>
+                           <exclude>log4j.properties</exclude>
+                       </excludes>
+                    </configuration>
+                 </plugin>
+        <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                  <execution>
+                    <id>copy-dependencies</id>
+                    <phase>package</phase>
+                    <goals>
+                      <goal>copy-dependencies</goal>
+                    </goals>
+                    <configuration>
+                      <outputDirectory>
+                        ${project.build.directory}/lib
+                      </outputDirectory>
+                    </configuration>
+                  </execution>
+                </executions>
+              </plugin>
+        <plugin>
+                <!-- NOTE: We don't need a groupId specification because the group is
+                     org.apache.maven.plugins ...which is assumed by default.
+                 -->
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.2-beta-2</version>
+                <configuration>
+                  <finalName>${artifactId}-${version}-${os.type}</finalName>
+			      <outputDirectory>${assembly.dir}</outputDirectory>
+                    <descriptors>
+                        <descriptor>src/main/assembly/scar.xml</descriptor>
+                    </descriptors>
+                </configuration>
+                <executions>
+                      <execution>
+                        <id>make-assembly</id> <!-- this is used for inheritance merges -->
+                        <phase>package</phase> <!-- append to the packaging phase. -->
+                        <goals>
+                          <goal>single</goal> <!-- goals == mojos -->
+                        </goals>
+                      </execution>
+                    </executions>
         </plugin>
     </plugins>
   </build>

@@ -5,7 +5,10 @@ import net.phys2d.math.Vector2f
 import su.msk.dunno.scage.single.support.Vec
 
 trait Physical {
-  val body:Body
+  def initBody:Body
+  def setupBody = {}
+  val body:Body = initBody
+  Physics.addBody(body)
 
   def addForce(force:Vec) = {
     body.setIsResting(false)

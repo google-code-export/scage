@@ -11,9 +11,8 @@ import su.msk.dunno.scage.screens.prototypes.ScageRender
 
 class StaticBox(leftup_coord:Vec, width:Float, height:Float) extends Physical {
   val box = new Box(width, height)
-  val body = new StaticBody("StaticBox", box)
+  def initBody = new StaticBody("StaticBox", box)
   body.setPosition(leftup_coord.x+width/2, leftup_coord.y-height/2)
-  Physics.addBody(body)
 
   Scaranoid.addRender(new ScageRender {
     override def render = {

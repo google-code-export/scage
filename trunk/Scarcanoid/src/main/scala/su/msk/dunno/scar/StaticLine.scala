@@ -11,9 +11,8 @@ import su.msk.dunno.scage.screens.prototypes.ScageRender
 
 class StaticLine(val start:Vec, val end:Vec) extends Physical {
   val line = new Line((end-start).x, (end-start).y)
-  val body = new StaticBody("line", line)
+  def initBody = new StaticBody("line", line)
   body.setPosition(start.x, start.y)
-  Physics.addBody(body)
 
   Scaranoid.addRender(new ScageRender {
     override def render = {

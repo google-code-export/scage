@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<messages>
+    <message code="game.lose">
+        You Lose!
+    </message>
+
+    <message code="game.win">
+        You Win!
+    </message>
+</messages>

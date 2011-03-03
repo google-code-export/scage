@@ -1,6 +1,13 @@
+app.name = Scar
+#app.version = 1.0
+
 screen.width = 640
 screen.height = 480
 
+strings.base = resources/strings/scar_strings
+strings.lang = ru
+
 dt = 5
-gravity = -5
-friction = 0
+
+ball.radius = 10
+ball.speed = 25

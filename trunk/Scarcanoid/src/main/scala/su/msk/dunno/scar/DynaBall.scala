@@ -8,13 +8,13 @@ import su.msk.dunno.scage.screens.prototypes.{ScageRender, ScageAction}
 import su.msk.dunno.scage.screens.handlers.Renderer
 
 class DynaBall(init_coord:Vec, val radius:Int) extends Physical {
-  def initBody = new Body(new Circle(radius), 1)
+  val body = new Body(new Circle(radius), 1)
+  body.setRestitution(1.0f)
   body.setPosition(init_coord.x, init_coord.y)
+  Physics.addBody(this)
 
-  Scaranoid.addRender(new ScageRender {
-    override def render = {
-      Renderer.color = WHITE
-      Renderer.drawCircle(coord, radius)
-    }
-  })
+  def renderFunc = {
+    Renderer.color = WHITE
+    Renderer.drawCircle(coord, radius)
+  }
 }

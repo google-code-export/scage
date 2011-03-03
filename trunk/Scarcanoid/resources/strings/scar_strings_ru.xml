@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<messages>
+    <message code="renderer.loading">
+        Начинаем загрузку, пожалуйста, подождите...
+    </message>
+
+    <message code="renderer.exiting">
+        Приложение заканчивает работу...
+    </message>
+
+    <message code="game.lose">
+        Вы проиграли!
+    </message>
+
+    <message code="game.win">
+        Вы выиграли!
+    </message>
+</messages>

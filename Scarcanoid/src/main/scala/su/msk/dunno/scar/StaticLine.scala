@@ -11,15 +11,15 @@ import su.msk.dunno.scage.screens.prototypes.ScageRender
 
 class StaticLine(val start:Vec, val end:Vec) extends Physical {
   val line = new Line((end-start).x, (end-start).y)
-  def initBody = new StaticBody("line", line)
+  val body = new StaticBody("line", line)
+  body.setRestitution(1.0f)
   body.setPosition(start.x, start.y)
+  Physics.addBody(this)
 
-  Scaranoid.addRender(new ScageRender {
-    override def render = {
-      val verts:Array[Vector2f] = line.getVertices(body.getPosition(), body.getRotation());
-      Renderer.color = WHITE
-      Renderer.drawLine(Vec(verts(0).getX, verts(0).getY),
-                        Vec(verts(1).getX, verts(1).getY))
-    }
-  })
+  def renderFunc = {
+    val verts:Array[Vector2f] = line.getVertices(body.getPosition(), body.getRotation());
+    Renderer.color = WHITE
+    Renderer.drawLine(Vec(verts(0).getX, verts(0).getY),
+                      Vec(verts(1).getX, verts(1).getY))
+  }
 }

@@ -68,7 +68,7 @@ object Scaranoid extends ScageScreen(
       }
     })
   }
-  ball.body.adjustVelocity(new Vector2f(-15,-15))
+  ball.body.adjustVelocity(new Vector2f(0, -ball_speed))
 
   Scaranoid.addRender(new ScageRender {
     override def interface = {
@@ -80,6 +80,16 @@ object Scaranoid extends ScageScreen(
       //print(ball.velocity, 10, height-40, WHITE)
     }
   })
+
+  new ScageScreen("Help Screen") {
+    keyListener(Keyboard.KEY_SPACE, onKeyDown = stop)
+
+    addRender(new ScageRender {
+      override def interface = {
+        print(xml("helpscreen.helpmessage"), 10, height-20, WHITE)
+      }
+    })
+  }.run
 
   def main(args:Array[String]):Unit = run
 }

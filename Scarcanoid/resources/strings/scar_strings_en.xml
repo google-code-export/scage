@@ -8,6 +8,10 @@
         You Win!
     </message>
 
+    <message code="game.playagain">
+        Play Again? (y/n)
+    </message>
+
     <message code="helpscreen.helpmessage">
 Simple remake of classic Arcanoid, written in Scala.
 

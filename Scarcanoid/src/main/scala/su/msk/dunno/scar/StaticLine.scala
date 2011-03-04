@@ -9,7 +9,7 @@ import su.msk.dunno.scage.single.support.{Vec}
 import su.msk.dunno.scage.single.support.ScageColors._
 import su.msk.dunno.scage.screens.prototypes.ScageRender
 
-class StaticLine(val start:Vec, val end:Vec) extends Physical {
+class StaticLine(start:Vec, end:Vec) extends Physical {
   val line = new Line((end-start).x, (end-start).y)
   val body = new StaticBody("line", line)
   body.setRestitution(1.0f)

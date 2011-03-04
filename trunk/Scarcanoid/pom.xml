@@ -2,9 +2,12 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>su.msk.dunno</groupId>
-  <artifactId>Scarcanoid</artifactId>
-  <version>0.1</version>
+  <artifactId>scar</artifactId>
+  <version>1.1</version>
   <inceptionYear>2008</inceptionYear>
+
+  <name>Scar</name>
+  <description>simple remake of classic arcanoid written in Scala</description>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

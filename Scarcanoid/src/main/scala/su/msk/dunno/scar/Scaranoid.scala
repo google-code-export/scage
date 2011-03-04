@@ -61,14 +61,15 @@ object Scaranoid extends ScageScreen(
           body.adjustVelocity(new Vector2f(delta.x, delta.y))
         }
         else if(math.abs(old_v.y) < 1) {
-          val new_v = Vec(old_v.x, 5)
+
+          val new_v = Vec(old_v.x, 10*math.signum(old_v.y))
           val delta = new_v - old_v
           body.adjustVelocity(new Vector2f(delta.x, delta.y))
         }
       }
     })
   }
-  ball.body.adjustVelocity(new Vector2f(0, -ball_speed))
+  ball.body.adjustVelocity(new Vector2f(-ball_speed, -ball_speed))
 
   Scaranoid.addRender(new ScageRender {
     override def interface = {

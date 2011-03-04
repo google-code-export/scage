@@ -16,6 +16,10 @@
         Вы выиграли!
     </message>
 
+    <message code="game.playagain">
+        Еще раз? (y/n)
+    </message>
+
     <message code="helpscreen.helpmessage">
 Простой клон классического Арканоида, написанный
 на Scala.

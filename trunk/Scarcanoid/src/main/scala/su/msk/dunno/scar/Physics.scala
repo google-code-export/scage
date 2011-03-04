@@ -6,6 +6,7 @@ import net.phys2d.math.Vector2f
 import _root_.net.phys2d.raw.strategies.QuadSpaceStrategy
 import su.msk.dunno.scage.screens.prototypes.{ScageAction}
 import su.msk.dunno.scage.single.support.Vec
+import su.msk.dunno.scage.screens.ScageScreen
 
 object Physics {
   val dt = property("dt", 5)
@@ -24,7 +25,7 @@ object Physics {
 
   Scaranoid.addAction(new ScageAction {
     override def action = {
-      if(!Scaranoid.isGameOver) {
+      if(!Scaranoid.onPause) {
         physicals.foreach(_.isTouching = false)
         for(i <- 1 to dt) {
           world.step()

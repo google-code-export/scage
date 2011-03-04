@@ -5,7 +5,7 @@ import net.phys2d.math.Vector2f
 import su.msk.dunno.scage.single.support.Vec
 import su.msk.dunno.scage.screens.prototypes.ScageRender
 
-trait Physical {
+abstract class Physical {
   val body:Body
 
   private var is_active = true
@@ -39,12 +39,6 @@ trait Physical {
   private var is_touching = false
   def isTouching = is_touching
   def isTouching_=(new_is_touching:Boolean) = is_touching = new_is_touching
-  /*def isTouching:Boolean = {
-    body.getTouching.size > 0
-    /*for(i <- 0 to body.getTouching.size-1; val b:Body = body.getTouching.get(i))
-      if(b.isStatic) return true
-    false*/
-  }*/
 
   def renderFunc
   Scaranoid.addRender(new ScageRender {

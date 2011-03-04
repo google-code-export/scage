@@ -15,17 +15,15 @@ object Scaranoid extends ScageScreen(
   is_main_screen = true,
   properties = "scaranoid-properties.txt"
 ) {
-  private var is_game_over = false
-  def isGameOver = is_game_over
   private var count = 0
 
-  new StaticLine(Vec(30, 10),   Vec(30, 470))
-  new StaticLine(Vec(30, 470),  Vec(630, 470))
-  new StaticLine(Vec(630, 470), Vec(630, 10))
-  new StaticLine(Vec(630, 10),  Vec(30, 10)) {
+  new StaticLine(Vec(30,  10),   Vec(30,  470))
+  new StaticLine(Vec(30,  470),  Vec(630, 470))
+  new StaticLine(Vec(630, 470),  Vec(630, 10))
+  new StaticLine(Vec(630, 10),   Vec(30,  10)) {
     addAction(new ScageAction {
       override def action = {
-        if(isTouching) is_game_over = true
+        if(isTouching) pause
       }
     })
   }
@@ -35,19 +33,20 @@ object Scaranoid extends ScageScreen(
       override def action = {
         if(isActive && isTouching) {
           count += 1
-          if(count >= 39) is_game_over = true
+          if(count >= 39) pause
           isActive = false
         }
       }
     })
   }
-  for(i <- 0 to 12) new TargetBox(Vec(35 + i*45, 460))
-  for(i <- 0 to 12) new TargetBox(Vec(35 + i*45, 415))
-  for(i <- 0 to 12) new TargetBox(Vec(35 + i*45, 370))
+  private var boxes:List[TargetBox] = Nil
+  for(i <- 0 to 12) boxes = new TargetBox(Vec(35 + i*45, 460)) :: boxes
+  for(i <- 0 to 12) boxes = new TargetBox(Vec(35 + i*45, 415)) :: boxes
+  for(i <- 0 to 12) boxes = new TargetBox(Vec(35 + i*45, 370)) :: boxes
 
   val player_platform = new StaticBox(Vec(width/2,25), 50, 10)
-  keyListener(Keyboard.KEY_LEFT,  10, onKeyDown = if(!is_game_over && player_platform.coord.x > 60) player_platform.move(Vec(-3, 0)))
-  keyListener(Keyboard.KEY_RIGHT, 10, onKeyDown = if(!is_game_over && player_platform.coord.x < 600) player_platform.move(Vec(3, 0)))
+  keyListener(Keyboard.KEY_LEFT,  10, onKeyDown = if(!onPause && player_platform.coord.x > 60) player_platform.move(Vec(-3, 0)))
+  keyListener(Keyboard.KEY_RIGHT, 10, onKeyDown = if(!onPause && player_platform.coord.x < 600) player_platform.move(Vec(3, 0)))
 
   val ball_radius = property("ball.radius", 5)
   val ball_speed = property("ball.speed", 25)
@@ -68,19 +67,32 @@ object Scaranoid extends ScageScreen(
         }
       }
     })
-  }
-  ball.body.adjustVelocity(new Vector2f(-ball_speed, -ball_speed))
 
-  Scaranoid.addRender(new ScageRender {
+    body.adjustVelocity(new Vector2f(-ball_speed, -ball_speed))
+  }
+
+  addRender(new ScageRender {
     override def interface = {
-      if(is_game_over) {
-        if(count < 39) print(xml("game.lose"), width/2, height/2, WHITE)
+      if(onPause) {
+        if(count < 39) {
+          print(xml("game.lose"), width/2, height/2, WHITE)
+          print(xml("game.playagain"), width/2, height/2-20, WHITE)
+        }
         else print(xml("game.win"), width/2, height/2, WHITE)
       }
       print(count, 5, height-20, WHITE)
       //print(ball.velocity, 10, height-40, WHITE)
     }
   })
+  keyListener(Keyboard.KEY_Y,  10, onKeyDown = if(onPause) reset)
+  keyListener(Keyboard.KEY_N,  10, onKeyDown = if(onPause) stop)
+
+  def reset = {
+    count = 0
+    ball.body.move(width/2, height/2)
+    boxes.foreach(_.isActive = true)
+    pauseOff
+  }
 
   new ScageScreen("Help Screen") {
     keyListener(Keyboard.KEY_SPACE, onKeyDown = stop)

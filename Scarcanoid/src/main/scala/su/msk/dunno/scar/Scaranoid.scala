@@ -62,18 +62,10 @@ object Scaranoid extends ScageScreen(
   val ball = new DynaBall(Vec(width/2, height/2), ball_radius) {
     addAction(new ScageAction {
       override def action = {
-        val old_v = velocity
-        if(old_v.norma < ball_speed-1) {
-          val new_v = old_v.n * ball_speed
-          val delta = new_v - old_v
-          body.adjustVelocity(new Vector2f(delta.x, delta.y))
-        }
-        else if(math.abs(old_v.y) < 1) {
-
-          val new_v = Vec(old_v.x, 10*math.signum(old_v.y))
-          val delta = new_v - old_v
-          body.adjustVelocity(new Vector2f(delta.x, delta.y))
-        }
+        if(velocity.norma < ball_speed-1)
+          velocity = velocity.n * ball_speed
+        else if(math.abs(velocity.y) < 1)
+          velocity = Vec(velocity.x, 10*math.signum(velocity.y))
       }
     })
 

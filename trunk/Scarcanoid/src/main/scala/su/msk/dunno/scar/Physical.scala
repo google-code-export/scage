@@ -5,7 +5,7 @@ import net.phys2d.math.Vector2f
 import su.msk.dunno.scage.single.support.Vec
 import su.msk.dunno.scage.screens.prototypes.{ScageRender, ScageAction}
 
-abstract class Physical {
+trait Physical {
   val body:Body
 
   private var is_active = true
@@ -14,7 +14,6 @@ abstract class Physical {
     is_active = new_is_active
     if(!is_active) Physics.removeBody(body)
   }
-
 
   def addForce(force:Vec) = {
     body.setIsResting(false)

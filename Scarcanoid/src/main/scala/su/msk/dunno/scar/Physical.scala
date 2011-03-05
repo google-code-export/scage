@@ -25,6 +25,11 @@ abstract class Physical {
     val pos = body.getPosition
     Vec(pos.getX, pos.getY)
   }
+  def coord_=(new_coord:Vec) = body.move(new_coord.x, new_coord.y)
+  def move(delta:Vec) = {
+    val new_coord = coord + delta
+    body.move(new_coord.x, new_coord.y)
+  }
 
   def velocity = {
     val vel = body.getVelocity
@@ -33,11 +38,6 @@ abstract class Physical {
   def velocity_=(new_velocity:Vec) = {
     val delta = new_velocity - velocity
     body.adjustVelocity(new Vector2f(delta.x, delta.y))
-  }
-
-  def move(delta:Vec) = {
-    val new_coord = coord + delta
-    body.move(new_coord.x, new_coord.y)
   }
 
   private var is_touching = false

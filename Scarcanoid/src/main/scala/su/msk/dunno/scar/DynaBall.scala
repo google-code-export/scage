@@ -11,7 +11,6 @@ class DynaBall(init_coord:Vec, val radius:Int) extends Physical {
   val body = new Body(new Circle(radius), 1)
   body.setRestitution(1.0f)
   body.setPosition(init_coord.x, init_coord.y)
-  Physics.addBody(this)
 
   def renderFunc = {
     Renderer.color = WHITE

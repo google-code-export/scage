@@ -12,7 +12,7 @@ import su.msk.dunno.scage.single.support.messages.ScageMessage._
 
 object Scaranoid extends ScageScreen(
   screen_name = "Scaranoid",
-  is_main_screen = true,
+  is_main_screen = false,
   properties = "scaranoid-properties.txt"
 ) {
   private var count = 0
@@ -84,14 +84,16 @@ object Scaranoid extends ScageScreen(
       //print(ball.velocity, 10, height-40, WHITE)
     }
   })
-  keyListener(Keyboard.KEY_Y,  10, onKeyDown = if(onPause) reset)
-  keyListener(Keyboard.KEY_N,  10, onKeyDown = if(onPause) stop)
+  keyListener(Keyboard.KEY_Y, onKeyDown = if(onPause) reset)
+  keyListener(Keyboard.KEY_N, onKeyDown = if(onPause) stop)
 
   def reset = {
     count = 0
     ball.body.move(width/2, height/2)
-    boxes.foreach(_.isActive = true)
+    ball.velocity = new Vec(-ball_speed, -ball_speed)
+    player_platform.body.move(width/2, 25)
     pauseOff
+    run
   }
 
   new ScageScreen("Help Screen") {

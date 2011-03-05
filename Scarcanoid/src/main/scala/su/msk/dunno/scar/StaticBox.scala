@@ -11,10 +11,10 @@ import su.msk.dunno.scage.screens.prototypes.ScageRender
 
 class StaticBox(leftup_coord:Vec, width:Float, height:Float) extends Physical {
   val box = new Box(width, height)
+
   val body = new StaticBody("StaticBox", box)
   body.setRestitution(1.0f)
   body.setPosition(leftup_coord.x+width/2, leftup_coord.y-height/2)
-  Physics.addBody(this)
 
   def renderFunc = {
     val verts:Array[Vector2f] = box.getPoints(body.getPosition(), body.getRotation());

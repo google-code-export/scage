@@ -11,10 +11,10 @@ import su.msk.dunno.scage.screens.prototypes.ScageRender
 
 class StaticLine(start:Vec, end:Vec) extends Physical {
   val line = new Line((end-start).x, (end-start).y)
+
   val body = new StaticBody("line", line)
   body.setRestitution(1.0f)
   body.setPosition(start.x, start.y)
-  Physics.addBody(this)
 
   def renderFunc = {
     val verts:Array[Vector2f] = line.getVertices(body.getPosition(), body.getRotation());

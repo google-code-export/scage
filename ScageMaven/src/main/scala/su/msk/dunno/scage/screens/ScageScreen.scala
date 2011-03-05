@@ -40,21 +40,26 @@ class ScageScreen(val screen_name:String, val is_main_screen:Boolean = false, pr
   def center = renderer.center
   def center_= (coord: => Vec) = renderer.center = coord
 
-  var onPause:Boolean = false
-  def switchPause = onPause = !onPause
+  private var on_pause = false
+  def onPause = on_pause
+  def switchPause = on_pause = !on_pause
+  def pause = on_pause = true
+  def pauseOff = on_pause = false
 
   private var is_running = false
   def isRunning = is_running
+  def init = handlers.foreach(handler => handler.init)
+  def exit = handlers.foreach(handler => handler.exit)
   def run = {
     if(!is_main_screen) log.info("starting "+screen_name+"...")
-    handlers.foreach(handler => handler.init)
+    init
     is_running = true
     while(is_running && !ScageScreen.isAllScreensStop) {
       controller.checkControls
-      handlers.foreach(handler => handler.action)
+      if(!on_pause) handlers.foreach(handler => handler.action)
       renderer.render
     }
-    handlers.foreach(handler => handler.exit)
+    exit
     log.info(screen_name+" was stopped")
     if(is_main_screen) System.exit(0)
   }

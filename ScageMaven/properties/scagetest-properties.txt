@@ -3,5 +3,5 @@ app.version = v1.0
 
 strings.lang = en
 
-screen.width=2000
+screen.width=640
 screen.height=480

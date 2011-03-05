@@ -24,6 +24,11 @@ object Physics {
   def removeBody(body:Body) = world.remove(body)
 
   Scaranoid.addAction(new ScageAction {
+    override def init = {
+      physicals.foreach(_.isTouching = false)
+      physicals.foreach(_.isActive = true)
+    }
+
     override def action = {
       if(!Scaranoid.onPause) {
         physicals.foreach(_.isTouching = false)

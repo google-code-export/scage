@@ -10,4 +10,4 @@ strings.lang = ru
 dt = 5
 
 ball.radius = 10
-ball.speed = 25
+ball.speed = 20

@@ -3,7 +3,7 @@ package su.msk.dunno.scar
 import net.phys2d.raw.Body
 import net.phys2d.math.Vector2f
 import su.msk.dunno.scage.single.support.Vec
-import su.msk.dunno.scage.screens.prototypes.ScageRender
+import su.msk.dunno.scage.screens.prototypes.{ScageRender, ScageAction}
 
 abstract class Physical {
   val body:Body
@@ -30,6 +30,10 @@ abstract class Physical {
     val vel = body.getVelocity
     Vec(vel.getX, vel.getY)
   }
+  def velocity_=(new_velocity:Vec) = {
+    val delta = new_velocity - velocity
+    body.adjustVelocity(new Vector2f(delta.x, delta.y))
+  }
 
   def move(delta:Vec) = {
     val new_coord = coord + delta
@@ -39,6 +43,13 @@ abstract class Physical {
   private var is_touching = false
   def isTouching = is_touching
   def isTouching_=(new_is_touching:Boolean) = is_touching = new_is_touching
+
+  private val this_object = this
+  Scaranoid.addAction(new ScageAction {
+    override def init = {
+      Physics.addBody(this_object)
+    }
+  })
 
   def renderFunc
   Scaranoid.addRender(new ScageRender {

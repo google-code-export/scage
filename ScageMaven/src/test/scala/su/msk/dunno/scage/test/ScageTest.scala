@@ -32,11 +32,11 @@ class ScageTest extends TestCase("app") {
       new ScageScreen("Hello World", is_main_screen = true, properties = "scagetest-properties.txt") {
         backgroundColor = WHITE
 
-        addRender(new ScageRender{
-          override def interface = {
+        /*addRender(new ScageRender{
+          override def */interface/* =*/ {
             print(xml("hello.world"), width/2, height/2, BLACK)
           }
-        })
+        /*})*/
       }.run
       assertTrue(true)
     };

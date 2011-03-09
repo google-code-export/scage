@@ -183,8 +183,8 @@ object Renderer {
 class Renderer {
   def this(main_screen:ScageScreen) = {
     this()
-    main_screen.addAction(new ScageAction {
-      override def exit = {
+    /*main_screen.addAction(new ScageAction {*/
+      /*override def */main_screen.exit/* =*/ {
         Renderer.backgroundColor = ScageColors.BLACK
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
         print(xmlOrDefault("renderer.exiting", "Exiting..."), 20, Renderer.height-25, ScageColors.GREEN)
@@ -193,7 +193,7 @@ class Renderer {
         Thread.sleep(1000)
         Display.destroy
       }
-    })
+    /*})*/
   }
   Renderer.initgl
 
@@ -209,8 +209,16 @@ class Renderer {
   def center = central_coord()
   def center_= (coord: => Vec) = central_coord = () => coord
   
-  private var render_list:List[ScageRender] = Nil
-  def addRender(render:ScageRender) = render_list = render :: render_list
+  /*private var render_list:List[ScageRender] = Nil
+  def addRender(render:ScageRender) = render_list = render :: render_list*/
+
+  private var render_list:List[() => Unit] = List[() => Unit]()
+  def render(render_func: => Unit) = {render_list = render_list ::: List(() => render_func)}
+
+  private var interface_list:List[() => Unit] = List[() => Unit]()
+  def interface(render_func: => Unit) = {
+    interface_list = (() => render_func) :: interface_list
+  }
 
   def render = {
     if(Display.isCloseRequested()) ScageScreen.allStop
@@ -221,10 +229,10 @@ class Renderer {
         val coord = window_center() - central_coord()*_scale
         GL11.glTranslatef(coord.x , coord.y, 0.0f)
         GL11.glScalef(_scale, _scale, 1)
-        render_list.foreach(renderable => renderable.render)
+        /*render_list.foreach(renderable => renderable.render)*/ render_list.foreach(render_func => render_func())
       GL11.glPopMatrix
 
-      render_list.foreach(renderable => renderable.interface)
+      /*render_list.foreach(renderable => renderable.interface)*/ interface_list.foreach(interface_func => interface_func())
 
       Renderer.update
     }

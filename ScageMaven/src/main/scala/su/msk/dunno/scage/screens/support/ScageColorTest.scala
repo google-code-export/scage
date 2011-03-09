@@ -20,8 +20,8 @@ object ScageColorTest {
 
   var color_num = 1
   val main_screen = new ScageScreen("Color Test", is_main_screen = true, properties="colortest-properties.txt") {
-    addRender(new ScageRender {
-      override def interface = {
+    /*addRender(new ScageRender {
+      override def */interface/* =*/ {
         if(color_num >= 0 && color_num < fields.length) {
           print(fields(color_num).getName, width/2, height/2,
             if("BLACK".equalsIgnoreCase(fields(color_num).getName)) WHITE else BLACK)
@@ -31,7 +31,7 @@ object ScageColorTest {
           }
         }
       }
-    })
+    /*})*/
 
     keyListener(Keyboard.KEY_LEFT, onKeyDown = {
       def nextColorNumInc() {

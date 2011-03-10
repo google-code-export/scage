@@ -3,13 +3,14 @@
   <groupId>su.msk.dunno</groupId>
   <artifactId>scage</artifactId>
   <versioning>
-    <release>0.3.5-act</release>
+    <release>0.3.6-act</release>
     <versions>
       <version>0.3.3</version>
       <version>0.3.4</version>
       <version>0.3.5</version>
       <version>0.3.5-act</version>
+      <version>0.3.6-act</version>
     </versions>
-    <lastUpdated>20110309064445</lastUpdated>
+    <lastUpdated>20110310064355</lastUpdated>
   </versioning>
 </metadata>

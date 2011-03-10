@@ -61,12 +61,21 @@ class ScageScreen(val screen_name:String, val is_main_screen:Boolean = false, pr
 
   private var is_running = false
   def isRunning = is_running
-  def init = /*handlers.foreach(handler => handler.init)*/ inits.foreach(init_func => init_func())
-  def exit = /*handlers.foreach(handler => handler.exit)*/ exits.foreach(exit_func => exit_func())
+  def init = {
+    /*handlers.foreach(handler => handler.init)*/
+    log.info(screen_name+": init")
+    inits.foreach(init_func => init_func())
+  }
+  def exit = {
+    /*handlers.foreach(handler => handler.exit)*/
+    log.info(screen_name+": exit")
+    exits.foreach(exit_func => exit_func())
+  }
   def run = {
     if(!is_main_screen) log.info("starting "+screen_name+"...")
     init
     is_running = true
+    log.info(screen_name+": run")
     while(is_running && !ScageScreen.isAllScreensStop) {
       controller.checkControls
       if(!on_pause) /*handlers.foreach(handler => handler.action)*/ actions.foreach(action_func => action_func())

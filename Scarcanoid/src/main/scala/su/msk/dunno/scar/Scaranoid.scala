@@ -9,38 +9,42 @@ import org.lwjgl.input.Keyboard
 import su.msk.dunno.scage.single.support.ScageProperties._
 import su.msk.dunno.scage.screens.prototypes.{ScageAction, ScageRender}
 import su.msk.dunno.scage.single.support.messages.ScageMessage._
+import su.msk.dunno.scage.screens.handlers.Renderer._
 
 object Scaranoid extends ScageScreen(
   screen_name = "Scaranoid",
-  is_main_screen = false,
+  is_main_screen = true,
   properties = "scaranoid-properties.txt"
 ) {
   private var count = 0
-  addAction(new ScageAction {
+  /*addAction(new ScageAction {
     override def init = count = 0
-  })
+  })*/
+  init {
+    count = 0
+  }
 
   new StaticLine(Vec(30,  10),   Vec(30,  470))
   new StaticLine(Vec(30,  470),  Vec(630, 470))
   new StaticLine(Vec(630, 470),  Vec(630, 10))
   new StaticLine(Vec(630, 10),   Vec(30,  10)) {
-    addAction(new ScageAction {
-      override def action = {
+    /*addAction(new ScageAction {*/
+      /*override def */action/* =*/ {
         if(isTouching) pause
       }
-    })
+    /*})*/
   }
 
   class TargetBox(leftup_coord:Vec) extends StaticBox(leftup_coord, 40, 40) {
-    addAction(new ScageAction {
-      override def action = {
+    /*addAction(new ScageAction {
+      override def */action/* =*/ {
         if(isActive && isTouching) {
           count += 1
           if(count >= 39) pause
           isActive = false
         }
       }
-    })
+    /*})*/
   }
   private var boxes:List[TargetBox] = Nil
   for(i <- 0 to 12) boxes = new TargetBox(Vec(35 + i*45, 460)) :: boxes
@@ -48,11 +52,11 @@ object Scaranoid extends ScageScreen(
   for(i <- 0 to 12) boxes = new TargetBox(Vec(35 + i*45, 370)) :: boxes
 
   val player_platform = new StaticBox(Vec(width/2,25), 50, 10) {
-    addAction(new ScageAction {
-      override def init = {
+    /*addAction(new ScageAction {
+      override def */init/* =*/ {
         coord = Vec(width/2, 25)
       }
-    })
+    /*})*/
   }
   keyListener(Keyboard.KEY_LEFT,  10, onKeyDown = if(!onPause && player_platform.coord.x > 60) player_platform.move(Vec(-3, 0)))
   keyListener(Keyboard.KEY_RIGHT, 10, onKeyDown = if(!onPause && player_platform.coord.x < 600) player_platform.move(Vec(3, 0)))
@@ -60,36 +64,35 @@ object Scaranoid extends ScageScreen(
   val ball_radius = property("ball.radius", 5)
   val ball_speed = property("ball.speed", 25)
   val ball = new DynaBall(Vec(width/2, height/2), ball_radius) {
-    addAction(new ScageAction {
-      override def action = {
+    /*addAction(new ScageAction {
+      override def */action/* =*/ {
         if(velocity.norma < ball_speed-1)
           velocity = velocity.n * ball_speed
         else if(math.abs(velocity.y) < 1)
           velocity = Vec(velocity.x, 10*math.signum(velocity.y))
       }
-    })
+    /*})*/
 
-    addAction(new ScageAction {
-      override def init = {
+    /*addAction(new ScageAction {
+      override def */init/* =*/ {
         coord = Vec(width/2, height/2)
         velocity = new Vec(-ball_speed, -ball_speed)
       }
-    })
+    /*})*/
   }
 
-  addRender(new ScageRender {
-    override def interface = {
+  /*addRender(new ScageRender {
+    override def */interface/* =*/ {
       if(onPause) {
-        if(count < 39) {
-          print(xml("game.lose"), width/2, height/2, WHITE)
-          print(xml("game.playagain"), width/2, height/2-20, WHITE)
-        }
+        if(count < 39) print(xml("game.lose"), width/2, height/2, WHITE)
         else print(xml("game.win"), width/2, height/2, WHITE)
+        print(xml("game.playagain"), width/2, height/2-20, WHITE)
       }
       print(count, 5, height-20, WHITE)
+      print(fps, 5, height-40, WHITE)
       //print(ball.velocity, 10, height-40, WHITE)
     }
-  })
+  /*})*/
   keyListener(Keyboard.KEY_Y, onKeyDown = if(onPause) {
     init
     pauseOff
@@ -99,11 +102,11 @@ object Scaranoid extends ScageScreen(
   new ScageScreen("Help Screen") {
     keyListener(Keyboard.KEY_SPACE, onKeyDown = stop)
 
-    addRender(new ScageRender {
-      override def interface = {
+    /*addRender(new ScageRender {
+      override def */interface/* =*/ {
         print(xml("helpscreen.helpmessage"), 10, height-20, WHITE)
       }
-    })
+    /*})*/
   }.run
 
   def main(args:Array[String]):Unit = run

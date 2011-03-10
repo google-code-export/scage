@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>su.msk.dunno</groupId>
   <artifactId>scar</artifactId>
-  <version>1.2</version>
+  <version>1.2-act</version>
   <inceptionYear>2008</inceptionYear>
 
   <name>Scar</name>
@@ -76,7 +76,7 @@
     <dependency>
         <groupId>su.msk.dunno</groupId>
         <artifactId>scage</artifactId>
-        <version>0.3.5</version>
+        <version>0.3.6-act</version>
         <scope>compile</scope>
     </dependency>
   </dependencies>

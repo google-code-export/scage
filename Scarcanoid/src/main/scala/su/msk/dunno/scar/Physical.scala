@@ -44,14 +44,16 @@ trait Physical {
   def isTouching_=(new_is_touching:Boolean) = is_touching = new_is_touching
 
   private val this_object = this
-  Scaranoid.addAction(new ScageAction {
-    override def init = {
+  Scaranoid./*addAction(new ScageAction {
+    override def */init/* =*/ {
       Physics.addBody(this_object)
     }
-  })
+  /*})*/
 
   def renderFunc
-  Scaranoid.addRender(new ScageRender {
-    override def render = if(is_active) renderFunc
-  })
+  Scaranoid./*addRender(new ScageRender {
+    override def */render/* =*/ {
+      if(is_active) renderFunc
+    }
+  /*})*/
 }

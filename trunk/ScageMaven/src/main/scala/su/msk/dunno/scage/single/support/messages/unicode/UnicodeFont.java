@@ -17,6 +17,8 @@ import java.lang.reflect.Field;
 import java.util.*;
 import java.util.List;
 
+import su.msk.dunno.scage.single.support.ScageColors;
+
 /**
  * A Slick bitmap font that can display unicode glyphs from a TrueTypeFont.
  *
@@ -412,6 +414,40 @@ public class UnicodeFont implements org.newdawn.slick.Font {
 		clearGlyphs();
 	}
 
+    private class ColoredString
+    {
+        public HashMap<Integer, Color> color_switches = new HashMap<Integer, Color>();
+        public String colored_text;
+
+        public ColoredString(String text, Color color)
+        {
+            colored_text = prepareText(text, color);
+        }
+
+        private String prepareText(String text, Color color)
+        {
+            String new_text = new String(text);
+            int start_bracer = new_text.indexOf('[');
+            while(start_bracer != -1 && start_bracer < new_text.length()-1)
+            {
+		      char char_after_bracer = new_text.charAt(start_bracer+1);
+              switch(char_after_bracer)
+              {
+                case 'r': color_switches.put(start_bracer, Color.red); new_text = new_text.replaceFirst("\\["+char_after_bracer, ""); break;
+                case 'g': color_switches.put(start_bracer, Color.green); new_text = new_text.replaceFirst("\\["+char_after_bracer, ""); break;
+                case 'b': color_switches.put(start_bracer, Color.blue); new_text = new_text.replaceFirst("\\["+char_after_bracer, ""); break;
+                case 'y': color_switches.put(start_bracer, Color.yellow); new_text = new_text.replaceFirst("\\["+char_after_bracer, ""); break;
+              }
+              int end_bracer = new_text.indexOf(']', start_bracer);
+              color_switches.put(end_bracer, color);
+              new_text = new_text.replaceFirst("]", "");
+			
+		      start_bracer = new_text.indexOf('[');
+            }
+            return new_text;
+        }
+    }
+
 	/**
 	 * Identical to {@link #drawString(float, float, String, Color, int, int)} but returns a
 	 * DisplayList which provides access to the width and height of the text drawn.
@@ -433,6 +469,7 @@ public class UnicodeFont implements org.newdawn.slick.Font {
 		y -= paddingTop;
 
 		String displayListKey = text.substring(startIndex, endIndex);
+        ColoredString cs = new ColoredString(displayListKey, color);
 
 		color.bind();
 		TextureImpl.bindNone();
@@ -475,7 +512,7 @@ public class UnicodeFont implements org.newdawn.slick.Font {
 
 		if (displayList != null) GL.glNewList(displayList.id, SGL.GL_COMPILE_AND_EXECUTE);
 
-		char[] chars = text.substring(0, endIndex).toCharArray();
+		char[] chars = cs.colored_text.substring(0, Math.min(cs.colored_text.length(), endIndex)).toCharArray();
 		GlyphVector vector = font.layoutGlyphVector(GlyphPage.renderContext, chars, 0, chars.length, Font.LAYOUT_LEFT_TO_RIGHT);
 
 		int maxWidth = 0, totalHeight = 0, lines = 0;
@@ -486,6 +523,12 @@ public class UnicodeFont implements org.newdawn.slick.Font {
 			int charIndex = vector.getGlyphCharIndex(glyphIndex);
 			if (charIndex < startIndex) continue;
 			if (charIndex > endIndex) break;
+
+            if(cs.color_switches.containsKey(charIndex))
+            {
+                Color new_color = cs.color_switches.get(charIndex);
+                GL.glColor4f(new_color.r, new_color.g, new_color.b, new_color.a);
+            }
 
 			int codePoint = text.codePointAt(charIndex);
 

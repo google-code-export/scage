@@ -469,7 +469,6 @@ public class UnicodeFont implements org.newdawn.slick.Font {
 		y -= paddingTop;
 
 		String displayListKey = text.substring(startIndex, endIndex);
-        ColoredString cs = new ColoredString(displayListKey, color);
 
 		color.bind();
 		TextureImpl.bindNone();
@@ -512,6 +511,7 @@ public class UnicodeFont implements org.newdawn.slick.Font {
 
 		if (displayList != null) GL.glNewList(displayList.id, SGL.GL_COMPILE_AND_EXECUTE);
 
+        ColoredString cs = new ColoredString(displayListKey, color);
 		char[] chars = cs.colored_text.substring(0, Math.min(cs.colored_text.length(), endIndex)).toCharArray();
 		GlyphVector vector = font.layoutGlyphVector(GlyphPage.renderContext, chars, 0, chars.length, Font.LAYOUT_LEFT_TO_RIGHT);
 

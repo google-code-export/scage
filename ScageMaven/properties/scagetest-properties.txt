@@ -1,7 +1,7 @@
 app.name=ScageTest
 app.version = v1.0
 
-strings.lang = en
+strings.lang = ru
 
 screen.width=640
 screen.height=480

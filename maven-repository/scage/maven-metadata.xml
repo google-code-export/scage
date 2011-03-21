@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <plugins>
+    <plugin>
+      <name>project-archetype</name>
+      <prefix>project-archetype</prefix>
+      <artifactId>project-archetype</artifactId>
+    </plugin>
+  </plugins>
+</metadata>

@@ -248,11 +248,4 @@
       </plugin>
     </plugins>
   </reporting>
-
-  <distributionManagement>
-      <repository>
-       <id>googlecode.scage.repo</id>
-       <url>dav:https://scage.googlecode.com/svn/maven-repository/</url>
-      </repository>
-  </distributionManagement>
 </project>

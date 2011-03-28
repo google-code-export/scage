@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>su.msk.dunno</groupId>
   <artifactId>scage</artifactId>
-  <version>0.3.7-act</version>
+  <version>0.4.0-physics</version>
   <inceptionYear>2008</inceptionYear>
 
   <name>Scage</name>

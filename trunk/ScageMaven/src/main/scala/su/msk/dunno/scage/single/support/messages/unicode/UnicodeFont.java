@@ -17,8 +17,6 @@ import java.lang.reflect.Field;
 import java.util.*;
 import java.util.List;
 
-import su.msk.dunno.scage.single.support.ScageColors;
-
 /**
  * A Slick bitmap font that can display unicode glyphs from a TrueTypeFont.
  *

@@ -3,8 +3,9 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>su.msk.dunno</groupId>
   <artifactId>scage</artifactId>
-  <version>0.4.0-physics</version>
-  <inceptionYear>2008</inceptionYear>
+    <packaging>jar</packaging>
+    <version>0.4.2-render</version>
+  <inceptionYear>2011</inceptionYear>
 
   <name>Scage</name>
   <description>Game Engine written in Scala</description>
@@ -203,7 +204,18 @@
                 </argLine>
             </configuration>
         </plugin>
-
+        <plugin>
+	            <groupId>org.apache.maven.plugins</groupId>
+	            <artifactId>maven-source-plugin</artifactId>
+	            <executions>
+	                <execution>
+	                    <goals>
+	                        <goal>jar</goal>
+	                        <goal>test-jar</goal>
+	                    </goals>
+	                </execution>
+	            </executions>
+        </plugin>
     </plugins>
   </build>
 

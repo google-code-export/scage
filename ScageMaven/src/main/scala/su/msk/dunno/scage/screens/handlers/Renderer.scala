@@ -8,7 +8,6 @@ import org.lwjgl.util.glu.GLU
 import su.msk.dunno.scage.single.support.ScageProperties._
 import su.msk.dunno.scage.single.support.{ScageColor, ScageColors, Vec}
 import su.msk.dunno.scage.single.support.messages.ScageMessage._
-import su.msk.dunno.scage.screens.prototypes.{ScageAction, ScageRender}
 import org.lwjgl.BufferUtils
 
 object Renderer {
@@ -236,5 +235,15 @@ class Renderer {
 
       Renderer.update
     }
+  }
+
+  def exitRender {
+    Renderer.backgroundColor = ScageColors.BLACK
+    GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
+    print(xmlOrDefault("renderer.exiting", "Exiting..."), 20, Renderer.height-25, ScageColors.GREEN)
+    Renderer.update
+
+    Thread.sleep(1000)
+    Display.destroy
   }
 }

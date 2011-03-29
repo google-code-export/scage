@@ -3,7 +3,6 @@ package su.msk.dunno.scage.screens
 import handlers.controller.Controller
 import handlers.{Idler, Renderer}
 import org.apache.log4j.Logger
-import prototypes.{ScageRender, ScageAction}
 import su.msk.dunno.scage.single.support.{Vec}
 import su.msk.dunno.scage.single.support.ScageProperties
 
@@ -36,10 +35,10 @@ class ScageScreen(val screen_name:String, val is_main_screen:Boolean = false, pr
   def exit(exit_func: => Unit) = exits = (() => exit_func) :: exits
 
   val controller = new Controller
-  def keyListener(key: => Int, repeatTime: => Long = 0, onKeyDown: => Any, onKeyUp: => Any = {}) =
-    controller.keyListener(key, repeatTime, onKeyDown, onKeyUp)
+  def key(key: => Int, repeatTime: => Long = 0, onKeyDown: => Any, onKeyUp: => Any = {}) =
+    controller.key(key, repeatTime, onKeyDown, onKeyUp)
 
-  val renderer = if(is_main_screen) new Renderer(main_screen = this) else new Renderer
+  val renderer = new Renderer
   /*def addRender(render:ScageRender) = renderer.addRender(render)*/
   def render(render_func: => Unit) = renderer.render(render_func)
   def interface(interface_func: => Unit) = renderer.interface(interface_func)
@@ -83,7 +82,10 @@ class ScageScreen(val screen_name:String, val is_main_screen:Boolean = false, pr
     }
     exit
     log.info(screen_name+" was stopped")
-    if(is_main_screen) System.exit(0)
+    if(is_main_screen) {
+      renderer.exitRender
+      System.exit(0)
+    }
   }
   def stop = {
     if(is_main_screen) ScageScreen.allStop

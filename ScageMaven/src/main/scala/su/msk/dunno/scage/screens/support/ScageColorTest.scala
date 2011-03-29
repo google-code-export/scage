@@ -1,10 +1,9 @@
 package su.msk.dunno.scage.screens.support
 
-import org.lwjgl.input.Keyboard
+import org.lwjgl.input.Keyboard._
 import su.msk.dunno.scage.single.support.ScageColors._
 import su.msk.dunno.scage.single.support.{ScageColors, ScageColor}
 import su.msk.dunno.scage.screens.ScageScreen
-import su.msk.dunno.scage.screens.prototypes.ScageRender
 import su.msk.dunno.scage.screens.handlers.Renderer._
 import su.msk.dunno.scage.single.support.messages.ScageMessage._
 
@@ -20,20 +19,18 @@ object ScageColorTest {
 
   var color_num = 1
   val main_screen = new ScageScreen("Color Test", is_main_screen = true, properties="colortest-properties.txt") {
-    /*addRender(new ScageRender {
-      override def */interface/* =*/ {
-        if(color_num >= 0 && color_num < fields.length) {
-          print(fields(color_num).getName, width/2, height/2,
-            if("BLACK".equalsIgnoreCase(fields(color_num).getName)) WHITE else BLACK)
-          try {backgroundColor = (colors(color_num))}
-          catch {
-            case ex:java.lang.Exception =>
-          }
+    interface {
+      if(color_num >= 0 && color_num < fields.length) {
+        print(fields(color_num).getName, width/2, height/2,
+          if("BLACK".equalsIgnoreCase(fields(color_num).getName)) WHITE else BLACK)
+        try {backgroundColor = (colors(color_num))}
+        catch {
+          case ex:java.lang.Exception =>
         }
       }
-    /*})*/
+    }
 
-    keyListener(Keyboard.KEY_LEFT, onKeyDown = {
+    key(KEY_LEFT, onKeyDown = {
       def nextColorNumInc() {
         if(color_num < fields.length - 1) color_num += 1
         else color_num = 0
@@ -42,7 +39,7 @@ object ScageColorTest {
       }
       nextColorNumInc
     })
-    keyListener(Keyboard.KEY_RIGHT, onKeyDown = {
+    key(KEY_RIGHT, onKeyDown = {
       def nextColorNumDec() {
         if(color_num > 0) color_num -= 1
         else color_num = fields.length - 1
@@ -51,7 +48,7 @@ object ScageColorTest {
       }
       nextColorNumDec
     })
-    keyListener(Keyboard.KEY_ESCAPE, onKeyDown = stop)
+    key(KEY_ESCAPE, onKeyDown = stop)
   }
 
   def main(args:Array[String]) = main_screen.run

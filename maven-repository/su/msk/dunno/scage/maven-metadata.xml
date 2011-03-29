@@ -3,7 +3,7 @@
   <groupId>su.msk.dunno</groupId>
   <artifactId>scage</artifactId>
   <versioning>
-    <release>0.4.0-physics</release>
+    <release>0.4.1-key</release>
     <versions>
       <version>0.3.3</version>
       <version>0.3.4</version>
@@ -13,7 +13,8 @@
       <version>0.3.7-act</version>
       <version>0.3.8-act-phys</version>
       <version>0.4.0-physics</version>
+      <version>0.4.1-key</version>
     </versions>
-    <lastUpdated>20110328214328</lastUpdated>
+    <lastUpdated>20110329151431</lastUpdated>
   </versioning>
 </metadata>

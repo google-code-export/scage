@@ -3,11 +3,11 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>su.msk.dunno</groupId>
   <artifactId>scar</artifactId>
-  <version>1.2-act</version>
+  <version>1.3-physics</version>
   <inceptionYear>2008</inceptionYear>
 
-  <name>Scar</name>
-  <description>simple remake of classic arcanoid written in Scala</description>
+  <name>Scaranoid</name>
+  <description>Simple remake of classic arcanoid written in Scala</description>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -76,7 +76,7 @@
     <dependency>
         <groupId>su.msk.dunno</groupId>
         <artifactId>scage</artifactId>
-        <version>0.3.6-act</version>
+        <version>0.4.0-physics</version>
         <scope>compile</scope>
     </dependency>
   </dependencies>

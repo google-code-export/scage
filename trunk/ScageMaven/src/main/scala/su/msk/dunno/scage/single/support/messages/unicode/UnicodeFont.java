@@ -413,38 +413,38 @@ public class UnicodeFont implements org.newdawn.slick.Font {
 	}
 
     private class ColoredString
-    {
-        public HashMap<Integer, Color> color_switches = new HashMap<Integer, Color>();
-        public String colored_text;
-
-        public ColoredString(String text, Color color)
         {
-            colored_text = prepareText(text, color);
-        }
+            public HashMap<Integer, Color> color_switches = new HashMap<Integer, Color>();
+            public String colored_text;
 
-        private String prepareText(String text, Color color)
-        {
-            String new_text = new String(text);
-            int start_bracer = new_text.indexOf('[');
-            while(start_bracer != -1 && start_bracer < new_text.length()-1)
+            public ColoredString(String text, Color color)
             {
-		      char char_after_bracer = new_text.charAt(start_bracer+1);
-              switch(char_after_bracer)
-              {
-                case 'r': color_switches.put(start_bracer, Color.red); new_text = new_text.replaceFirst("\\["+char_after_bracer, ""); break;
-                case 'g': color_switches.put(start_bracer, Color.green); new_text = new_text.replaceFirst("\\["+char_after_bracer, ""); break;
-                case 'b': color_switches.put(start_bracer, Color.blue); new_text = new_text.replaceFirst("\\["+char_after_bracer, ""); break;
-                case 'y': color_switches.put(start_bracer, Color.yellow); new_text = new_text.replaceFirst("\\["+char_after_bracer, ""); break;
-              }
-              int end_bracer = new_text.indexOf(']', start_bracer);
-              color_switches.put(end_bracer, color);
-              new_text = new_text.replaceFirst("]", "");
-			
-		      start_bracer = new_text.indexOf('[');
+                colored_text = prepareText(text, color);
             }
-            return new_text;
+
+            private String prepareText(String text, Color color)
+            {
+                String new_text = new String(text);
+                int start_bracer = new_text.indexOf('[');
+                while(start_bracer != -1 && start_bracer < new_text.length()-1)
+                {
+                  char char_after_bracer = new_text.charAt(start_bracer+1);
+                  switch(char_after_bracer)
+                  {
+                    case 'r': color_switches.put(start_bracer, Color.red); new_text = new_text.replaceFirst("\\["+char_after_bracer, ""); break;
+                    case 'g': color_switches.put(start_bracer, Color.green); new_text = new_text.replaceFirst("\\["+char_after_bracer, ""); break;
+                    case 'b': color_switches.put(start_bracer, Color.blue); new_text = new_text.replaceFirst("\\["+char_after_bracer, ""); break;
+                    case 'y': color_switches.put(start_bracer, Color.yellow); new_text = new_text.replaceFirst("\\["+char_after_bracer, ""); break;
+                  }
+                  int end_bracer = new_text.indexOf(']', start_bracer);
+                  color_switches.put(end_bracer, color);
+                  new_text = new_text.replaceFirst("]", "");
+
+                  start_bracer = new_text.indexOf('[');
+                }
+                return new_text;
+            }
         }
-    }
 
 	/**
 	 * Identical to {@link #drawString(float, float, String, Color, int, int)} but returns a
@@ -509,8 +509,7 @@ public class UnicodeFont implements org.newdawn.slick.Font {
 
 		if (displayList != null) GL.glNewList(displayList.id, SGL.GL_COMPILE_AND_EXECUTE);
 
-        ColoredString cs = new ColoredString(displayListKey, color);
-		char[] chars = cs.colored_text.substring(0, Math.min(cs.colored_text.length(), endIndex)).toCharArray();
+		char[] chars = text.substring(0, endIndex).toCharArray();
 		GlyphVector vector = font.layoutGlyphVector(GlyphPage.renderContext, chars, 0, chars.length, Font.LAYOUT_LEFT_TO_RIGHT);
 
 		int maxWidth = 0, totalHeight = 0, lines = 0;
@@ -521,12 +520,6 @@ public class UnicodeFont implements org.newdawn.slick.Font {
 			int charIndex = vector.getGlyphCharIndex(glyphIndex);
 			if (charIndex < startIndex) continue;
 			if (charIndex > endIndex) break;
-
-            if(cs.color_switches.containsKey(charIndex))
-            {
-                Color new_color = cs.color_switches.get(charIndex);
-                GL.glColor4f(new_color.r, new_color.g, new_color.b, new_color.a);
-            }
 
 			int codePoint = text.codePointAt(charIndex);
 
@@ -1018,4 +1011,3 @@ public class UnicodeFont implements org.newdawn.slick.Font {
 		}
 	}
 }
-

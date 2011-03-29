@@ -14,24 +14,11 @@ extends ScageScreen(screen_name, is_main_screen, properties) {
   world.enableRestingBodyDetection(0.01f, 0.000001f, 0.01f)
   
   private var physicals:List[Physical] = Nil
-  def addBody(physical:Physical) {
-    if(!world.getBodies.contains(physical.body)) {
-      init {
-        world.add(physical.body)
-        physicals = physical :: physicals
-      }
-
-      render {
-        if(physical.isActive) physical.render
-      }
-
-      exit {
-        physicals.foreach(p => world.remove(p.body))
-        physicals = Nil
-      }
-    }
+  private[physics] def addPhysical(physical:Physical) {
+    if(!world.getBodies.contains(physical.body)) world.add(physical.body)
+    if(!physicals.contains(physical)) physicals = physical :: physicals
   }
-  def removeBody(physical:Physical) {
+  private def removeBody(physical:Physical) {
     world.remove(physical.body)
     physicals = physicals.filterNot(_ == physical)
   }
@@ -47,5 +34,10 @@ extends ScageScreen(screen_name, is_main_screen, properties) {
         })
       }
     }
+  }
+
+  exit {
+    physicals.foreach(p => world.remove(p.body))
+    physicals = Nil
   }
 }

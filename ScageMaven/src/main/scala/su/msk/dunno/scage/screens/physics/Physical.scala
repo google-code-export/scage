@@ -7,18 +7,9 @@ import su.msk.dunno.scage.single.support.Vec
 trait Physical {
   val body:Body
 
-  def -> (screen:PhysicsScreen) = {
-    screen.init {
-      screen.addPhysical(this)
-      is_active = true
-      is_touching = false
-    }
-
-    screen.render {
-      if(is_active) render
-    }
-
-    this
+  def prepare {
+    is_active = true
+    is_touching = false
   }
 
   private var is_active = true

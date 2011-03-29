@@ -51,8 +51,8 @@ object Scaranoid extends PhysicsScreen(
     }
   } -> this
 
-  keyListener(KEY_LEFT,  10, onKeyDown = if(!onPause && player_platform.coord.x > 60) player_platform.move(Vec(-3, 0)))
-  keyListener(KEY_RIGHT, 10, onKeyDown = if(!onPause && player_platform.coord.x < 600) player_platform.move(Vec(3, 0)))
+  key(KEY_LEFT,  10, onKeyDown = if(!onPause && player_platform.coord.x > 60) player_platform.move(Vec(-3, 0)))
+  key(KEY_RIGHT, 10, onKeyDown = if(!onPause && player_platform.coord.x < 600) player_platform.move(Vec(3, 0)))
 
   val ball_radius = property("ball.radius", 5)
   val ball_speed = property("ball.speed", 25)
@@ -79,14 +79,14 @@ object Scaranoid extends PhysicsScreen(
     print(count, 5, height-20, WHITE)
     print(fps, 5, height-40, WHITE)
   }
-  keyListener(KEY_Y, onKeyDown = if(onPause) {
+  key(KEY_Y, onKeyDown = if(onPause) {
     init
     pauseOff
   })
-  keyListener(KEY_N, onKeyDown = if(onPause) stop)
+  key(KEY_N, onKeyDown = if(onPause) stop)
 
   new ScageScreen("Help Screen") {
-    keyListener(KEY_SPACE, onKeyDown = stop)
+    key(KEY_SPACE, onKeyDown = stop)
 
     interface {
       print(xml("helpscreen.helpmessage"), 10, height-20, WHITE)

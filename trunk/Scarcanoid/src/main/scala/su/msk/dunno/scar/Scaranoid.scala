@@ -18,8 +18,10 @@ object Scaranoid extends PhysicsScreen(
   properties = "scaranoid-properties.txt"
 ) {
   private var count = 0
+  private var bonus = 1
   init {
     count = 0
+    bonus = 1
   }
 
   this --> new StaticLine(Vec(30,  10),   Vec(30,  470))
@@ -43,20 +45,28 @@ object Scaranoid extends PhysicsScreen(
 
     action {
       if(isTouching) {
-        count += 1
-        if(count >= 39) pause
+        count += bonus
+        bonus += 1
         isActive = false
+
+        if(winCondition) pause
       }
     }
   }
 
-  for(i <- 0 to 12) new TargetBox(Vec(35 + i*45, 460))
-  for(i <- 0 to 12) new TargetBox(Vec(35 + i*45, 415))
-  for(i <- 0 to 12) new TargetBox(Vec(35 + i*45, 370))
+  private var boxes:List[TargetBox] = Nil
+  for(i <- 0 to 12) boxes = new TargetBox(Vec(35 + i*45, 460)) :: boxes
+  for(i <- 0 to 12) boxes = new TargetBox(Vec(35 + i*45, 415)) :: boxes
+  for(i <- 0 to 12) boxes = new TargetBox(Vec(35 + i*45, 370)) :: boxes
+  def winCondition = boxes.forall(!_.isActive)
 
   val player_platform = this --> new StaticBox(Vec(width/2,25), 50, 10) {
     init {
       coord = Vec(width/2,25)
+    }
+
+    action {
+      if(isTouching) bonus = 1
     }
   }
 
@@ -81,12 +91,13 @@ object Scaranoid extends PhysicsScreen(
 
   interface {
     if(onPause) {
-      if(count < 39) print(xml("game.lose"), width/2, height/2, WHITE)
+      if(winCondition) print(xml("game.lose"), width/2, height/2, WHITE)
       else print(xml("game.win"), width/2, height/2, WHITE)
       print(xml("game.playagain"), width/2, height/2-20, WHITE)
     }
     print(count, 5, height-20, WHITE)
-    print(fps, 5, height-40, WHITE)
+    print("x"+bonus, 5, height-40, WHITE)
+    print(fps, 5, height-60, WHITE)
   }
   key(KEY_Y, onKeyDown = if(onPause) {
     init

@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>su.msk.dunno</groupId>
   <artifactId>scar</artifactId>
-  <version>1.4-physics</version>
+  <version>1.4.1-bonuses</version>
   <inceptionYear>2011</inceptionYear>
 
   <name>Scaranoid</name>

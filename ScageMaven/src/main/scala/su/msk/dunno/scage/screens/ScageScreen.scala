@@ -24,7 +24,7 @@ class ScageScreen(val screen_name:String, val is_main_screen:Boolean = false, pr
     else handlers = handler :: handlers*/
 
   private var inits:List[() => Unit] = Nil
-  def init(init_func: => Unit) = if(is_running) inits else inits = (() => init_func) :: inits
+  def init(init_func: => Unit) = if(is_running) init_func else inits = (() => init_func) :: inits
 
   private var actions:List[() => Unit] = Nil
   def action(action_func: => Unit) = actions = (() => action_func) :: actions

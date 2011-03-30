@@ -21,13 +21,9 @@ extends ScageScreen(screen_name, is_main_screen, properties) {
 
     physical
   }
-  private def removeBody(physical:Physical) {
-    world.remove(physical.body)
-    physicals = physicals.filterNot(_ == physical)
-  }
 
   render {
-    physicals.foreach(p => if(p.isActive) p.render)
+    physicals.foreach(p => p.render)
   }
 
   action {
@@ -36,7 +32,10 @@ extends ScageScreen(screen_name, is_main_screen, properties) {
       for(i <- 1 to dt) {
         world.step()
         physicals.foreach(p => {
-          if(!p.isActive) removeBody(p)
+          if(!p.isActive) {
+            world.remove(p.body)
+            physicals = physicals.filterNot(_ == p)
+          }
           else p.isTouching = p.isTouching || p.body.getTouching.size > 0
         })
       }
@@ -44,7 +43,10 @@ extends ScageScreen(screen_name, is_main_screen, properties) {
   }
 
   exit {
-    physicals.foreach(p => world.remove(p.body))
+    physicals.foreach(p => {
+      p.isActive = false
+      world.remove(p.body)
+    })
     physicals = Nil
   }
 }

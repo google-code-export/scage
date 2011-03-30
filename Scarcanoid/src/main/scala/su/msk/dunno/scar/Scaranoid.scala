@@ -27,13 +27,13 @@ object Scaranoid extends PhysicsScreen(
   this --> new StaticLine(Vec(30,  10),   Vec(30,  470))
   this --> new StaticLine(Vec(30,  470),  Vec(630, 470))
   this --> new StaticLine(Vec(630, 470),  Vec(630, 10))
-  this --> new StaticLine(Vec(630, 10),   Vec(30,  10)) {
+  val down_line = this --> new StaticLine(Vec(630, 10),   Vec(30,  10)) {
     init {
       this.prepare
     }
 
     action {
-      if(isTouching) pause
+      if(isTouching(player_ball)) pause
     }
   }
 
@@ -44,12 +44,21 @@ object Scaranoid extends PhysicsScreen(
     }
 
     action {
-      if(isTouching) {
+      if(isActive && isTouching) {
         count += bonus
-        bonus += 1
         isActive = false
 
         if(winCondition) pause
+        else {
+          bonus += 1
+          if(bonus > 1) {
+            physics_screen --> new PlayerBall(coord) {
+              action {
+                if(isActive && isTouching(down_line)) isActive = false
+              }
+            }
+          }
+        }
       }
     }
   }
@@ -75,14 +84,18 @@ object Scaranoid extends PhysicsScreen(
 
   val ball_radius = property("ball.radius", 5)
   val ball_speed = property("ball.speed", 25)
-  this --> new DynaBall(Vec(width/2, height/2), ball_radius) {
+  class PlayerBall(coord:Vec) extends DynaBall(coord, ball_radius) {
+    velocity = new Vec(-ball_speed, -ball_speed)
+
     action {
       if(velocity.norma < ball_speed-1)
         velocity = velocity.n * ball_speed
       else if(math.abs(velocity.y) < 1)
         velocity = Vec(velocity.x, 10*math.signum(velocity.y))
     }
+  }
 
+  val player_ball = this --> new PlayerBall(Vec(width/2, height/2)) {
     init {
       coord = Vec(width/2, height/2)
       velocity = new Vec(-ball_speed, -ball_speed)
@@ -91,8 +104,8 @@ object Scaranoid extends PhysicsScreen(
 
   interface {
     if(onPause) {
-      if(winCondition) print(xml("game.lose"), width/2, height/2, WHITE)
-      else print(xml("game.win"), width/2, height/2, WHITE)
+      if(winCondition) print(xml("game.win"), width/2, height/2, WHITE)
+      else print(xml("game.lose"), width/2, height/2, WHITE)
       print(xml("game.playagain"), width/2, height/2-20, WHITE)
     }
     print(count, 5, height-20, WHITE)

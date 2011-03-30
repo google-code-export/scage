@@ -1,5 +1,5 @@
 app.name = Scaranoid
-app.version = 1.4.1
+app.version = 1.4.2
 
 screen.width = 640
 screen.height = 480

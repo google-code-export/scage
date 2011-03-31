@@ -49,20 +49,7 @@ object Scaranoid extends PhysicsScreen(
         isActive = false
 
         if(winCondition) pause
-        else {
-          bonus += 1
-          if(bonus > 1 && isTouching(player_ball)) {
-            val tmp = physics_screen --> new PlayerBall(coord - Vec(0, ball_radius*4)) {
-              action {
-                if(isActive && isTouching(down_line)) isActive = false
-              }
-
-              exit {
-                isActive = false
-              }
-            }
-          }
-        }
+        else bonus += 1
       }
     }
   }
@@ -117,7 +104,6 @@ object Scaranoid extends PhysicsScreen(
     print(fps, 5, height-60, WHITE)
   }
   key(KEY_Y, onKeyDown = if(onPause) {
-    exit
     init
     pauseOff
   })

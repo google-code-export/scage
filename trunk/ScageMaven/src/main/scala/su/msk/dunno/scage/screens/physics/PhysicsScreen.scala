@@ -42,11 +42,11 @@ extends ScageScreen(screen_name, is_main_screen, properties) {
     }
   }
 
-  exit {
+  /*exit {
     physicals.foreach(p => {
       p.isActive = false
       world.remove(p.body)
     })
     physicals = Nil
-  }
+  }*/
 }

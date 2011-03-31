@@ -11,6 +11,7 @@ trait Physical {
   def prepare {
     is_active = true
     is_touching = false
+    touching_bodies = new BodyList
   }
 
   private var is_active = true

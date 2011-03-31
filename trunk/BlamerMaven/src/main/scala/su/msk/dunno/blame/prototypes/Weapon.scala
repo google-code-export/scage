@@ -136,7 +136,7 @@ class Weapon(val owner:Living) extends PointTracer[FieldObject] (
     _isNoExtenderOrBasePartNear(point, Nil)
   }
 
-  private var conditions:State = new State
+  /*private var conditions:State = new State
   private def checkConditions = {
     conditions.keys.foreach(effect_name => {
       println(effect_name)
@@ -155,7 +155,7 @@ class Weapon(val owner:Living) extends PointTracer[FieldObject] (
       else owner.removeStat(effect_name)
     })
     //println(conditions)
-  }
+  }*/
 
   private lazy val weapon_screen = new ScageScreen("Weapon Screen") {
     private var cursor = new Vec(N_x/2, N_y/2)
@@ -240,12 +240,12 @@ class Weapon(val owner:Living) extends PointTracer[FieldObject] (
               if(state.getState(key).contains("effect")) {
                 owner.changeStat(key, -state.getState(key).getFloat("effect"))
               }
-              if(state.getState(key).contains("conditions")) {
+              /*if(state.getState(key).contains("conditions")) {
                 conditions.remove(key)
-              }
+              }*/
             })
-            checkConditions
-            owner.checkMax
+            /*checkConditions
+            owner.checkMax*/
             if(state.contains("extender")) removeSockets(item.getPoint)
             owner.inventory.addItem(item)
           }
@@ -262,12 +262,12 @@ class Weapon(val owner:Living) extends PointTracer[FieldObject] (
                   if(state.getState(key).contains("effect")) {
                     owner.changeStat(key, state.getState(key).getFloat("effect"))
                   }
-                  if(state.getState(key).contains("conditions")) {
+                  /*if(state.getState(key).contains("conditions")) {
                     conditions.put(key, state.getState(key).getState("conditions"))
                     conditions.put(key, cursor.copy)
-                  }
+                  }*/
                 })
-                checkConditions
+                /*checkConditions*/
                 if(state.contains("extender")) addSockets(item.getPoint)
               }
               case None =>
@@ -283,11 +283,11 @@ class Weapon(val owner:Living) extends PointTracer[FieldObject] (
   }
 
   def showWeapon = weapon_screen.run
-  def shoot(target_point:Vec) = {
+  /*def shoot(target_point:Vec) = {
     val damage = (math.random * owner.floatStat("damage")).toFloat
     val energy_cost = math.max(damage/10f, 1)
     val energy = owner.floatStat("energy")
     if(energy > energy_cost) new State("damage", owner.intStat("damage"))
     else new State
-  }
+  }*/
 }

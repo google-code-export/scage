@@ -64,8 +64,8 @@ extends FieldObject(point) with HaveStats {
   setStat("blood", RED)
 
   def isAlive = intStat("health") > 0
-  def isCurrentPlayer = haveStat("player") && point == Blamer.currentPlayer.getPoint
-
+  def isCurrentPlayer = /*haveStat("player") && point == Blamer.currentPlayer.getPoint*/ id == Blamer.currentPlayer.id
+/*
   def checkMax(effect_name:String, max_effect_name:String) = {
     if(floatStat(effect_name) > floatStat(max_effect_name))
       setStat(effect_name, floatStat(max_effect_name))
@@ -85,5 +85,5 @@ extends FieldObject(point) with HaveStats {
     }
     _process("energy", "max_energy", "energy_increase_rate")
     _process("shield", "max_shield", "shield_increase_rate")
-  }
+  }*/
 }

@@ -46,8 +46,8 @@ class CloseDoor(living:Living) extends Decision(living) {
   }
 }
 
-class Shoot(living:Living, private val target_point:Vec) extends Decision(living) {
-  def this(living:Living) = this(living, Vec(-1,-1))
+class Shoot(living:Living, private val target_point:Vec = Vec(-1,-1)) extends Decision(living) {
+  /*def this(living:Living) = this(living, Vec(-1,-1))*/
 
   def doAction = {
     val target = if(target_point != Vec(-1, -1)) target_point else living.selectTarget(Keyboard.KEY_F)
@@ -58,7 +58,9 @@ class Shoot(living:Living, private val target_point:Vec) extends Decision(living
       val kickback_delta = Vec(if(math.abs(kickback.x) > 0.3) math.signum(kickback.x) else 0,
                                if(math.abs(kickback.y) > 0.3) math.signum(kickback.y) else 0)
       TimeUpdater.addDecision(new Move(living, kickback_delta))
-      FieldTracer.objectsAtPoint(target).foreach(_.changeState(new State("damage", 10)))
+
+      val damage = living.floatStat("damage")
+      FieldTracer.objectsAtPoint(target).foreach(_.changeState(new State("damage", damage)))
       was_executed = true
     }
   }

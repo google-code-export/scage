@@ -22,8 +22,7 @@ object Tracer {
 import Tracer._
 
 trait Trace {
-  private val _id = nextTraceID
-  def id = _id
+  val _id = nextTraceID
   def getCoord:Vec
   def getState:State
   def changeState(state:State):Unit

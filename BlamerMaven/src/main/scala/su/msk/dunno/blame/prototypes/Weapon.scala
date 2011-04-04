@@ -157,6 +157,31 @@ class Weapon(val owner:Living) extends PointTracer[FieldObject] (
     //println(conditions)
   }*/
 
+  private def removeFromWeapon(item:Item, cursor:Vec) {
+    removeTraceFromPoint(item.id, cursor)
+    val state = item.getState
+    for {
+      key <- state.keys
+      if state.getState(key).contains("effect")
+    } owner.changeStat(key, -state.getState(key).getFloat("effect"))
+    if(state.contains("extender")) removeSockets(item.getPoint)
+    owner.inventory.addItem(item)
+  }
+
+  private def addToWeapon(item:Item, cursor:Vec) {
+     owner.inventory.removeItem(item)
+     addPointTrace({
+       item.changeState(new State("point", cursor))
+       item
+     })
+     val state = item.getState
+     for {
+        key <- state.keys
+        if state.getState(key).contains("effect")
+     } owner.changeStat(key, state.getState(key).getFloat("effect"))
+     if(state.contains("extender")) addSockets(item.getPoint)
+  }
+
   private lazy val weapon_screen = new ScageScreen("Weapon Screen") {
     private var cursor = new Vec(N_x/2, N_y/2)
     private var is_show_cursor = false
@@ -233,43 +258,10 @@ class Weapon(val owner:Living) extends PointTracer[FieldObject] (
       val objects_at_cursor = coord_matrix(cursor.ix)(cursor.iy)
       if(objects_at_cursor.exists(item => item.getState.contains("socket"))) {
         objects_at_cursor.find(!_.getState.contains("socket")) match {
-          case Some(item) => {
-            removeTraceFromPoint(item.id, cursor)
-            val state = item.getState
-            state.keys.foreach(key => {
-              if(state.getState(key).contains("effect")) {
-                owner.changeStat(key, -state.getState(key).getFloat("effect"))
-              }
-              /*if(state.getState(key).contains("conditions")) {
-                conditions.remove(key)
-              }*/
-            })
-            /*checkConditions
-            owner.checkMax*/
-            if(state.contains("extender")) removeSockets(item.getPoint)
-            owner.inventory.addItem(item)
-          }
+          case Some(item) => removeFromWeapon(item, cursor)
           case None => {
             owner.inventory.selectItem(xml("weapon.selectmodifier"), fo => fo.getState.contains("modifier")) match {
-              case Some(item) => {
-                owner.inventory.removeItem(item)
-                addPointTrace({
-                  item.changeState(new State("point", cursor))
-                  item
-                })
-                val state = item.getState
-                state.keys.foreach(key => {
-                  if(state.getState(key).contains("effect")) {
-                    owner.changeStat(key, state.getState(key).getFloat("effect"))
-                  }
-                  /*if(state.getState(key).contains("conditions")) {
-                    conditions.put(key, state.getState(key).getState("conditions"))
-                    conditions.put(key, cursor.copy)
-                  }*/
-                })
-                /*checkConditions*/
-                if(state.contains("extender")) addSockets(item.getPoint)
-              }
+              case Some(item) => addToWeapon(item, cursor)
               case None =>
             }
           }

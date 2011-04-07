@@ -50,10 +50,11 @@ trait Physical {
     is_touching = new_is_touching
     if(is_touching) {
       val new_touching_bodies =  body.getTouching
-      for(i <- 0 until new_touching_bodies.size) {
-        val body = new_touching_bodies.get(i)
-        if(!touching_bodies.contains(body)) touching_bodies.add(body)
-      }
+      for {
+        i <- 0 until new_touching_bodies.size
+        body = new_touching_bodies.get(i)
+        if !touching_bodies.contains(body)
+      } touching_bodies.add(body)
     }
     else touching_bodies.clear
   }

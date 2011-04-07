@@ -1,11 +1,10 @@
 package su.msk.dunno.scage.screens.physics
 
 import su.msk.dunno.scage.screens.ScageScreen
-import _root_.net.phys2d.raw.{Body, World}
-import su.msk.dunno.scage.single.support.Vec
+import net.phys2d.raw.World
 import su.msk.dunno.scage.single.support.ScageProperties._
 import net.phys2d.math.Vector2f
-import _root_.net.phys2d.raw.strategies.QuadSpaceStrategy
+import net.phys2d.raw.strategies.QuadSpaceStrategy
 
 class PhysicsScreen(screen_name:String, is_main_screen:Boolean = false, properties:String = "")
 extends ScageScreen(screen_name, is_main_screen, properties) {

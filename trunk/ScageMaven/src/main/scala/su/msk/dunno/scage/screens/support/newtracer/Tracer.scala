@@ -3,6 +3,7 @@ package su.msk.dunno.scage.screens.support.newtracer
 import org.apache.log4j.Logger
 import su.msk.dunno.scage.single.support.Vec
 import collection.mutable.HashMap
+import su.msk.dunno.scage.single.support.ScageProperties.property
 
 object Tracer {
   private val log = Logger.getLogger(this.getClass);
@@ -20,7 +21,7 @@ trait Trace {
   val id = nextTraceID
   def getPoint:Vec
   def getState:State
-  def changeState(changer:Trace, state:State):Unit
+  def changeState(changer:Trace, state:State)
 }
 
 class Tracer[T <: Trace](val field_from_x:Int = property("field.from.x", 0), 
@@ -87,19 +88,20 @@ class Tracer[T <: Trace](val field_from_x:Int = property("field.from.x", 0),
   def neighbours(trace_id:Int, range:Range, condition:(T) => Boolean):List[T] = {
     if(traces_in_point.contains(trace_id)) {
       val p = traces_in_point(trace_id)
-      for {
+      (for {
         i <- range
         j <- range
         near_point = checkPointEdges(p + Vec(i, j))
         trace <- point_matrix(near_point.ix)(near_point.iy)
         if condition(trace) && trace.id != trace_id
-      } yield trace
+      } yield trace).toList
     }
     else Nil
   }
   
   def updateLocation(trace_id:Int):Boolean = {
-    if(are_solid_edges && traces_in_point.contains(trace_id) && !isPointOnArea(traces_in_point(trace_id))) false
+    if(are_solid_edges &&
+       traces_in_point.contains(trace_id) && !isPointOnArea(traces_in_point(trace_id))) false
     else {
       removeTrace(trace_id) match {
         case Some(trace) => {

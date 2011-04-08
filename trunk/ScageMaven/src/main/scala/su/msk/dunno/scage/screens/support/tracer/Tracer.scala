@@ -8,16 +8,21 @@ object Tracer {
   private val log = Logger.getLogger(this.getClass);
 
   private var next_trace_id = 0
-  def nextTraceID:Int = {
-    next_trace_id += 1
-    next_trace_id
+  /*private[tracer] */def nextTraceID:Int = {
+    try {
+      next_trace_id
+    }
+    finally {
+      next_trace_id += 1
+    }
+
   }
 }
 
 import Tracer._
 
 trait Trace {
-  val _id = nextTraceID
+  val id = nextTraceID
   def getCoord:Vec
   def getState:State
   def changeState(state:State):Unit
@@ -37,9 +42,9 @@ class Tracer[T <: Trace](val field_from_x:Int = property("field.from.x", 0),
   val field_width = field_to_x - field_from_x
   val field_height = field_to_y - field_from_y
 
-  private var coord_matrix = Array.ofDim[List[T]](N_x, N_y)
-  for(i <- 0 until N_x; j <- 0 until N_y) {coord_matrix(i)(j) = Nil}
-  private val traces_in_coord = new HashMap[Int, Vec]()
+  protected var coord_matrix = Array.ofDim[List[T]](N_x, N_y)
+  (0 to N_x-1).foreachpair(0 to N_y-1) ((i, j) => coord_matrix(i)(j) = Nil)
+  //def matrix = coord_matrix
 
   val h_x = field_width/N_x
 	val h_y = field_height/N_y
@@ -57,16 +62,7 @@ class Tracer[T <: Trace](val field_from_x:Int = property("field.from.x", 0),
   def removeTrace(trace_id:Int, coord:Vec) = {
     removeTraceFromPoint(trace_id, point(coord))
   }
-  
-  def addTraceToPoint(trace:T) {
-    val point = t.getPoint
-    if(isPointOnArea(point)) {
-      coord_matrix(point.ix)(point.iy) = t :: coord_matrix(point.ix)(point.iy)
-      traces_in_coord += (t.id -> point)
-      log.debug("added new trace #"+t.id+" in point ("+t.getPoint+")")
-    }
-  }
-  def removeTraceFromPoint(trace_id:Int, point:Vec) {
+  def removeTraceFromPoint(trace_id:Int, point:Vec) = {
     coord_matrix(point.ix)(point.iy) = coord_matrix(point.ix)(point.iy).filterNot(_.id == trace_id)
   }
 

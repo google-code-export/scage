@@ -51,6 +51,8 @@ case class Vec(private var _x:Float, private var _y:Float) {
   /*private[scage] */def is(v:Vec) = {
     _x = v.x
     _y = v.y
+
+    this
   }
 
   def is(v:(Float, Float)) = {

@@ -48,7 +48,8 @@ class Tracer[T <: Trace](val field_from_x:Int = property("field.from.x", 0),
       else if(c < 0) checkC(c + dist, dist)
       else c
     }
-    Vec(checkC(point.x, N_x), checkC(point.y, N_y))
+    if(are_solid_edges) point
+    else Vec(checkC(point.x, N_x), checkC(point.y, N_y))
   }
   
   def point(v:Vec):Vec = Vec(((v.x - field_from_x)/field_width*N_x).toInt,
@@ -63,10 +64,11 @@ class Tracer[T <: Trace](val field_from_x:Int = property("field.from.x", 0),
     val p = t.getPoint
     if(isPointOnArea(p)) {
       point_matrix(p.ix)(p.iy) = t :: point_matrix(p.ix)(p.iy)
-      traces_in_point += (t.id -> p)
-      log.debug("added new trace #"+t.id+" in point ("+t.getPoint+")")
+      traces_in_point += (t.id -> t.getPoint.copy)
+      log.debug("added new trace #"+t.id+" in coord ("+t.getPoint+")")
     }
-    else log.warn("failed to add trace: point ("+t.getPoint+") is out of area")
+    else log.warn("failed to add trace: coord ("+t.getPoint+") is out of area")
+
     t.id
   }
   def removeTrace(trace_id:Int) = {
@@ -92,6 +94,7 @@ class Tracer[T <: Trace](val field_from_x:Int = property("field.from.x", 0),
         i <- range
         j <- range
         near_point = checkPointEdges(p + Vec(i, j))
+        if isPointOnArea(near_point)
         trace <- point_matrix(near_point.ix)(near_point.iy)
         if condition(trace) && trace.id != trace_id
       } yield trace).toList
@@ -99,17 +102,25 @@ class Tracer[T <: Trace](val field_from_x:Int = property("field.from.x", 0),
     else Nil
   }
   
-  def updateLocation(trace_id:Int):Boolean = {
-    if(are_solid_edges &&
-       traces_in_point.contains(trace_id) && !isPointOnArea(traces_in_point(trace_id))) false
-    else {
-      removeTrace(trace_id) match {
+  def updateLocation(trace_id:Int, _new_point:Vec) = {
+    if(traces_in_point.contains(trace_id)) {
+      val old_point = traces_in_point(trace_id)
+      point_matrix(old_point.ix)(old_point.iy).find(_.id == trace_id) match {
         case Some(trace) => {
-      	  addTrace(trace)
-      	  true
+          val new_point = checkPointEdges(_new_point)
+          if(isPointOnArea(new_point) && old_point != new_point) {
+
+            point_matrix(old_point.ix)(old_point.iy).filterNot(_.id == trace_id)
+            point_matrix(new_point.ix)(new_point.iy) = trace :: point_matrix(new_point.ix)(new_point.iy)
+            traces_in_point(trace_id) is new_point
+
+            new_point
+          }
+          else old_point
         }
-        case None => false
+        case None => old_point
       }
     }
+    else Vec(-1,-1)
   }
 }

@@ -24,8 +24,8 @@ case class Vec(private var _x:Float, private var _y:Float) {
   def **(v:Vec) = Vec(x*v.x, y*v.y)
 
   def /(k:Float) = if(k == 0) Vec(x*1000, y*1000) else Vec(x/k, y/k)
-  def /(k:Double):Float = this/k.toFloat
-  def /(k:Int):Float = this/k.toFloat
+  def /(k:Double):Float = this / k.toFloat
+  def /(k:Int):Float = this / k.toFloat
 
   def norma2():Float = x*x + y*y
   def norma() = math.sqrt(norma2).toFloat
@@ -48,14 +48,14 @@ case class Vec(private var _x:Float, private var _y:Float) {
 
   def ::(o:Vec) = o :: List[Vec](this)
 
-  /*private[scage] */def is(v:Vec) = {
+  private[scage] def is(v:Vec) = {
     _x = v.x
     _y = v.y
 
     this
   }
 
-  def is(v:(Float, Float)) = {
+  private[scage] def is(v:(Float, Float)) = {
     _x = v._1
     _y = v._2
   }

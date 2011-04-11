@@ -2,7 +2,6 @@ package su.msk.dunno.scage.screens.support.newtracer
 
 import org.apache.log4j.Logger
 import su.msk.dunno.scage.single.support.Vec
-import collection.mutable.HashMap
 import su.msk.dunno.scage.single.support.ScageProperties.property
 
 object Tracer {
@@ -19,7 +18,11 @@ import Tracer._
 
 trait Trace {
   val id = nextTraceID
-  def getPoint:Vec
+
+  private val _point:Vec = Vec(-1,-1)
+  private[newtracer] def point_=(new_point:Vec) {_point is new_point}
+  def point:Vec = _point
+
   def getState:State
   def changeState(changer:Trace, state:State)
 }
@@ -59,68 +62,42 @@ class Tracer[T <: Trace](val field_from_x:Int = property("field.from.x", 0),
   
   private var point_matrix = Array.ofDim[List[T]](N_x, N_y)
   for(i <- 0 until N_x; j <- 0 until N_y) {point_matrix(i)(j) = Nil}
-  private val traces_in_point = new HashMap[Int, Vec]()
-  def addTrace(t:T) = {
-    val p = t.getPoint
-    if(isPointOnArea(p)) {
-      point_matrix(p.ix)(p.iy) = t :: point_matrix(p.ix)(p.iy)
-      traces_in_point += (t.id -> t.getPoint.copy)
-      log.debug("added new trace #"+t.id+" in coord ("+t.getPoint+")")
+  def addTrace(point:Vec, trace:T) = {
+    if(isPointOnArea(point)) {
+      trace.point = point
+      point_matrix(point.ix)(point.iy) = trace :: point_matrix(point.ix)(point.iy)
+      log.debug("added new trace #"+trace.id+" in point ("+trace.point+")")
     }
-    else log.warn("failed to add trace: coord ("+t.getPoint+") is out of area")
+    else log.warn("failed to add trace: point ("+trace.point+") is out of area")
 
-    t.id
+    trace
   }
-  def removeTrace(trace_id:Int) = {
-    traces_in_point.find(_._1 == trace_id) match {
-      case Some((id, p)) => {
-        point_matrix(p.ix)(p.iy).find(_.id == trace_id) match {
-          case Some(trace) => {
-            point_matrix(p.ix)(p.iy).filterNot(_.id == trace_id)
-            traces_in_point -= trace_id
-            Some(trace)
-          }
-          case None => None
-        }  
-      }
-      case None => None
-    }
+  def removeTrace(trace:T) {
+    point_matrix(trace.point.ix)(trace.point.iy).filterNot(_.id == trace.id)
   }
   
-  def neighbours(trace_id:Int, range:Range, condition:(T) => Boolean):List[T] = {
-    if(traces_in_point.contains(trace_id)) {
-      val p = traces_in_point(trace_id)
-      (for {
-        i <- range
-        j <- range
-        near_point = checkPointEdges(p + Vec(i, j))
-        if isPointOnArea(near_point)
-        trace <- point_matrix(near_point.ix)(near_point.iy)
-        if condition(trace) && trace.id != trace_id
-      } yield trace).toList
-    }
-    else Nil
+  def neighbours(target_trace:T, range:Range, condition:(T) => Boolean):List[T] = {
+    (for {
+      i <- range
+      j <- range
+      near_point = checkPointEdges(target_trace.point + Vec(i, j))
+      if isPointOnArea(near_point)
+      trace <- point_matrix(near_point.ix)(near_point.iy)
+      if condition(trace) && trace.id != target_trace.id
+    } yield trace).toList
   }
   
-  def updateLocation(trace_id:Int, _new_point:Vec) = {
-    if(traces_in_point.contains(trace_id)) {
-      val old_point = traces_in_point(trace_id)
-      point_matrix(old_point.ix)(old_point.iy).find(_.id == trace_id) match {
-        case Some(trace) => {
-          val new_point = checkPointEdges(_new_point)
-          if(isPointOnArea(new_point) && old_point != new_point) {
-
-            point_matrix(old_point.ix)(old_point.iy).filterNot(_.id == trace_id)
-            point_matrix(new_point.ix)(new_point.iy) = trace :: point_matrix(new_point.ix)(new_point.iy)
-            traces_in_point(trace_id) is new_point
-
-            new_point
-          }
-          else old_point
-        }
-        case None => old_point
-      }
+  def updateLocation(trace:T, _new_point:Vec) {
+    val old_point = trace.point
+    val new_point = checkPointEdges(_new_point)
+    if(isPointOnArea(new_point) && old_point != new_point) {
+      point_matrix(old_point.ix)(old_point.iy) = point_matrix(old_point.ix)(old_point.iy).filterNot(_.id == trace.id)
+      point_matrix(new_point.ix)(new_point.iy) = trace :: point_matrix(new_point.ix)(new_point.iy)
+      trace.point = new_point
     }
-    else Vec(-1,-1)
+  }
+
+  def move(trace:T, delta:Vec) {
+    updateLocation(trace, trace.point + delta)
   }
 }

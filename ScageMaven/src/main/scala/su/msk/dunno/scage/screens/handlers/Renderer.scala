@@ -21,7 +21,7 @@ object Renderer {
 
   private var msek = System.currentTimeMillis
   private var frames:Int = 0
-  private def countFPS = {
+  private def countFPS() {
     frames += 1
     if(System.currentTimeMillis - msek >= 1000) {
       _fps = frames
@@ -30,13 +30,21 @@ object Renderer {
     }
   }
   
-  def update = {
+  def update() {
     Display.sync(framerate)
-    Display.update
-    countFPS
+    Display.update()
+    countFPS()
   }
 
-  lazy val initgl = {
+  private var next_displaylist_key = 10000
+  def nextDisplayListKey = {
+    val next_key = next_displaylist_key
+    next_displaylist_key += 1
+    next_key
+  }
+  private val CIRCLE = nextDisplayListKey
+
+  /*lazy val initgl = */{
     Display.setDisplayMode(new DisplayMode(width, height));
     Display.setVSyncEnabled(true);
     Display.create();
@@ -64,7 +72,7 @@ object Renderer {
         val splash_texture = getTexture(screen_splash_path)
         drawDisplayList(createDisplayList(splash_texture, width, height, 0, 0, splash_texture.getImageWidth, splash_texture.getImageHeight), Vec(width/2, height/2))
     }
-    update
+    update()
     Thread.sleep(1000)
 
     GL11.glNewList(CIRCLE, GL11.GL_COMPILE);
@@ -77,30 +85,22 @@ object Renderer {
       GL11.glEnd();
     GL11.glEndList();
   }
-
-  private var next_displaylist_key = 10000
-  val CIRCLE = nextDisplayListKey           
-  /*private */def nextDisplayListKey() = {
-    val next_key = next_displaylist_key
-    next_displaylist_key += 1
-    next_key
-  }
   
   def backgroundColor = {
     val background_color = BufferUtils.createFloatBuffer(16)    
     GL11.glGetFloat(GL11.GL_COLOR_CLEAR_VALUE, background_color)
     new ScageColor(background_color.get(0), background_color.get(1), background_color.get(2))
   }
-  def backgroundColor_=(c:ScageColor) = GL11.glClearColor(c.red, c.green, c.blue, 0)
+  def backgroundColor_=(c:ScageColor) {GL11.glClearColor(c.red, c.green, c.blue, 0)}
   
   def color = {
     val _color = BufferUtils.createFloatBuffer(16)
     GL11.glGetFloat(GL11.GL_CURRENT_COLOR, _color)
     new ScageColor(_color.get(0), _color.get(1), _color.get(2))
   }
-  def color_=(c:ScageColor) = GL11.glColor3f(c.red, c.green, c.blue)
+  def color_=(c:ScageColor) {GL11.glColor3f(c.red, c.green, c.blue)}
 
-  def drawLine(v1:Vec, v2:Vec) = {
+  def drawLine(v1:Vec, v2:Vec) {
     GL11.glDisable(GL11.GL_TEXTURE_2D);
     	GL11.glBegin(GL11.GL_LINES);
     		GL11.glVertex2f(v1.x, v1.y);
@@ -109,7 +109,7 @@ object Renderer {
     GL11.glEnable(GL11.GL_TEXTURE_2D);
   }
 
-  def drawCircle(coord:Vec, radius:Float) = {
+  def drawCircle(coord:Vec, radius:Float) {
     GL11.glDisable(GL11.GL_TEXTURE_2D);
       GL11.glPushMatrix();
       GL11.glTranslatef(coord.x, coord.y, 0.0f);
@@ -119,8 +119,19 @@ object Renderer {
     GL11.glEnable(GL11.GL_TEXTURE_2D);
   }
 
-  def drawDisplayList(list_code:Int, coord:Vec):Unit = drawDisplayList(list_code:Int, coord:Vec, ScageColors.WHITE)
-  def drawDisplayList(list_code:Int, coord:Vec, _color:ScageColor):Unit = {
+  def drawRect(coord:Vec, width:Float, height:Float) {
+    GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glBegin(GL11.GL_LINE_LOOP);
+        GL11.glVertex2f(coord.x - width/2, coord.y - height/2)
+        GL11.glVertex2f(coord.x - width/2, coord.y + height/2)
+        GL11.glVertex2f(coord.x + width/2, coord.y + height/2)
+        GL11.glVertex2f(coord.x + width/2, coord.y - height/2)
+      GL11.glEnd();
+    GL11.glEnable(GL11.GL_TEXTURE_2D);
+  }
+
+  def drawDisplayList(list_code:Int, coord:Vec) {drawDisplayList(list_code:Int, coord:Vec, ScageColors.WHITE)}
+  def drawDisplayList(list_code:Int, coord:Vec, _color:ScageColor) {
     GL11.glPushMatrix();
 	  GL11.glTranslatef(coord.x, coord.y, 0.0f);
 	  Renderer.color = _color
@@ -135,7 +146,7 @@ object Renderer {
   }
 
   def createDisplayList(texture:Texture, game_width:Float, game_height:Float, start_x:Float, start_y:Float, real_width:Float, real_height:Float):Int = {
-	  val list_name = nextDisplayListKey()
+	  val list_name = nextDisplayListKey
 
 		val t_width:Float = texture.getTextureWidth
 		val t_height:Float = texture.getTextureHeight
@@ -180,7 +191,7 @@ object Renderer {
 }
 
 class Renderer {
-  def this(main_screen:ScageScreen) = {
+  /*def this(main_screen:ScageScreen) = {
     this()
     /*main_screen.addAction(new ScageAction {*/
       /*override def */main_screen.exit/* =*/ {
@@ -193,57 +204,57 @@ class Renderer {
         Display.destroy
       }
     /*})*/
-  }
-  Renderer.initgl
+  }*/
+  /*Renderer.initgl*/
 
   private var _scale:Float = 1.0f
   def scale = _scale
-  def scale_= (value:Float) = _scale = value
+  def scale_= (value:Float) {_scale = value}
 
   private var window_center = () => Vec(Renderer.width/2, Renderer.height/2)
   def windowCenter = window_center()
-  def windowCenter_= (coord: => Vec) = window_center = () => coord
+  def windowCenter_= (coord: => Vec) {window_center = () => coord}
   
   private var central_coord = window_center
   def center = central_coord()
-  def center_= (coord: => Vec) = central_coord = () => coord
+  def center_= (coord: => Vec) {central_coord = () => coord}
   
   /*private var render_list:List[ScageRender] = Nil
   def addRender(render:ScageRender) = render_list = render :: render_list*/
 
   private var render_list:List[() => Unit] = List[() => Unit]()
-  def render(render_func: => Unit) = {render_list = render_list ::: List(() => render_func)}
+  def render(render_func: => Unit) {render_list = render_list ::: List(() => render_func)}
 
   private var interface_list:List[() => Unit] = List[() => Unit]()
-  def interface(render_func: => Unit) = {
+  def interface(render_func: => Unit) {
     interface_list = (() => render_func) :: interface_list
   }
 
-  def render = {
+  def render() {
     if(Display.isCloseRequested()) ScageScreen.allStop
     else {
       GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
       GL11.glLoadIdentity();
-      GL11.glPushMatrix
+      GL11.glPushMatrix()
         val coord = window_center() - central_coord()*_scale
         GL11.glTranslatef(coord.x , coord.y, 0.0f)
         GL11.glScalef(_scale, _scale, 1)
         /*render_list.foreach(renderable => renderable.render)*/ render_list.foreach(render_func => render_func())
-      GL11.glPopMatrix
+      GL11.glPopMatrix()
 
       /*render_list.foreach(renderable => renderable.interface)*/ interface_list.foreach(interface_func => interface_func())
 
-      Renderer.update
+      Renderer.update()
     }
   }
 
-  def exitRender {
+  def exitRender() {
     Renderer.backgroundColor = ScageColors.BLACK
     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
     print(xmlOrDefault("renderer.exiting", "Exiting..."), 20, Renderer.height-25, ScageColors.GREEN)
-    Renderer.update
+    Renderer.update()
 
     Thread.sleep(1000)
-    Display.destroy
+    Display.destroy()
   }
 }

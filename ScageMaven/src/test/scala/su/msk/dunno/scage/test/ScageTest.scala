@@ -53,7 +53,7 @@ class ScageTest extends TestCase("app") {
         }
         render {
           Renderer.color = BLACK
-          Renderer.drawCircle(tracer.pointCenter(trace.point), 10)
+          Renderer.drawRect(tracer.pointCenter(trace.point), 50, 50)
         }
       }.run
       assertTrue(true)

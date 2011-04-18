@@ -6,4 +6,4 @@ strings.lang = ru
 screen.width=640
 screen.height=480
 
-field.solid_edges = true
+field.solid_edges = off

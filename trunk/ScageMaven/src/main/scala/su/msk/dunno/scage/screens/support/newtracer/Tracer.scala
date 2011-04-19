@@ -53,11 +53,8 @@ class Tracer[T <: Trace](val field_from_x:Int = property("field.from.x", 0),
     if(are_solid_edges) point
     else Vec(checkC(point.x, N_x), checkC(point.y, N_y))
   }
-  
-  def point(v:Vec):Vec = Vec(((v.x - field_from_x)/field_width*N_x).toInt,
-                             ((v.y - field_from_y)/field_height*N_y).toInt)
+
   def pointCenter(p:Vec):Vec = Vec(field_from_x + p.x*h_x + h_x/2, field_from_y + p.y*h_y + h_y/2)
-  
   
   private var point_matrix = Array.ofDim[List[T]](N_x, N_y)
   for(i <- 0 until N_x; j <- 0 until N_y) {point_matrix(i)(j) = Nil}
@@ -79,14 +76,14 @@ class Tracer[T <: Trace](val field_from_x:Int = property("field.from.x", 0),
     traces_in_point -= trace.id
   }
   
-  def neighbours(target_trace:T, range:Range, condition:(T) => Boolean):List[T] = {
+  def traces(point:Vec, range:Range, condition:(T) => Boolean = (trace) => true):List[T] = {
     (for {
       i <- range
       j <- range
-      near_point = checkPointEdges(target_trace.point + Vec(i, j))
+      near_point = checkPointEdges(point + Vec(i, j))
       if isPointOnArea(near_point)
       trace <- point_matrix(near_point.ix)(near_point.iy)
-      if condition(trace) && trace.id != target_trace.id
+      if condition(trace)
     } yield trace).toList
   }
   

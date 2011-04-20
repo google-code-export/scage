@@ -1,15 +1,15 @@
 package su.msk.dunno.scage.test;
 
-import junit.framework._
 import su.msk.dunno.scage.single.support.ScageColors._
 import su.msk.dunno.scage.screens.handlers.Renderer._
 import org.lwjgl.input.Keyboard._
 import su.msk.dunno.scage.single.support.messages.ScageMessage._
 import su.msk.dunno.scage.screens.ScageScreen
-
-import Assert._
 import su.msk.dunno.scage.single.support.Vec
 import su.msk.dunno.scage.screens.support.newtracer._
+
+import junit.framework._
+import Assert._
 
 object ScageTest {
     def suite: Test = {

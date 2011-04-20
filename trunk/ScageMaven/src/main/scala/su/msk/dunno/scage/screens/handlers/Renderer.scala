@@ -42,49 +42,48 @@ object Renderer {
     next_displaylist_key += 1
     next_key
   }
-  private val CIRCLE = nextDisplayListKey
 
-  /*lazy val initgl = */{
-    Display.setDisplayMode(new DisplayMode(width, height));
-    Display.setVSyncEnabled(true);
-    Display.create();
-    Display.setTitle(property("app.name", "Scage")+" - "+property("app.version", "Release"));
+  Display.setDisplayMode(new DisplayMode(width, height));
+  Display.setVSyncEnabled(true);
+  Display.create();
+  Display.setTitle(property("app.name", "Scage")+" - "+property("app.version", "Release"));
 
-    GL11.glEnable(GL11.GL_TEXTURE_2D);
-    GL11.glClearColor(0,0,0,0);
-    GL11.glDisable(GL11.GL_DEPTH_TEST);
+  GL11.glEnable(GL11.GL_TEXTURE_2D);
+  GL11.glClearColor(0,0,0,0);
+  GL11.glDisable(GL11.GL_DEPTH_TEST);
 
-    GL11.glEnable(GL11.GL_BLEND);
-    GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+  GL11.glEnable(GL11.GL_BLEND);
+  GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-    GL11.glMatrixMode(GL11.GL_PROJECTION); // Select The Projection Matrix
-    GL11.glLoadIdentity(); // Reset The Projection Matrix
-    GLU.gluOrtho2D(0, width, 0, height);
-    //GL11.glOrtho(0, width, height, 0, 1, -1);
+  GL11.glMatrixMode(GL11.GL_PROJECTION); // Select The Projection Matrix
+  GL11.glLoadIdentity(); // Reset The Projection Matrix
+  GLU.gluOrtho2D(0, width, 0, height);
+  //GL11.glOrtho(0, width, height, 0, 1, -1);
 
-    GL11.glMatrixMode(GL11.GL_MODELVIEW);
-    GL11.glLoadIdentity();
+  GL11.glMatrixMode(GL11.GL_MODELVIEW);
+  GL11.glLoadIdentity();
 
-    print(xmlOrDefault("renderer.loading", "Loading..."), 20, Renderer.height-25, ScageColors.GREEN)
-    stringProperty("screen.splash") match {
-      case "" =>
-      case screen_splash_path:String =>
-        val splash_texture = getTexture(screen_splash_path)
-        drawDisplayList(createDisplayList(splash_texture, width, height, 0, 0, splash_texture.getImageWidth, splash_texture.getImageHeight), Vec(width/2, height/2))
-    }
-    update()
-    Thread.sleep(1000)
-
-    GL11.glNewList(CIRCLE, GL11.GL_COMPILE);
-      GL11.glBegin(GL11.GL_LINE_LOOP);
-        for(i <- 0 to 100) {
-          val cosine = math.cos(i*2*math.Pi/100).toFloat;
-          val sine = math.sin(i*2*math.Pi/100).toFloat;
-          GL11.glVertex2f(cosine, sine);
-        }
-      GL11.glEnd();
-    GL11.glEndList();
+  print(xmlOrDefault("renderer.loading", "Loading..."), 20, Renderer.height-25, ScageColors.GREEN)
+  stringProperty("screen.splash") match {
+    case "" =>
+    case screen_splash_path:String =>
+      val splash_texture = getTexture(screen_splash_path)
+      drawDisplayList(createDisplayList(splash_texture, width, height, 0, 0, splash_texture.getImageWidth, splash_texture.getImageHeight), Vec(width/2, height/2))
   }
+  update()
+  Thread.sleep(1000)
+
+  private val CIRCLE = nextDisplayListKey
+  GL11.glNewList(CIRCLE, GL11.GL_COMPILE);
+    GL11.glBegin(GL11.GL_LINE_LOOP);
+      for(i <- 0 to 100) {
+        val cosine = math.cos(i*2*math.Pi/100).toFloat;
+        val sine = math.sin(i*2*math.Pi/100).toFloat;
+        GL11.glVertex2f(cosine, sine);
+      }
+    GL11.glEnd();
+  GL11.glEndList();
+
   
   def backgroundColor = {
     val background_color = BufferUtils.createFloatBuffer(16)    
@@ -175,6 +174,7 @@ object Renderer {
     createDisplayList(getTexture(filename), game_width, game_height, start_x, start_y, real_width, real_height)
   }
 
+  // TODO : rewrite this using for-statement
   def createAnimation(filename:String, game_width:Float, game_height:Float, real_width:Float, real_height:Float, num_frames:Int):Array[Int] = {
     val texture = Renderer.getTexture(filename)
     val columns:Int = (texture.getImageWidth/real_width).toInt

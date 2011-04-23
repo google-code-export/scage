@@ -30,9 +30,9 @@ class ScageTest extends TestCase("app") {
     /**
      * Rigourous Tests :-)
      */
-    def testOK() = {
+    def testOK() {
       new ScageScreen("Hello World", is_main_screen = true, properties = "scagetest-properties.txt") {
-        val tracer = new CoordTracer[CoordTrace](0,640,0,480,32,24)
+        val tracer = new CoordTracer[CoordTrace]
 
         val trace = tracer.addTrace(Vec(width/2, height/2), new CoordTrace() {
           def getState = new State
@@ -62,8 +62,8 @@ class ScageTest extends TestCase("app") {
           print(trace.point,        width/2, height/2-20, BLACK)
         }
         render {
-          color = BLACK
-          drawCircle(trace.coord, 10)
+          color = RED
+          drawFilledCircle(trace.coord, 10)
 
           color = GREEN
           drawCircle(another_trace.coord, 10)

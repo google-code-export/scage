@@ -73,18 +73,6 @@ object Renderer {
   update()
   Thread.sleep(1000)
 
-  private val CIRCLE = nextDisplayListKey
-  GL11.glNewList(CIRCLE, GL11.GL_COMPILE);
-    GL11.glBegin(GL11.GL_LINE_LOOP);
-      for(i <- 0 to 100) {
-        val cosine = math.cos(i*2*math.Pi/100).toFloat;
-        val sine = math.sin(i*2*math.Pi/100).toFloat;
-        GL11.glVertex2f(cosine, sine);
-      }
-    GL11.glEnd();
-  GL11.glEndList();
-
-  
   def backgroundColor = {
     val background_color = BufferUtils.createFloatBuffer(16)    
     GL11.glGetFloat(GL11.GL_COLOR_CLEAR_VALUE, background_color)
@@ -99,15 +87,23 @@ object Renderer {
   }
   def color_=(c:ScageColor) {GL11.glColor3f(c.red, c.green, c.blue)}
 
-  def drawLine(v1:Vec, v2:Vec) {
-    GL11.glDisable(GL11.GL_TEXTURE_2D);
-    	GL11.glBegin(GL11.GL_LINES);
-    		GL11.glVertex2f(v1.x, v1.y);
-    		GL11.glVertex2f(v2.x, v2.y);
-    	GL11.glEnd();
-    GL11.glEnable(GL11.GL_TEXTURE_2D);
+  def displayList(func: => Unit) = {
+    val list_code = nextDisplayListKey
+    GL11.glNewList(list_code, GL11.GL_COMPILE);
+    func
+    GL11.glEndList();
+    list_code
   }
 
+  private val CIRCLE = displayList {
+    GL11.glBegin(GL11.GL_LINE_LOOP);
+      for(i <- 0 to 100) {
+        val cosine = math.cos(i*2*math.Pi/100).toFloat;
+        val sine = math.sin(i*2*math.Pi/100).toFloat;
+        GL11.glVertex2f(cosine, sine);
+      }
+    GL11.glEnd();
+  }
   def drawCircle(coord:Vec, radius:Float) {
     GL11.glDisable(GL11.GL_TEXTURE_2D);
       GL11.glPushMatrix();
@@ -118,9 +114,48 @@ object Renderer {
     GL11.glEnable(GL11.GL_TEXTURE_2D);
   }
 
+  private val FILLED_CIRCLE = displayList {
+    GL11.glBegin(GL11.GL_TRIANGLE_FAN);
+      for(i <- 0 to 100) {
+        val cosine = math.cos(i*2*math.Pi/100).toFloat;
+        val sine = math.sin(i*2*math.Pi/100).toFloat;
+        GL11.glVertex2f(cosine, sine);
+      }
+    GL11.glEnd();
+  }
+  def drawFilledCircle(coord:Vec, radius:Float) {
+    GL11.glDisable(GL11.GL_TEXTURE_2D);
+      GL11.glPushMatrix();
+      GL11.glTranslatef(coord.x, coord.y, 0.0f);
+      GL11.glScalef(radius,radius,1)
+     	  GL11.glCallList(FILLED_CIRCLE);
+      GL11.glPopMatrix()
+    GL11.glEnable(GL11.GL_TEXTURE_2D);
+  }
+
+  def drawLine(v1:Vec, v2:Vec) {
+    GL11.glDisable(GL11.GL_TEXTURE_2D);
+    	GL11.glBegin(GL11.GL_LINES);
+    		GL11.glVertex2f(v1.x, v1.y);
+    		GL11.glVertex2f(v2.x, v2.y);
+    	GL11.glEnd();
+    GL11.glEnable(GL11.GL_TEXTURE_2D);
+  }
+
   def drawRect(coord:Vec, width:Float, height:Float) {
     GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glBegin(GL11.GL_LINE_LOOP);
+        GL11.glVertex2f(coord.x - width/2, coord.y - height/2)
+        GL11.glVertex2f(coord.x - width/2, coord.y + height/2)
+        GL11.glVertex2f(coord.x + width/2, coord.y + height/2)
+        GL11.glVertex2f(coord.x + width/2, coord.y - height/2)
+      GL11.glEnd();
+    GL11.glEnable(GL11.GL_TEXTURE_2D);
+  }
+
+  def drawFilledRect(coord:Vec, width:Float, height:Float) {
+    GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glBegin(GL11.GL_QUADS);
         GL11.glVertex2f(coord.x - width/2, coord.y - height/2)
         GL11.glVertex2f(coord.x - width/2, coord.y + height/2)
         GL11.glVertex2f(coord.x + width/2, coord.y + height/2)
@@ -191,22 +226,6 @@ object Renderer {
 }
 
 class Renderer {
-  /*def this(main_screen:ScageScreen) = {
-    this()
-    /*main_screen.addAction(new ScageAction {*/
-      /*override def */main_screen.exit/* =*/ {
-        Renderer.backgroundColor = ScageColors.BLACK
-        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
-        print(xmlOrDefault("renderer.exiting", "Exiting..."), 20, Renderer.height-25, ScageColors.GREEN)
-        Renderer.update
-
-        Thread.sleep(1000)
-        Display.destroy
-      }
-    /*})*/
-  }*/
-  /*Renderer.initgl*/
-
   private var _scale:Float = 1.0f
   def scale = _scale
   def scale_= (value:Float) {_scale = value}
@@ -218,9 +237,6 @@ class Renderer {
   private var central_coord = window_center
   def center = central_coord()
   def center_= (coord: => Vec) {central_coord = () => coord}
-  
-  /*private var render_list:List[ScageRender] = Nil
-  def addRender(render:ScageRender) = render_list = render :: render_list*/
 
   private var render_list:List[() => Unit] = List[() => Unit]()
   def render(render_func: => Unit) {render_list = render_list ::: List(() => render_func)}
@@ -239,10 +255,10 @@ class Renderer {
         val coord = window_center() - central_coord()*_scale
         GL11.glTranslatef(coord.x , coord.y, 0.0f)
         GL11.glScalef(_scale, _scale, 1)
-        /*render_list.foreach(renderable => renderable.render)*/ render_list.foreach(render_func => render_func())
+        render_list.foreach(render_func => render_func())
       GL11.glPopMatrix()
 
-      /*render_list.foreach(renderable => renderable.interface)*/ interface_list.foreach(interface_func => interface_func())
+      interface_list.foreach(interface_func => interface_func())
 
       Renderer.update()
     }

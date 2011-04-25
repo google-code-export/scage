@@ -1,8 +1,8 @@
 app.name = Scaranoid
 app.version = 1.4.3
 
-screen.width = 640
-screen.height = 480
+screen.width = 810
+screen.height = 600
 
 strings.base = resources/strings/scar_strings
 strings.lang = ru
@@ -10,4 +10,4 @@ strings.lang = ru
 dt = 5
 
 ball.radius = 10
-ball.speed = 20
+ball.speed = 30

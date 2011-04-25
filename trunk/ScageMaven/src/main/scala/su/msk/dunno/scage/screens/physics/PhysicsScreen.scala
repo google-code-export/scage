@@ -16,27 +16,30 @@ extends ScageScreen(screen_name, is_main_screen, properties) {
   def --> (physical:Physical) = {
     if(!world.getBodies.contains(physical.body)) world.add(physical.body)
     if(!physicals.contains(physical)) physicals = physical :: physicals
-    physical.prepare
+    physical.prepare()
 
     physical
   }
 
   render {
-    physicals.foreach(p => p.render)
+    physicals.foreach(p => p.render())
   }
 
   action {
     if(!onPause) {
-      physicals.foreach(_.isTouching = false)
+      for(p <- physicals) {
+        if(!p.isActive) {
+          world.remove(p.body)
+          physicals = physicals.filterNot(_ == p)
+        }
+        else p.isTouching = false
+      }
+
       for(i <- 1 to dt) {
         world.step()
-        physicals.foreach(p => {
-          if(!p.isActive) {
-            world.remove(p.body)
-            physicals = physicals.filterNot(_ == p)
-          }
-          else p.isTouching = p.isTouching || p.body.getTouching.size > 0
-        })
+        for(p <- physicals) {
+          p.isTouching = p.isTouching || p.body.getTouching.size > 0
+        }
       }
     }
   }

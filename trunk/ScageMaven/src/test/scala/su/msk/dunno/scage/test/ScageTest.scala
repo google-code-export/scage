@@ -67,6 +67,8 @@ class ScageTest extends TestCase("app") {
 
           color = GREEN
           drawCircle(another_trace.coord, 10)
+
+          print(fps, 10, height-20, BLACK)
         }
       }.run
       assertTrue(true)

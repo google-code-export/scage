@@ -152,7 +152,6 @@ object Renderer {
       GL11.glEnd();
     GL11.glEnable(GL11.GL_TEXTURE_2D);
   }
-
   def drawFilledRect(coord:Vec, width:Float, height:Float) {
     GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glBegin(GL11.GL_QUADS);
@@ -160,6 +159,14 @@ object Renderer {
         GL11.glVertex2f(coord.x - width/2, coord.y + height/2)
         GL11.glVertex2f(coord.x + width/2, coord.y + height/2)
         GL11.glVertex2f(coord.x + width/2, coord.y - height/2)
+      GL11.glEnd();
+    GL11.glEnable(GL11.GL_TEXTURE_2D);
+  }
+
+  def drawPolygon(coords:Array[Vec]) {
+    GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glBegin(GL11.GL_LINE_LOOP);
+        for(coord <- coords) GL11.glVertex2f(coord.x, coord.y)
       GL11.glEnd();
     GL11.glEnable(GL11.GL_TEXTURE_2D);
   }

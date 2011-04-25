@@ -16,7 +16,12 @@ class StaticBox(leftup_coord:Vec, width:Float, height:Float) extends Physical {
   body.setRestitution(1.0f)
   body.setPosition(leftup_coord.x+width/2, leftup_coord.y-height/2)
 
-  def render {
+  def points = {
+    val verts = box.getPoints(body.getPosition(), body.getRotation());
+    for(v <- verts) yield Vec(v.getX(), v.getY())
+  }
+
+  def render() {
     val verts:Array[Vector2f] = box.getPoints(body.getPosition(), body.getRotation());
     Renderer.color = WHITE
     GL11.glDisable(GL11.GL_TEXTURE_2D);

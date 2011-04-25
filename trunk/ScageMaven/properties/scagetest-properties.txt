@@ -7,3 +7,5 @@ screen.width=640
 screen.height=480
 
 field.solid_edges = off
+
+screen.splash = resources/images/scage-logo.png

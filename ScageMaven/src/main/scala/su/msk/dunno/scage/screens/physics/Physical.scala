@@ -8,7 +8,7 @@ import su.msk.dunno.scage.single.support.Vec
 trait Physical {
   val body:Body
 
-  def prepare {
+  def prepare() {
     is_active = true
     is_touching = false
     touching_bodies = new BodyList
@@ -18,7 +18,7 @@ trait Physical {
   def isActive = is_active
   def isActive_=(activity:Boolean) {is_active = activity}
 
-  def addForce(force:Vec) = {
+  def addForce(force:Vec) {
     body.setIsResting(false)
     body.addForce(new Vector2f(force.x, force.y))
   }
@@ -27,8 +27,10 @@ trait Physical {
     val pos = body.getPosition
     Vec(pos.getX, pos.getY)
   }
-  def coord_=(new_coord:Vec) = body.move(new_coord.x, new_coord.y)
-  def move(delta:Vec) = {
+  def coord_=(new_coord:Vec) {
+    body.move(new_coord.x, new_coord.y)
+  }
+  def move(delta:Vec) {
     val new_coord = coord + delta
     body.move(new_coord.x, new_coord.y)
   }
@@ -37,7 +39,7 @@ trait Physical {
     val vel = body.getVelocity
     Vec(vel.getX, vel.getY)
   }
-  def velocity_=(new_velocity:Vec) = {
+  def velocity_=(new_velocity:Vec) {
     val delta = new_velocity - velocity
     body.adjustVelocity(new Vector2f(delta.x, delta.y))
   }
@@ -56,8 +58,9 @@ trait Physical {
         if !touching_bodies.contains(body)
       } touching_bodies.add(body)
     }
-    else touching_bodies.clear
+    else touching_bodies.clear()
   }
 
-  def render
+  def points:Array[Vec]
+  def render()
 }

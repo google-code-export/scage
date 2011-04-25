@@ -16,7 +16,12 @@ class StaticLine(start:Vec, end:Vec) extends Physical {
   body.setRestitution(1.0f)
   body.setPosition(start.x, start.y)
 
-  def render {
+  def points = {
+    val verts:Array[Vector2f] = line.getVertices(body.getPosition(), body.getRotation());
+    for(v <- verts) yield Vec(v.getX(), v.getY())
+  }
+
+  def render() {
     val verts:Array[Vector2f] = line.getVertices(body.getPosition(), body.getRotation());
     Renderer.color = WHITE
     Renderer.drawLine(Vec(verts(0).getX, verts(0).getY),

@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>su.msk.dunno</groupId>
   <artifactId>scar</artifactId>
-  <version>1.4.2-ball</version>
+  <version>1.4.3-colors</version>
   <inceptionYear>2011</inceptionYear>
 
   <name>Scaranoid</name>
@@ -76,7 +76,7 @@
     <dependency>
         <groupId>su.msk.dunno</groupId>
         <artifactId>scage</artifactId>
-        <version>0.4.4-touch</version>
+        <version>0.4.6-render</version>
         <scope>compile</scope>
     </dependency>
   </dependencies>

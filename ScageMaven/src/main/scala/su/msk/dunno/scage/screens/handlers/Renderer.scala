@@ -165,7 +165,16 @@ object Renderer {
 
   def drawPolygon(coords:Array[Vec]) {
     GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glBegin(GL11.GL_LINE_LOOP);
+      GL11.glBegin(GL11.GL_LINE_LOOP);
+        for(coord <- coords) GL11.glVertex2f(coord.x, coord.y)
+      GL11.glEnd();
+    GL11.glEnable(GL11.GL_TEXTURE_2D);
+  }
+  def drawFilledPolygon(coords:Array[Vec]) {
+    GL11.glDisable(GL11.GL_TEXTURE_2D);
+      /*GL11.glPolygonMode(GL11.GL_FRONT, GL11.GL_FILL);
+      GL11.glPolygonMode(GL11.GL_BACK, GL11.GL_LINE);*/
+      GL11.glBegin(GL11.GL_POLYGON);
         for(coord <- coords) GL11.glVertex2f(coord.x, coord.y)
       GL11.glEnd();
     GL11.glEnable(GL11.GL_TEXTURE_2D);

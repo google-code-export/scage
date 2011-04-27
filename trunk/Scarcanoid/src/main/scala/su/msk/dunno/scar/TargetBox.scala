@@ -6,6 +6,7 @@ import su.msk.dunno.scage.screens.handlers.Renderer._
 import net.phys2d.math.Vector2f
 import org.lwjgl.opengl.GL11
 import su.msk.dunno.scage.single.support.ScageColors._
+import Scaranoid._
 
 class TargetBox(leftup_coord:Vec) extends StaticBox(leftup_coord, 40, 40) {
   val box_color = {
@@ -34,7 +35,7 @@ class TargetBox(leftup_coord:Vec) extends StaticBox(leftup_coord, 40, 40) {
     else 1
   }
 
-  Scaranoid.action {
+  action {
     if(isActive && isTouching(PlayerBall)) {
       Scaranoid.bonus = colorModificator(box_color)
       Scaranoid.count += Scaranoid.bonus
@@ -42,7 +43,7 @@ class TargetBox(leftup_coord:Vec) extends StaticBox(leftup_coord, 40, 40) {
       PlayerBall.ball_color = box_color
       isActive = false
 
-      if(Scaranoid.winCondition) Scaranoid.pause
+      if(Level.winCondition) pause()
     }
   }
 

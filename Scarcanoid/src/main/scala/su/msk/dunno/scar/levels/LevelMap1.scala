@@ -1,6 +1,6 @@
 package su.msk.dunno.scar.levels
 
-object Level1 extends Level {
+object LevelMap1 extends LevelMap {
   val columns = 17
   val rows = 4
 

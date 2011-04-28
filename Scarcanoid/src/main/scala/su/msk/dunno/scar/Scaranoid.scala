@@ -9,11 +9,11 @@ import org.lwjgl.input.Keyboard._
 import su.msk.dunno.scage.single.support.ScageProperties._
 import su.msk.dunno.scage.single.support.messages.ScageMessage._
 
-object Scaranoid extends PhysicsScreen(
+object Scaranoid extends ScageScreen(
   screen_name = "Scaranoid",
   is_main_screen = true,
   properties = "scaranoid-properties.txt"
-) {
+) with ScagePhysics {
   var count = 0
   var bonus = 0
   private var current_level = 1
@@ -51,6 +51,10 @@ object Scaranoid extends PhysicsScreen(
     pauseOff()
   })
   key(KEY_N, onKeyDown = if(onPause) stop())
+
+  action {
+    step()
+  }
 
   new ScageScreen("Help Screen") {
     key(KEY_SPACE, onKeyDown = stop())

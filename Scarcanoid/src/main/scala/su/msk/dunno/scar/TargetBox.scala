@@ -47,7 +47,7 @@ class TargetBox(leftup_coord:Vec) extends StaticBox(leftup_coord, 40, 40) {
     }
   }
 
-  override def render() {
+  render {
     color = box_color
     val verts:Array[Vector2f] = box.getPoints(body.getPosition(), body.getRotation());
     GL11.glDisable(GL11.GL_TEXTURE_2D);

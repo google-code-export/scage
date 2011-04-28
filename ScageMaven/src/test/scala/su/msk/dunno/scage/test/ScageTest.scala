@@ -56,6 +56,11 @@ class ScageTest extends TestCase("app") {
         key(KEY_LEFT,  10, onKeyDown = moveIfFreeLocation(trace, Vec(-1,0)))
         key(KEY_W,         onKeyDown = trace.coord is Vec(0,0))
 
+        val poly = displayList {
+          color = CYAN
+          drawFilledPolygon(Array(Vec(100, 200), Vec(150, 250), Vec(300, 300), Vec(300, 150), Vec(200, 200)))
+        }
+
         backgroundColor = WHITE
         interface {
           print(xml("hello.world"), width/2, height/2,    BLACK)
@@ -67,6 +72,8 @@ class ScageTest extends TestCase("app") {
 
           color = GREEN
           drawCircle(another_trace.coord, 10)
+
+          drawDisplayList(poly)
 
           print(fps, 10, height-20, BLACK)
         }

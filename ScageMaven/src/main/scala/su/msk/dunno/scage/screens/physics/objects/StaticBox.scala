@@ -21,7 +21,7 @@ class StaticBox(leftup_coord:Vec, width:Float, height:Float) extends Physical {
     for(v <- verts) yield Vec(v.getX(), v.getY())
   }
 
-  def render() {
+  /*def render() {
     val verts:Array[Vector2f] = box.getPoints(body.getPosition(), body.getRotation());
     Renderer.color = WHITE
     GL11.glDisable(GL11.GL_TEXTURE_2D);
@@ -29,5 +29,5 @@ class StaticBox(leftup_coord:Vec, width:Float, height:Float) extends Physical {
         verts.foreach(v => GL11.glVertex2f(v.getX, v.getY))
       GL11.glEnd();
     GL11.glEnable(GL11.GL_TEXTURE_2D);
-  }
+  }*/
 }

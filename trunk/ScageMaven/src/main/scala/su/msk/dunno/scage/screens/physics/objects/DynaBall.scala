@@ -14,8 +14,8 @@ class DynaBall(init_coord:Vec, val radius:Int) extends Physical {
 
   def points = Array(coord)
 
-  def render() {
+  /*def render() {
     color = WHITE
     drawCircle(coord, radius)
-  }
+  }*/
 }

@@ -9,8 +9,11 @@ import su.msk.dunno.scage.single.support.ScageProperties._
 import su.msk.dunno.scage.single.support.{ScageColor, ScageColors, Vec}
 import su.msk.dunno.scage.single.support.messages.ScageMessage._
 import org.lwjgl.BufferUtils
+import org.apache.log4j.Logger
 
 object Renderer {
+  protected val log = Logger.getLogger(this.getClass);
+
   val width = property("screen.width", 800)
   val height = property("screen.height", 600)
   
@@ -43,35 +46,45 @@ object Renderer {
     next_key
   }
 
-  Display.setDisplayMode(new DisplayMode(width, height));
-  Display.setVSyncEnabled(true);
-  Display.create();
-  Display.setTitle(property("app.name", "Scage")+" - "+property("app.version", "Release"));
+  lazy val initgl = {
+    Display.setDisplayMode(new DisplayMode(width, height));
+    Display.setVSyncEnabled(true);
+    Display.create();
+    Display.setTitle(property("app.name", "Scage")+" - "+property("app.version", "Release"));
 
-  GL11.glEnable(GL11.GL_TEXTURE_2D);
-  GL11.glClearColor(0,0,0,0);
-  GL11.glDisable(GL11.GL_DEPTH_TEST);
+    GL11.glEnable(GL11.GL_TEXTURE_2D);
+    GL11.glClearColor(0,0,0,0);
+    GL11.glDisable(GL11.GL_DEPTH_TEST);
 
-  GL11.glEnable(GL11.GL_BLEND);
-  GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+    GL11.glEnable(GL11.GL_BLEND);
+    GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-  GL11.glMatrixMode(GL11.GL_PROJECTION); // Select The Projection Matrix
-  GL11.glLoadIdentity(); // Reset The Projection Matrix
-  GLU.gluOrtho2D(0, width, 0, height);
-  //GL11.glOrtho(0, width, height, 0, 1, -1);
+    GL11.glMatrixMode(GL11.GL_PROJECTION); // Select The Projection Matrix
+    GL11.glLoadIdentity(); // Reset The Projection Matrix
+    GLU.gluOrtho2D(0, width, 0, height);
+    //GL11.glOrtho(0, width, height, 0, 1, -1);
 
-  GL11.glMatrixMode(GL11.GL_MODELVIEW);
-  GL11.glLoadIdentity();
+    GL11.glMatrixMode(GL11.GL_MODELVIEW);
+    GL11.glLoadIdentity();
 
-  print(xmlOrDefault("renderer.loading", "Loading..."), 20, Renderer.height-25, ScageColors.GREEN)
-  stringProperty("screen.splash") match {
-    case "" =>
-    case screen_splash_path:String =>
-      val splash_texture = getTexture(screen_splash_path)
-      drawDisplayList(createDisplayList(splash_texture, width, height, 0, 0, splash_texture.getImageWidth, splash_texture.getImageHeight), Vec(width/2, height/2))
+    print(xmlOrDefault("renderer.loading", "Loading..."), 20, Renderer.height-25, ScageColors.GREEN)
+    stringProperty("screen.splash") match {
+      case "" =>
+      case screen_splash_path:String =>
+        try {
+          val splash_texture = getTexture(screen_splash_path)
+          drawDisplayList(createDisplayList(splash_texture, width, height, 0, 0, splash_texture.getImageWidth, splash_texture.getImageHeight), Vec(width/2, height/2))
+        }
+        catch {
+          case e:Exception => log.error("failed to render splash image: "+e.getLocalizedMessage)
+        }
+    }
+    update()
+    Thread.sleep(1000)
+
+    log.info("initialized opengl system")
   }
-  update()
-  Thread.sleep(1000)
+  initgl
 
   def backgroundColor = {
     val background_color = BufferUtils.createFloatBuffer(16)    
@@ -180,8 +193,7 @@ object Renderer {
     GL11.glEnable(GL11.GL_TEXTURE_2D);
   }
 
-  def drawDisplayList(list_code:Int, coord:Vec) {drawDisplayList(list_code:Int, coord:Vec, ScageColors.WHITE)}
-  def drawDisplayList(list_code:Int, coord:Vec, _color:ScageColor) {
+  def drawDisplayList(list_code:Int, coord:Vec = Vec(0,0), _color:ScageColor = ScageColors.WHITE) {
     GL11.glPushMatrix();
 	  GL11.glTranslatef(coord.x, coord.y, 0.0f);
 	  Renderer.color = _color
@@ -242,6 +254,10 @@ object Renderer {
 }
 
 class Renderer {
+  Renderer.initgl
+
+  protected val log = Logger.getLogger(this.getClass);
+
   private var _scale:Float = 1.0f
   def scale = _scale
   def scale_= (value:Float) {_scale = value}

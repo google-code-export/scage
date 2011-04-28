@@ -62,5 +62,4 @@ trait Physical {
   }
 
   def points:Array[Vec]
-  def render()
 }

@@ -26,6 +26,4 @@ object PlayerPlatform extends StaticBox(Vec(width/2,25), 50, 10) {
       GL11.glEnd();
     GL11.glEnable(GL11.GL_TEXTURE_2D);
   }
-
-  Scaranoid --> this
 }

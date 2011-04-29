@@ -29,6 +29,4 @@ object PlayerBall extends DynaBall(Vec(width/2, height/2), property("ball.radius
     color = ball_color
     drawFilledCircle(coord, radius)
   }
-
-  Scaranoid --> this
 }

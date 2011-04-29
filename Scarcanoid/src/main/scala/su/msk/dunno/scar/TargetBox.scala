@@ -48,12 +48,14 @@ class TargetBox(leftup_coord:Vec) extends StaticBox(leftup_coord, 40, 40) {
   }
 
   render {
-    color = box_color
-    val verts:Array[Vector2f] = box.getPoints(body.getPosition(), body.getRotation());
-    GL11.glDisable(GL11.GL_TEXTURE_2D);
-      GL11.glBegin(GL11.GL_QUADS);
-        verts.foreach(v => GL11.glVertex2f(v.getX, v.getY))
-      GL11.glEnd();
-    GL11.glEnable(GL11.GL_TEXTURE_2D);
+    if(isActive) {
+      color = box_color
+      val verts:Array[Vector2f] = box.getPoints(body.getPosition(), body.getRotation());
+      GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glBegin(GL11.GL_QUADS);
+          verts.foreach(v => GL11.glVertex2f(v.getX, v.getY))
+        GL11.glEnd();
+      GL11.glEnable(GL11.GL_TEXTURE_2D);
+    }
   }
 }

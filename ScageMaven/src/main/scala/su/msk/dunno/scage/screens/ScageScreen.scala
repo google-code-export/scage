@@ -10,32 +10,59 @@ object ScageScreen {
   private var isAllScreensStop = false
   def isAppRunning = !isAllScreensStop
   def allStop() {isAllScreensStop = true}
+
+  private var operation_id = 0
+  def nextOperationId = {
+    operation_id += 1
+    operation_id
+  }
 }
+
+import ScageScreen._
 
 class ScageScreen(val screen_name:String, val is_main_screen:Boolean = false, properties:String = "") {
   protected val log = Logger.getLogger(this.getClass);
 
   if(is_main_screen) log.info("starting main screen "+screen_name+"...")
   if(!"".equals(properties)) ScageProperties.properties = properties
-  
-  /*private var handlers:List[ScageAction] = Nil
-  def addAction(handler:ScageAction, period:Long = 0) =
-    if(period > 0) handlers = new ActionWaiter(period, handler) :: handlers
-    else handlers = handler :: handlers*/
 
-  private var inits:List[() => Unit] = Nil
-  def init(init_func: => Unit) {
-    inits = (() => init_func) :: inits
+  private var inits:List[(Int, () => Unit)] = Nil
+  def init(init_func: => Unit) = {
+    val operation_id = nextOperationId
+    inits = (operation_id, () => init_func) :: inits
     if(is_running) init_func
+    operation_id
+  }
+  // TODO: add boolean return value
+  def delInitOperation(operation_id:Int) {
+    inits = inits.filterNot(_._1 == operation_id)
   }
 
-  private var actions:List[() => Unit] = Nil
-  def action(action_func: => Unit) {actions = (() => action_func) :: actions}
-  /*def action(action_period:Long)(action_func: => Unit) =
-    actions = new ActionWaiter(action_period, action_func).doAction :: actions*/
+  private var actions:List[(Int, () => Unit)] = Nil
+  def action(action_func: => Unit) = {
+    val operation_id = nextOperationId
+    actions = (operation_id, () => action_func) :: actions
+    operation_id
+  }
+  def delActionOperation(operation_id:Int) {
+    actions = actions.filterNot(_._1 == operation_id)
+  }
 
-  private var exits:List[() => Unit] = Nil
-  def exit(exit_func: => Unit) {exits = (() => exit_func) :: exits}
+  private var exits:List[(Int, () => Unit)] = Nil
+  def exit(exit_func: => Unit) = {
+    val operation_id = nextOperationId
+    exits = (operation_id, () => exit_func) :: exits
+    operation_id
+  }
+  def delExitOperation(operation_id:Int) {
+    exits = exits.filterNot(_._1 == operation_id)
+  }
+
+  def delOperation(operation_id:Int) {
+    delInitOperation(operation_id)
+    delActionOperation(operation_id)
+    delExitOperation(operation_id)
+  }
 
   val controller = new Controller
   def key(key: => Int, repeatTime: => Long = 0, onKeyDown: => Any, onKeyUp: => Any = {}) {
@@ -43,7 +70,6 @@ class ScageScreen(val screen_name:String, val is_main_screen:Boolean = false, pr
   }
 
   val renderer = new Renderer
-  /*def addRender(render:ScageRender) = renderer.addRender(render)*/
   def render(render_func: => Unit) {renderer.render(render_func)}
   def interface(interface_func: => Unit) {renderer.interface(interface_func)}
 
@@ -65,23 +91,22 @@ class ScageScreen(val screen_name:String, val is_main_screen:Boolean = false, pr
   private var is_running = false
   def isRunning = is_running
   def init() {
-    /*handlers.foreach(handler => handler.init)*/
     log.info(screen_name+": init")
-    inits.foreach(init_func => init_func())
+    inits.foreach(init_func => init_func._2())
   }
   def exit() {
-    /*handlers.foreach(handler => handler.exit)*/
     log.info(screen_name+": exit")
-    exits.foreach(exit_func => exit_func())
+    exits.foreach(exit_func => exit_func._2())
   }
   def run() {
     if(!is_main_screen) log.info("starting screen "+screen_name+"...")
     init()
     is_running = true
     log.info(screen_name+": run")
+    val is_global_pause = ScageProperties.property("pause.global", true)
     while(is_running && !ScageScreen.isAllScreensStop) {
       controller.checkControls
-      if(!on_pause) /*handlers.foreach(handler => handler.action)*/ actions.foreach(action_func => action_func())
+      if(!on_pause || !is_global_pause) actions.foreach(action_func => action_func._2())
       renderer.render()
     }
     exit()
@@ -95,26 +120,4 @@ class ScageScreen(val screen_name:String, val is_main_screen:Boolean = false, pr
     if(is_main_screen) ScageScreen.allStop()
     else is_running = false 
   }
-
-  /*private[ScageScreen] class ActionWaiter(val period:Long, private val action_handler:ScageAction) extends ScageAction {
-    private var last_action_time:Long = 0
-
-    override def action {
-      if(System.currentTimeMillis - last_action_time > period) {
-        action_handler.action
-        last_action_time = System.currentTimeMillis
-      }
-    }
-  }*/
-
-  /*private[ScageScreen] class ActionWaiter(period:Long, action_func: => Unit) {
-    private var last_action_time:Long = 0
-
-    def doAction() {
-      if(System.currentTimeMillis - last_action_time > period) {
-        action_func
-        last_action_time = System.currentTimeMillis
-      }
-    }
-  }*/
 }

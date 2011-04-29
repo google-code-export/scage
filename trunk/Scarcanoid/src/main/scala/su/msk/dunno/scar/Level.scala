@@ -14,26 +14,20 @@ object Level {
   private var boxes:IndexedSeq[Physical] = null
   def winCondition = boxes.forall(!_.isActive)
   def load(level_map:LevelMap) {
+    if(boxes != null) boxes.foreach(_.isActive = false)
     boxes = level_map.load
   }
 
-  Scaranoid --> new StaticLine(Vec(30,  10),   Vec(30,  height-10))
-  Scaranoid --> new StaticLine(Vec(30,  height-10),  Vec(width-10, height-10))
-  Scaranoid --> new StaticLine(Vec(width-10, height-10),  Vec(width-10, 10))
-  val down_line = Scaranoid --> new StaticLine(Vec(width-10, 10),   Vec(30,  10)) {
+  new LevelEdge(Vec(30,  10),   Vec(30,  height-10))
+  new LevelEdge(Vec(30,  height-10),  Vec(width-10, height-10))
+  new LevelEdge(Vec(width-10, height-10),  Vec(width-10, 10))
+  new LevelEdge(Vec(width-10, 10),   Vec(30,  10)) {
     init {
       prepare()
     }
 
     action {
       if(isTouching(PlayerBall)) pause()
-    }
-
-    render {
-      val verts:Array[Vector2f] = line.getVertices(body.getPosition(), body.getRotation());
-      color = WHITE
-      drawLine(Vec(verts(0).getX, verts(0).getY),
-               Vec(verts(1).getX, verts(1).getY))
     }
   }
 

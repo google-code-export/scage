@@ -25,10 +25,13 @@ object Scaranoid extends ScageScreen(
       case _ => Level.load(LevelMap1)
     }
   }
+  Scaranoid --> PlayerBall
+  Scaranoid --> PlayerPlatform
 
   interface {
     print(count, 5, height-20, WHITE)
     print("+"+bonus, 5, height-40, WHITE)
+    print(world.getBodies().size(), 5, height-60, WHITE)
 
     if(onPause) {
       if(Level.winCondition) print(xml("game.win"), width/2, height/2, WHITE)

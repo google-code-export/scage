@@ -176,14 +176,17 @@ object Renderer {
     GL11.glEnable(GL11.GL_TEXTURE_2D);
   }
 
-  def drawPolygon(coords:Array[Vec]) {
+  def drawPolygon(coords:Vec*) {
     GL11.glDisable(GL11.GL_TEXTURE_2D);
       GL11.glBegin(GL11.GL_LINE_LOOP);
         for(coord <- coords) GL11.glVertex2f(coord.x, coord.y)
       GL11.glEnd();
     GL11.glEnable(GL11.GL_TEXTURE_2D);
   }
-  def drawFilledPolygon(coords:Array[Vec]) {
+  def drawPolygon(coords:Array[Vec]) {
+    drawPolygon(coords:_*)
+  }
+  def drawFilledPolygon(coords:Vec*) {
     GL11.glDisable(GL11.GL_TEXTURE_2D);
       /*GL11.glPolygonMode(GL11.GL_FRONT, GL11.GL_FILL);
       GL11.glPolygonMode(GL11.GL_BACK, GL11.GL_LINE);*/
@@ -191,6 +194,9 @@ object Renderer {
         for(coord <- coords) GL11.glVertex2f(coord.x, coord.y)
       GL11.glEnd();
     GL11.glEnable(GL11.GL_TEXTURE_2D);
+  }
+  def drawFilledPolygon(coords:Array[Vec]) {
+    drawFilledPolygon(coords:_*)
   }
 
   def drawDisplayList(list_code:Int, coord:Vec = Vec(0,0), _color:ScageColor = ScageColors.WHITE) {

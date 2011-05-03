@@ -58,7 +58,7 @@ class ScageTest extends TestCase("app") {
 
         val poly = displayList {
           color = CYAN
-          drawFilledPolygon(Array(Vec(100, 200), Vec(150, 250), Vec(300, 300), Vec(300, 150), Vec(200, 200)))
+          drawPolygon(Array(Vec(100, 300), Vec(150, 250), Vec(300, 300), Vec(300, 450), Vec(200, 400)))
         }
 
         backgroundColor = WHITE

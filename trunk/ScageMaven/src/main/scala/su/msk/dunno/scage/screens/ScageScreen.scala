@@ -16,6 +16,8 @@ object ScageScreen {
     operation_id += 1
     operation_id
   }
+
+  val is_global_pause = ScageProperties.property("pause.global", true)
 }
 
 import ScageScreen._
@@ -33,9 +35,10 @@ class ScageScreen(val screen_name:String, val is_main_screen:Boolean = false, pr
     if(is_running) init_func
     operation_id
   }
-  // TODO: add boolean return value
-  def delInitOperation(operation_id:Int) {
+  def delInitOperation(operation_id:Int) = {  // TODO: Add log messages
+    val old_inits_size = inits.size
     inits = inits.filterNot(_._1 == operation_id)
+    inits.size != old_inits_size
   }
 
   private var actions:List[(Int, () => Unit)] = Nil
@@ -44,8 +47,10 @@ class ScageScreen(val screen_name:String, val is_main_screen:Boolean = false, pr
     actions = (operation_id, () => action_func) :: actions
     operation_id
   }
-  def delActionOperation(operation_id:Int) {
+  def delActionOperation(operation_id:Int) = {
+    val old_actions_size = actions.size
     actions = actions.filterNot(_._1 == operation_id)
+    actions.size != old_actions_size
   }
 
   private var exits:List[(Int, () => Unit)] = Nil
@@ -54,14 +59,22 @@ class ScageScreen(val screen_name:String, val is_main_screen:Boolean = false, pr
     exits = (operation_id, () => exit_func) :: exits
     operation_id
   }
-  def delExitOperation(operation_id:Int) {
+  def delExitOperation(operation_id:Int) = {
+    val old_exits_size = exits.size
     exits = exits.filterNot(_._1 == operation_id)
+    exits.size != old_exits_size
   }
 
-  def delOperation(operation_id:Int) {
-    delInitOperation(operation_id)
-    delActionOperation(operation_id)
+  def delOperation(operation_id:Int) = {
+    delInitOperation(operation_id)   ||
+    delActionOperation(operation_id) ||
     delExitOperation(operation_id)
+  }
+
+  def delAllOperations() {
+    inits = Nil
+    actions = Nil
+    exits = Nil
   }
 
   val controller = new Controller
@@ -103,8 +116,7 @@ class ScageScreen(val screen_name:String, val is_main_screen:Boolean = false, pr
     init()
     is_running = true
     log.info(screen_name+": run")
-    val is_global_pause = ScageProperties.property("pause.global", true)
-    while(is_running && !ScageScreen.isAllScreensStop) {
+    while(is_running && !isAllScreensStop) {
       controller.checkControls
       if(!on_pause || !is_global_pause) actions.foreach(action_func => action_func._2())
       renderer.render()
@@ -117,7 +129,7 @@ class ScageScreen(val screen_name:String, val is_main_screen:Boolean = false, pr
     }
   }
   def stop() {
-    if(is_main_screen) ScageScreen.allStop()
+    if(is_main_screen) allStop()
     else is_running = false 
   }
 }

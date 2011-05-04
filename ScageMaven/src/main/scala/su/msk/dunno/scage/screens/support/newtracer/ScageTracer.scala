@@ -5,7 +5,7 @@ import su.msk.dunno.scage.single.support.Vec
 import su.msk.dunno.scage.single.support.ScageProperties.property
 import collection.mutable.HashMap
 
-object Tracer {
+object ScageTracer {
   private val log = Logger.getLogger(this.getClass);
 
   private var next_trace_id = 0
@@ -15,7 +15,7 @@ object Tracer {
   }
 }
 
-import Tracer._
+import ScageTracer._
 
 trait Trace {
   val id = nextTraceID
@@ -26,7 +26,7 @@ trait Trace {
   def changeState(changer:Trace, state:State)
 }
 
-class Tracer[T <: Trace](val field_from_x:Int = property("field.from.x", 0), 
+class ScageTracer[T <: Trace](val field_from_x:Int = property("field.from.x", 0),
                          val field_to_x:Int = property("field.to.x", 800),
                          val field_from_y:Int = property("field.from.y", 0), 
                          val field_to_y:Int = property("field.to.y", 600),
@@ -75,26 +75,37 @@ class Tracer[T <: Trace](val field_from_x:Int = property("field.from.x", 0),
     point_matrix(trace.point.ix)(trace.point.iy).filterNot(_.id == trace.id)
     traces_in_point -= trace.id
   }
+
+  def tracesInPoint(point:Vec, condition:(T) => Boolean = (trace) => true) = {
+    if(!isPointOnArea(point)) Nil
+    else {
+      for{
+        trace <- point_matrix(point.ix)(point.iy)
+        if condition(trace)
+      } yield trace
+    }
+  }
   
-  def traces(point:Vec, range:Range, condition:(T) => Boolean = (trace) => true):List[T] = {
+  def traces(point:Vec, xrange:Range, yrange:Range, condition:(T) => Boolean = (trace) => true):List[T] = {
     (for {
-      i <- range
-      j <- range
+      i <- xrange
+      j <- yrange
       near_point = checkPointEdges(point + Vec(i, j))
       if isPointOnArea(near_point)
-      trace <- point_matrix(near_point.ix)(near_point.iy)
-      if condition(trace)
+      trace <- tracesInPoint(near_point, condition)
     } yield trace).toList
   }
   
   def updateLocation(trace:T, _new_point:Vec) {
     val old_point = traces_in_point(trace.id)
-    val new_point = checkPointEdges(_new_point)
-    if(isPointOnArea(new_point) && old_point != new_point) {
-      point_matrix(old_point.ix)(old_point.iy) = point_matrix(old_point.ix)(old_point.iy).filterNot(_.id == trace.id)
-      point_matrix(new_point.ix)(new_point.iy) = trace :: point_matrix(new_point.ix)(new_point.iy)
-      traces_in_point(trace.id) is trace.point
-      trace.point is new_point
+    if(old_point != null) {
+      val new_point = checkPointEdges(_new_point)
+      if(isPointOnArea(new_point) && old_point != new_point) {
+        point_matrix(old_point.ix)(old_point.iy) = point_matrix(old_point.ix)(old_point.iy).filterNot(_.id == trace.id)
+        point_matrix(new_point.ix)(new_point.iy) = trace :: point_matrix(new_point.ix)(new_point.iy)
+        traces_in_point(trace.id) is trace.point
+        trace.point is new_point
+      }
     }
   }
 

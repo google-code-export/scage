@@ -100,7 +100,7 @@ object ScageColors {
   val BLUE_VIOLET: ScageColor = new ScageColor(0x8A, 0x2B, 0xE2)
   val PURPLE: ScageColor = new ScageColor(0xA0, 0x20, 0xF0)
 
-  def randomColor() = new ScageColor(Math.random.toFloat, Math.random.toFloat, Math.random.toFloat)
+  def randomColor = new ScageColor(math.random.toFloat, math.random.toFloat, math.random.toFloat)
 }
 
 trait ScageColors {

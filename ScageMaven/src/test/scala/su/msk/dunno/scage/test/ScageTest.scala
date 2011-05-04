@@ -6,7 +6,7 @@ import org.lwjgl.input.Keyboard._
 import su.msk.dunno.scage.single.support.messages.ScageMessage._
 import su.msk.dunno.scage.screens.ScageScreen
 import su.msk.dunno.scage.single.support.Vec
-import su.msk.dunno.scage.screens.support.newtracer._
+import su.msk.dunno.scage.screens.support.tracer._
 
 import junit.framework._
 import Assert._
@@ -57,27 +57,28 @@ class ScageTest extends TestCase("app") {
         key(KEY_W,         onKeyDown = trace.coord is Vec(0,0))
 
         val poly = displayList {
-          color = CYAN
-          drawPolygon(Array(Vec(100, 300), Vec(150, 250), Vec(300, 300), Vec(300, 450), Vec(200, 400)))
+          drawPolygon(Array(Vec(100, 300), Vec(150, 250), Vec(300, 300), Vec(300, 450), Vec(200, 400)), CYAN)
         }
 
-        backgroundColor = WHITE
+        val stars = displayList {
+          for(i <- 1 to 100) {
+            drawPoint(Vec(math.random.toFloat*width, math.random.toFloat*height), randomColor)
+          }
+        }
+
+        backgroundColor = BLACK
         interface {
-          print(xml("hello.world"), width/2, height/2,    BLACK)
-          print(trace.point,        width/2, height/2-20, BLACK)
+          print(xml("hello.world"), width/2, height/2,    WHITE)
+          print(trace.point,        width/2, height/2-20, WHITE)
+          print(fps, 10, height-20, WHITE)
         }
         render {
-          color = RED
-          drawFilledCircle(trace.coord, 10)
-
-          color = GREEN
-          drawCircle(another_trace.coord, 10)
-
+          drawDisplayList(stars)
+          drawFilledCircle(trace.coord, 10, RED)
+          drawCircle(another_trace.coord, 10, GREEN)
           drawDisplayList(poly)
-
-          print(fps, 10, height-20, BLACK)
         }
-      }.run
+      }.run()
       assertTrue(true)
     };
 }

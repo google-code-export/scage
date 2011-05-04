@@ -46,7 +46,7 @@ class ScageTest extends TestCase("app") {
 
         def moveIfFreeLocation(trace:CoordTrace, delta:Vec) {
           val new_location = trace.coord + delta
-          if(!tracer.hasCollisions(trace, new_location, -1 to 1, 20))
+          if(!tracer.hasCollisions(trace, new_location, 20))
             tracer.updateLocation(trace, new_location)
         }
 

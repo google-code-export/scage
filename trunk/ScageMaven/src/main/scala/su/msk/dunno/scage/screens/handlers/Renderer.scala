@@ -117,7 +117,8 @@ object Renderer {
       }
     GL11.glEnd();
   }
-  def drawCircle(coord:Vec, radius:Float) {
+  def drawCircle(coord:Vec, radius:Float, _color:ScageColor = color) {
+    color = _color
     GL11.glDisable(GL11.GL_TEXTURE_2D);
       GL11.glPushMatrix();
       GL11.glTranslatef(coord.x, coord.y, 0.0f);
@@ -136,7 +137,8 @@ object Renderer {
       }
     GL11.glEnd();
   }
-  def drawFilledCircle(coord:Vec, radius:Float) {
+  def drawFilledCircle(coord:Vec, radius:Float, _color:ScageColor = color) {
+    color = _color
     GL11.glDisable(GL11.GL_TEXTURE_2D);
       GL11.glPushMatrix();
       GL11.glTranslatef(coord.x, coord.y, 0.0f);
@@ -146,7 +148,8 @@ object Renderer {
     GL11.glEnable(GL11.GL_TEXTURE_2D);
   }
 
-  def drawLine(v1:Vec, v2:Vec) {
+  def drawLine(v1:Vec, v2:Vec, _color:ScageColor = color) {
+    color = _color
     GL11.glDisable(GL11.GL_TEXTURE_2D);
     	GL11.glBegin(GL11.GL_LINES);
     		GL11.glVertex2f(v1.x, v1.y);
@@ -155,7 +158,8 @@ object Renderer {
     GL11.glEnable(GL11.GL_TEXTURE_2D);
   }
 
-  def drawRect(coord:Vec, width:Float, height:Float) {
+  def drawRect(coord:Vec, width:Float, height:Float, _color:ScageColor = color) {
+    color = _color
     GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glBegin(GL11.GL_LINE_LOOP);
         GL11.glVertex2f(coord.x - width/2, coord.y - height/2)
@@ -165,7 +169,8 @@ object Renderer {
       GL11.glEnd();
     GL11.glEnable(GL11.GL_TEXTURE_2D);
   }
-  def drawFilledRect(coord:Vec, width:Float, height:Float) {
+  def drawFilledRect(coord:Vec, width:Float, height:Float, _color:ScageColor = color) {
+    color = _color
     GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glBegin(GL11.GL_QUADS);
         GL11.glVertex2f(coord.x - width/2, coord.y - height/2)
@@ -183,7 +188,8 @@ object Renderer {
       GL11.glEnd();
     GL11.glEnable(GL11.GL_TEXTURE_2D);
   }
-  def drawPolygon(coords:Array[Vec]) {
+  def drawPolygon(coords:Array[Vec], _color:ScageColor = color) {
+    color = _color
     drawPolygon(coords:_*)
   }
   def drawFilledPolygon(coords:Vec*) {
@@ -195,14 +201,24 @@ object Renderer {
       GL11.glEnd();
     GL11.glEnable(GL11.GL_TEXTURE_2D);
   }
-  def drawFilledPolygon(coords:Array[Vec]) {
+  def drawFilledPolygon(coords:Array[Vec], _color:ScageColor = color) {
+    color = _color
     drawFilledPolygon(coords:_*)
   }
 
-  def drawDisplayList(list_code:Int, coord:Vec = Vec(0,0), _color:ScageColor = ScageColors.WHITE) {
+  def drawPoint(coord:Vec, _color:ScageColor = color) {
+    color = _color
+    GL11.glDisable(GL11.GL_TEXTURE_2D)
+      GL11.glBegin(GL11.GL_POINTS)
+        GL11.glVertex2f(coord.x, coord.y)
+      GL11.glEnd()
+    GL11.glEnable(GL11.GL_TEXTURE_2D)
+  }
+
+  def drawDisplayList(list_code:Int, coord:Vec = Vec(0,0), _color:ScageColor = color) {
+    color = _color
     GL11.glPushMatrix();
 	  GL11.glTranslatef(coord.x, coord.y, 0.0f);
-	  Renderer.color = _color
 	  GL11.glCallList(list_code)
 	  GL11.glPopMatrix()
   }

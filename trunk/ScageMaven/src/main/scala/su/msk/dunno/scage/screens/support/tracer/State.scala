@@ -1,4 +1,4 @@
-package su.msk.dunno.scage.screens.support.newtracer
+package su.msk.dunno.scage.screens.support.tracer
 
 import collection.mutable.HashMap
 import su.msk.dunno.scage.single.support.{ScageColor, Vec}

@@ -1,12 +1,13 @@
 package su.msk.dunno.scage.screens.handlers
 
-import su.msk.dunno.scage.screens.ScageScreen
+import su.msk.dunno.scage.screens.ScageScreen._
 import java.io.{InputStream, FileInputStream}
 import org.newdawn.slick.opengl.{TextureLoader, Texture}
 import org.lwjgl.opengl.{DisplayMode, GL11, Display}
 import org.lwjgl.util.glu.GLU
 import su.msk.dunno.scage.single.support.ScageProperties._
-import su.msk.dunno.scage.single.support.{ScageColor, ScageColors, Vec}
+import su.msk.dunno.scage.single.support.{ScageColor, Vec}
+import su.msk.dunno.scage.single.support.ScageColors._
 import su.msk.dunno.scage.single.support.messages.ScageMessage._
 import org.lwjgl.BufferUtils
 import org.apache.log4j.Logger
@@ -67,13 +68,13 @@ object Renderer {
     GL11.glMatrixMode(GL11.GL_MODELVIEW);
     GL11.glLoadIdentity();
 
-    print(xmlOrDefault("renderer.loading", "Loading..."), 20, Renderer.height-25, ScageColors.GREEN)
+    print(xmlOrDefault("renderer.loading", "Loading..."), 20, Renderer.height-25, GREEN)
     stringProperty("screen.splash") match {
       case "" =>
       case screen_splash_path:String =>
         try {
           val splash_texture = getTexture(screen_splash_path)
-          drawDisplayList(createDisplayList(splash_texture, width, height, 0, 0, splash_texture.getImageWidth, splash_texture.getImageHeight), Vec(width/2, height/2))
+          drawDisplayList(image(splash_texture, width, height, 0, 0, splash_texture.getImageWidth, splash_texture.getImageHeight), Vec(width/2, height/2))
         }
         catch {
           case e:Exception => log.error("failed to render splash image: "+e.getLocalizedMessage)
@@ -215,7 +216,7 @@ object Renderer {
     GL11.glEnable(GL11.GL_TEXTURE_2D)
   }
 
-  def drawDisplayList(list_code:Int, coord:Vec = Vec(0,0), _color:ScageColor = color) {
+  def drawDisplayList(list_code:Int, coord:Vec = Vec(0,0), _color:ScageColor = WHITE) {
     color = _color
     GL11.glPushMatrix();
 	  GL11.glTranslatef(coord.x, coord.y, 0.0f);
@@ -229,7 +230,7 @@ object Renderer {
     getTexture(format, new FileInputStream(filename))
   }
 
-  def createDisplayList(texture:Texture, game_width:Float, game_height:Float, start_x:Float, start_y:Float, real_width:Float, real_height:Float):Int = {
+  def image(texture:Texture, game_width:Float, game_height:Float, start_x:Float, start_y:Float, real_width:Float, real_height:Float):Int = {
 	  val list_name = nextDisplayListKey
 
 		val t_width:Float = texture.getTextureWidth
@@ -255,18 +256,20 @@ object Renderer {
 
 		list_name
 	}
-  def createDisplayList(filename:String, game_width:Float, game_height:Float, start_x:Float, start_y:Float, real_width:Float, real_height:Float):Int = {
-    createDisplayList(getTexture(filename), game_width, game_height, start_x, start_y, real_width, real_height)
+
+  val images_base = property("images.base", "resources/images/")
+  def image(filename:String, game_width:Float, game_height:Float, start_x:Float, start_y:Float, real_width:Float, real_height:Float):Int = {
+    image(getTexture(images_base+filename), game_width, game_height, start_x, start_y, real_width, real_height)
   }
 
   // TODO : rewrite this using for-statement
-  def createAnimation(filename:String, game_width:Float, game_height:Float, real_width:Float, real_height:Float, num_frames:Int):Array[Int] = {
-    val texture = Renderer.getTexture(filename)
+  def animation(filename:String, game_width:Float, game_height:Float, real_width:Float, real_height:Float, num_frames:Int):Array[Int] = {
+    val texture = getTexture(images_base+filename)
     val columns:Int = (texture.getImageWidth/real_width).toInt
     def nextFrame(arr:List[Int], texture:Texture):List[Int] = {
       val x = real_width*(arr.length - arr.length/columns*columns)
       val y = real_height*(arr.length/columns)
-      val next_key = Renderer.createDisplayList(texture, game_width, game_height, x, y, real_width, real_height)
+      val next_key = Renderer.image(texture, game_width, game_height, x, y, real_width, real_height)
       val new_arr = arr ::: List(next_key)
       if(new_arr.length == num_frames)new_arr
       else nextFrame(new_arr, texture)
@@ -275,8 +278,10 @@ object Renderer {
   }
 }
 
+import Renderer._
+
 class Renderer {
-  Renderer.initgl
+  initgl
 
   protected val log = Logger.getLogger(this.getClass);
 
@@ -301,7 +306,7 @@ class Renderer {
   }
 
   def render() {
-    if(Display.isCloseRequested()) ScageScreen.allStop
+    if(Display.isCloseRequested()) allStop()
     else {
       GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
       GL11.glLoadIdentity();
@@ -314,15 +319,15 @@ class Renderer {
 
       interface_list.foreach(interface_func => interface_func())
 
-      Renderer.update()
+      update()
     }
   }
 
   def exitRender() {
-    Renderer.backgroundColor = ScageColors.BLACK
+    backgroundColor = BLACK
     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
-    print(xmlOrDefault("renderer.exiting", "Exiting..."), 20, Renderer.height-25, ScageColors.GREEN)
-    Renderer.update()
+    print(xmlOrDefault("renderer.exiting", "Exiting..."), 20, height-25, GREEN)
+    update()
 
     Thread.sleep(1000)
     Display.destroy()

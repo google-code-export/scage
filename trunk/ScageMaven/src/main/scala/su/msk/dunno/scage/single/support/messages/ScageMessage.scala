@@ -30,13 +30,14 @@ object ScageMessage {
     }
   }
 
-  val font_path = property("font.file", "resources/fonts/DroidSans.ttf")
+  val fonts_base = property("fonts.base", "resources/fonts/")
+  val font_file = property("font.file", "DroidSans.ttf")
   val font_size = property("font.size", 18)
   val row_height = property("font.row.height", font_size+2)
   val glyph_from = property("glyph.from", 1024)
   val glyph_to = property("glyph.to", 1279)
   private val font = try {
-    new UnicodeFont(font_path, font_size, glyph_from, glyph_to)
+    new UnicodeFont(fonts_base+font_file, font_size, glyph_from, glyph_to)
   }
   catch {
     case e:Exception => {

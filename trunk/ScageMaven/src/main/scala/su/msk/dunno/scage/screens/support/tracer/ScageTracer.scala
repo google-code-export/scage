@@ -97,8 +97,8 @@ class ScageTracer[T <: Trace](val field_from_x:Int = property("field.from.x", 0)
   }
   
   def updateLocation(trace:T, _new_point:Vec) {
-    val old_point = traces_in_point(trace.id)
-    if(old_point != null) {
+    if(traces_in_point.contains(trace.id)) {
+      val old_point = traces_in_point(trace.id)
       val new_point = checkPointEdges(_new_point)
       if(isPointOnArea(new_point) && old_point != new_point) {
         point_matrix(old_point.ix)(old_point.iy) = point_matrix(old_point.ix)(old_point.iy).filterNot(_.id == trace.id)
@@ -107,6 +107,7 @@ class ScageTracer[T <: Trace](val field_from_x:Int = property("field.from.x", 0)
         trace.point is new_point
       }
     }
+    else log.warn("trace with id "+trace.id+" not found")
   }
 
   def move(trace:T, delta:Vec) {

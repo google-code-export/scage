@@ -39,7 +39,7 @@ class ScageScreen(val screen_name:String, val is_main_screen:Boolean = false, pr
     val old_inits_size = inits.size
     inits = inits.filterNot(_._1 == operation_id)
     val deletion_result = inits.size != old_inits_size
-    if(deletion_result) log.info("deleted init operation with id "+operation_id)
+    if(deletion_result) log.debug("deleted init operation with id "+operation_id)
     else log.warn("operation with id "+operation_id+" not found among inits so wasn't deleted")
     deletion_result
   }
@@ -54,7 +54,7 @@ class ScageScreen(val screen_name:String, val is_main_screen:Boolean = false, pr
     val old_actions_size = actions.size
     actions = actions.filterNot(_._1 == operation_id)
     val deletion_result = actions.size != old_actions_size
-    if(deletion_result) log.info("deleted action operation with id "+operation_id)
+    if(deletion_result) log.debug("deleted action operation with id "+operation_id)
     else log.warn("operation with id "+operation_id+" not found among actions so wasn't deleted")
     deletion_result
   }
@@ -69,7 +69,7 @@ class ScageScreen(val screen_name:String, val is_main_screen:Boolean = false, pr
     val old_exits_size = exits.size
     exits = exits.filterNot(_._1 == operation_id)
     val deletion_result = exits.size != old_exits_size
-    if(deletion_result) log.info("deleted exit operation with id "+operation_id)
+    if(deletion_result) log.debug("deleted exit operation with id "+operation_id)
     else log.warn("operation with id "+operation_id+" not found among exits so wasn't deleted")
     deletion_result
   }
@@ -78,7 +78,7 @@ class ScageScreen(val screen_name:String, val is_main_screen:Boolean = false, pr
     val deletion_result = delInitOperation(operation_id)   ||
     delActionOperation(operation_id) ||
     delExitOperation(operation_id)
-    if(deletion_result) log.info("deleted operation with id "+operation_id)
+    if(deletion_result) log.debug("deleted operation with id "+operation_id)
     else log.warn("operation with id "+operation_id+"not found so wasn't deleted")
     deletion_result
   }

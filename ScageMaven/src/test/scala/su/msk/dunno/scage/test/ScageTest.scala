@@ -6,10 +6,10 @@ import org.lwjgl.input.Keyboard._
 import su.msk.dunno.scage.single.support.messages.ScageMessage._
 import su.msk.dunno.scage.screens.ScageScreen
 import su.msk.dunno.scage.single.support.Vec
-import su.msk.dunno.scage.screens.support.tracer._
 
 import junit.framework._
 import Assert._
+import su.msk.dunno.scage.screens.support.tracer.{Trace, State, CoordTrace, CoordTracer}
 
 object ScageTest {
     def suite: Test = {

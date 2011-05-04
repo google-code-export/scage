@@ -27,9 +27,9 @@ case class Vec(private var _x:Float, private var _y:Float) {
   def /(k:Double):Float = this / k.toFloat
   def /(k:Int):Float = this / k.toFloat
 
-  def norma2():Float = x*x + y*y
-  def norma() = math.sqrt(norma2).toFloat
-  def n() = this/norma
+  def norma2:Float = x*x + y*y
+  def norma = math.sqrt(norma2).toFloat
+  def n = this/norma
 
   def dist2(v:Vec) = (x - v.x)*(x - v.x) + (y - v.y)*(y - v.y)
   def dist(v:Vec) = math.sqrt(dist2(v)).toFloat

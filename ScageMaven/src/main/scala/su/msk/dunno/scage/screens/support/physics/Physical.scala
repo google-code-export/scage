@@ -1,4 +1,4 @@
-package su.msk.dunno.scage.screens.physics
+package su.msk.dunno.scage.screens.support.physics
 
 import net.phys2d.raw.Body
 import net.phys2d.raw.BodyList

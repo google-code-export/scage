@@ -1,10 +1,10 @@
-package su.msk.dunno.scage.screens.physics.objects
+package su.msk.dunno.scage.screens.physics.support.objects
 
 import net.phys2d.raw.shapes.Line
 import net.phys2d.math.Vector2f
 import net.phys2d.raw.StaticBody
 import su.msk.dunno.scage.single.support.Vec
-import su.msk.dunno.scage.screens.physics.Physical
+import su.msk.dunno.scage.screens.support.physics.Physical
 
 class StaticLine(start:Vec, end:Vec) extends Physical {
   val line = new Line((end-start).x, (end-start).y)

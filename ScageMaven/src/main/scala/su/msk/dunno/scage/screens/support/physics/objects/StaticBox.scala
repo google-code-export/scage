@@ -1,13 +1,9 @@
-package su.msk.dunno.scage.screens.physics.objects
+package su.msk.dunno.scage.screens.physics.support.objects
 
 import net.phys2d.raw.StaticBody
 import net.phys2d.raw.shapes.Box
-import net.phys2d.math.Vector2f
-import org.lwjgl.opengl.GL11
-import su.msk.dunno.scage.screens.handlers.{Renderer}
-import su.msk.dunno.scage.single.support.{Vec}
-import su.msk.dunno.scage.single.support.ScageColors._
-import su.msk.dunno.scage.screens.physics.Physical
+import su.msk.dunno.scage.single.support.Vec
+import su.msk.dunno.scage.screens.support.physics.Physical
 
 class StaticBox(leftup_coord:Vec, width:Float, height:Float) extends Physical {
   val box = new Box(width, height)

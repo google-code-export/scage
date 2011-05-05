@@ -15,7 +15,12 @@ v0.5
 * сообщения в логах при удалении операций из ScageScreen (done)
 
 ----------------
-переименовать в Renderer: createDisplayList -> image, createAnimation -> animation
+дописать в ScageMessage методы print*, принимающие Vec
+
+поботать паттернов каких-нибудь модных:
+паттерны вообще и scala-паттерны, в частности.
+
+переименовать в Renderer: createDisplayList -> image, createAnimation -> animation (done)
 
 Раз уж удаление операций вроде фурычит, мб придумать какой-нить механизм самоудаления операций...
 

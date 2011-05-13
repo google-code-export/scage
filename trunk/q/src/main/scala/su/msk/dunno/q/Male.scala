@@ -87,10 +87,11 @@ class Male extends Human("male") {
       }
     }
     else {
-      gender match {
+      drawDisplayList(skull, coord, WHITE)
+      /*gender match {
         case "male" => drawDisplayList(dead_male_image, coord, WHITE)
         case "queer" => drawDisplayList(dead_queer_image, coord, WHITE)
-      }
+      }*/
     }
   }
 }

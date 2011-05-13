@@ -37,6 +37,9 @@ class Female extends Human("female") {
       if(is_child) drawDisplayList(baby_image, coord, WHITE)
       else drawDisplayList(female_image, coord, WHITE)
     }
-    else drawDisplayList(dead_female_image, coord, WHITE)
+    else {
+      drawDisplayList(skull, coord, WHITE)
+      //drawDisplayList(dead_female_image, coord, WHITE)
+    }
   }
 }

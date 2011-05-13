@@ -22,9 +22,12 @@ object QueersIsland extends ScageScreen("QueersIsland", is_main_screen=true, pro
   }
 
   val landscape = image("landscape.png", width, height, 0, 0, 640, 480)
+  //val landscape = image("desert.png", width, height, 0, 0, 400, 400)
   render {
     drawDisplayList(landscape, Vec(width/2, height/2), WHITE)
   }
+
+  val skull = image("skull.png", 55, 38, 0, 0, 111, 76)
 
   def randomCoord = Vec(tracer.field_from_x + (tracer.field_to_x - tracer.field_from_x)*math.random.toFloat,
                         tracer.field_from_y + (tracer.field_to_y - tracer.field_from_y)*math.random.toFloat)

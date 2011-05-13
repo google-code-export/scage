@@ -17,7 +17,7 @@ abstract class Human(protected var gender:String) extends CoordTrace {
 
   protected var is_alive = true
 
-  private var steps = 50
+  private var steps = 200
   private var dir = randomDir
   def randomDir = Vec((-1 + math.random*2).toFloat, (-1 + math.random*2).toFloat).n
 
@@ -48,10 +48,10 @@ abstract class Human(protected var gender:String) extends CoordTrace {
   }
 
   private val max_count = property("message.time", 50)
-  private var count = max_count // TODO: make a property
+  private var count = max_count
   render {
     if(status != "") {
-      print(status, coord.x, coord.y+30, BLUE)
+      print(status, coord.x, coord.y+30, RED)
       count -= 1
       if(count == 0) {
         count = max_count

@@ -4,6 +4,7 @@ import su.msk.dunno.scage.single.handlers.Renderer
 import su.msk.dunno.scage.single.support.Vec
 import org.apache.log4j.Logger
 import su.msk.dunno.scage.single.support.ScageLibrary._
+import su.msk.dunno.scage.single.support.ScageColors._
 
 object Tracer {
   private val log = Logger.getLogger(this.getClass);

@@ -163,11 +163,11 @@ object Renderer {
     color = _color
     GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glBegin(GL11.GL_LINE_LOOP);
-        GL11.glVertex2f(coord.x - width/2, coord.y - height/2)
-        GL11.glVertex2f(coord.x - width/2, coord.y + height/2)
-        GL11.glVertex2f(coord.x + width/2, coord.y + height/2)
-        GL11.glVertex2f(coord.x + width/2, coord.y - height/2)
-      GL11.glEnd();
+          GL11.glVertex2f(coord.x - width/2, coord.y - height/2)
+          GL11.glVertex2f(coord.x - width/2, coord.y + height/2)
+          GL11.glVertex2f(coord.x + width/2, coord.y + height/2)
+          GL11.glVertex2f(coord.x + width/2, coord.y - height/2)
+        GL11.glEnd();
     GL11.glEnable(GL11.GL_TEXTURE_2D);
   }
   def drawFilledRect(coord:Vec, width:Float, height:Float, _color:ScageColor = color) {

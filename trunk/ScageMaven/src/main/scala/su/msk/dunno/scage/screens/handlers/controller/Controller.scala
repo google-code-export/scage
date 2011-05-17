@@ -1,13 +1,26 @@
 package su.msk.dunno.scage.screens.handlers.controller
 
+import su.msk.dunno.scage.single.support.Vec
+
 class Controller {
   private var listeners = List[UIListener]()
 
-  /*private var to_add = List[UIListener]()*/
-  def key(key: => Int, repeatTime: => Long = 0, onKeyDown: => Any, onKeyUp: => Any = {}) = {
+  def addListener(listener:UIListener) {
+    listeners = listener :: listeners
+  }
+
+  /*/*private var to_add = List[UIListener]()*/
+  def key(key: => Int, repeatTime: => Long = 0, onKeyDown: => Any, onKeyUp: => Any = {}) {
 	  /*to_add = new KeyListener(key, repeatTime, onKeyDown, onKeyUp) :: to_add*/
     listeners = new KeyListener(key, repeatTime, onKeyDown, onKeyUp) :: listeners
   }
+
+  def leftMouse(repeatTime: => Long = 0, onBtnDown: Vec => Any, onBtnUp: Vec => Any = Vec => {}) {
+    listeners = new MouseButtonsListener(0, repeatTime, onBtnDown, onBtnUp) :: listeners
+  }
+  def rightMouse(repeatTime: => Long = 0, onBtnDown: Vec => Any, onBtnUp: Vec => Any = Vec => {}) {
+    listeners = new MouseButtonsListener(1, repeatTime, onBtnDown, onBtnUp) :: listeners
+  }*/
 
   /*private var to_remove = List[UIListener]()
     def removeKeyListener(key:Int, repeatTime:Long, onKeyDown: () => Any) = {
@@ -23,6 +36,6 @@ class Controller {
       listeners.filterNot(l => to_remove.contains(l))
       to_remove = List[UIListener]()
     }*/
-    listeners.foreach(l => l.check)
+    listeners.foreach(l => l.check())
   }
 }

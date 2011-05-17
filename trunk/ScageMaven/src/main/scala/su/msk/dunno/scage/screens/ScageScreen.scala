@@ -1,6 +1,6 @@
 package su.msk.dunno.scage.screens
 
-import handlers.controller.Controller
+import handlers.controller.{MouseButtonsListener, KeyListener, Controller}
 import handlers.Renderer
 import org.apache.log4j.Logger
 import su.msk.dunno.scage.single.support.Vec
@@ -92,7 +92,16 @@ class ScageScreen(val screen_name:String, val is_main_screen:Boolean = false, pr
 
   val controller = new Controller
   def key(key: => Int, repeatTime: => Long = 0, onKeyDown: => Any, onKeyUp: => Any = {}) {
-    controller.key(key, repeatTime, onKeyDown, onKeyUp)
+    controller.addListener(new KeyListener(key, repeatTime, onKeyDown, onKeyUp))
+    //controller.key(key, repeatTime, onKeyDown, onKeyUp)
+  }
+  def leftMouse(repeatTime: => Long = 0, onBtnDown: Vec => Any, onBtnUp: Vec => Any = Vec => {}) {
+    controller.addListener(new MouseButtonsListener(0, repeatTime, onBtnDown, onBtnUp))
+    //controller.leftMouse(repeatTime, onBtnDown, onBtnUp)
+  }
+  def rightMouse(repeatTime: => Long = 0, onBtnDown: Vec => Any, onBtnUp: Vec => Any = Vec => {}) {
+    controller.addListener(new MouseButtonsListener(1, repeatTime, onBtnDown, onBtnUp))
+    //controller.rightMouse(repeatTime, onBtnDown, onBtnUp)
   }
 
   val renderer = new Renderer

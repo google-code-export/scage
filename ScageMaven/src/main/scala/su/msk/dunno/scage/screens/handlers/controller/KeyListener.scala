@@ -14,19 +14,21 @@ object KeyListener {
   def keyUp(key_code:Int) = keys(key_code) = (false, keys(key_code)._2)
 }
 
+import KeyListener._
+
 class KeyListener(key: => Int, repeatTime: => Long, onKeyDown: => Any, onKeyUp: => Any) extends UIListener {
   val isRepeatable = repeatTime > 0
 
-  def check() = {
+  def check() {
     if(Keyboard.isKeyDown(key)) {
-      if(!KeyListener.wasPressed(key) ||
-         (isRepeatable && System.currentTimeMillis() - KeyListener.lastPressedTime(key) > repeatTime)) {
-        KeyListener.keyDown(key)
+      if(!wasPressed(key) ||
+         (isRepeatable && System.currentTimeMillis() - lastPressedTime(key) > repeatTime)) {
+        keyDown(key)
         onKeyDown        
       }
     }
-    else if(KeyListener.wasPressed(key)) {
-      KeyListener.keyUp(key)
+    else if(wasPressed(key)) {
+      keyUp(key)
       onKeyUp
     }
   }

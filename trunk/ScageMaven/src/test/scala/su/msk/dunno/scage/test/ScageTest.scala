@@ -12,6 +12,7 @@ import su.msk.dunno.scage.screens.support.net.ClientHandler
 import junit.framework._
 import Assert._
 import su.msk.dunno.scage.screens.support.tracer.{Trace, State, CoordTrace, CoordTracer}
+import su.msk.dunno.scage.screens.support.input.ScageUserInput
 
 object ScageTest {
     def suite: Test = {

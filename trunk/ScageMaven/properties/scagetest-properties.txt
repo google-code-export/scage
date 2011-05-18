@@ -6,6 +6,10 @@ strings.lang = ru
 screen.width=640
 screen.height=480
 
+field.to.x = 640
+field.N_x = 32
+field.to.y = 480
+field.N_y = 24
 field.solid_edges = off
 
 screen.splash = resources/images/scage-logo.png

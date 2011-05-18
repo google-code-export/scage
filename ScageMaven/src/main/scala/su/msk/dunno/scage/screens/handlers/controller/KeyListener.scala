@@ -10,8 +10,8 @@ object KeyListener {
     keys(key_code)._1
   }
   def lastPressedTime(key_code:Int):Long = keys(key_code)._2
-  def keyDown(key_code:Int) = keys(key_code) = (true, System.currentTimeMillis)
-  def keyUp(key_code:Int) = keys(key_code) = (false, keys(key_code)._2)
+  def keyDown(key_code:Int) {keys(key_code) = (true, System.currentTimeMillis)}
+  def keyUp(key_code:Int) {keys(key_code) = (false, keys(key_code)._2)}
 }
 
 import KeyListener._

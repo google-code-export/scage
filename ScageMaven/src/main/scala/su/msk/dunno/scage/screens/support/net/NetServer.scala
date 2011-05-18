@@ -48,6 +48,7 @@ object NetServer {
 
   private var is_running = false
   def startServer() {
+    log.info("starting net server...")
     is_running = true
     new Thread() {  // awaiting new connections
       override def run() {
@@ -83,6 +84,7 @@ object NetServer {
   }
 
   def stopServer() {
+    log.info("shutting net server down...")
     if(client_handlers.length > 0) log.info("disconnecting all clients...")
     client_handlers.foreach(client => client.send(new JSONObject().put("quit", "")))
     client_handlers.foreach(client => client.disconnect())

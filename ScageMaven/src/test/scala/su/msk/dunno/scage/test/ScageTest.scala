@@ -12,7 +12,8 @@ import su.msk.dunno.scage.screens.support.net.ClientHandler
 import junit.framework._
 import Assert._
 import su.msk.dunno.scage.screens.support.tracer.{Trace, State, CoordTrace, CoordTracer}
-import su.msk.dunno.scage.screens.support.input.ScageUserInput
+import su.msk.dunno.scage.screens.support.physics.ScagePhysics
+import su.msk.dunno.scage.screens.physics.support.objects.DynaBall
 
 object ScageTest {
     def suite: Test = {
@@ -57,15 +58,10 @@ class ScageTest extends TestCase("app") {
         key(KEY_DOWN,  10, onKeyDown = moveIfFreeLocation(trace, Vec(0,-1)))
         key(KEY_RIGHT, 10, onKeyDown = moveIfFreeLocation(trace, Vec(1,0)))
         key(KEY_LEFT,  10, onKeyDown = moveIfFreeLocation(trace, Vec(-1,0)))
-        /*key(KEY_W,         onKeyDown = trace.coord is Vec(0,0))*/
-        /*key(KEY_W, onKeyDown = {
-          println("ttest")
-          /*input("Enter")*/
-        })*/
 
-        leftMouse(onBtnDown = {
+        /*leftMouse(onBtnDown = {
           mouse_coord => tracer.updateLocation(trace, mouse_coord)
-        })
+        })*/
 
         val poly = displayList {
           drawPolygon(Array(Vec(100, 300), Vec(150, 250), Vec(300, 300), Vec(300, 450), Vec(200, 400)), CYAN)
@@ -77,6 +73,32 @@ class ScageTest extends TestCase("app") {
           }
         }
 
+        private var target_point = trace.coord
+        mouseMotion {
+          mouse_coord =>
+            target_point = (mouse_coord - trace.coord).n * 20
+        }
+
+        val physics = new ScagePhysics
+        action {
+          physics.step()
+        }
+        leftMouse(onBtnDown = {
+          mouse_coord => physics.addPhysical(new DynaBall(trace.coord, 2) {
+            velocity = (mouse_coord - trace.coord).n*10
+            render {
+              if(isActive) drawFilledCircle(coord, 2, YELLOW)
+            }
+
+            val action_id:Int = action {
+              if(!tracer.isCoordOnArea(coord)) {
+                isActive = false
+                delActionOperation(action_id)
+              }
+            }
+          })
+        })
+
         backgroundColor = BLACK
         interface {
           print(xml("hello.world"), width/2, height/2,    WHITE)
@@ -86,11 +108,12 @@ class ScageTest extends TestCase("app") {
         render {
           drawDisplayList(stars)
           drawFilledCircle(trace.coord, 10, RED)
+          drawLine(trace.coord, trace.coord + target_point)
           drawCircle(another_trace.coord, 10, GREEN)
           drawDisplayList(poly)
         }
 
-        startServer()
+        /*startServer()
         action {
           clients.foreach(client => {
             if(client.hasNewIncomingData) {
@@ -99,6 +122,9 @@ class ScageTest extends TestCase("app") {
             }
           })
         }
+        exit {
+          stopServer()
+        }*/
       }.run()
       assertTrue(true)
     };

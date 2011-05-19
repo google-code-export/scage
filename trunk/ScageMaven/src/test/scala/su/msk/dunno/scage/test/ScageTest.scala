@@ -85,16 +85,22 @@ class ScageTest extends TestCase("app") {
         }
         leftMouse(onBtnDown = {
           mouse_coord => physics.addPhysical(new DynaBall(trace.coord, 2) {
+            val ball_trace = tracer.addTrace(coord, new CoordTrace() {
+              def getState = new State
+              def changeState(changer:Trace, state:State) {}
+            })
+            val action_id:Int = action {
+              tracer.updateLocation(ball_trace, coord)
+              coord = ball_trace.coord
+              /*if(!tracer.isCoordOnArea(coord)) {
+                isActive = false
+                delActionOperation(action_id)
+              }*/
+            }
+
             velocity = (mouse_coord - trace.coord).n*10
             render {
               if(isActive) drawFilledCircle(coord, 2, YELLOW)
-            }
-
-            val action_id:Int = action {
-              if(!tracer.isCoordOnArea(coord)) {
-                isActive = false
-                delActionOperation(action_id)
-              }
             }
           })
         })

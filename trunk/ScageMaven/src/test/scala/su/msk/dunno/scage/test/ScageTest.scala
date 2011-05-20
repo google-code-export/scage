@@ -84,8 +84,8 @@ class ScageTest extends TestCase("app") {
           physics.step()
         }
         leftMouse(onBtnDown = {
-          mouse_coord => physics.addPhysical(new DynaBall(trace.coord, 2) {
-            val ball_trace = tracer.addTrace(coord, new CoordTrace() {
+          mouse_coord => physics.addPhysical(new DynaBall(trace.coord + target_point, 2) {
+            val ball_trace = tracer.addTrace(trace.coord + target_point, new CoordTrace() {
               def getState = new State
               def changeState(changer:Trace, state:State) {}
             })

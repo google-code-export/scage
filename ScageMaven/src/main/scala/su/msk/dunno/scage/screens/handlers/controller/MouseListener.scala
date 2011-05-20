@@ -41,21 +41,41 @@ class MouseMotionListener(onMotion: Vec => Any) extends UIListener {
   }
 }
 
-class MouseWheelUpListener(onWheelUp: Vec => Any) extends UIListener {
+class MouseDragListener(button:Int, onDrag: Vec => Any) extends UIListener {
   def check() {
-    if(Mouse.getDWheel > 0) {
+    if(Mouse.isButtonDown(button) && (Mouse.getDX != 0 || Mouse.getDY != 0)) {
       val mouse_coord = Vec(Mouse.getX, Mouse.getY)
-      onWheelUp(mouse_coord)
+      onMotion(mouse_coord)
     }
   }
 }
 
-class MouseWheelDownListener(onWheelDown: Vec => Any) extends UIListener {
-  def check() {
-    if(Mouse.getDWheel < 0) {
-      val mouse_coord = Vec(Mouse.getX, Mouse.getY)
-      onWheelDown(mouse_coord)
+class MouseWheelFactory {
+  def wheelUpListener(onWheelUp: Vec => Any) = {
+    if(Mouse.hasWheel) {
+      new UIListener {
+        def check() {
+          if(Mouse.getDWheel > 0) {
+            val mouse_coord = Vec(Mouse.getX, Mouse.getY)
+            onWheelUp(mouse_coord)
+          }
+        }
+      }
     }
+    else new UIListener {def check() {}}
+  }
+
+  def wheelDownListener(onWheelDown: Vec => Any) {
+    if(Mouse.hasWheel) {
+      new UIListener {
+        def check() {
+          if(Mouse.getDWheel < 0) {
+            val mouse_coord = Vec(Mouse.getX, Mouse.getY)
+            onWheelDown(mouse_coord)
+          }
+        }
+      }
+    }
+    else new UIListener {def check() {}}
   }
 }
-

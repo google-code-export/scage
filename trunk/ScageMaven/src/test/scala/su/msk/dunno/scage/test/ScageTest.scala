@@ -13,7 +13,7 @@ import junit.framework._
 import Assert._
 import su.msk.dunno.scage.screens.support.tracer.{Trace, State, CoordTrace, CoordTracer}
 import su.msk.dunno.scage.screens.support.physics.ScagePhysics
-import su.msk.dunno.scage.screens.physics.support.objects.DynaBall
+import su.msk.dunno.scage.screens.support.physics.objects.DynaBall
 
 object ScageTest {
     def suite: Test = {

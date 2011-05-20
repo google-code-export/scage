@@ -1,4 +1,4 @@
-package su.msk.dunno.scage.screens.physics.support.objects
+package su.msk.dunno.scage.screens.support.physics.objects
 
 import net.phys2d.raw.Body
 import su.msk.dunno.scage.single.support.Vec

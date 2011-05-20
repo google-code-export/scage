@@ -1,4 +1,4 @@
-package su.msk.dunno.scage.screens.physics.support.objects
+package su.msk.dunno.scage.screens.support.physics.objects
 
 import net.phys2d.raw.shapes.Line
 import net.phys2d.math.Vector2f
@@ -14,8 +14,8 @@ class StaticLine(start:Vec, end:Vec) extends Physical {
   body.setPosition(start.x, start.y)
 
   def points = {
-    val verts:Array[Vector2f] = line.getVertices(body.getPosition(), body.getRotation());
-    for(v <- verts) yield Vec(v.getX(), v.getY())
+    val verts:Array[Vector2f] = line.getVertices(body.getPosition, body.getRotation);
+    for(v <- verts) yield Vec(v.getX, v.getY)
   }
 
   /*def render() {

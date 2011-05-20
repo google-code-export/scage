@@ -1,4 +1,4 @@
-package su.msk.dunno.scage.screens.physics.support.objects
+package su.msk.dunno.scage.screens.support.physics.objects
 
 import net.phys2d.raw.StaticBody
 import net.phys2d.raw.shapes.Box
@@ -13,8 +13,8 @@ class StaticBox(leftup_coord:Vec, width:Float, height:Float) extends Physical {
   body.setPosition(leftup_coord.x+width/2, leftup_coord.y-height/2)
 
   def points = {
-    val verts = box.getPoints(body.getPosition(), body.getRotation());
-    for(v <- verts) yield Vec(v.getX(), v.getY())
+    val verts = box.getPoints(body.getPosition, body.getRotation);
+    for(v <- verts) yield Vec(v.getX, v.getY)
   }
 
   /*def render() {

@@ -297,12 +297,40 @@ class Renderer {
   def center = central_coord()
   def center_= (coord: => Vec) {central_coord = () => coord}
 
-  private var render_list:List[() => Unit] = List[() => Unit]()
-  def render(render_func: => Unit) {render_list = render_list ::: List(() => render_func)}
+  private var renders:List[Int, () => Unit] = Nil
+  def render(render_func: => Unit) = {
+    val operation_id = nextOperationId
+    renders = renders ::: List(operation_id, () => render_func)
+    operation_id
+  }
+  def delRender(render_id:Int) = {
+    val old_renders_size = renders.size
+    renders = renders.filterNot(_._1 == render_id)
+    val deletion_result = renders.size != old_renders_size
+    if(deletion_result) log.debug("deleted render with id "+render_id)
+    else log.warn("render with id "+render_id+" not found among renders so wasn't deleted")
+    deletion_result
+  }
 
-  private var interface_list:List[() => Unit] = List[() => Unit]()
-  def interface(render_func: => Unit) {
-    interface_list = (() => render_func) :: interface_list
+  private var interfaces:List[Int, () => Unit] = Nil
+  def interface(interface_func: => Unit) {
+    val operation_id = nextOperationId
+    interfaces = (operation_id, () => interface_func) :: interfaces
+    operation_id
+  }
+  def delInterface(interface_id:Int) = {
+    val old_interfaces_size = interfaces.size
+    interfaces = interfaces.filterNot(_._1 == interface_id)
+    val deletion_result = interfaces.size != old_interfaces_size
+    if(deletion_result) log.debug("deleted interface with id "+interface_id)
+    else log.warn("interface with id "+interface_id+" not found among interfaces so wasn't deleted")
+    deletion_result
+  }
+
+  def dellAll() {
+    renders = Nil
+    interfaces = Nil
+    log.info("deleted all drawing operations")
   }
 
   def render() {
@@ -314,10 +342,10 @@ class Renderer {
         val coord = window_center() - central_coord()*_scale
         GL11.glTranslatef(coord.x , coord.y, 0.0f)
         GL11.glScalef(_scale, _scale, 1)
-        render_list.foreach(render_func => render_func())
+        renders.foreach(render_func => render_func._2())
       GL11.glPopMatrix()
 
-      interface_list.foreach(interface_func => interface_func())
+      interfaces.foreach(interface_func => interface_func._2())
 
       update()
     }

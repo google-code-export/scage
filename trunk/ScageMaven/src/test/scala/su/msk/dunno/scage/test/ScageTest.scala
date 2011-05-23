@@ -35,7 +35,7 @@ class ScageTest extends TestCase("app") {
      * Rigourous Tests :-)
      */
     def testOK() {
-      new ScageScreen("Hello World", is_main_screen = true, properties = "scagetest-properties.txt") {
+      new ScageScreen(screen_name = "Hello World", is_main_screen = true, properties = "scagetest-properties.txt") {
         val tracer = new CoordTracer[CoordTrace]
 
         val trace = tracer.addTrace(Vec(width/2, height/2), new CoordTrace() {

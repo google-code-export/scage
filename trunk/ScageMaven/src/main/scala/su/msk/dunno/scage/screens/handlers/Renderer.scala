@@ -297,10 +297,10 @@ class Renderer {
   def center = central_coord()
   def center_= (coord: => Vec) {central_coord = () => coord}
 
-  private var renders:List[Int, () => Unit] = Nil
+  private var renders:List[(Int, () => Unit)] = Nil
   def render(render_func: => Unit) = {
     val operation_id = nextOperationId
-    renders = renders ::: List(operation_id, () => render_func)
+    renders = renders ::: List((operation_id, () => render_func))
     operation_id
   }
   def delRender(render_id:Int) = {
@@ -312,8 +312,8 @@ class Renderer {
     deletion_result
   }
 
-  private var interfaces:List[Int, () => Unit] = Nil
-  def interface(interface_func: => Unit) {
+  private var interfaces:List[(Int, () => Unit)] = Nil
+  def interface(interface_func: => Unit) = {
     val operation_id = nextOperationId
     interfaces = (operation_id, () => interface_func) :: interfaces
     operation_id

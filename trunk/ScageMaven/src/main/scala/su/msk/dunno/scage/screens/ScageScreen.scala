@@ -5,6 +5,7 @@ import handlers.Renderer
 import org.apache.log4j.Logger
 import su.msk.dunno.scage.single.support.Vec
 import su.msk.dunno.scage.single.support.ScageProperties
+import org.lwjgl.input.Mouse
 
 object ScageScreen {
   private var isAllScreensStop = false
@@ -16,17 +17,16 @@ object ScageScreen {
     operation_id += 1
     operation_id
   }
-
-  val is_global_pause = ScageProperties.property("pause.global", true)
 }
 
 import ScageScreen._
 
-class ScageScreen(val screen_name:String, val is_main_screen:Boolean = false, properties:String = "") {
-  protected val log = Logger.getLogger(this.getClass);
+class ScageScreen(val screen_name:String, is_main_screen:Boolean = false, properties:String = "") {
+  protected val log = Logger.getLogger(this.getClass)
 
   if(is_main_screen) log.info("starting main screen "+screen_name+"...")
-  if(!"".equals(properties)) ScageProperties.properties = properties
+  if(properties != "") ScageProperties.properties = properties
+  else if(is_main_screen) ScageProperties.properties = screen_name.toLowerCase+".properties"
 
   private var inits:List[(Int, () => Unit)] = Nil
   def init(init_func: => Unit) = {
@@ -102,11 +102,12 @@ class ScageScreen(val screen_name:String, val is_main_screen:Boolean = false, pr
   def mouseWheelDown(onWheelDown: Vec => Any) {
     controller.addListener(new MouseWheelFactory().wheelDownListener(onWheelDown))
   }
+  def mouseCoord = Vec(Mouse.getX, Mouse.getY)
 
   private val renderer = new Renderer
-  def render(render_func: => Unit) {renderer.render(render_func)}
+  def render(render_func: => Unit) = {renderer.render(render_func)}
   def delRender(render_id:Int) = renderer.delRender(render_id)
-  def interface(interface_func: => Unit) {renderer.interface(interface_func)}
+  def interface(interface_func: => Unit) = {renderer.interface(interface_func)}
   def delInterface(interface_id:Int) = renderer.delInterface(interface_id)
 
   def scale = renderer.scale
@@ -140,6 +141,7 @@ class ScageScreen(val screen_name:String, val is_main_screen:Boolean = false, pr
   def pause() {on_pause = true}
   def pauseOff() {on_pause = false}
 
+  val is_global_pause = ScageProperties.property("pause.global", true)
   private var is_running = false
   def isRunning = is_running
   def init() {
@@ -171,4 +173,6 @@ class ScageScreen(val screen_name:String, val is_main_screen:Boolean = false, pr
     if(is_main_screen) allStop()
     else is_running = false 
   }
+
+  def main(args:Array[String]) {run()}
 }

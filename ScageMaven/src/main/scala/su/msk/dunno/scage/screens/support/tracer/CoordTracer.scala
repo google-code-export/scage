@@ -2,17 +2,18 @@ package su.msk.dunno.scage.screens.support.tracer
 
 import su.msk.dunno.scage.single.support.Vec
 import su.msk.dunno.scage.single.support.ScageProperties._
+import su.msk.dunno.scage.screens.handlers.Renderer._
 
 trait CoordTrace extends Trace {
   val coord:Vec = Vec(-1,-1)
 }
 
-class CoordTracer[CT <: CoordTrace](field_from_x:Int = property("field.from.x", 0),
-                                    field_to_x:Int = property("field.to.x", 800),
-                                    field_from_y:Int = property("field.from.y", 0),
-                                    field_to_y:Int = property("field.to.y", 600),
-                                    N_x:Int = property("field.N_x", 16),
-                                    N_y:Int = property("field.N_y", 12),
+class CoordTracer[CT <: CoordTrace](field_from_x:Int        = property("field.from.x", 0),
+                                    field_to_x:Int          = property("field.to.x", width),
+                                    field_from_y:Int        = property("field.from.y", 0),
+                                    field_to_y:Int          = property("field.to.y", height),
+                                    N_x:Int                 = property("field.N_x", width/50),
+                                    N_y:Int                 = property("field.N_y", height/50),
                                     are_solid_edges:Boolean = property("field.solid_edges", true))
 extends ScageTracer[CT](field_from_x,field_to_x,field_from_y,field_to_y,N_x,N_y,are_solid_edges) {
   def point(v:Vec):Vec = Vec(((v.x - field_from_x)/field_width*N_x).toInt,

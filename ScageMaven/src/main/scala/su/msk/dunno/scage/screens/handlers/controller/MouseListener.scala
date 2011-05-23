@@ -45,7 +45,7 @@ class MouseDragListener(button:Int, onDrag: Vec => Any) extends UIListener {
   def check() {
     if(Mouse.isButtonDown(button) && (Mouse.getDX != 0 || Mouse.getDY != 0)) {
       val mouse_coord = Vec(Mouse.getX, Mouse.getY)
-      onMotion(mouse_coord)
+      onDrag(mouse_coord)
     }
   }
 }
@@ -65,7 +65,7 @@ class MouseWheelFactory {
     else new UIListener {def check() {}}
   }
 
-  def wheelDownListener(onWheelDown: Vec => Any) {
+  def wheelDownListener(onWheelDown: Vec => Any) = {
     if(Mouse.hasWheel) {
       new UIListener {
         def check() {

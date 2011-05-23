@@ -9,7 +9,7 @@ object ScageProperties {
 
   private var _file:String = null
   def properties = _file
-  def properties_= (f:String) = {
+  def properties_= (f:String) {
     _file = f
     log.info("properties file is "+_file)
     _props = load
@@ -39,6 +39,7 @@ object ScageProperties {
       val p = new Properties
       p.load(new FileInputStream(file))
       log.info("loaded properties file "+file)
+      props_already_read = Nil
       p
     }
     catch {

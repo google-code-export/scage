@@ -4,6 +4,7 @@ import org.apache.log4j.Logger
 import su.msk.dunno.scage.single.support.Vec
 import su.msk.dunno.scage.single.support.ScageProperties.property
 import collection.mutable.HashMap
+import su.msk.dunno.scage.screens.handlers.Renderer._
 
 object ScageTracer {
   private val log = Logger.getLogger(this.getClass);
@@ -26,13 +27,13 @@ trait Trace {
   def changeState(changer:Trace, state:State)
 }
 
-class ScageTracer[T <: Trace](val field_from_x:Int = property("field.from.x", 0),
-                         val field_to_x:Int = property("field.to.x", 800),
-                         val field_from_y:Int = property("field.from.y", 0), 
-                         val field_to_y:Int = property("field.to.y", 600),
-                         val N_x:Int = property("field.N_x", 16),
-                         val N_y:Int = property("field.N_y", 12),
-                         val are_solid_edges:Boolean = property("field.solid_edges", true)) {
+class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from.x", 0),
+                              val field_to_x:Int          = property("field.to.x", width),
+                              val field_from_y:Int        = property("field.from.y", 0),
+                              val field_to_y:Int          = property("field.to.y", height),
+                              val N_x:Int                 = property("field.N_x", width/50),
+                              val N_y:Int                 = property("field.N_y", height/50),
+                              val are_solid_edges:Boolean = property("field.solid_edges", true)) {
   protected val log = Logger.getLogger(this.getClass);
 
   log.debug("creating tracer "+this.getClass.getName)

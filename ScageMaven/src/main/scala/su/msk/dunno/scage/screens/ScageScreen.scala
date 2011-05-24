@@ -21,7 +21,7 @@ object ScageScreen {
 
 import ScageScreen._
 
-class ScageScreen(val screen_name:String, is_main_screen:Boolean = false, properties:String = "") {
+class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean = false, properties:String = "") {
   protected val log = Logger.getLogger(this.getClass)
 
   if(is_main_screen) log.info("starting main screen "+screen_name+"...")
@@ -43,6 +43,10 @@ class ScageScreen(val screen_name:String, is_main_screen:Boolean = false, proper
     else log.warn("operation with id "+operation_id+" not found among inits so wasn't deleted")
     deletion_result
   }
+  def delInits() {
+    inits = Nil
+    log.info("deleted all init operations")
+  }
 
   private var actions:List[(Int, () => Unit)] = Nil
   def action(action_func: => Unit) = {
@@ -58,6 +62,10 @@ class ScageScreen(val screen_name:String, is_main_screen:Boolean = false, proper
     else log.warn("operation with id "+operation_id+" not found among actions so wasn't deleted")
     deletion_result
   }
+  def delActions() {
+    actions = Nil
+    log.info("deleted all action operations")
+  }
 
   private var exits:List[(Int, () => Unit)] = Nil
   def exit(exit_func: => Unit) = {
@@ -72,6 +80,10 @@ class ScageScreen(val screen_name:String, is_main_screen:Boolean = false, proper
     if(deletion_result) log.debug("deleted exit operation with id "+operation_id)
     else log.warn("operation with id "+operation_id+" not found among exits so wasn't deleted")
     deletion_result
+  }
+  def delExits() {
+    exits = Nil
+    log.info("deleted all exit operations")
   }
 
   private val controller = new Controller
@@ -107,8 +119,10 @@ class ScageScreen(val screen_name:String, is_main_screen:Boolean = false, proper
   private val renderer = new Renderer
   def render(render_func: => Unit) = {renderer.render(render_func)}
   def delRender(render_id:Int) = renderer.delRender(render_id)
+  def delRenders() {renderer.delRenders()}
   def interface(interface_func: => Unit) = {renderer.interface(interface_func)}
   def delInterface(interface_id:Int) = renderer.delInterface(interface_id)
+  def delInterfaces() {renderer.delInterfaces()}
 
   def scale = renderer.scale
   def scale_= (value:Float) {renderer.scale = value}
@@ -125,14 +139,6 @@ class ScageScreen(val screen_name:String, is_main_screen:Boolean = false, proper
     delExit(operation_id)   ||
     delRender(operation_id) ||
     delInterface(operation_id)
-  }
-
-  def delAllOperations() {
-    inits = Nil
-    actions = Nil
-    exits = Nil
-    log.info("deleted all screen operations")
-    renderer.dellAll()
   }
 
   private var on_pause = false
@@ -173,6 +179,4 @@ class ScageScreen(val screen_name:String, is_main_screen:Boolean = false, proper
     if(is_main_screen) allStop()
     else is_running = false 
   }
-
-  def main(args:Array[String]) {run()}
 }

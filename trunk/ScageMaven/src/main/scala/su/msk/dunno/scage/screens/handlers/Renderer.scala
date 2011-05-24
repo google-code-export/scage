@@ -11,6 +11,7 @@ import su.msk.dunno.scage.single.support.ScageColors._
 import su.msk.dunno.scage.single.support.messages.ScageMessage._
 import org.lwjgl.BufferUtils
 import org.apache.log4j.Logger
+import java.lang.Boolean
 
 object Renderer {
   protected val log = Logger.getLogger(this.getClass);
@@ -311,6 +312,10 @@ class Renderer {
     else log.warn("render with id "+render_id+" not found among renders so wasn't deleted")
     deletion_result
   }
+  def delRenders() {
+    renders = Nil
+    log.info("deleted all render operations")
+  }
 
   private var interfaces:List[(Int, () => Unit)] = Nil
   def interface(interface_func: => Unit) = {
@@ -326,11 +331,9 @@ class Renderer {
     else log.warn("interface with id "+interface_id+" not found among interfaces so wasn't deleted")
     deletion_result
   }
-
-  def dellAll() {
-    renders = Nil
+  def delInterfaces() {
     interfaces = Nil
-    log.info("deleted all drawing operations")
+    log.info("deleted all interface operations")
   }
 
   def render() {

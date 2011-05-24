@@ -25,7 +25,7 @@ extends ScageTracer[CT](field_from_x,field_to_x,field_from_y,field_to_y,N_x,N_y,
   }
 
   override def updateLocation(trace:CT, new_coord:Vec) {
-    val new_coord_edges_affected = checkCoordEdges(new_coord)
+    val new_coord_edges_affected = outsideCoord(new_coord)
     if(isCoordOnArea(new_coord_edges_affected)) {
       trace.coord is new_coord_edges_affected
       super.updateLocation(trace, point(new_coord_edges_affected))
@@ -36,7 +36,7 @@ extends ScageTracer[CT](field_from_x,field_to_x,field_from_y,field_to_y,N_x,N_y,
     updateLocation(trace, trace.coord + delta)
   }
 
-  protected def checkCoordEdges(coord:Vec):Vec = {
+  def outsideCoord(coord:Vec):Vec = {
     def checkC(c:Float, from:Float, to:Float):Float = {
       val dist = to - from
       if(c >= to) checkC(c - dist, from, to)
@@ -59,7 +59,7 @@ extends ScageTracer[CT](field_from_x,field_to_x,field_from_y,field_to_y,N_x,N_y,
   def hasCollisions(target_trace:CT, tested_coord:Vec, min_dist:Float, condition:(CT) => Boolean = (trace) => true) = {
     if(are_solid_edges && !isCoordOnArea(tested_coord)) true
     else {
-      val tested_coord_edges_affected = checkCoordEdges(tested_coord)
+      val tested_coord_edges_affected = outsideCoord(tested_coord)
       val min_dist2 = min_dist*min_dist
       val modified_condition = (trace:CT) => trace.id != target_trace.id && condition(trace)
 

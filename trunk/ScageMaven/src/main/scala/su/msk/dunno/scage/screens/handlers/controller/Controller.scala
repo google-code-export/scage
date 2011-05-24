@@ -27,7 +27,7 @@ class Controller {
       to_remove = new KeyListener(key, repeatTime, onKeyDown) :: to_remove
   }*/
 
-  def checkControls = {
+  def checkControls {
     /*if(to_add.length > 0) {
       listeners = to_add ::: listeners
       to_add = List[UIListener]()

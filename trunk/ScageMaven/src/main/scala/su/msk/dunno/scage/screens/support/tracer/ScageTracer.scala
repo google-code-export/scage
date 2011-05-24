@@ -45,7 +45,7 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
   val h_y = field_height/N_y                         
   
   def isPointOnArea(point:Vec):Boolean = point.x >= 0 && point.x < N_x && point.y >= 0 && point.y < N_y
-  protected def checkPointEdges(point:Vec):Vec = {
+  def outsidePoint(point:Vec):Vec = {
     def checkC(c:Float, dist:Int):Float = {
       if(c >= dist) checkC(c - dist, dist)
       else if(c < 0) checkC(c + dist, dist)
@@ -73,7 +73,7 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
     trace
   }
   def removeTrace(trace:T) {
-    point_matrix(trace.point.ix)(trace.point.iy).filterNot(_.id == trace.id)
+    point_matrix(trace.point.ix)(trace.point.iy) = point_matrix(trace.point.ix)(trace.point.iy).filterNot(_.id == trace.id)
     traces_in_point -= trace.id
   }
 
@@ -91,7 +91,7 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
     (for {
       i <- xrange
       j <- yrange
-      near_point = checkPointEdges(point + Vec(i, j))
+      near_point = outsidePoint(point + Vec(i, j))
       if isPointOnArea(near_point)
       trace <- tracesInPoint(near_point, condition)
     } yield trace).toList
@@ -100,7 +100,7 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
   def updateLocation(trace:T, _new_point:Vec) {
     if(traces_in_point.contains(trace.id)) {
       val old_point = traces_in_point(trace.id)
-      val new_point = checkPointEdges(_new_point)
+      val new_point = outsidePoint(_new_point)
       if(isPointOnArea(new_point) && old_point != new_point) {
         point_matrix(old_point.ix)(old_point.iy) = point_matrix(old_point.ix)(old_point.iy).filterNot(_.id == trace.id)
         point_matrix(new_point.ix)(new_point.iy) = trace :: point_matrix(new_point.ix)(new_point.iy)

@@ -1,10 +1,10 @@
 package su.msk.dunno.scage.screens.support.tracer
 
 import org.apache.log4j.Logger
-import su.msk.dunno.scage.single.support.Vec
 import su.msk.dunno.scage.single.support.ScageProperties.property
 import collection.mutable.HashMap
 import su.msk.dunno.scage.screens.handlers.Renderer._
+import su.msk.dunno.scage.single.support.Vec
 
 object ScageTracer {
   private val log = Logger.getLogger(this.getClass);
@@ -56,9 +56,13 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
   }
 
   def pointCenter(p:Vec):Vec = Vec(field_from_x + p.x*h_x + h_x/2, field_from_y + p.y*h_y + h_y/2)
-  
-  private var point_matrix = Array.ofDim[List[T]](N_x, N_y)
-  for(i <- 0 until N_x; j <- 0 until N_y) {point_matrix(i)(j) = Nil}
+
+  private def initPointMatrix(x_len:Int, y_len:Int) = {
+    val matrix = Array.ofDim[List[T]](x_len, x_len)
+    for(i <- 0 until x_len; j <- 0 until y_len) {matrix(i)(j) = Nil}
+    matrix
+  }
+  private var point_matrix = initPointMatrix(N_x, N_y)
   private val traces_in_point = new HashMap[Int, Vec]()
 
   def addTrace(point:Vec, trace:T) = {
@@ -75,6 +79,11 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
   def removeTrace(trace:T) {
     point_matrix(trace.point.ix)(trace.point.iy) = point_matrix(trace.point.ix)(trace.point.iy).filterNot(_.id == trace.id)
     traces_in_point -= trace.id
+  }
+  def removeTraces {
+    point_matrix = initPointMatrix(N_x, N_y)
+    traces_in_point.clear()
+    log.info("deleted all traces")
   }
 
   def tracesInPoint(point:Vec, condition:(T) => Boolean = (trace) => true) = {
@@ -97,7 +106,7 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
     } yield trace).toList
   }
   
-  def updateLocation(trace:T, _new_point:Vec) {
+  def updateLocation(trace:T, _new_point:Vec):Vec = {
     if(traces_in_point.contains(trace.id)) {
       val old_point = traces_in_point(trace.id)
       val new_point = outsidePoint(_new_point)
@@ -109,9 +118,21 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
       }
     }
     else log.warn("trace with id "+trace.id+" not found")
+    trace.coord
   }
 
-  def move(trace:T, delta:Vec) {
+  def move(trace:T, delta:Vec):Vec = {
     updateLocation(trace, trace.point + delta)
+  }
+
+  def randomPoint = {
+    val x = (math.random*N_x).toInt
+    val y = (math.random*N_x).toInt
+    Vec(x, y)
+  }
+  def randomPoint(leftup_x:Int = 0, leftup_y:Int = N_y, width:Int = N_x, height:Int = N_y) = {
+    val x = leftup_x + (math.random*width).toInt
+    val y = leftup_y - (math.random*height).toInt
+    Vec(x,y)
   }
 }

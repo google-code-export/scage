@@ -11,7 +11,6 @@ import su.msk.dunno.scage.single.support.ScageColors._
 import su.msk.dunno.scage.single.support.messages.ScageMessage._
 import org.lwjgl.BufferUtils
 import org.apache.log4j.Logger
-import java.lang.Boolean
 
 object Renderer {
   protected val log = Logger.getLogger(this.getClass);

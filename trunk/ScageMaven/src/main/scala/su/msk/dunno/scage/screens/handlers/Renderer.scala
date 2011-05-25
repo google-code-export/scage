@@ -303,17 +303,22 @@ class Renderer {
     renders = renders ::: List((operation_id, () => render_func))
     operation_id
   }
-  def delRender(render_id:Int) = {
-    val old_renders_size = renders.size
-    renders = renders.filterNot(_._1 == render_id)
-    val deletion_result = renders.size != old_renders_size
-    if(deletion_result) log.debug("deleted render with id "+render_id)
-    else log.warn("render with id "+render_id+" not found among renders so wasn't deleted")
-    deletion_result
-  }
-  def delRenders() {
-    renders = Nil
-    log.info("deleted all render operations")
+  def delRenders(render_ids:Int*) = {
+    if(render_ids.size > 0) {
+      render_ids.foldLeft(true)((overall_result, render_id) => {
+        val old_renders_size = renders.size
+        renders = renders.filterNot(_._1 == render_id)
+        val deletion_result = renders.size != old_renders_size
+        if(deletion_result) log.debug("deleted render with id "+render_id)
+        else log.warn("render with id "+render_id+" not found among renders so wasn't deleted")
+        overall_result && deletion_result
+      })
+    }
+    else {
+      renders = Nil
+      log.info("deleted all render operations")
+      true
+    }
   }
 
   private var interfaces:List[(Int, () => Unit)] = Nil
@@ -322,17 +327,22 @@ class Renderer {
     interfaces = (operation_id, () => interface_func) :: interfaces
     operation_id
   }
-  def delInterface(interface_id:Int) = {
-    val old_interfaces_size = interfaces.size
-    interfaces = interfaces.filterNot(_._1 == interface_id)
-    val deletion_result = interfaces.size != old_interfaces_size
-    if(deletion_result) log.debug("deleted interface with id "+interface_id)
-    else log.warn("interface with id "+interface_id+" not found among interfaces so wasn't deleted")
-    deletion_result
-  }
-  def delInterfaces() {
-    interfaces = Nil
-    log.info("deleted all interface operations")
+  def delInterfaces(interface_ids:Int*) = {
+    if(interface_ids.size > 0) {
+      interface_ids.foldLeft(true)((overall_result, interface_id) => {
+        val old_interfaces_size = interfaces.size
+        interfaces = interfaces.filterNot(_._1 == interface_id)
+        val deletion_result = interfaces.size != old_interfaces_size
+        if(deletion_result) log.debug("deleted interface with id "+interface_id)
+        else log.warn("interface with id "+interface_id+" not found among interfaces so wasn't deleted")
+        overall_result && deletion_result
+      })
+    }
+    else {
+      interfaces = Nil
+      log.info("deleted all interface operations")
+      true
+    }
   }
 
   def render() {

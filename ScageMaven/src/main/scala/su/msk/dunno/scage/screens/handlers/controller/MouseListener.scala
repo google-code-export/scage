@@ -1,7 +1,11 @@
 package su.msk.dunno.scage.screens.handlers.controller
 
-import su.msk.dunno.scage.single.support.Vec
 import org.lwjgl.input.Mouse
+import su.msk.dunno.scage.single.support.Vec
+
+object MouseListener {
+  def mouseCoord = Vec(Mouse.getX, Mouse.getY)
+}
 
 class MouseButtonsListener(button:Int, repeatTime: => Long, onBtnDown: Vec => Any, onBtnUp: Vec => Any) extends UIListener {
   val isRepeatable = repeatTime > 0

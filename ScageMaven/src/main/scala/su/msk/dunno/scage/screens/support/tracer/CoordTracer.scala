@@ -24,15 +24,16 @@ extends ScageTracer[CT](field_from_x,field_to_x,field_from_y,field_to_y,N_x,N_y,
     super.addTrace(point(coord), trace)
   }
 
-  override def updateLocation(trace:CT, new_coord:Vec) {
+  override def updateLocation(trace:CT, new_coord:Vec):Vec = {
     val new_coord_edges_affected = outsideCoord(new_coord)
     if(isCoordOnArea(new_coord_edges_affected)) {
       trace.coord is new_coord_edges_affected
       super.updateLocation(trace, point(new_coord_edges_affected))
     }
+    trace.coord
   }
 
-  override def move(trace:CT, delta:Vec) {
+  override def move(trace:CT, delta:Vec):Vec = {
     updateLocation(trace, trace.coord + delta)
   }
 

@@ -35,17 +35,22 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
     if(is_running) init_func
     operation_id
   }
-  def delInit(operation_id:Int) = {
-    val old_inits_size = inits.size
-    inits = inits.filterNot(_._1 == operation_id)
-    val deletion_result = inits.size != old_inits_size
-    if(deletion_result) log.debug("deleted init operation with id "+operation_id)
-    else log.warn("operation with id "+operation_id+" not found among inits so wasn't deleted")
-    deletion_result
-  }
-  def delInits() {
-    inits = Nil
-    log.info("deleted all init operations")
+  def delInits(operation_ids:Int*) = {
+    if(operation_ids.size > 0) {
+      operation_ids.foldLeft(true)((overall_result, operation_id) => {
+        val old_inits_size = inits.size
+        inits = inits.filterNot(_._1 == operation_id)
+        val deletion_result = inits.size != old_inits_size
+        if(deletion_result) log.debug("deleted init operation with id "+operation_id)
+        else log.warn("operation with id "+operation_id+" not found among inits so wasn't deleted")
+        overall_result && deletion_result
+      })
+    }
+    else {
+      inits = Nil
+      log.info("deleted all init operations")
+      true
+    }
   }
 
   private var actions:List[(Int, () => Unit)] = Nil
@@ -54,17 +59,30 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
     actions = (operation_id, () => action_func) :: actions
     operation_id
   }
-  def delAction(operation_id:Int) = {
-    val old_actions_size = actions.size
-    actions = actions.filterNot(_._1 == operation_id)
-    val deletion_result = actions.size != old_actions_size
-    if(deletion_result) log.debug("deleted action operation with id "+operation_id)
-    else log.warn("operation with id "+operation_id+" not found among actions so wasn't deleted")
-    deletion_result
+  def action(/*alive_condition: => Boolean = true, onDelete: => Unit = {}, */action_period:Long = 0)(action_func: => Unit) = {
+    val operation_id = nextOperationId
+    if(action_period > 0) {
+      actions = (operation_id, new ActionWaiter(action_period, action_func).doAction) :: actions
+    }
+    else actions = (operation_id, () => action_func) :: actions
+    operation_id
   }
-  def delActions() {
-    actions = Nil
-    log.info("deleted all action operations")
+  def delActions(operation_ids:Int*) = {
+    if(operation_ids.size > 0) {
+      operation_ids.foldLeft(true)((overall_result, operation_id) => {
+        val old_actions_size = actions.size
+        actions = actions.filterNot(_._1 == operation_id)
+        val deletion_result = actions.size != old_actions_size
+        if(deletion_result) log.debug("deleted action operation with id "+operation_id)
+        else log.warn("operation with id "+operation_id+" not found among actions so wasn't deleted")
+        overall_result && deletion_result
+      })
+    }
+    else {
+      actions = Nil
+      log.info("deleted all action operations")
+      true
+    }
   }
 
   private var exits:List[(Int, () => Unit)] = Nil
@@ -73,17 +91,22 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
     exits = (operation_id, () => exit_func) :: exits
     operation_id
   }
-  def delExit(operation_id:Int) = {
-    val old_exits_size = exits.size
-    exits = exits.filterNot(_._1 == operation_id)
-    val deletion_result = exits.size != old_exits_size
-    if(deletion_result) log.debug("deleted exit operation with id "+operation_id)
-    else log.warn("operation with id "+operation_id+" not found among exits so wasn't deleted")
-    deletion_result
-  }
-  def delExits() {
-    exits = Nil
-    log.info("deleted all exit operations")
+  def delExits(operation_ids:Int*) = {
+    if(operation_ids.size > 0) {
+      operation_ids.foldLeft(true)((overall_result, operation_id) => {
+        val old_exits_size = exits.size
+        exits = exits.filterNot(_._1 == operation_id)
+        val deletion_result = exits.size != old_exits_size
+        if(deletion_result) log.debug("deleted exit operation with id "+operation_id)
+        else log.warn("operation with id "+operation_id+" not found among exits so wasn't deleted")
+        overall_result && deletion_result
+      })
+    }
+    else {
+      exits = Nil
+      log.info("deleted all exit operations")
+      true
+    }
   }
 
   private val controller = new Controller
@@ -118,11 +141,9 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
 
   private val renderer = new Renderer
   def render(render_func: => Unit) = {renderer.render(render_func)}
-  def delRender(render_id:Int) = renderer.delRender(render_id)
-  def delRenders() {renderer.delRenders()}
+  def delRenders(render_ids:Int*) = renderer.delRenders(render_ids:_*)
   def interface(interface_func: => Unit) = {renderer.interface(interface_func)}
-  def delInterface(interface_id:Int) = renderer.delInterface(interface_id)
-  def delInterfaces() {renderer.delInterfaces()}
+  def delInterfaces(interface_ids:Int*) = renderer.delInterfaces(interface_ids:_*)
 
   def scale = renderer.scale
   def scale_= (value:Float) {renderer.scale = value}
@@ -133,13 +154,14 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
   def center = renderer.center
   def center_= (coord: => Vec) {renderer.center = coord}
 
-  def delOperation(operation_id:Int) = {
+  // will be uncommented on real purpose appeared
+  /*def delOperation(operation_id:Int) = {
     delInit(operation_id)   ||
     delAction(operation_id) ||
     delExit(operation_id)   ||
     delRender(operation_id) ||
     delInterface(operation_id)
-  }
+  }*/
 
   private var on_pause = false
   def onPause = on_pause
@@ -178,5 +200,16 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
   def stop() {
     if(is_main_screen) allStop()
     else is_running = false 
+  }
+
+  private[ScageScreen] class ActionWaiter(period:Long, action_func: => Unit) {
+    private var last_action_time:Long = 0
+
+    def doAction = () => {
+      if(System.currentTimeMillis - last_action_time > period) {
+        action_func
+        last_action_time = System.currentTimeMillis
+      }
+    }
   }
 }

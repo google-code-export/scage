@@ -76,14 +76,19 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
 
     trace
   }
-  def removeTrace(trace:T) {
-    point_matrix(trace.point.ix)(trace.point.iy) = point_matrix(trace.point.ix)(trace.point.iy).filterNot(_.id == trace.id)
-    traces_in_point -= trace.id
-  }
-  def removeTraces {
-    point_matrix = initPointMatrix(N_x, N_y)
-    traces_in_point.clear()
-    log.info("deleted all traces")
+
+  def removeTraces(traces:T*) { // TODO: add log messages and return result
+    if(traces.size > 0) {
+      traces.foreach(trace => {
+        point_matrix(trace.point.ix)(trace.point.iy) = point_matrix(trace.point.ix)(trace.point.iy).filterNot(_.id == trace.id)
+        traces_in_point -= trace.id
+      })
+    }
+    else {
+      point_matrix = initPointMatrix(N_x, N_y)
+      traces_in_point.clear()
+      log.info("deleted all traces")
+    }
   }
 
   def tracesInPoint(point:Vec, condition:(T) => Boolean = (trace) => true) = {
@@ -118,21 +123,19 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
       }
     }
     else log.warn("trace with id "+trace.id+" not found")
-    trace.coord
+    trace.point
   }
 
   def move(trace:T, delta:Vec):Vec = {
     updateLocation(trace, trace.point + delta)
   }
 
-  def randomPoint = {
-    val x = (math.random*N_x).toInt
-    val y = (math.random*N_x).toInt
-    Vec(x, y)
-  }
   def randomPoint(leftup_x:Int = 0, leftup_y:Int = N_y, width:Int = N_x, height:Int = N_y) = {
     val x = leftup_x + (math.random*width).toInt
     val y = leftup_y - (math.random*height).toInt
     Vec(x,y)
+  }
+  def randomCoord(leftup_x:Int = 0, leftup_y:Int = field_to_y, width:Int = field_to_x - field_from_x, height:Int = field_to_y - field_from_y) = {
+    randomPoint(leftup_x, leftup_y, width, height)
   }
 }

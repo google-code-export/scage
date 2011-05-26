@@ -59,14 +59,14 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
     actions = (operation_id, () => action_func) :: actions
     operation_id
   }
-  def action(/*alive_condition: => Boolean = true, onDelete: => Unit = {}, */action_period:Long = 0)(action_func: => Unit) = {
+  /*def action(/*alive_condition: => Boolean = true, onDelete: => Unit = {}, */action_period:Long = 0)(action_func: => Unit) = {
     val operation_id = nextOperationId
     if(action_period > 0) {
       actions = (operation_id, new ActionWaiter(action_period, action_func).doAction) :: actions
     }
     else actions = (operation_id, () => action_func) :: actions
     operation_id
-  }
+  }*/
   def delActions(operation_ids:Int*) = {
     if(operation_ids.size > 0) {
       operation_ids.foldLeft(true)((overall_result, operation_id) => {
@@ -202,7 +202,7 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
     else is_running = false 
   }
 
-  private[ScageScreen] class ActionWaiter(period:Long, action_func: => Unit) {
+  /*private[ScageScreen] class ActionWaiter(period:Long, action_func: => Unit) {
     private var last_action_time:Long = 0
 
     def doAction = () => {
@@ -211,5 +211,5 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
         last_action_time = System.currentTimeMillis
       }
     }
-  }
+  }*/
 }

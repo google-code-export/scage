@@ -56,5 +56,8 @@
     <fileSet>
         <directory>builds</directory>
     </fileSet>
+    <fileSet>
+        <directory>resources/images</directory>
+    </fileSet>
   </fileSets>
 </archetype-descriptor>

@@ -1,4 +1,4 @@
-package ScageArchetype;
+package ${groupId}
 
 import su.msk.dunno.scage.single.support.ScageColors._
 import su.msk.dunno.scage.screens.handlers.Renderer._
@@ -10,8 +10,8 @@ import su.msk.dunno.scage.screens.ScageScreen
  * Hello world!
  *
  */
-object App extends Application {
-  new ScageScreen("Hello World", is_main_screen = true, properties = "app-properties.txt") {
+object ScageApp extends Application {
+  new ScageScreen("Hello World", is_main_screen = true, properties = "$artifactId.txt") {
     backgroundColor = WHITE
 
     interface {

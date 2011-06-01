@@ -1,16 +1,16 @@
-Сборка:
-в папке проекта сказать
+РЎР±РѕСЂРєР°:
+РІ РїР°РїРєРµ РїСЂРѕРµРєС‚Р° СЃРєР°Р·Р°С‚СЊ
 mvn clean archetype:create-from-project
 
-После того, как мавен закончит работу, пойти в папку target/generated/sources/archetype
-Там дописать в pom.xml в теге extensions:
+РџРѕСЃР»Рµ С‚РѕРіРѕ, РєР°Рє РјР°РІРµРЅ Р·Р°РєРѕРЅС‡РёС‚ СЂР°Р±РѕС‚Сѓ, РїРѕР№С‚Рё РІ РїР°РїРєСѓ target/generated/sources/archetype
+РўР°Рј РґРѕРїРёСЃР°С‚СЊ РІ pom.xml РІ С‚РµРіРµ extensions:
 <extension>
          <groupId>org.apache.maven.wagon</groupId>
          <artifactId>wagon-webdav</artifactId>
          <version>1.0-beta-2</version>
 </extension>
 
-Внизу дописать:
+Р’РЅРёР·Сѓ РґРѕРїРёСЃР°С‚СЊ:
 <distributionManagement>
       <repository>
        <id>googlecode.scage.repo</id>
@@ -18,9 +18,9 @@ mvn clean archetype:create-from-project
       </repository>
 </distributionManagement>
 
-Далее в src/main/resources/META-INF/maven/archetype-metadata.xml
-вычистить все лишние файлы (папка .idea, файл *.iml, этот файл readme итд)
+Р”Р°Р»РµРµ РІ src/main/resources/META-INF/maven/archetype-metadata.xml
+РІС‹С‡РёСЃС‚РёС‚СЊ РІСЃРµ Р»РёС€РЅРёРµ С„Р°Р№Р»С‹ (РїР°РїРєР° .idea, С„Р°Р№Р» *.iml, СЌС‚РѕС‚ С„Р°Р№Р» readme РёС‚Рґ)
 
-После этого в папке archetype сказать
+РџРѕСЃР»Рµ СЌС‚РѕРіРѕ РІ РїР°РїРєРµ archetype СЃРєР°Р·Р°С‚СЊ
 mvn deploy
-Архетип будет отправлен в репозиторий.
+РђСЂС…РµС‚РёРї Р±СѓРґРµС‚ РѕС‚РїСЂР°РІР»РµРЅ РІ СЂРµРїРѕР·РёС‚РѕСЂРёР№.

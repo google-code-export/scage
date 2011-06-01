@@ -142,18 +142,6 @@
       <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <configuration>
-                  <artifactItems>
-                    <artifactItem>
-                      <groupId>org.lwjgl</groupId>
-                      <artifactId>lwjgl-native</artifactId>
-                      <version>${lwjgl.version}</version>
-                      <type>jar</type>
-                      <outputDirectory>${project.build.directory}/native</outputDirectory>
-                      <overWrite>true</overWrite>
-                    </artifactItem>
-                  </artifactItems>
-                </configuration>
                 <executions>
                   <execution>
                     <id>unpack</id>
@@ -161,6 +149,28 @@
                     <goals>
                       <goal>unpack</goal>
                     </goals>
+                    <configuration>
+                      <artifactItems>
+                        <artifactItem>
+                          <groupId>org.lwjgl</groupId>
+                          <artifactId>lwjgl-native</artifactId>
+                          <version>${lwjgl.version}</version>
+                          <type>jar</type>
+                          <outputDirectory>${project.build.directory}/native</outputDirectory>
+                          <overWrite>true</overWrite>
+                        </artifactItem>
+                      </artifactItems>
+                    </configuration>
+                  </execution>
+                  <execution>
+                    <id>copy-dependencies</id>
+                    <phase>package</phase>
+                    <goals>
+                      <goal>copy-dependencies</goal>
+                    </goals>
+                    <configuration>
+                      <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                    </configuration>
                   </execution>
                 </executions>
       </plugin>
@@ -192,23 +202,6 @@
       </plugin>
 
       <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                  <execution>
-                    <id>copy-dependencies</id>
-                    <phase>package</phase>
-                    <goals>
-                      <goal>copy-dependencies</goal>
-                    </goals>
-                    <configuration>
-                      <outputDirectory>${project.build.directory}/lib</outputDirectory>
-                    </configuration>
-                  </execution>
-                </executions>
-      </plugin>
-
-      <plugin>
                 <!-- NOTE: We don't need a groupId specification because the group is
                      org.apache.maven.plugins ...which is assumed by default.
                  -->
@@ -218,7 +211,7 @@
                   <finalName>${artifactId}-${version}-${os.type}</finalName>
 			      <outputDirectory>${assembly.dir}</outputDirectory>
                     <descriptors>
-                        <descriptor>src/main/assembly/scageapp.xml</descriptor>
+                        <descriptor>src/main/assembly/${assembly.file}</descriptor>
                     </descriptors>
                 </configuration>
                 <executions>

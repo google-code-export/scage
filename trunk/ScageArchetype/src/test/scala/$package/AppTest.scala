@@ -1,4 +1,4 @@
-package ScageArchetype;
+package $package;
 
 import junit.framework._;
 import Assert._;
@@ -23,7 +23,7 @@ class AppTest extends TestCase("app") {
      * Rigourous Tests :-)
      */
     def testOK() = {
-      ScageArchetype.App
+      $package.App
       assertTrue(true)
     };
     //def testKO() = assertTrue(false);

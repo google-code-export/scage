@@ -5,6 +5,7 @@ import su.msk.dunno.scage.single.support.ScageProperties.property
 import collection.mutable.HashMap
 import su.msk.dunno.scage.screens.handlers.Renderer._
 import su.msk.dunno.scage.single.support.Vec
+import io.BytePickle.Def
 
 object ScageTracer {
   private val log = Logger.getLogger(this.getClass);
@@ -57,13 +58,17 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
 
   def pointCenter(p:Vec):Vec = Vec(field_from_x + p.x*h_x + h_x/2, field_from_y + p.y*h_y + h_y/2)
 
-  private def initPointMatrix(x_len:Int, y_len:Int) = {
+  protected def pointMatrix(x_len:Int, y_len:Int) = {
     val matrix = Array.ofDim[List[T]](x_len, x_len)
-    for(i <- 0 until x_len; j <- 0 until y_len) {matrix(i)(j) = Nil}
+    initMatrix(matrix)
     matrix
   }
-  private var point_matrix = initPointMatrix(N_x, N_y)
-  private val traces_in_point = new HashMap[Int, Vec]()
+  protected def initMatrix(matrix:Array[Array[List[T]]]) {
+    for(i <- 0 until matrix.length; j <- 0 until matrix.head.length) {matrix(i)(j) = Nil}
+  }
+
+  protected val point_matrix = pointMatrix(N_x, N_y)
+  protected val traces_in_point = new HashMap[Int, Vec]()
 
   def addTrace(point:Vec, trace:T) = {
     if(isPointOnArea(point)) {
@@ -85,13 +90,13 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
       })
     }
     else {
-      point_matrix = initPointMatrix(N_x, N_y)
+      initMatrix(point_matrix)
       traces_in_point.clear()
       log.info("deleted all traces")
     }
   }
 
-  def tracesInPoint(point:Vec, condition:(T) => Boolean = (trace) => true) = {
+  def tracesInPoint(point:Vec, condition:(T) => Boolean) = {
     if(!isPointOnArea(point)) Nil
     else {
       for{
@@ -99,6 +104,10 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
         if condition(trace)
       } yield trace
     }
+  }
+  def tracesInPoint(point:Vec) = {
+    if(!isPointOnArea(point)) Nil
+    else point_matrix(point.ix)(point.iy)
   }
   
   def traces(point:Vec, xrange:Range, yrange:Range, condition:(T) => Boolean = (trace) => true):List[T] = {

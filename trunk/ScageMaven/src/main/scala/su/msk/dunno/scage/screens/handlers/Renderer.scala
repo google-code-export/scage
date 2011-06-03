@@ -68,6 +68,7 @@ object Renderer {
     GL11.glMatrixMode(GL11.GL_MODELVIEW);
     GL11.glLoadIdentity();
 
+    GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
     print(xmlOrDefault("renderer.loading", "Loading..."), 20, Renderer.height-25, GREEN)
     stringProperty("screen.splash") match {
       case "" =>

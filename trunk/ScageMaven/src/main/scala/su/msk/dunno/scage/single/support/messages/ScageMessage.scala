@@ -1,6 +1,7 @@
 package su.msk.dunno.scage.single.support.messages
 
-import su.msk.dunno.scage.single.support.{ScageColors, ScageColor}
+import su.msk.dunno.scage.single.support.{ScageColor}
+import su.msk.dunno.scage.screens.handlers.Renderer._
 import su.msk.dunno.scage.single.support.ScageProperties._
 import collection.mutable.HashMap
 import org.xml.sax.Attributes
@@ -81,7 +82,7 @@ object ScageMessage {
     }
   }
 
-  def print(message:Any, x:Float, y:Float, color:ScageColor = ScageColors.WHITE) = {
+  def print(message:Any, x:Float, y:Float, color:ScageColor = color) {
     font.drawString(x,y,message.toString, new org.newdawn.slick.Color(color.red, color.green, color.blue))
   }
 
@@ -91,19 +92,19 @@ object ScageMessage {
     private var current_message_key = ""
     private var current_message_text = new StringBuilder
 
-    override def startElement(uri:String, local_name:String, raw_name:String, amap:Attributes) = {
+    override def startElement(uri:String, local_name:String, raw_name:String, amap:Attributes) {
       if("message".equalsIgnoreCase(raw_name)) current_message_key = amap.getValue("code")
     }
 
-    override def characters(ch:Array[Char], start:Int, length:Int) = {
+    override def characters(ch:Array[Char], start:Int, length:Int) {
       val value = new String(ch, start, length)
       current_message_text.append(value)
     }
 
-    override def endElement(uri:String, local_name:String, raw_name:String) = {
+    override def endElement(uri:String, local_name:String, raw_name:String) {
       if("message".equalsIgnoreCase(raw_name)) {
-        xml_messages += (current_message_key -> current_message_text.toString.trim)
-        current_message_text.clear
+        xml_messages += (current_message_key -> current_message_text.toString().trim)
+        current_message_text.clear()
       }
     }
   }

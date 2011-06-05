@@ -6,6 +6,7 @@ import org.apache.log4j.Logger
 import su.msk.dunno.scage.single.support.Vec
 import su.msk.dunno.scage.single.support.ScageProperties
 import org.lwjgl.input.Mouse
+import collection.mutable.HashMap
 
 object ScageScreen {
   private var isAllScreensStop = false
@@ -17,6 +18,10 @@ object ScageScreen {
     operation_id += 1
     operation_id
   }
+
+  private var current_operation_id = 0
+  def currentOperation = current_operation_id
+  def currentOperation_= (id:Int) {current_operation_id = id}
 }
 
 import ScageScreen._
@@ -174,11 +179,17 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
   def isRunning = is_running
   def init() {
     log.info(screen_name+": init")
-    inits.foreach(init_func => init_func._2())
+    inits.foreach(init_func => {
+      currentOperation = init_func._1
+      init_func._2()
+    })
   }
   def exit() {
     log.info(screen_name+": exit")
-    exits.foreach(exit_func => exit_func._2())
+    exits.foreach(exit_func => {
+      currentOperation = exit_func._1
+      exit_func._2()
+    })
   }
   def run() {
     if(!is_main_screen) log.info("starting screen "+screen_name+"...")
@@ -187,7 +198,10 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
     log.info(screen_name+": run")
     while(is_running && !isAllScreensStop) {
       controller.checkControls
-      if(!on_pause || !is_global_pause) actions.foreach(action_func => action_func._2())
+      if(!on_pause || !is_global_pause) actions.foreach(action_func => {
+        currentOperation = action_func._1
+        action_func._2()
+      })
       renderer.render()
     }
     exit()
@@ -200,6 +214,16 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
   def stop() {
     if(is_main_screen) allStop()
     else is_running = false 
+  }
+
+  private val events = new HashMap[String, List[() => Unit]]()
+  def onEvent(event_name:String)(event_action: => Unit) {
+    if(events.contains(event_name)) events(event_name) = (() => event_action) :: events(event_name)
+    else events += (event_name -> List(() => event_action))
+  }
+  def callEvent(event_name:String) {
+    if(events.contains(event_name)) events(event_name).foreach(event_action => event_action())
+    else log.warn("event "+event_name+" not found")
   }
 
   /*private[ScageScreen] class ActionWaiter(period:Long, action_func: => Unit) {

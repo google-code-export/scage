@@ -110,13 +110,22 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
     else point_matrix(point.ix)(point.iy)
   }
   
-  def traces(point:Vec, xrange:Range, yrange:Range, condition:(T) => Boolean = (trace) => true):List[T] = {
+  def traces(point:Vec, xrange:Range, yrange:Range, condition:(T) => Boolean):List[T] = {
     (for {
       i <- xrange
       j <- yrange
       near_point = outsidePoint(point + Vec(i, j))
       if isPointOnArea(near_point)
       trace <- tracesInPoint(near_point, condition)
+    } yield trace).toList
+  }
+  def traces(point:Vec, xrange:Range, yrange:Range):List[T] = {
+    (for {
+      i <- xrange
+      j <- yrange
+      near_point = outsidePoint(point + Vec(i, j))
+      if isPointOnArea(near_point)
+      trace <- tracesInPoint(near_point)
     } yield trace).toList
   }
   
@@ -127,7 +136,7 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
       if(isPointOnArea(new_point) && old_point != new_point) {
         point_matrix(old_point.ix)(old_point.iy) = point_matrix(old_point.ix)(old_point.iy).filterNot(_.id == trace.id)
         point_matrix(new_point.ix)(new_point.iy) = trace :: point_matrix(new_point.ix)(new_point.iy)
-        traces_in_point(trace.id) is trace.point
+        traces_in_point(trace.id) is new_point
         trace.point is new_point
       }
     }

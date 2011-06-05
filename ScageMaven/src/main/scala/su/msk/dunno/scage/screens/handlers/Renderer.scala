@@ -217,6 +217,7 @@ object Renderer {
     GL11.glEnable(GL11.GL_TEXTURE_2D)
   }
 
+  // white color by default for display lists to draw in natural colors
   def drawDisplayList(list_code:Int, coord:Vec = Vec(0,0), _color:ScageColor = WHITE) {
     color = _color
     GL11.glPushMatrix();
@@ -355,10 +356,16 @@ class Renderer {
         val coord = window_center() - central_coord()*_scale
         GL11.glTranslatef(coord.x , coord.y, 0.0f)
         GL11.glScalef(_scale, _scale, 1)
-        renders.foreach(render_func => render_func._2())
+        renders.foreach(render_func => {
+          currentOperation = render_func._1
+          render_func._2()
+        })
       GL11.glPopMatrix()
 
-      interfaces.foreach(interface_func => interface_func._2())
+      interfaces.foreach(interface_func => {
+        currentOperation = interface_func._1
+        interface_func._2()
+      })
 
       update()
     }

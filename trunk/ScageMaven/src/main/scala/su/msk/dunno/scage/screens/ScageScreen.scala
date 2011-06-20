@@ -64,14 +64,15 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
     actions = (operation_id, () => action_func) :: actions
     operation_id
   }
-  /*def action(/*alive_condition: => Boolean = true, onDelete: => Unit = {}, */action_period:Long = 0)(action_func: => Unit) = {
+  def action(action_period:Long = 0)(action_func: => Unit) = {
     val operation_id = nextOperationId
     if(action_period > 0) {
-      actions = (operation_id, new ActionWaiter(action_period, action_func).doAction) :: actions
+      val action_waiter = new ActionWaiter(action_period, action_func)
+      actions = (operation_id, () => action_waiter.doAction()) :: actions
     }
     else actions = (operation_id, () => action_func) :: actions
     operation_id
-  }*/
+  }
   def delActions(operation_ids:Int*) = {
     if(operation_ids.size > 0) {
       operation_ids.foldLeft(true)((overall_result, operation_id) => {
@@ -226,14 +227,15 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
     else log.warn("event "+event_name+" not found")
   }
 
-  /*private[ScageScreen] class ActionWaiter(period:Long, action_func: => Unit) {
+  private[ScageScreen] class ActionWaiter(period:Long, action_func: => Unit) {
+    //println("creating new action waiter...")
     private var last_action_time:Long = 0
 
-    def doAction = () => {
+    def doAction() {
       if(System.currentTimeMillis - last_action_time > period) {
         action_func
         last_action_time = System.currentTimeMillis
       }
     }
-  }*/
+  }
 }

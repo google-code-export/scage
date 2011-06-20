@@ -58,16 +58,12 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
 
   def pointCenter(p:Vec):Vec = Vec(field_from_x + p.x*h_x + h_x/2, field_from_y + p.y*h_y + h_y/2)
 
-  protected def pointMatrix(x_len:Int, y_len:Int) = {
-    val matrix = Array.ofDim[List[T]](x_len, x_len)
-    initMatrix(matrix)
-    matrix
-  }
   protected def initMatrix(matrix:Array[Array[List[T]]]) {
     for(i <- 0 until matrix.length; j <- 0 until matrix.head.length) {matrix(i)(j) = Nil}
   }
 
-  protected val point_matrix = pointMatrix(N_x, N_y)
+  protected val point_matrix = Array.ofDim[List[T]](N_x, N_y)
+  initMatrix(point_matrix)
   protected val traces_in_point = new HashMap[Int, Vec]()
 
   def addTrace(point:Vec, trace:T) = {
@@ -148,6 +144,7 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
     updateLocation(trace, trace.point + delta)
   }
 
+  // TODO: a bug here: returning value can be (-1; -1)
   def randomPoint(leftup_x:Int = 0, leftup_y:Int = N_y, width:Int = N_x, height:Int = N_y) = {
     val x = leftup_x + (math.random*width).toInt
     val y = leftup_y - (math.random*height).toInt

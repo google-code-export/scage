@@ -80,7 +80,7 @@ class ScageTest extends TestCase("app") {
         }
 
         val physics = new ScagePhysics
-        action {
+        action(500) {
           physics.step()
         }
         leftMouse(onBtnDown = {

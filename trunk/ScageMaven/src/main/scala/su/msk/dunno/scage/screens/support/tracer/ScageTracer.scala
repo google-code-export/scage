@@ -5,7 +5,6 @@ import su.msk.dunno.scage.single.support.ScageProperties.property
 import collection.mutable.HashMap
 import su.msk.dunno.scage.screens.handlers.Renderer._
 import su.msk.dunno.scage.single.support.Vec
-import io.BytePickle.Def
 
 object ScageTracer {
   private val log = Logger.getLogger(this.getClass);

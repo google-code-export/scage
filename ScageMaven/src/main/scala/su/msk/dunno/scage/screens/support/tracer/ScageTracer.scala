@@ -72,7 +72,7 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
       traces_in_point += trace.id -> trace.point.copy
       log.debug("added new trace #"+trace.id+" in point ("+trace.point+")")
     }
-    else log.warn("failed to add trace: point ("+trace.point+") is out of area")
+    else log.warn("failed to add trace: point ("+point+") is out of area")
 
     trace
   }
@@ -143,13 +143,14 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
     updateLocation(trace, trace.point + delta)
   }
 
-  // TODO: a bug here: returning value can be (-1; -1)
-  def randomPoint(leftup_x:Int = 0, leftup_y:Int = N_y, width:Int = N_x, height:Int = N_y) = {
+  def randomPoint(leftup_x:Int = 0, leftup_y:Int = N_y-1, width:Int = N_x, height:Int = N_y) = {
+    println(leftup_x+" "+leftup_y+" "+width+" "+height)
     val x = leftup_x + (math.random*width).toInt
     val y = leftup_y - (math.random*height).toInt
+    println(x+" "+y)
     Vec(x,y)
   }
-  def randomCoord(leftup_x:Int = 0, leftup_y:Int = field_to_y, width:Int = field_to_x - field_from_x, height:Int = field_to_y - field_from_y) = {
+  def randomCoord(leftup_x:Int = 0, leftup_y:Int = field_to_y-1, width:Int = field_to_x - field_from_x, height:Int = field_to_y - field_from_y) = {
     randomPoint(leftup_x, leftup_y, width, height)
   }
 }

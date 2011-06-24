@@ -33,8 +33,8 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
   if(properties != "") ScageProperties.properties = properties
   else if(is_main_screen) ScageProperties.properties = screen_name.toLowerCase+".properties"
 
-  private var inits:List[(Int, () => Unit)] = Nil
-  def init(init_func: => Unit) = {
+  private var inits:List[(Int, () => Any)] = Nil
+  def init(init_func: => Any) = {
     val operation_id = nextOperationId
     inits = (operation_id, () => init_func) :: inits
     if(is_running) init_func
@@ -58,8 +58,8 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
     }
   }
 
-  private var actions:List[(Int, () => Unit)] = Nil
-  def action(action_func: => Unit) = {
+  private var actions:List[(Int, () => Any)] = Nil
+  def action(action_func: => Any) = {
     val operation_id = nextOperationId
     actions = (operation_id, () => action_func) :: actions
     operation_id
@@ -91,8 +91,8 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
     }
   }
 
-  private var exits:List[(Int, () => Unit)] = Nil
-  def exit(exit_func: => Unit) = {
+  private var exits:List[(Int, () => Any)] = Nil
+  def exit(exit_func: => Any) = {
     val operation_id = nextOperationId
     exits = (operation_id, () => exit_func) :: exits
     operation_id

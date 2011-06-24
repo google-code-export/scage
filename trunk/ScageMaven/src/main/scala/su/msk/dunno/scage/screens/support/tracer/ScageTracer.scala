@@ -77,7 +77,7 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
     trace
   }
 
-  def removeTraces(traces:T*) { // TODO: add log messages and return result
+  def removeTraces(traces:T*) { // TODO: add existence check (plan it carefully), log messages and return result
     if(traces.size > 0) {
       traces.foreach(trace => {
         point_matrix(trace.point.ix)(trace.point.iy) = point_matrix(trace.point.ix)(trace.point.iy).filterNot(_.id == trace.id)
@@ -88,6 +88,26 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
       initMatrix(point_matrix)
       traces_in_point.clear()
       log.info("deleted all traces")
+    }
+  }
+
+  def removeTracesById(trace_ids:Int*) = { // TODO: add log messages
+    if(trace_ids.size > 0) {
+      trace_ids.foreach(trace_id => {
+        val trace_point = traces_in_point(trace_id)
+        if(trace_point != null) {
+          point_matrix(trace_point.ix)(trace_point.iy) = point_matrix(trace_point.ix)(trace_point.iy).filterNot(_.id == trace_id)
+          traces_in_point -= trace_id
+          true
+        }
+        else false
+      })
+    }
+    else {
+      initMatrix(point_matrix)
+      traces_in_point.clear()
+      log.info("deleted all traces")
+      false
     }
   }
 
@@ -144,10 +164,8 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
   }
 
   def randomPoint(leftup_x:Int = 0, leftup_y:Int = N_y-1, width:Int = N_x, height:Int = N_y) = {
-    println(leftup_x+" "+leftup_y+" "+width+" "+height)
     val x = leftup_x + (math.random*width).toInt
     val y = leftup_y - (math.random*height).toInt
-    println(x+" "+y)
     Vec(x,y)
   }
   def randomCoord(leftup_x:Int = 0, leftup_y:Int = field_to_y-1, width:Int = field_to_x - field_from_x, height:Int = field_to_y - field_from_y) = {

@@ -18,12 +18,12 @@ object ScageTracer {
 
 import ScageTracer._
 
-trait Trace {
+trait Trace extends State {
   val id = nextTraceID
 
   val point:Vec = Vec(-1,-1)
 
-  def getState:State
+  //def getState:State
   def changeState(changer:Trace, state:State)
 }
 

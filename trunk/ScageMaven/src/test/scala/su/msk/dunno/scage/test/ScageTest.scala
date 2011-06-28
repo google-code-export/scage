@@ -14,6 +14,7 @@ import Assert._
 import su.msk.dunno.scage.screens.support.tracer.{Trace, State, CoordTrace, CoordTracer}
 import su.msk.dunno.scage.screens.support.physics.ScagePhysics
 import su.msk.dunno.scage.screens.support.physics.objects.DynaBall
+import su.msk.dunno.scage.single.support.messages.ScageMessage
 
 object ScageTest {
     def suite: Test = {
@@ -39,12 +40,12 @@ class ScageTest extends TestCase("app") {
         val tracer = new CoordTracer[CoordTrace]
 
         val trace = tracer.addTrace(Vec(width/2, height/2), new CoordTrace() {
-          def getState = new State
+          //def getState = new State
           def changeState(changer:Trace, state:State) {}
         })
 
         val another_trace = tracer.addTrace(Vec(width/4, height/2), new CoordTrace() {
-          def getState = new State
+          //def getState = new State
           def changeState(changer:Trace, state:State) {}
         })
 
@@ -86,7 +87,7 @@ class ScageTest extends TestCase("app") {
         leftMouse(onBtnDown = {
           mouse_coord => physics.addPhysical(new DynaBall(trace.coord + target_point, 2) {
             val ball_trace = tracer.addTrace(trace.coord + target_point, new CoordTrace() {
-              def getState = new State
+              //def getState = new State
               def changeState(changer:Trace, state:State) {}
             })
             val action_id:Int = action {
@@ -106,7 +107,9 @@ class ScageTest extends TestCase("app") {
         })
 
         backgroundColor = BLACK
+        val another_font = new ScageMessage(font_size = 12)
         interface {
+          another_font.print(xml("hello.world"), width/2, height/2+20,    WHITE)
           print(xml("hello.world"), width/2, height/2,    WHITE)
           print(trace.point,        width/2, height/2-20, WHITE)
           print(fps, 10, height-20, WHITE)

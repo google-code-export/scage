@@ -40,12 +40,12 @@ class ScageTest extends TestCase("app") {
         val tracer = new CoordTracer[CoordTrace]
 
         val trace = tracer.addTrace(Vec(width/2, height/2), new CoordTrace() {
-          //def getState = new State
+          def getState = new State
           def changeState(changer:Trace, state:State) {}
         })
 
         val another_trace = tracer.addTrace(Vec(width/4, height/2), new CoordTrace() {
-          //def getState = new State
+          def getState = new State
           def changeState(changer:Trace, state:State) {}
         })
 
@@ -87,7 +87,7 @@ class ScageTest extends TestCase("app") {
         leftMouse(onBtnDown = {
           mouse_coord => physics.addPhysical(new DynaBall(trace.coord + target_point, 2) {
             val ball_trace = tracer.addTrace(trace.coord + target_point, new CoordTrace() {
-              //def getState = new State
+              def getState = new State
               def changeState(changer:Trace, state:State) {}
             })
             val action_id:Int = action {

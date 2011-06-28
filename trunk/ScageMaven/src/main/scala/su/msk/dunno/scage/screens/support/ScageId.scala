@@ -2,12 +2,13 @@ package su.msk.dunno.scage.screens.support
 
 import su.msk.dunno.scage.single.support.ScageProperties._
 
-object ScageId {
-  private var operation_id = property("scageid.start", 10000L)
-  require(operation_id >= 10000)
+object ScageId extends ScageId(start_id = property("id.start", 10000))
 
+class ScageId(start_id:Int = property("id.start", 10000)) {
+  protected var id = start_id
+  require(id >= 10000)
   def nextId = {
-    operation_id += 1
-    operation_id
+    id += 1
+    id
   }
 }

@@ -7,6 +7,7 @@ import su.msk.dunno.scage.single.support.Vec
 import su.msk.dunno.scage.single.support.ScageProperties
 import org.lwjgl.input.Mouse
 import collection.mutable.HashMap
+import su.msk.dunno.scage.screens.support.ScageId._
 
 object ScageScreen {
   private var isAllScreensStop = false
@@ -21,7 +22,7 @@ object ScageScreen {
 
   private var current_operation_id = 0
   def currentOperation = current_operation_id
-  def currentOperation_= (id:Int) {current_operation_id = id}
+  private[screens] def currentOperation_= (id:Int) {current_operation_id = id}
 }
 
 import ScageScreen._
@@ -35,7 +36,7 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
 
   private var inits:List[(Int, () => Any)] = Nil
   def init(init_func: => Any) = {
-    val operation_id = nextOperationId
+    val operation_id = /*nextOperationId*/nextId
     inits = (operation_id, () => init_func) :: inits
     if(is_running) init_func
     operation_id
@@ -60,12 +61,12 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
 
   private var actions:List[(Int, () => Any)] = Nil
   def action(action_func: => Any) = {
-    val operation_id = nextOperationId
+    val operation_id = /*nextOperationId*/nextId
     actions = (operation_id, () => action_func) :: actions
     operation_id
   }
   def action(action_period:Long = 0)(action_func: => Unit) = {
-    val operation_id = nextOperationId
+    val operation_id = /*nextOperationId*/nextId
     if(action_period > 0) {
       val action_waiter = new ActionWaiter(action_period, action_func)
       actions = (operation_id, () => action_waiter.doAction()) :: actions
@@ -93,7 +94,7 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
 
   private var exits:List[(Int, () => Any)] = Nil
   def exit(exit_func: => Any) = {
-    val operation_id = nextOperationId
+    val operation_id = /*nextOperationId*/nextId
     exits = (operation_id, () => exit_func) :: exits
     operation_id
   }

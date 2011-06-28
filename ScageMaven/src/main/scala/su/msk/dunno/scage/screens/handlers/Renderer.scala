@@ -11,6 +11,7 @@ import su.msk.dunno.scage.single.support.ScageColors._
 import su.msk.dunno.scage.single.support.messages.ScageMessage._
 import org.lwjgl.BufferUtils
 import org.apache.log4j.Logger
+import su.msk.dunno.scage.screens.support.ScageId._
 
 object Renderer {
   protected val log = Logger.getLogger(this.getClass);
@@ -301,7 +302,7 @@ class Renderer {
 
   private var renders:List[(Int, () => Unit)] = Nil
   def render(render_func: => Unit) = {
-    val operation_id = nextOperationId
+    val operation_id = /*nextOperationId*/nextId
     renders = renders ::: List((operation_id, () => render_func))
     operation_id
   }
@@ -325,7 +326,7 @@ class Renderer {
 
   private var interfaces:List[(Int, () => Unit)] = Nil
   def interface(interface_func: => Unit) = {
-    val operation_id = nextOperationId
+    val operation_id = /*nextOperationId*/nextId
     interfaces = (operation_id, () => interface_func) :: interfaces
     operation_id
   }

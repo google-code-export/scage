@@ -5,8 +5,9 @@ import su.msk.dunno.scage.single.support.ScageProperties.property
 import collection.mutable.HashMap
 import su.msk.dunno.scage.screens.handlers.Renderer._
 import su.msk.dunno.scage.single.support.Vec
+import su.msk.dunno.scage.screens.support.ScageId._
 
-object ScageTracer {
+/*object ScageTracer {
   private val log = Logger.getLogger(this.getClass);
 
   private var next_trace_id = 0
@@ -16,15 +17,15 @@ object ScageTracer {
   }
 }
 
-import ScageTracer._
+import ScageTracer._*/
 
-trait Trace extends State {
-  val id = nextTraceID
+trait Trace {
+  val id = /*nextTraceID*/nextId
 
   val point:Vec = Vec(-1,-1)
 
-  //def getState:State
   def changeState(changer:Trace, state:State)
+  def getState:State
 }
 
 class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from.x", 0),

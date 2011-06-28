@@ -11,13 +11,28 @@ import javax.xml.parsers.SAXParserFactory
 import org.apache.log4j.Logger
 import unicode.UnicodeFont
 
-object ScageMessage {
-  private val log = Logger.getLogger(this.getClass)
-  
-  val lang = property("strings.lang", "en")
-  val messages_base = property("strings.base", "resources/strings/"+stringProperty("app.name").toLowerCase+"_strings")
-  val messages_file = messages_base + "_" + lang + ".xml"
+object ScageMessage extends ScageMessage (
+  lang          = property("strings.lang", "en"),
+  messages_base = property("strings.base", "resources/strings/"+stringProperty("app.name").toLowerCase+"_strings"),
+  fonts_base    = property("fonts.base", "resources/fonts/"),
+  font_file     = property("font.file", "DroidSans.ttf"),
+  font_size     = property("font.size", 18),
+  glyph_from    = property("glyph.from", 1024),
+  glyph_to      = property("glyph.to", 1279)
+)
 
+class ScageMessage(
+  val lang:String          = property("strings.lang", "en"),
+  val messages_base:String = property("strings.base", "resources/strings/"+stringProperty("app.name").toLowerCase+"_strings"),
+  val fonts_base:String    = property("fonts.base", "resources/fonts/"),
+  val font_file:String     = property("font.file", "DroidSans.ttf"),
+  val font_size:Int        = property("font.size", 18),
+  val glyph_from:Int       = property("glyph.from", 1024),
+  val glyph_to:Int         = property("glyph.to", 1279)
+) {
+  private val log = Logger.getLogger(this.getClass)
+
+  val messages_file = messages_base + "_" + lang + ".xml"
   private val xmlmh = new XMLMessageHandler
   private val parser = SAXParserFactory.newInstance.newSAXParser
   try {
@@ -31,12 +46,6 @@ object ScageMessage {
     }
   }
 
-  val fonts_base = property("fonts.base", "resources/fonts/")
-  val font_file = property("font.file", "DroidSans.ttf")
-  val font_size = property("font.size", 18)
-  val row_height = property("font.row.height", font_size+2)
-  val glyph_from = property("glyph.from", 1024)
-  val glyph_to = property("glyph.to", 1279)
   private val font = try {
     new UnicodeFont(fonts_base+font_file, font_size, glyph_from, glyph_to)
   }

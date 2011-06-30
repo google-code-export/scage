@@ -78,6 +78,9 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
     trace
   }
 
+  def containsTrace(trace:T) = traces_in_point.contains(trace.id)
+  def containsTraceById(id:Int) = traces_in_point.contains(id)
+
   def removeTraces(traces:T*) { // TODO: add existence check (plan it carefully), log messages and return result
     if(traces.size > 0) {
       traces.foreach(trace => {

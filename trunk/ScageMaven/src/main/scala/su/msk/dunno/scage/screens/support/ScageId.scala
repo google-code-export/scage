@@ -6,7 +6,7 @@ object ScageId extends ScageId(start_id = property("id.start", 10000))
 
 class ScageId(start_id:Int = property("id.start", 10000)) {
   protected var id = start_id
-  require(id >= 10000)
+  require(id >= 10000, "id.start must be bigger then 10000")
   def nextId = {
     id += 1
     id

@@ -9,6 +9,12 @@
         <include>**/*.xml</include>
       </includes>
     </fileSet>
+    <fileSet encoding="UTF-8">
+      <directory>src/main/resources</directory>
+      <includes>
+        <include>log4j.properties</include>
+      </includes>
+    </fileSet>
     <fileSet encoding="UTF-8" filtered="true" packaged="true">
       <directory>src/main/scala</directory>
       <includes>
@@ -49,7 +55,6 @@
       <directory></directory>
       <includes>
         <include>build.properties</include>
-        <include>log4j.properties</include>
         <include>scageapp.properties</include>
       </includes>
     </fileSet>

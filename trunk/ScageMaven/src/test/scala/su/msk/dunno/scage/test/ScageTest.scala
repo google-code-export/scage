@@ -55,10 +55,12 @@ class ScageTest extends TestCase("app") {
             tracer.updateLocation(trace, new_location)
         }
 
-        key(KEY_UP,    10, onKeyDown = moveIfFreeLocation(trace, Vec(0,1)))
-        key(KEY_DOWN,  10, onKeyDown = moveIfFreeLocation(trace, Vec(0,-1)))
-        key(KEY_RIGHT, 10, onKeyDown = moveIfFreeLocation(trace, Vec(1,0)))
-        key(KEY_LEFT,  10, onKeyDown = moveIfFreeLocation(trace, Vec(-1,0)))
+        key(KEY_W, 10, onKeyDown = moveIfFreeLocation(trace, Vec(0,1)))
+        key(KEY_A, 10, onKeyDown = moveIfFreeLocation(trace, Vec(-1,0)))
+        key(KEY_S, 10, onKeyDown = moveIfFreeLocation(trace, Vec(0,-1)))
+        key(KEY_D, 10, onKeyDown = moveIfFreeLocation(trace, Vec(1,0)))
+
+        anykey(onKeyDown = println("any key pressed =)"))
 
         /*leftMouse(onBtnDown = {
           mouse_coord => tracer.updateLocation(trace, mouse_coord)
@@ -81,7 +83,13 @@ class ScageTest extends TestCase("app") {
         }
 
         val physics = new ScagePhysics
-        action(500) {
+        private var x = 0.0f
+        def period = {
+          x += 0.01f
+          if(x > 2*math.Pi) x = 0
+          (250 * (math.sin(x)+1)).toLong
+        }
+        action(period) {
           physics.step()
         }
         leftMouse(onBtnDown = {

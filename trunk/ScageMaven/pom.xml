@@ -4,7 +4,7 @@
   <groupId>su.msk.dunno</groupId>
   <artifactId>scage</artifactId>
     <packaging>jar</packaging>
-    <version>0.6</version>
+    <version>0.6.1</version>
   <inceptionYear>2011</inceptionYear>
 
   <name>Scage</name>
@@ -155,6 +155,9 @@
         </executions>
         <configuration>
           <scalaVersion>${scala.version}</scalaVersion>
+          <args>
+            <arg>-optimise</arg>
+          </args>
         </configuration>
       </plugin>
       <plugin>

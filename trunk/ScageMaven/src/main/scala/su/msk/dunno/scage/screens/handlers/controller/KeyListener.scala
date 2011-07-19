@@ -33,3 +33,21 @@ class KeyListener(key: => Int, repeatTime: => Long, onKeyDown: => Any, onKeyUp: 
     }
   }
 }
+
+class AnyKeyListener(onKeyDown: => Any, onKeyUp: => Any) extends UIListener {
+  def check() {
+    if(Keyboard.next) {
+      val key = Keyboard.getEventKey
+      if(Keyboard.getEventKeyState) {
+        if(!wasPressed(key)) {
+          keyDown(key)
+          onKeyDown
+        }
+      }
+      else if(wasPressed(key)) {
+        keyUp(key)
+        onKeyUp
+      }
+    }
+  }
+}

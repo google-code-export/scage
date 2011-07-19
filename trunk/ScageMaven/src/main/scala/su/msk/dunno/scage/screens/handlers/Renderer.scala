@@ -41,12 +41,12 @@ object Renderer {
     countFPS()
   }
 
-  private var next_displaylist_key = 10000
+  /*private var next_displaylist_key = 10000
   def nextDisplayListKey = {
     val next_key = next_displaylist_key
     next_displaylist_key += 1
     next_key
-  }
+  }*/
 
   lazy val initgl = {
     Display.setDisplayMode(new DisplayMode(width, height));
@@ -104,7 +104,7 @@ object Renderer {
   def color_=(c:ScageColor) {GL11.glColor3f(c.red, c.green, c.blue)}
 
   def displayList(func: => Unit) = {
-    val list_code = nextDisplayListKey
+    val list_code = /*nextDisplayListKey*/nextId
     GL11.glNewList(list_code, GL11.GL_COMPILE);
     func
     GL11.glEndList();
@@ -234,7 +234,7 @@ object Renderer {
   }
 
   def image(texture:Texture, game_width:Float, game_height:Float, start_x:Float, start_y:Float, real_width:Float, real_height:Float):Int = {
-	  val list_name = nextDisplayListKey
+	  val list_name = /*nextDisplayListKey*/nextId
 
 		val t_width:Float = texture.getTextureWidth
 		val t_height:Float = texture.getTextureHeight

@@ -65,10 +65,16 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
     actions = (operation_id, () => action_func) :: actions
     operation_id
   }
-  def action(action_period:Long = 0)(action_func: => Unit) = {
+  def action(action_period: => Long)(action_func: => Unit) = {
+    val operation_id = /*nextOperationId*/nextId
+    val action_waiter = new ActionWaiterDynamic(action_period, action_func)
+    actions = (operation_id, () => action_waiter.doAction()) :: actions
+    operation_id
+  }
+  def actionWithStaticPeriod(action_period:Long)(action_func: => Unit) = {
     val operation_id = /*nextOperationId*/nextId
     if(action_period > 0) {
-      val action_waiter = new ActionWaiter(action_period, action_func)
+      val action_waiter = new ActionWaiterStatic(action_period, action_func)
       actions = (operation_id, () => action_waiter.doAction()) :: actions
     }
     else actions = (operation_id, () => action_func) :: actions
@@ -120,6 +126,9 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
   def key(key: => Int, repeatTime: => Long = 0, onKeyDown: => Any, onKeyUp: => Any = {}) {
     controller.addListener(new KeyListener(key, repeatTime, onKeyDown, onKeyUp))
     //controller.key(key, repeatTime, onKeyDown, onKeyUp)
+  }
+  def anykey(onKeyDown: => Any, onKeyUp: => Any = {}) {
+    controller.addListener(new AnyKeyListener(onKeyDown, onKeyUp))
   }
   def leftMouse(repeatTime: => Long = 0, onBtnDown: Vec => Any, onBtnUp: Vec => Any = Vec => {}) {
     controller.addListener(new MouseButtonsListener(0, repeatTime, onBtnDown, onBtnUp))
@@ -228,9 +237,9 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
     else log.warn("event "+event_name+" not found")
   }
 
-  private[ScageScreen] class ActionWaiter(period:Long, action_func: => Unit) {
-    //println("creating new action waiter...")
+  private[ScageScreen] abstract class ActionWaiter(action_func: => Unit) {
     private var last_action_time:Long = 0
+    protected def period:Long
 
     def doAction() {
       if(System.currentTimeMillis - last_action_time > period) {
@@ -239,4 +248,8 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
       }
     }
   }
+  private[ScageScreen] class ActionWaiterDynamic(action_period: => Long, action_func: => Unit) extends ActionWaiter(action_func) {
+    def period = action_period
+  }
+  private[ScageScreen] class ActionWaiterStatic(val period:Long, action_func: => Unit) extends ActionWaiter(action_func)
 }

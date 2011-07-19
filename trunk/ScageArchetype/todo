@@ -1,0 +1,6 @@
+перенести значения в build.properties:
+<sourceDirectory>src/main/scala</sourceDirectory>
+<testSourceDirectory>src/test/scala</testSourceDirectory>
+чтобы в рамках одного проекта возможно было делать несколько папок исходников (нужно для scage-tutorials)
+
+починить добавление log4j.properties при сборке

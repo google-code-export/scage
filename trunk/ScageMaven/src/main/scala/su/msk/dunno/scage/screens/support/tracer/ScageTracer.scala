@@ -62,19 +62,23 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
     for(i <- 0 until matrix.length; j <- 0 until matrix.head.length) {matrix(i)(j) = Nil}
   }
 
+  // it is very critical for the structures below to be changed only inside ScageTracer
+  // but for convenience I keep them protected, so client classes - children of ScageTracer can read them
   protected val point_matrix = Array.ofDim[List[T]](N_x, N_y)
   initMatrix(point_matrix)
   protected val traces_in_point = new HashMap[Int, Vec]()
+  protected var traces_list:List[T] = Nil
+  def tracesList = traces_list
 
   def addTrace(point:Vec, trace:T) = {
     if(isPointOnArea(point)) {
       trace.point is point
       point_matrix(point.ix)(point.iy) = trace :: point_matrix(point.ix)(point.iy)
       traces_in_point += trace.id -> trace.point.copy
+      traces_list = trace :: traces_list
       log.debug("added new trace #"+trace.id+" in point ("+trace.point+")")
     }
     else log.warn("failed to add trace: point ("+point+") is out of area")
-
     trace
   }
 
@@ -86,39 +90,40 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
       traces.foreach(trace => {
         point_matrix(trace.point.ix)(trace.point.iy) = point_matrix(trace.point.ix)(trace.point.iy).filterNot(_.id == trace.id)
         traces_in_point -= trace.id
+        traces_list.filterNot(other_trace => other_trace.id == trace.id)
       })
     }
     else {
       initMatrix(point_matrix)
       traces_in_point.clear()
+      traces_list = Nil
       log.info("deleted all traces")
     }
   }
 
-  def removeTracesById(trace_ids:Int*) = { // TODO: add log messages
+  def removeTracesById(trace_ids:Int*) { // TODO: add log messages
     if(trace_ids.size > 0) {
       trace_ids.foreach(trace_id => {
         val trace_point = traces_in_point(trace_id)
         if(trace_point != null) {
           point_matrix(trace_point.ix)(trace_point.iy) = point_matrix(trace_point.ix)(trace_point.iy).filterNot(_.id == trace_id)
           traces_in_point -= trace_id
-          true
+          traces_list.filterNot(other_trace => other_trace.id == trace_id)
         }
-        else false
       })
     }
     else {
       initMatrix(point_matrix)
       traces_in_point.clear()
+      traces_list = Nil
       log.info("deleted all traces")
-      false
     }
   }
 
   def tracesInPoint(point:Vec, condition:(T) => Boolean) = {
     if(!isPointOnArea(point)) Nil
     else {
-      for{
+      for {
         trace <- point_matrix(point.ix)(point.iy)
         if condition(trace)
       } yield trace

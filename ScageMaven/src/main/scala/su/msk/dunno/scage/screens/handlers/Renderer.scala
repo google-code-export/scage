@@ -217,6 +217,21 @@ object Renderer {
       GL11.glEnd()
     GL11.glEnable(GL11.GL_TEXTURE_2D)
   }
+  def drawPoints(coords:Vec*) {
+    GL11.glDisable(GL11.GL_TEXTURE_2D)
+      GL11.glBegin(GL11.GL_POINTS)
+        coords.foreach(coord => GL11.glVertex2f(coord.x, coord.y))
+      GL11.glEnd()
+    GL11.glEnable(GL11.GL_TEXTURE_2D)
+  }
+  def drawPoints(coords:Array[Vec], _color:ScageColor = color) {
+    color = _color
+    drawPoints(coords:_*)
+  }
+  def drawPoints(coords:List[Vec], _color:ScageColor) {
+    color = _color
+    drawPoints(coords:_*)
+  }
 
   // white color by default for display lists to draw in natural colors
   def drawDisplayList(list_code:Int, coord:Vec = Vec(0,0), _color:ScageColor = WHITE) {

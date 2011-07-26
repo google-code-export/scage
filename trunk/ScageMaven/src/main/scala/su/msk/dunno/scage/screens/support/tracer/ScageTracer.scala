@@ -177,7 +177,7 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
     val y = leftup_y - (math.random*height).toInt
     Vec(x,y)
   }
-  def randomCoord(leftup_x:Int = 0, leftup_y:Int = field_to_y-1, width:Int = field_to_x - field_from_x, height:Int = field_to_y - field_from_y) = {
+  def randomCoord(leftup_x:Int = field_from_x, leftup_y:Int = field_to_y-1, width:Int = field_to_x - field_from_x, height:Int = field_to_y - field_from_y) = {
     randomPoint(leftup_x, leftup_y, width, height)
   }
 }

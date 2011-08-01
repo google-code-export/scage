@@ -16,9 +16,6 @@ class CoordTracer[CT <: CoordTrace](field_from_x:Int        = property("field.fr
                                     N_y:Int                 = property("field.N_y", height/50),
                                     are_solid_edges:Boolean = property("field.solid_edges", true))
 extends ScageTracer[CT](field_from_x,field_to_x,field_from_y,field_to_y,N_x,N_y,are_solid_edges) {
-  def point(v:Vec):Vec = Vec(((v.x - field_from_x)/field_width*N_x).toInt,
-                             ((v.y - field_from_y)/field_height*N_y).toInt)
-
   override def addTrace(coord:Vec, trace:CT) = {
     if(isCoordOnArea(coord)) trace.coord is coord
     super.addTrace(point(coord), trace)

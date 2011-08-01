@@ -56,6 +56,8 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
     else Vec(checkC(point.x, N_x), checkC(point.y, N_y))
   }
 
+  def point(v:Vec):Vec = Vec(((v.x - field_from_x)/field_width*N_x).toInt,
+                             ((v.y - field_from_y)/field_height*N_y).toInt)
   def pointCenter(p:Vec):Vec = Vec(field_from_x + p.x*h_x + h_x/2, field_from_y + p.y*h_y + h_y/2)
 
   protected def initMatrix(matrix:Array[Array[List[T]]]) {
@@ -90,7 +92,7 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
       traces.foreach(trace => {
         point_matrix(trace.point.ix)(trace.point.iy) = point_matrix(trace.point.ix)(trace.point.iy).filterNot(_.id == trace.id)
         traces_in_point -= trace.id
-        traces_list.filterNot(other_trace => other_trace.id == trace.id)
+        traces_list = traces_list.filterNot(other_trace => other_trace.id == trace.id)
       })
     }
     else {
@@ -100,6 +102,9 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
       log.info("deleted all traces")
     }
   }
+  def removeTraces(traces:List[T]) {
+    removeTraces(traces:_*)
+  }
 
   def removeTracesById(trace_ids:Int*) { // TODO: add log messages
     if(trace_ids.size > 0) {
@@ -108,7 +113,7 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
         if(trace_point != null) {
           point_matrix(trace_point.ix)(trace_point.iy) = point_matrix(trace_point.ix)(trace_point.iy).filterNot(_.id == trace_id)
           traces_in_point -= trace_id
-          traces_list.filterNot(other_trace => other_trace.id == trace_id)
+          traces_list = traces_list.filterNot(other_trace => other_trace.id == trace_id)
         }
       })
     }

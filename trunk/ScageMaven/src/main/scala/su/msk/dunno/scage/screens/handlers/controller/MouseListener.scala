@@ -7,6 +7,8 @@ object MouseListener {
   def mouseCoord = Vec(Mouse.getX, Mouse.getY)
 }
 
+import MouseListener._
+
 class MouseButtonsListener(button:Int, repeatTime: => Long, onBtnDown: Vec => Any, onBtnUp: Vec => Any) extends UIListener {
   val isRepeatable = repeatTime > 0
   private var was_pressed = false
@@ -26,12 +28,12 @@ class MouseButtonsListener(button:Int, repeatTime: => Long, onBtnDown: Vec => An
       if(!was_pressed ||
          (isRepeatable && System.currentTimeMillis() - last_pressed_time > repeatTime)) {
         btnDown()
-        onBtnDown(Vec(Mouse.getX, Mouse.getY))
+        onBtnDown(mouseCoord)
       }
     }
     else if(was_pressed) {
       btnUp()
-      onBtnUp(Vec(Mouse.getX, Mouse.getY))
+      onBtnUp(mouseCoord)
     }
   }
 }
@@ -39,8 +41,7 @@ class MouseButtonsListener(button:Int, repeatTime: => Long, onBtnDown: Vec => An
 class MouseMotionListener(onMotion: Vec => Any) extends UIListener {
   def check() {
     if(Mouse.getDX != 0 || Mouse.getDY != 0) {
-      val mouse_coord = Vec(Mouse.getX, Mouse.getY)
-      onMotion(mouse_coord)
+      onMotion(mouseCoord)
     }
   }
 }
@@ -48,8 +49,7 @@ class MouseMotionListener(onMotion: Vec => Any) extends UIListener {
 class MouseDragListener(button:Int, onDrag: Vec => Any) extends UIListener {
   def check() {
     if(Mouse.isButtonDown(button) && (Mouse.getDX != 0 || Mouse.getDY != 0)) {
-      val mouse_coord = Vec(Mouse.getX, Mouse.getY)
-      onDrag(mouse_coord)
+      onDrag(mouseCoord)
     }
   }
 }
@@ -60,8 +60,7 @@ class MouseWheelFactory {
       new UIListener {
         def check() {
           if(Mouse.getDWheel > 0) {
-            val mouse_coord = Vec(Mouse.getX, Mouse.getY)
-            onWheelUp(mouse_coord)
+            onWheelUp(mouseCoord)
           }
         }
       }
@@ -74,8 +73,7 @@ class MouseWheelFactory {
       new UIListener {
         def check() {
           if(Mouse.getDWheel < 0) {
-            val mouse_coord = Vec(Mouse.getX, Mouse.getY)
-            onWheelDown(mouse_coord)
+            onWheelDown(mouseCoord)
           }
         }
       }

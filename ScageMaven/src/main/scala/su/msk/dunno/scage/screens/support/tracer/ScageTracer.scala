@@ -32,8 +32,10 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
                               val field_to_x:Int          = property("field.to.x", width),
                               val field_from_y:Int        = property("field.from.y", 0),
                               val field_to_y:Int          = property("field.to.y", height),
-                              val N_x:Int                 = property("field.N_x", width/50),
-                              val N_y:Int                 = property("field.N_y", height/50),
+                              init_h_x:Int                = property("field.h_x", 0),
+                              init_h_y:Int                = property("field.h_y", 0),
+                              init_N_x:Int                 = property("field.N_x", width/50),
+                              init_N_y:Int                 = property("field.N_y", height/50),
                               val are_solid_edges:Boolean = property("field.solid_edges", true)) {
   protected val log = Logger.getLogger(this.getClass);
 
@@ -42,8 +44,11 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
   val field_width = field_to_x - field_from_x
   val field_height = field_to_y - field_from_y
 
-  val h_x = field_width/N_x
-  val h_y = field_height/N_y                         
+  val N_x = if(init_h_x != 0) field_width/init_h_x else init_N_x
+  val N_y = if(init_h_y != 0) field_height/init_h_y else init_N_y
+
+  val h_x = if(init_h_x == 0) field_width/init_N_x else init_h_x
+  val h_y = if(init_h_y == 0) field_height/init_N_y else init_h_y
   
   def isPointOnArea(point:Vec):Boolean = point.x >= 0 && point.x < N_x && point.y >= 0 && point.y < N_y
   def outsidePoint(point:Vec):Vec = {

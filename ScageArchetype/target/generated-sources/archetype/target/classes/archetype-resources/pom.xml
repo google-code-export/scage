@@ -13,7 +13,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <scala.version>2.9.0</scala.version>
     <lwjgl.version>2.6</lwjgl.version>
-    <scage.version>0.5.5</scage.version>
+    <scage.version>0.6.1</scage.version>
   </properties>
 
   <repositories>
@@ -78,8 +78,8 @@
   </dependencies>
 
   <build>
-    <sourceDirectory>src/main/scala</sourceDirectory>
-    <testSourceDirectory>src/test/scala</testSourceDirectory>
+    <sourceDirectory>${src.dir}/main/scala</sourceDirectory>
+    <testSourceDirectory>${src.dir}/test/scala</testSourceDirectory>
     <filters>
         <filter>build.properties</filter>
     </filters>
@@ -118,6 +118,9 @@
         </executions>
         <configuration>
           <scalaVersion>${scala.version}</scalaVersion>
+          <args>
+            <arg>-optimise</arg>
+          </args>
         </configuration>
       </plugin>
 
@@ -142,18 +145,6 @@
       <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <configuration>
-                  <artifactItems>
-                    <artifactItem>
-                      <groupId>org.lwjgl</groupId>
-                      <artifactId>lwjgl-native</artifactId>
-                      <version>${lwjgl.version}</version>
-                      <type>jar</type>
-                      <outputDirectory>${project.build.directory}/native</outputDirectory>
-                      <overWrite>true</overWrite>
-                    </artifactItem>
-                  </artifactItems>
-                </configuration>
                 <executions>
                   <execution>
                     <id>unpack</id>
@@ -161,6 +152,28 @@
                     <goals>
                       <goal>unpack</goal>
                     </goals>
+                    <configuration>
+                      <artifactItems>
+                        <artifactItem>
+                          <groupId>org.lwjgl</groupId>
+                          <artifactId>lwjgl-native</artifactId>
+                          <version>${lwjgl.version}</version>
+                          <type>jar</type>
+                          <outputDirectory>${project.build.directory}/native</outputDirectory>
+                          <overWrite>true</overWrite>
+                        </artifactItem>
+                      </artifactItems>
+                    </configuration>
+                  </execution>
+                  <execution>
+                    <id>copy-dependencies</id>
+                    <phase>package</phase>
+                    <goals>
+                      <goal>copy-dependencies</goal>
+                    </goals>
+                    <configuration>
+                      <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                    </configuration>
                   </execution>
                 </executions>
       </plugin>
@@ -185,27 +198,7 @@
                              <mainClass>${jar.mainclass}</mainClass>
                           </manifest>
                        </archive>
-                       <excludes>
-                           <exclude>log4j.properties</exclude>
-                       </excludes>
                     </configuration>
-      </plugin>
-
-      <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                  <execution>
-                    <id>copy-dependencies</id>
-                    <phase>package</phase>
-                    <goals>
-                      <goal>copy-dependencies</goal>
-                    </goals>
-                    <configuration>
-                      <outputDirectory>${project.build.directory}/lib</outputDirectory>
-                    </configuration>
-                  </execution>
-                </executions>
       </plugin>
 
       <plugin>
@@ -218,7 +211,7 @@
                   <finalName>${artifactId}-${version}-${os.type}</finalName>
 			      <outputDirectory>${assembly.dir}</outputDirectory>
                     <descriptors>
-                        <descriptor>src/main/assembly/scageapp.xml</descriptor>
+                        <descriptor>src/main/assembly/${assembly.file}</descriptor>
                     </descriptors>
                 </configuration>
                 <executions>

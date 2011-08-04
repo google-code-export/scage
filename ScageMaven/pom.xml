@@ -3,8 +3,8 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>su.msk.dunno</groupId>
   <artifactId>scage</artifactId>
-    <packaging>jar</packaging>
-    <version>0.6.3</version>
+  <packaging>jar</packaging>
+  <version>0.6.3-webstart</version>
   <inceptionYear>2011</inceptionYear>
 
   <name>Scage</name>
@@ -115,12 +115,16 @@
             <filter>build.properties</filter>
           </filters>
       <resources>
-            <resource>
-              <directory>src/main/resources</directory>
-              <filtering>true</filtering>
-            </resource>
-          </resources>
-
+        <resource>
+            <directory>src/main/resources</directory>
+            <filtering>true</filtering>
+        </resource>
+      </resources>
+      <testResources>
+          <testResource>
+              <directory>src/test/resources</directory>
+          </testResource>
+      </testResources>
 
     <plugins>
         <plugin>

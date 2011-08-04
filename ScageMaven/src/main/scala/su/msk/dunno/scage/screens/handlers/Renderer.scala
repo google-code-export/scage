@@ -12,6 +12,7 @@ import su.msk.dunno.scage.single.support.messages.ScageMessage._
 import org.lwjgl.BufferUtils
 import org.apache.log4j.Logger
 import su.msk.dunno.scage.screens.support.ScageId._
+import org.newdawn.slick.util.ResourceLoader
 
 object Renderer {
   protected val log = Logger.getLogger(this.getClass);
@@ -245,7 +246,8 @@ object Renderer {
   private def getTexture(format:String, in:InputStream):Texture = TextureLoader.getTexture(format, in)
   private def getTexture(filename:String):Texture = {
     val format:String = filename.substring(filename.length-3)
-    getTexture(format, new FileInputStream(filename))
+    //getTexture(format, new FileInputStream(filename))
+    getTexture(format, ResourceLoader.getResourceAsStream(filename))
   }
 
   def image(texture:Texture, game_width:Float, game_height:Float, start_x:Float, start_y:Float, real_width:Float, real_height:Float):Int = {

@@ -3,6 +3,7 @@ package su.msk.dunno.scage.single.support
 import java.io.{FileInputStream, FileNotFoundException}
 import java.util.Properties
 import org.apache.log4j.Logger
+import org.newdawn.slick.util.ResourceLoader
 
 object ScageProperties {
   private val log = Logger.getLogger(this.getClass)
@@ -37,16 +38,19 @@ object ScageProperties {
   private def load:Properties = {
     try {
       val p = new Properties
-      p.load(new FileInputStream(file))
+      //p.load(new FileInputStream(file))
+      p.load(ResourceLoader.getResourceAsStream(file))
       log.info("loaded properties file "+file)
       props_already_read = Nil
       p
     }
     catch {
-      case ex:FileNotFoundException =>
+      //case ex:FileNotFoundException =>
+      case ex:Exception =>
         if(!file.contains("properties/")) {
-          _file = "properties/" + _file
+          log.error("failed to load properties: file "+_file+" not found")
           log.debug("development mode: looking for properties file in the properties folder")
+          _file = "properties/" + _file
           load
         }
         else fileNotFound

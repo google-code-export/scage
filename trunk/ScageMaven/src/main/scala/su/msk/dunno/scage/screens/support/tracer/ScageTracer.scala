@@ -34,8 +34,8 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
                               val field_to_y:Int          = property("field.to.y", height),
                               init_h_x:Int                = property("field.h_x", 0),
                               init_h_y:Int                = property("field.h_y", 0),
-                              init_N_x:Int                 = property("field.N_x", width/50),
-                              init_N_y:Int                 = property("field.N_y", height/50),
+                              init_N_x:Int                = if(property("field.h_x", 0) == 0) property("field.N_x", width/50) else 0,
+                              init_N_y:Int                = if(property("field.h_y", 0) == 0) property("field.N_y", height/50) else 0,
                               val are_solid_edges:Boolean = property("field.solid_edges", true)) {
   protected val log = Logger.getLogger(this.getClass);
 

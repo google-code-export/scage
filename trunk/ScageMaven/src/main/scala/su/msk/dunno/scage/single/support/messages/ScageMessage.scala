@@ -10,10 +10,11 @@ import java.io.FileInputStream
 import javax.xml.parsers.SAXParserFactory
 import org.apache.log4j.Logger
 import unicode.UnicodeFont
+import org.newdawn.slick.util.ResourceLoader
 
 object ScageMessage extends ScageMessage (
   lang          = property("strings.lang", "en"),
-  messages_base = property("strings.base", "resources/strings/"+stringProperty("app.name").toLowerCase+"_strings"),
+  messages_base = property("strings.base", "resources/strings/" +stringProperty("app.name").toLowerCase+"_strings"),
   fonts_base    = property("fonts.base", "resources/fonts/"),
   font_file     = property("font.file", "DroidSans.ttf"),
   font_size     = property("font.size", 18),
@@ -23,7 +24,7 @@ object ScageMessage extends ScageMessage (
 
 class ScageMessage(
   val lang:String          = property("strings.lang", "en"),
-  val messages_base:String = property("strings.base", "resources/strings/"+stringProperty("app.name").toLowerCase+"_strings"),
+  val messages_base:String = property("strings.base", "resources/strings/" +stringProperty("app.name").toLowerCase+"_strings"),
   val fonts_base:String    = property("fonts.base", "resources/fonts/"),
   val font_file:String     = property("font.file", "DroidSans.ttf"),
   val font_size:Int        = property("font.size", 18),
@@ -36,7 +37,8 @@ class ScageMessage(
   private val xmlmh = new XMLMessageHandler
   private val parser = SAXParserFactory.newInstance.newSAXParser
   try {
-    val fis = new FileInputStream(messages_file)
+    //val fis = new FileInputStream(messages_file)
+    val fis = ResourceLoader.getResourceAsStream(messages_file)
     parser.parse(fis, xmlmh)
     log.info("successfully parsed strings file "+messages_file)
   }

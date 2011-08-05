@@ -38,8 +38,7 @@ object ScageProperties {
   private def load:Properties = {
     try {
       val p = new Properties
-      //p.load(new FileInputStream(file))
-      p.load(ResourceLoader.getResourceAsStream(file))
+      p.load(ResourceLoader.getResourceAsStream(file))   // can be loaded as resource from jar
       log.info("loaded properties file "+file)
       props_already_read = Nil
       p

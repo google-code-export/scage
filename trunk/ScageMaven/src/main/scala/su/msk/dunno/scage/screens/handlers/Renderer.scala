@@ -1,7 +1,7 @@
 package su.msk.dunno.scage.screens.handlers
 
 import su.msk.dunno.scage.screens.ScageScreen._
-import java.io.{InputStream, FileInputStream}
+import java.io.{InputStream}
 import org.newdawn.slick.opengl.{TextureLoader, Texture}
 import org.lwjgl.opengl.{DisplayMode, GL11, Display}
 import org.lwjgl.util.glu.GLU
@@ -246,8 +246,7 @@ object Renderer {
   private def getTexture(format:String, in:InputStream):Texture = TextureLoader.getTexture(format, in)
   private def getTexture(filename:String):Texture = {
     val format:String = filename.substring(filename.length-3)
-    //getTexture(format, new FileInputStream(filename))
-    getTexture(format, ResourceLoader.getResourceAsStream(filename))
+    getTexture(format, ResourceLoader.getResourceAsStream(filename))    // can be loaded as resource from jar, hell yeah!!
   }
 
   def image(texture:Texture, game_width:Float, game_height:Float, start_x:Float, start_y:Float, real_width:Float, real_height:Float):Int = {

@@ -48,7 +48,7 @@ public class UnicodeFont implements org.newdawn.slick.Font {
 	 */
 	private static Font createFont (String ttfFileRef) throws SlickException {
 		try {
-			return Font.createFont(Font.TRUETYPE_FONT, ResourceLoader.getResourceAsStream(ttfFileRef));
+			return Font.createFont(Font.TRUETYPE_FONT, ResourceLoader.getResourceAsStream(ttfFileRef)); // possible can be loaded from jar...
 		} catch (FontFormatException ex) {
 			throw new SlickException("Invalid font: " + ttfFileRef, ex);
 		} catch (IOException ex) {

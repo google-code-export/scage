@@ -6,7 +6,6 @@ import su.msk.dunno.scage.single.support.ScageProperties._
 import collection.mutable.HashMap
 import org.xml.sax.Attributes
 import org.xml.sax.helpers.DefaultHandler
-import java.io.FileInputStream
 import javax.xml.parsers.SAXParserFactory
 import org.apache.log4j.Logger
 import unicode.UnicodeFont
@@ -37,8 +36,7 @@ class ScageMessage(
   private val xmlmh = new XMLMessageHandler
   private val parser = SAXParserFactory.newInstance.newSAXParser
   try {
-    //val fis = new FileInputStream(messages_file)
-    val fis = ResourceLoader.getResourceAsStream(messages_file)
+    val fis = ResourceLoader.getResourceAsStream(messages_file)   // can be loaded as resource from jar
     parser.parse(fis, xmlmh)
     log.info("successfully parsed strings file "+messages_file)
   }

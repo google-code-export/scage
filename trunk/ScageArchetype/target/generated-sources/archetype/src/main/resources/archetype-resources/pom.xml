@@ -8,12 +8,13 @@
 
   <name>Scage Project</name>
   <description>Simple Scage Project Stub</description>
+  <url>http://example.com</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <scala.version>2.9.0</scala.version>
     <lwjgl.version>2.6</lwjgl.version>
-    <scage.version>0.6.1</scage.version>
+    <scage.version>0.6.4</scage.version>
   </properties>
 
   <repositories>
@@ -200,32 +201,120 @@
                        </archive>
                     </configuration>
       </plugin>
+    </plugins>
+  </build>
 
-      <plugin>
-                <!-- NOTE: We don't need a groupId specification because the group is
-                     org.apache.maven.plugins ...which is assumed by default.
-                 -->
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.2-beta-2</version>
-                <configuration>
-                  <finalName>${artifactId}-${version}-${os.type}</finalName>
-			      <outputDirectory>${assembly.dir}</outputDirectory>
-                    <descriptors>
-                        <descriptor>src/main/assembly/${assembly.file}</descriptor>
-                    </descriptors>
-                </configuration>
-                <executions>
+  <profiles>
+      <profile>
+          <id>build</id>
+          <activation>
+              <activeByDefault>true</activeByDefault>
+          </activation>
+          <build>
+              <plugins>
+                <plugin>
+                            <!-- NOTE: We don't need a groupId specification because the group is
+                                 org.apache.maven.plugins ...which is assumed by default.
+                             -->
+                            <artifactId>maven-assembly-plugin</artifactId>
+                            <version>2.2-beta-2</version>
+                            <configuration>
+                              <finalName>webstart-0.1-${os.type}</finalName>
+                              <outputDirectory>${assembly.dir}</outputDirectory>
+                                <descriptors>
+                                    <descriptor>src/main/assembly/${assembly.file}</descriptor>
+                                </descriptors>
+                            </configuration>
+                            <executions>
+                                  <execution>
+                                    <id>make-assembly</id> <!-- this is used for inheritance merges -->
+                                    <phase>package</phase> <!-- append to the packaging phase. -->
+                                    <goals>
+                                      <goal>single</goal> <!-- goals == mojos -->
+                                    </goals>
+                                  </execution>
+                            </executions>
+                  </plugin>
+              </plugins>
+          </build>
+      </profile>
+      <profile>
+          <id>webstart</id>
+          <build>
+              <plugins>
+                  <plugin>
+                    <groupId>org.codehaus.mojo.webstart</groupId>
+                    <artifactId>webstart-maven-plugin</artifactId>
+                    <executions>
                       <execution>
-                        <id>make-assembly</id> <!-- this is used for inheritance merges -->
-                        <phase>package</phase> <!-- append to the packaging phase. -->
+                        <phase>package</phase>
                         <goals>
-                          <goal>single</goal> <!-- goals == mojos -->
+                          <goal>jnlp-single</goal> <!-- use jnlp, jnlp-inline or jnlp-single as appropriate -->
                         </goals>
                       </execution>
                     </executions>
-      </plugin>
-    </plugins>
-  </build>
+                    <configuration>
+                        <!-- JNLP generation -->
+                      <jnlp>
+                        <!-- default values -->
+                        <!--inputTemplateResourcePath>${project.basedir}</inputTemplateResourcePath-->
+                        <!--inputTemplate>src/main/jnlp/template.vm</inputTemplate--> <!-- relative to inputTemplateResourcePath -->
+                        <outputFile>run.jnlp</outputFile> <!-- defaults to launch.jnlp -->
+
+                        <!-- used to automatically identify the jar containing the main class. -->
+                        <!-- this is perhaps going to change -->
+                        <mainClass>${jar.mainclass}</mainClass>
+                      </jnlp>
+                      <verbose>true</verbose>
+                      <!--
+                      <sign>
+                        <keystore>scage_keystore</keystore>
+                        <keypass>scagescage</keypass>
+                        <storepass>scagescage</storepass>
+                        <alias>scage_keystore</alias>
+                        <dnameCn>dunno</dnameCn>
+                        <dnameOu>dunno</dnameOu>
+                        <dnameO>dunno</dnameO>
+                        <dnameL>dunno</dnameL>
+                        <dnameSt>Russia</dnameSt>
+                        <dnameC>Moscow</dnameC>
+
+                        <verify>true</verify>
+                        <keystoreConfig>
+                          <delete>true</delete>
+                          <gen>true</gen>
+                        </keystoreConfig>
+                      </sign>
+                      -->
+                    </configuration>
+                  </plugin>
+
+                  <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jarsigner-plugin</artifactId>
+                    <version>1.2</version>
+                    <executions>
+                      <execution>
+                        <id>sign</id>
+                        <phase>package</phase>
+                        <goals>
+                          <goal>sign</goal>
+                        </goals>
+                      </execution>
+                    </executions>
+                    <configuration>
+                      <archiveDirectory>${project.build.directory}/jnlp</archiveDirectory>
+                      <keystore>${keystore}</keystore>
+                      <alias>${keystore.alias}</alias>
+                      <storepass>${keystore.pass}</storepass>
+                      <keypass>${key.pass}</keypass>
+                      <verbose>true</verbose>
+                    </configuration>
+                  </plugin>
+              </plugins>
+          </build>
+      </profile>
+  </profiles>
 
   <reporting>
     <plugins>

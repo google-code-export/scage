@@ -43,6 +43,7 @@
       <directory></directory>
       <includes>
         <include>build.properties</include>
+        <include>readme</include>
       </includes>
     </fileSet>
     <fileSet>

@@ -15,6 +15,7 @@
     <scala.version>2.9.0</scala.version>
     <lwjgl.version>2.6</lwjgl.version>
     <scage.version>0.6.4</scage.version>
+    <src.dir>src</src.dir>
   </properties>
 
   <repositories>
@@ -81,6 +82,14 @@
   <build>
     <sourceDirectory>${src.dir}/main/scala</sourceDirectory>
     <testSourceDirectory>${src.dir}/test/scala</testSourceDirectory>
+
+    <resources>
+        <resource>
+            <directory>${src.dir}/main/resources</directory>
+            <filtering>true</filtering>
+        </resource>
+    </resources>
+
     <filters>
         <filter>build.properties</filter>
     </filters>

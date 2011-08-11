@@ -86,7 +86,17 @@
     <resources>
         <resource>
             <directory>${src.dir}/main/resources</directory>
+            <includes>
+            	<include>log4j.properties</include>
+            </includes>
             <filtering>true</filtering>
+        </resource>
+        <resource>
+            <directory>${src.dir}/main/resources</directory>
+            <excludes>
+            	<exclude>log4j.properties</exclude>
+            </excludes>
+            <filtering>false</filtering>
         </resource>
     </resources>
 
@@ -228,10 +238,10 @@
                             <artifactId>maven-assembly-plugin</artifactId>
                             <version>2.2-beta-2</version>
                             <configuration>
-                              <finalName>webstart-0.1-${os.type}</finalName>
-                              <outputDirectory>${assembly.dir}</outputDirectory>
+                              <finalName>${artifactId}-0.1-${os.type}</finalName>
+                              <outputDirectory>builds</outputDirectory>
                                 <descriptors>
-                                    <descriptor>src/main/assembly/${assembly.file}</descriptor>
+                                    <descriptor>assembly.xml</descriptor>
                                 </descriptors>
                             </configuration>
                             <executions>

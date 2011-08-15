@@ -13,6 +13,7 @@ import org.lwjgl.BufferUtils
 import org.apache.log4j.Logger
 import su.msk.dunno.scage.screens.support.ScageId._
 import org.newdawn.slick.util.ResourceLoader
+import scala.Float._
 
 object Renderer {
   protected val log = Logger.getLogger(this.getClass);
@@ -281,19 +282,15 @@ object Renderer {
     image(getTexture(images_base+filename), game_width, game_height, start_x, start_y, real_width, real_height)
   }
 
-  // TODO : rewrite this using for-statement
-  def animation(filename:String, game_width:Float, game_height:Float, real_width:Float, real_height:Float, num_frames:Int):Array[Int] = {
+  // TODO: is Array[Int] preferable or IndexedSeq[Int] is fine??
+  def animation(filename:String, game_width:Float, game_height:Float, real_width:Float, real_height:Float, num_frames:Int) = {
     val texture = getTexture(images_base+filename)
     val columns:Int = (texture.getImageWidth/real_width).toInt
-    def nextFrame(arr:List[Int], texture:Texture):List[Int] = {
-      val x = real_width*(arr.length - arr.length/columns*columns)
-      val y = real_height*(arr.length/columns)
-      val next_key = Renderer.image(texture, game_width, game_height, x, y, real_width, real_height)
-      val new_arr = arr ::: List(next_key)
-      if(new_arr.length == num_frames)new_arr
-      else nextFrame(new_arr, texture)
-    }
-    nextFrame(List[Int](), texture).toArray
+    for {
+      frame <- 0 until num_frames
+      x = real_width*(frame - frame/columns*columns)
+      y = real_height*(frame/columns)
+    } yield image(texture, game_width, game_height, x, y, real_width, real_height)
   }
 }
 

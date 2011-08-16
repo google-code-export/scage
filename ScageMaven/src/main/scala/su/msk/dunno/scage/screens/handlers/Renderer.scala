@@ -74,7 +74,7 @@ object Renderer {
     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
     print(xmlOrDefault("renderer.loading", "Loading..."), 20, Renderer.height-25, GREEN)
     stringProperty("screen.splash") match {
-      case "" =>
+      case "" => print(xmlOrDefault("renderer.loading", "Loading..."), 20, Renderer.height-25, GREEN)
       case screen_splash_path:String =>
         try {
           val splash_texture = getTexture(screen_splash_path)

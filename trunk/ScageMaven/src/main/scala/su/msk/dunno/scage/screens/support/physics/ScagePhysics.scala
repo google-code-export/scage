@@ -7,7 +7,7 @@ import net.phys2d.raw.strategies.QuadSpaceStrategy
 import su.msk.dunno.scage.single.support.Vec
 
 class ScagePhysics {
-  val dt = property("dt", 5)
+  val dt = property("physics.dt", 5)
   val gravity = Vec(property("physics.gravity.x", 0.0f), property("physics.gravity.y", 0.0f))
   val world = new World(new Vector2f(gravity.x, gravity.y), 10, new QuadSpaceStrategy(20,10));
   world.enableRestingBodyDetection(0.01f, 0.000001f, 0.01f)
@@ -17,6 +17,7 @@ class ScagePhysics {
     if(!world.getBodies.contains(physical.body)) world.add(physical.body)
     if(!physicals.contains(physical)) physicals = physical :: physicals
     physical.prepare()
+
     physical
   }
 

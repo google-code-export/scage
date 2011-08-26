@@ -21,6 +21,11 @@ class ScagePhysics {
     physical
   }
 
+  def removeAll() {
+    physicals.foreach(p => world.remove(p.body))
+    physicals = Nil
+  }
+
   def step() {
     for(p <- physicals) {
       if(!p.isActive) {

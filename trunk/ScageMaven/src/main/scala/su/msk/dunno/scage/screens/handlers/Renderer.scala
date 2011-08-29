@@ -1,7 +1,7 @@
 package su.msk.dunno.scage.screens.handlers
 
 import su.msk.dunno.scage.screens.ScageScreen._
-import java.io.{InputStream}
+import java.io.InputStream
 import org.newdawn.slick.opengl.{TextureLoader, Texture}
 import org.lwjgl.opengl.{DisplayMode, GL11, Display}
 import org.lwjgl.util.glu.GLU
@@ -13,8 +13,6 @@ import org.lwjgl.BufferUtils
 import org.apache.log4j.Logger
 import su.msk.dunno.scage.screens.support.ScageId._
 import org.newdawn.slick.util.ResourceLoader
-import scala.Float._
-
 object Renderer {
   protected val log = Logger.getLogger(this.getClass);
 
@@ -71,6 +69,14 @@ object Renderer {
     GL11.glMatrixMode(GL11.GL_MODELVIEW);
     GL11.glLoadIdentity();
 
+    // drawing scage logo
+    GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
+    val logo_texture = getTexture("resources/images/scage-logo.png")
+    drawDisplayList(image(logo_texture, width, height, 0, 0, logo_texture.getImageWidth, logo_texture.getImageHeight), Vec(width/2, height/2))
+    update()
+    Thread.sleep(1000)
+
+    // drawing app logo or initial message
     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
     print(xmlOrDefault("renderer.loading", "Loading..."), 20, Renderer.height-25, GREEN)
     stringProperty("screen.splash") match {

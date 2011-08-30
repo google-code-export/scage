@@ -1,5 +1,7 @@
 package su.msk.dunno.scage.single.support
 
+import collection.mutable.HashMap
+
 class ScageColor(r:Float, g:Float, b:Float) {
   val red:Float = if(r >= 0 && r <= 1)r else if(r > 1 && r < 256)r/256 else 0
   val green:Float = if(g >= 0 && g <= 1)g else if(g > 1 && g < 256)g/256 else 0
@@ -21,7 +23,7 @@ object ScageColors {
   val CYAN: ScageColor = new ScageColor(0, 1, 1)
   val YELLOW: ScageColor = new ScageColor(1, 1, 0)
   val WHITE: ScageColor = new ScageColor(1, 1, 1)
-  val GRAY: ScageColor = new ScageColor(0.3f, 0.3f, 0.3f)
+  val GRAY: ScageColor = new ScageColor(0x80, 0x80, 0x80)
   val BLACK: ScageColor = new ScageColor(0, 0, 0)
 
   val SNOW: ScageColor = new ScageColor(0xFF, 0xFA, 0xFA)
@@ -44,7 +46,7 @@ object ScageColors {
   val LIGHT_SLATE_GRAY: ScageColor = new ScageColor(0x77, 0x88, 0x99)
   val LIGHT_GRAY: ScageColor = new ScageColor(0xC0, 0xC0, 0xC0)
   val MEDIUM_GRAY: ScageColor = new ScageColor(0xA0, 0xA0, 0xA4)
-  val DARK_GRAY: ScageColor = new ScageColor(0x80, 0x80, 0x80)
+  val DARK_GRAY: ScageColor = new ScageColor(0.3f, 0.3f, 0.3f)
   val MIDNIGHT_BLUE: ScageColor = new ScageColor(0x19, 0x19, 0x70)
   val NAVY: ScageColor = new ScageColor(0x00, 0x00, 0x80)
   val SLATE_BLUE: ScageColor = new ScageColor(0x6A, 0x5A, 0xCD)
@@ -112,6 +114,20 @@ object ScageColors {
   val ORCHID: ScageColor = new ScageColor(0xDA, 0x70, 0xD6)
   val BLUE_VIOLET: ScageColor = new ScageColor(0x8A, 0x2B, 0xE2)
   val PURPLE: ScageColor = new ScageColor(0xA0, 0x20, 0xF0)
+
+  private val colors = new HashMap[String, ScageColor]()
+  ScageColors.getClass.getDeclaredFields.foreach(field => {
+    field.setAccessible(true)
+    val color = try{field.get(ScageColors).asInstanceOf[ScageColor]}
+    catch {
+      case ex:Exception => WHITE
+    }
+    colors += (field.getName -> color)
+    field.setAccessible(false)
+  })
+  def colorFromString(color_string:String) = {
+    if(colors.contains(color_string)) colors(color_string) else WHITE
+  }
 
   def randomColor = new ScageColor(math.random.toFloat, math.random.toFloat, math.random.toFloat)
 }

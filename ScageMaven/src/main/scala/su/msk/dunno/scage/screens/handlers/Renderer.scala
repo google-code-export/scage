@@ -183,6 +183,21 @@ object Renderer {
     	GL11.glEnd();
     GL11.glEnable(GL11.GL_TEXTURE_2D);
   }
+  def drawLines(edges:Vec*) {
+    GL11.glDisable(GL11.GL_TEXTURE_2D);
+    	GL11.glBegin(GL11.GL_LINES);
+    		edges.foreach(edge => GL11.glVertex2f(edge.x, edge.y))
+    	GL11.glEnd();
+    GL11.glEnable(GL11.GL_TEXTURE_2D);
+  }
+  def drawLines(edges:Array[Vec], _color:ScageColor = color) {
+    color = _color
+    drawLines(edges:_*)
+  }
+  def drawLines(edges:List[Vec], _color:ScageColor) {
+    color = _color
+    drawLines(edges:_*)
+  }
 
   def drawRect(coord:Vec, width:Float, height:Float, _color:ScageColor = color) {
     color = _color
@@ -240,6 +255,10 @@ object Renderer {
     color = _color
     drawPolygon(coords:_*)
   }
+  def drawPolygon(coords:List[Vec], _color:ScageColor) {
+    color = _color
+    drawPolygon(coords:_*)
+  }
   def drawFilledPolygon(coords:Vec*) {
     GL11.glDisable(GL11.GL_TEXTURE_2D);
       /*GL11.glPolygonMode(GL11.GL_FRONT, GL11.GL_FILL);
@@ -250,6 +269,10 @@ object Renderer {
     GL11.glEnable(GL11.GL_TEXTURE_2D);
   }
   def drawFilledPolygon(coords:Array[Vec], _color:ScageColor = color) {
+    color = _color
+    drawFilledPolygon(coords:_*)
+  }
+  def drawFilledPolygon(coords:List[Vec], _color:ScageColor) {
     color = _color
     drawFilledPolygon(coords:_*)
   }

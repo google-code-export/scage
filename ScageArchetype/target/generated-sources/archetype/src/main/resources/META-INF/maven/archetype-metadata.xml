@@ -4,12 +4,6 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <fileSets>
     <fileSet encoding="UTF-8">
-      <directory>src/main/assembly</directory>
-      <includes>
-        <include>**/*.xml</include>
-      </includes>
-    </fileSet>
-    <fileSet encoding="UTF-8">
       <directory>src/main/resources</directory>
     </fileSet>
     <fileSet encoding="UTF-8">
@@ -42,6 +36,8 @@
     <fileSet filtered="true" encoding="UTF-8">
       <directory></directory>
       <includes>
+        <include>assembly.xml</include>
+        <include>pom.xml</include>
         <include>build.properties</include>
         <include>readme</include>
       </includes>

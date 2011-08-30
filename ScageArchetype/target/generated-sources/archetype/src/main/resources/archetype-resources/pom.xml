@@ -260,6 +260,14 @@
       <profile>
           <id>webstart</id>
           <build>
+              <resources>
+                  <resource>
+                      <directory>.</directory>
+                      <includes>
+                          <include>scageapp.properties</include>
+                      </includes>
+                  </resource>
+              </resources>
               <plugins>
                   <plugin>
                     <groupId>org.codehaus.mojo.webstart</groupId>

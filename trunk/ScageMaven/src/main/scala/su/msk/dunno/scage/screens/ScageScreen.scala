@@ -59,27 +59,44 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
     }
   }
 
-  private var actions:List[(Int, () => Any)] = Nil
-  def action(action_func: => Any) = {
-    val operation_id = /*nextOperationId*/nextId
-    actions = (operation_id, () => action_func) :: actions
+  // (operation_id, operation, is_pausable)
+  private var actions:List[(Int, () => Any, Boolean)] = Nil
+  private def addAction(operation: => Any, is_pausable:Boolean) = {
+    val operation_id = nextId
+    actions = (operation_id, () => operation, is_pausable) :: actions
     operation_id
+  }
+
+  // pausable actions
+  def action(action_func: => Any) = {
+    addAction(action_func, true)
   }
   def action(action_period: => Long)(action_func: => Unit) = {
-    val operation_id = /*nextOperationId*/nextId
     val action_waiter = new ActionWaiterDynamic(action_period, action_func)
-    actions = (operation_id, () => action_waiter.doAction()) :: actions
-    operation_id
+    addAction(action_waiter.doAction(), true)
   }
   def actionWithStaticPeriod(action_period:Long)(action_func: => Unit) = {
-    val operation_id = /*nextOperationId*/nextId
     if(action_period > 0) {
       val action_waiter = new ActionWaiterStatic(action_period, action_func)
-      actions = (operation_id, () => action_waiter.doAction()) :: actions
-    }
-    else actions = (operation_id, () => action_func) :: actions
-    operation_id
+      addAction(action_waiter.doAction(), true)
+    } else addAction(action_func, true)
   }
+
+  // non-pausable variants
+  def actionNoPause(action_func: => Any) = {
+    addAction(action_func, false)
+  }
+  def actionNoPause(action_period: => Long)(action_func: => Unit) = {
+    val action_waiter = new ActionWaiterDynamic(action_period, action_func)
+    addAction(action_waiter.doAction(), false)
+  }
+  def actionWithStaticPeriodNoPause(action_period:Long)(action_func: => Unit) = {
+    if(action_period > 0) {
+      val action_waiter = new ActionWaiterStatic(action_period, action_func)
+      addAction(action_waiter.doAction(), false)
+    } else addAction(action_func, false)
+  }
+
   def delActions(operation_ids:Int*) = {
     if(operation_ids.size > 0) {
       operation_ids.foldLeft(true)((overall_result, operation_id) => {
@@ -180,12 +197,12 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
   }*/
 
   private var on_pause = false
+  private def logPause() {log.info("pause = " + on_pause)}
   def onPause = on_pause
-  def switchPause() {on_pause = !on_pause}
-  def pause() {on_pause = true}
-  def pauseOff() {on_pause = false}
+  def switchPause() {on_pause = !on_pause; logPause()}
+  def pause() {on_pause = true; logPause()}
+  def pauseOff() {on_pause = false; logPause()}
 
-  val is_global_pause = ScageProperties.property("pause.global", true)
   private var is_running = false
   def isRunning = is_running
   def init() {
@@ -209,9 +226,9 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
     log.info(screen_name+": run")
     while(is_running && !isAllScreensStop) {
       controller.checkControls
-      if(!on_pause || !is_global_pause) actions.foreach(action_func => {
+      actions.foreach(action_func => {
         currentOperation = action_func._1
-        action_func._2()
+        if(!on_pause || !action_func._3) action_func._2()
       })
       renderer.render()
     }

@@ -114,7 +114,7 @@ class ScageTest extends TestCase("app") {
           })
         })
 
-        backgroundColor = BLACK
+        backgroundColor = colorFromString("BLACK")
         val another_font = new ScageMessage(font_size = 12)
         interface {
           another_font.print(xml("hello.world"), width/2, height/2+20,    WHITE)

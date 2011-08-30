@@ -13,6 +13,8 @@ import org.lwjgl.BufferUtils
 import org.apache.log4j.Logger
 import su.msk.dunno.scage.screens.support.ScageId._
 import org.newdawn.slick.util.ResourceLoader
+import scala.Float._
+
 object Renderer {
   protected val log = Logger.getLogger(this.getClass);
 
@@ -69,6 +71,12 @@ object Renderer {
     GL11.glMatrixMode(GL11.GL_MODELVIEW);
     GL11.glLoadIdentity();
 
+    // printing "Loading..." message. It is also necessary to properly initialize our main font (I guess)
+    GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
+    print(xmlOrDefault("renderer.loading", "Loading..."), 20, Renderer.height-25, GREEN)
+    update()
+    Thread.sleep(1000)
+
     // drawing scage logo
     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
     val logo_texture = getTexture("resources/images/scage-logo.png")
@@ -76,22 +84,29 @@ object Renderer {
     update()
     Thread.sleep(1000)
 
-    // drawing app logo or initial message
-    GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
-    print(xmlOrDefault("renderer.loading", "Loading..."), 20, Renderer.height-25, GREEN)
+    // drawing app logo or welcome message
     stringProperty("screen.splash") match {
-      case "" => print(xmlOrDefault("renderer.loading", "Loading..."), 20, Renderer.height-25, GREEN)
-      case screen_splash_path:String =>
+      case screen_splash_path if "" != screen_splash_path =>
         try {
+          GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
           val splash_texture = getTexture(screen_splash_path)
           drawDisplayList(image(splash_texture, width, height, 0, 0, splash_texture.getImageWidth, splash_texture.getImageHeight), Vec(width/2, height/2))
+          update()
+          Thread.sleep(1000)  // TODO: custom pause
         }
         catch {
           case e:Exception => log.error("failed to render splash image: "+e.getLocalizedMessage)
         }
+      case _ => xmlOrDefault("app.welcome", "") match {
+        case welcome_message if "" != welcome_message => {
+          GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
+          print(welcome_message, 20, Renderer.height-25, GREEN) // TODO: custom color and position
+          update()
+          Thread.sleep(1000)  // TODO: custom pause
+        }
+        case _ =>
+      }
     }
-    update()
-    Thread.sleep(1000)
 
     log.info("initialized opengl system")
   }
@@ -173,6 +188,28 @@ object Renderer {
     color = _color
     GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glBegin(GL11.GL_LINE_LOOP);
+          GL11.glVertex2f(coord.x, coord.y)
+          GL11.glVertex2f(coord.x + width, coord.y)
+          GL11.glVertex2f(coord.x + width, coord.y - height)
+          GL11.glVertex2f(coord.x, coord.y - height)
+        GL11.glEnd();
+    GL11.glEnable(GL11.GL_TEXTURE_2D);
+  }
+  def drawFilledRect(coord:Vec, width:Float, height:Float, _color:ScageColor = color) {
+    color = _color
+    GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glBegin(GL11.GL_QUADS);
+        GL11.glVertex2f(coord.x, coord.y)
+        GL11.glVertex2f(coord.x + width, coord.y)
+        GL11.glVertex2f(coord.x + width, coord.y - height)
+        GL11.glVertex2f(coord.x, coord.y - height)
+      GL11.glEnd();
+    GL11.glEnable(GL11.GL_TEXTURE_2D);
+  }
+  def drawRectCentered(coord:Vec, width:Float, height:Float, _color:ScageColor = color) {
+    color = _color
+    GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glBegin(GL11.GL_LINE_LOOP);
           GL11.glVertex2f(coord.x - width/2, coord.y - height/2)
           GL11.glVertex2f(coord.x - width/2, coord.y + height/2)
           GL11.glVertex2f(coord.x + width/2, coord.y + height/2)
@@ -180,7 +217,7 @@ object Renderer {
         GL11.glEnd();
     GL11.glEnable(GL11.GL_TEXTURE_2D);
   }
-  def drawFilledRect(coord:Vec, width:Float, height:Float, _color:ScageColor = color) {
+  def drawFilledRectCentered(coord:Vec, width:Float, height:Float, _color:ScageColor = color) {
     color = _color
     GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glBegin(GL11.GL_QUADS);

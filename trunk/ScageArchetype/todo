@@ -1,3 +1,8 @@
+таки грузить app.properties не из джарника, а пусть файл рядом лежит
+--
+нельзя же, webstart поломается. Типа для webstart нужно в джарнике, а для обычного билда - рядом. Но так как пока главная
+ориентация на webstart, нахер это
+
 перенести значения в build.properties:
 <sourceDirectory>src/main/scala</sourceDirectory>
 <testSourceDirectory>src/test/scala</testSourceDirectory>
@@ -9,3 +14,6 @@
 а не хранились в проекте
 
 подумать, что еще из build.properties можно отправить в pom.xml (мб все)
+--
+убрал assembly потому что assembly практически не меняется. Захардкодил в pom.xml.
+Подумать еще про jar.mainClass, да и про keystore тоже

@@ -14,7 +14,7 @@
  </security>
 
  <resources>
-   <j2se href="http://java.sun.com/products/autodl/j2se" version="1.5+" max-heap-size="512m"/>
+   <j2se href="http://java.sun.com/products/autodl/j2se" version="1.5+" max-heap-size="512m" java-vm-args="-DLWJGL_DISABLE_XRANDR=true"/>
     $dependencies
  </resources>
  <resources os="Windows">

@@ -1,6 +1,7 @@
 package su.msk.dunno.scage.single.support
 
 import collection.mutable.HashMap
+import org.apache.log4j.Logger
 
 class ScageColor(r:Float, g:Float, b:Float) {
   val red:Float = if(r >= 0 && r <= 1)r else if(r > 1 && r < 256)r/256 else 0
@@ -16,6 +17,8 @@ class ScageColor(r:Float, g:Float, b:Float) {
 }
 
 object ScageColors {
+  protected val log = Logger.getLogger(this.getClass)
+
   val RED: ScageColor = new ScageColor(1, 0, 0)
   val GREEN: ScageColor = new ScageColor(0, 1, 0)
   val BLUE: ScageColor = new ScageColor(0, 0, 1)
@@ -120,7 +123,10 @@ object ScageColors {
     field.setAccessible(true)
     val color = try{field.get(ScageColors).asInstanceOf[ScageColor]}
     catch {
-      case ex:Exception => WHITE
+      case ex:Exception => {
+        log.error("failed to create color with name "+field.getName+": "+ex.getLocalizedMessage)
+        WHITE
+      }
     }
     colors += (field.getName -> color)
     field.setAccessible(false)

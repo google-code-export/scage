@@ -14,6 +14,7 @@ import org.apache.log4j.Logger
 import su.msk.dunno.scage.screens.support.ScageId._
 import org.newdawn.slick.util.ResourceLoader
 import scala.Float._
+import collection.mutable.HashMap
 
 object Renderer {
   protected val log = Logger.getLogger(this.getClass);
@@ -349,15 +350,28 @@ object Renderer {
   }
 
   // TODO: is Array[Int] preferable or IndexedSeq[Int] is fine??
+  //private var animations = new HashMap[Int, (IndexedSeq[Int], Int)]
   def animation(filename:String, game_width:Float, game_height:Float, real_width:Float, real_height:Float, num_frames:Int) = {
     val texture = getTexture(images_base+filename)
     val columns:Int = (texture.getImageWidth/real_width).toInt
-    for {
+    /*val frames = */for {
       frame <- 0 until num_frames
       x = real_width*(frame - frame/columns*columns)
       y = real_height*(frame/columns)
     } yield image(texture, game_width, game_height, x, y, real_width, real_height)
+    /*val animation_id = nextId
+    animations += (animation_id -> (frames, 0))
+    animation_id*/
   }
+
+  /*def drawAnimation(animation_id:Int, coord:Vec) {
+    if(animations.contains(animation_id)) {
+      val (frames, current_frame) = animations(animation_id)
+      drawDisplayList(frames(current_frame), coord)
+      val next_frame = if(current_frame >= frames.length-1) 0 else current_frame + 1
+      animations(animation_id) = (frames, next_frame)
+    }
+  }*/
 }
 
 import Renderer._

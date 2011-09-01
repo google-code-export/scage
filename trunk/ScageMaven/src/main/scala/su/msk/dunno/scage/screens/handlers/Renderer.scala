@@ -19,8 +19,8 @@ import collection.mutable.HashMap
 object Renderer {
   protected val log = Logger.getLogger(this.getClass);
 
-  val width = property("screen.width", 800)
-  val height = property("screen.height", 600)
+  val screen_width = property("screen.width", 800)
+  val screen_height = property("screen.height", 600)
   
   val framerate = property("framerate", 100)
 
@@ -52,7 +52,7 @@ object Renderer {
   }*/
 
   lazy val initgl = {
-    Display.setDisplayMode(new DisplayMode(width, height));
+    Display.setDisplayMode(new DisplayMode(screen_width, screen_height));
     Display.setVSyncEnabled(true);
     Display.create();
     Display.setTitle(property("app.name", "Scage")+" - "+property("app.version", "Release"));
@@ -66,7 +66,7 @@ object Renderer {
 
     GL11.glMatrixMode(GL11.GL_PROJECTION); // Select The Projection Matrix
     GL11.glLoadIdentity(); // Reset The Projection Matrix
-    GLU.gluOrtho2D(0, width, 0, height);
+    GLU.gluOrtho2D(0, screen_width, 0, screen_height);
     //GL11.glOrtho(0, width, height, 0, 1, -1);
 
     GL11.glMatrixMode(GL11.GL_MODELVIEW);
@@ -74,14 +74,14 @@ object Renderer {
 
     // printing "Loading..." message. It is also necessary to properly initialize our main font (I guess)
     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
-    print(xmlOrDefault("renderer.loading", "Loading..."), 20, Renderer.height-25, GREEN)
+    print(xmlOrDefault("renderer.loading", "Loading..."), 20, Renderer.screen_height-25, GREEN)
     update()
     Thread.sleep(1000)
 
     // drawing scage logo
     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
     val logo_texture = getTexture("resources/images/scage-logo.png")
-    drawDisplayList(image(logo_texture, width, height, 0, 0, logo_texture.getImageWidth, logo_texture.getImageHeight), Vec(width/2, height/2))
+    drawDisplayList(image(logo_texture, screen_width, screen_height, 0, 0, logo_texture.getImageWidth, logo_texture.getImageHeight), Vec(screen_width/2, screen_height/2))
     update()
     Thread.sleep(1000)
 
@@ -91,7 +91,7 @@ object Renderer {
         try {
           GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
           val splash_texture = getTexture(screen_splash_path)
-          drawDisplayList(image(splash_texture, width, height, 0, 0, splash_texture.getImageWidth, splash_texture.getImageHeight), Vec(width/2, height/2))
+          drawDisplayList(image(splash_texture, screen_width, screen_height, 0, 0, splash_texture.getImageWidth, splash_texture.getImageHeight), Vec(screen_width/2, screen_height/2))
           update()
           Thread.sleep(1000)  // TODO: custom pause
         }
@@ -101,7 +101,7 @@ object Renderer {
       case _ => xmlOrDefault("app.welcome", "") match {
         case welcome_message if "" != welcome_message => {
           GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
-          print(welcome_message, 20, Renderer.height-25, GREEN) // TODO: custom color and position
+          print(welcome_message, 20, Renderer.screen_height-25, GREEN) // TODO: custom color and position
           update()
           Thread.sleep(1000)  // TODO: custom pause
         }
@@ -385,7 +385,7 @@ class Renderer {
   def scale = _scale
   def scale_= (value:Float) {_scale = value}
 
-  private var window_center = () => Vec(Renderer.width/2, Renderer.height/2)
+  private var window_center = () => Vec(Renderer.screen_width/2, Renderer.screen_height/2)
   def windowCenter = window_center()
   def windowCenter_= (coord: => Vec) {window_center = () => coord}
   
@@ -450,16 +450,16 @@ class Renderer {
         val coord = window_center() - central_coord()*_scale
         GL11.glTranslatef(coord.x , coord.y, 0.0f)
         GL11.glScalef(_scale, _scale, 1)
-        renders.foreach(render_func => {
-          currentOperation = render_func._1
-          render_func._2()
-        })
+        for((render_id, render_operation) <- renders) {
+          currentOperation = render_id
+          render_operation()
+        }
       GL11.glPopMatrix()
 
-      interfaces.foreach(interface_func => {
-        currentOperation = interface_func._1
-        interface_func._2()
-      })
+      for((interface_id, interface_operation) <- interfaces) {
+        currentOperation = interface_id
+        interface_operation()
+      }
 
       update()
     }
@@ -468,7 +468,7 @@ class Renderer {
   def exitRender() {
     backgroundColor = BLACK
     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
-    print(xmlOrDefault("renderer.exiting", "Exiting..."), 20, height-25, GREEN)
+    print(xmlOrDefault("renderer.exiting", "Exiting..."), 20, screen_height-25, GREEN)
     update()
 
     Thread.sleep(1000)

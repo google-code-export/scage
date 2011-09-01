@@ -5,9 +5,18 @@ import su.msk.dunno.scage.single.support.ScageProperties._
 import net.phys2d.math.Vector2f
 import net.phys2d.raw.strategies.QuadSpaceStrategy
 import su.msk.dunno.scage.single.support.Vec
+import org.apache.log4j.Logger
 
 class ScagePhysics {
-  val dt = property("physics.dt", 5)
+  protected val log = Logger.getLogger(this.getClass)
+  private var _dt = property("physics.dt", 5)
+  def dt = _dt
+  def dt_=(new_dt:Int) {
+    if(new_dt > 0) _dt = new_dt
+    else log.error("failed to update dt: must be more then zero but the value is "+new_dt)
+  }
+
+
   val gravity = Vec(property("physics.gravity.x", 0.0f), property("physics.gravity.y", 0.0f))
   val world = new World(new Vector2f(gravity.x, gravity.y), 10, new QuadSpaceStrategy(20,10));
   world.enableRestingBodyDetection(0.01f, 0.000001f, 0.01f)
@@ -17,7 +26,6 @@ class ScagePhysics {
     if(!world.getBodies.contains(physical.body)) world.add(physical.body)
     if(!physicals.contains(physical)) physicals = physical :: physicals
     physical.prepare()
-
     physical
   }
 
@@ -35,7 +43,7 @@ class ScagePhysics {
       else p.isTouching = false
     }
 
-    for(i <- 1 to dt) {
+    for(i <- 1 to _dt) {
       world.step()
       for(p <- physicals) {
         p.isTouching = p.isTouching || p.body.getTouching.size > 0

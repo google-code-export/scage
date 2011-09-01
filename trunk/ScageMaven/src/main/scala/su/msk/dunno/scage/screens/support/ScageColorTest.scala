@@ -21,7 +21,7 @@ object ScageColorTest {
   val main_screen = new ScageScreen("Color Test", properties="colortest-properties.txt") {
     interface {
       if(color_num >= 0 && color_num < fields.length) {
-        print(fields(color_num).getName, width/2, height/2,
+        print(fields(color_num).getName, screen_width/2, screen_height/2,
           if("BLACK".equalsIgnoreCase(fields(color_num).getName)) WHITE else BLACK)
         try {backgroundColor = (colors(color_num))}
         catch {

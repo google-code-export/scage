@@ -207,17 +207,17 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
   def isRunning = is_running
   def init() {
     log.info(screen_name+": init")
-    inits.foreach(init_func => {
-      currentOperation = init_func._1
-      init_func._2()
-    })
+    for((init_id, init_operation) <- inits) {
+      currentOperation = init_id
+      init_operation()
+    }
   }
   def exit() {
     log.info(screen_name+": exit")
-    exits.foreach(exit_func => {
-      currentOperation = exit_func._1
-      exit_func._2()
-    })
+    for((exit_id, exit_operation) <- exits) {
+      currentOperation = exit_id
+      exit_operation()
+    }
   }
   def run() {
     if(!is_main_screen) log.info("starting screen "+screen_name+"...")
@@ -226,10 +226,10 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
     log.info(screen_name+": run")
     while(is_running && !isAllScreensStop) {
       controller.checkControls
-      actions.foreach(action_func => {
-        currentOperation = action_func._1
-        if(!on_pause || !action_func._3) action_func._2()
-      })
+      for((action_id, action_operation, is_action_pausable) <- actions) {
+        currentOperation = action_id
+        if(!on_pause || !is_action_pausable) action_operation()
+      }
       renderer.render()
     }
     exit()

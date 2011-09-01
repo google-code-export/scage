@@ -78,7 +78,9 @@ class ScageMessage(
       mergeMessage(xmlmh.xml_messages(message_code), parameters.tail:_*)
     else {
       if(parameters.size > 0) {
-        log.info("default value for string code "+message_code+" is "+parameters.head)
+        log.info("default value for string code "+message_code+" is "+{
+          if("" == parameters.head) "empty string" else parameters.head
+        })
         xmlmh.xml_messages += (message_code -> parameters.head)
         mergeMessage(parameters.head, parameters.tail:_*)
       }

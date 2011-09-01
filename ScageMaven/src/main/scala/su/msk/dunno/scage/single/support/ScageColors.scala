@@ -124,7 +124,7 @@ object ScageColors {
     val color = try{field.get(ScageColors).asInstanceOf[ScageColor]}
     catch {
       case ex:Exception => {
-        log.error("failed to create color with name "+field.getName+": "+ex.getLocalizedMessage)
+        //log.error("failed to create color with name "+field.getName+": "+ex.getLocalizedMessage)
         WHITE
       }
     }

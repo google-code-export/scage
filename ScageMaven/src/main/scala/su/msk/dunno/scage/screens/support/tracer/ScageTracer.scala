@@ -29,13 +29,13 @@ trait Trace {
 }
 
 class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from.x", 0),
-                              val field_to_x:Int          = property("field.to.x", width),
+                              val field_to_x:Int          = property("field.to.x", screen_width),
                               val field_from_y:Int        = property("field.from.y", 0),
-                              val field_to_y:Int          = property("field.to.y", height),
+                              val field_to_y:Int          = property("field.to.y", screen_height),
                               init_h_x:Int                = property("field.h_x", 0),
                               init_h_y:Int                = property("field.h_y", 0),
-                              init_N_x:Int                = if(property("field.h_x", 0) == 0) property("field.N_x", width/50) else 0,
-                              init_N_y:Int                = if(property("field.h_y", 0) == 0) property("field.N_y", height/50) else 0,
+                              init_N_x:Int                = if(property("field.h_x", 0) == 0) property("field.N_x", screen_width/50) else 0,
+                              init_N_y:Int                = if(property("field.h_y", 0) == 0) property("field.N_y", screen_height/50) else 0,
                               val are_solid_edges:Boolean = property("field.solid_edges", true)) {
   protected val log = Logger.getLogger(this.getClass);
 

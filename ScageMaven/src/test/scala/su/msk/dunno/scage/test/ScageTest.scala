@@ -39,12 +39,12 @@ class ScageTest extends TestCase("app") {
       new ScageScreen(screen_name = "Hello World", is_main_screen = true, properties = "scagetest-properties.txt") {
         val tracer = new CoordTracer[CoordTrace]
 
-        val trace = tracer.addTrace(Vec(width/2, height/2), new CoordTrace() {
+        val trace = tracer.addTrace(Vec(screen_width/2, screen_height/2), new CoordTrace() {
           def getState = new State
           def changeState(changer:Trace, state:State) {}
         })
 
-        val another_trace = tracer.addTrace(Vec(width/4, height/2), new CoordTrace() {
+        val another_trace = tracer.addTrace(Vec(screen_width/4, screen_height/2), new CoordTrace() {
           def getState = new State
           def changeState(changer:Trace, state:State) {}
         })
@@ -72,7 +72,7 @@ class ScageTest extends TestCase("app") {
 
         val stars = displayList {
           for(i <- 1 to 100) {
-            drawPoint(Vec(math.random.toFloat*width, math.random.toFloat*height), randomColor)
+            drawPoint(Vec(math.random.toFloat*screen_width, math.random.toFloat*screen_height), randomColor)
           }
         }
 
@@ -117,10 +117,10 @@ class ScageTest extends TestCase("app") {
         backgroundColor = colorFromString("BLACK")
         val another_font = new ScageMessage(font_size = 12)
         interface {
-          another_font.print(xml("hello.world"), width/2, height/2+20,    WHITE)
-          print(xml("hello.world"), width/2, height/2,    WHITE)
-          print(trace.point,        width/2, height/2-20, WHITE)
-          print(fps, 10, height-20, WHITE)
+          another_font.print(xml("hello.world"), screen_width/2, screen_height/2+20,    WHITE)
+          print(xml("hello.world"), screen_width/2, screen_height/2,    WHITE)
+          print(trace.point,        screen_width/2, screen_height/2-20, WHITE)
+          print(fps, 10, screen_height-20, WHITE)
         }
         render {
           drawDisplayList(stars)

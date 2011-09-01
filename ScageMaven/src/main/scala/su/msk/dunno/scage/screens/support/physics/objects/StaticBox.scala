@@ -5,12 +5,12 @@ import net.phys2d.raw.shapes.Box
 import su.msk.dunno.scage.single.support.Vec
 import su.msk.dunno.scage.screens.support.physics.Physical
 
-class StaticBox(leftup_coord:Vec, width:Float, height:Float) extends Physical {
-  val box = new Box(width, height)
+class StaticBox(init_coord:Vec, val box_width:Float, val box_height:Float) extends Physical {
+  val box = new Box(box_width, box_height)
 
   val body = new StaticBody("StaticBox", box)
   body.setRestitution(1.0f)
-  body.setPosition(leftup_coord.x+width/2, leftup_coord.y-height/2)
+  body.setPosition(init_coord.x, init_coord.y)
 
   def points = {
     val verts = box.getPoints(body.getPosition, body.getRotation);

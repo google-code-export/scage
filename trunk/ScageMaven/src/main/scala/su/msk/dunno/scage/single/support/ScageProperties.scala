@@ -48,7 +48,7 @@ object ScageProperties {
       case ex:Exception =>
         if(!file.contains("properties/")) {
           log.error("failed to load properties: file "+_file+" not found")
-          log.debug("development mode: looking for properties file in the properties folder")
+          //log.debug("development mode: looking for properties file in the properties folder")
           _file = "properties/" + _file
           load
         }

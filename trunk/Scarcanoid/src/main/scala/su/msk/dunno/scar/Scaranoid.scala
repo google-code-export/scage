@@ -1,19 +1,17 @@
 package su.msk.dunno.scar
 
 import levels.LevelMap1
-import su.msk.dunno.scage.screens.physics._
 import su.msk.dunno.scage.screens.ScageScreen
 import su.msk.dunno.scage.single.support.ScageColors._
 import su.msk.dunno.scage.screens.handlers.Renderer._
 import org.lwjgl.input.Keyboard._
 import su.msk.dunno.scage.single.support.ScageProperties._
 import su.msk.dunno.scage.single.support.messages.ScageMessage._
+import su.msk.dunno.scage.screens.support.physics.ScagePhysics
 
-object Scaranoid extends ScageScreen(
-  screen_name = "Scaranoid",
-  is_main_screen = true,
-  properties = "scaranoid-properties.txt"
-) with ScagePhysics {
+object Scaranoid extends ScageScreen("Scaranoid", is_main_screen = true, "scaranoid.properties") {
+  val physics = new ScagePhysics
+
   var count = 0
   var bonus = 0
   private var current_level = 1
@@ -25,18 +23,18 @@ object Scaranoid extends ScageScreen(
       case _ => Level.load(LevelMap1)
     }
   }
-  Scaranoid --> PlayerBall
-  Scaranoid --> PlayerPlatform
+  physics.addPhysical(PlayerBall)
+  physics.addPhysical(PlayerPlatform)
 
   interface {
-    print(count, 5, height-20, WHITE)
-    print("+"+bonus, 5, height-40, WHITE)
-    print(world.getBodies().size(), 5, height-60, WHITE)
+    print(count, 5, screen_height-20, WHITE)
+    print("+"+bonus, 5, screen_height-40, WHITE)
+    print(physics.world.getBodies().size(), 5, screen_height-60, WHITE)
 
     if(onPause) {
-      if(Level.winCondition) print(xml("game.win"), width/2, height/2, WHITE)
-      else print(xml("game.lose"), width/2, height/2, WHITE)
-      print(xml("game.playagain"), width/2, height/2-20, WHITE)
+      if(Level.winCondition) print(xml("game.win"), screen_width/2, screen_height/2, WHITE)
+      else print(xml("game.lose"), screen_width/2, screen_height/2, WHITE)
+      print(xml("game.playagain"), screen_width/2, screen_height/2-20, WHITE)
     }
   }
 
@@ -56,14 +54,14 @@ object Scaranoid extends ScageScreen(
   key(KEY_N, onKeyDown = if(onPause) stop())
 
   action {
-    step()
+    physics.step()
   }
 
   new ScageScreen("Help Screen") {
     key(KEY_SPACE, onKeyDown = stop())
 
     interface {
-      print(xml("helpscreen.helpmessage"), 10, height-20, WHITE)
+      print(xml("helpscreen.helpmessage"), 10, screen_height-20, WHITE)
     }
   }.run()
 

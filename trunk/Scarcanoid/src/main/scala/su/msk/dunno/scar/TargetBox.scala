@@ -1,12 +1,12 @@
 package su.msk.dunno.scar
 
-import su.msk.dunno.scage.screens.physics.objects.StaticBox
 import su.msk.dunno.scage.single.support.{ScageColor, Vec}
 import su.msk.dunno.scage.screens.handlers.Renderer._
 import net.phys2d.math.Vector2f
 import org.lwjgl.opengl.GL11
 import su.msk.dunno.scage.single.support.ScageColors._
 import Scaranoid._
+import su.msk.dunno.scage.screens.support.physics.objects.StaticBox
 
 class TargetBox(leftup_coord:Vec) extends StaticBox(leftup_coord, 40, 40) {
   val box_color = {
@@ -49,13 +49,14 @@ class TargetBox(leftup_coord:Vec) extends StaticBox(leftup_coord, 40, 40) {
 
   render {
     if(isActive) {
-      color = box_color
+      /*color = box_color
       val verts:Array[Vector2f] = box.getPoints(body.getPosition(), body.getRotation());
       GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glBegin(GL11.GL_QUADS);
           verts.foreach(v => GL11.glVertex2f(v.getX, v.getY))
         GL11.glEnd();
-      GL11.glEnable(GL11.GL_TEXTURE_2D);
+      GL11.glEnable(GL11.GL_TEXTURE_2D);*/
+      drawFilledRectCentered(coord, box_width, box_height, box_color)
     }
   }
 }

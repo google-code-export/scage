@@ -40,6 +40,7 @@
         <include>pom.xml</include>
         <include>build.properties</include>
         <include>readme</include>
+        <include>scageapp.properties</include>
       </includes>
     </fileSet>
     <fileSet>

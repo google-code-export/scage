@@ -7,6 +7,7 @@
    <title>$project.Name</title>
    <vendor>$project.Name<vendor/>
    <description kind="one-line">$project.Description</description>
+   <offline-allowed/>
  </information>
 
  <security>

@@ -1,14 +1,14 @@
 package su.msk.dunno.scar
 
 import levels.LevelMap
-import su.msk.dunno.scage.screens.physics.Physical
 import su.msk.dunno.scage.single.support.Vec
 import su.msk.dunno.scage.screens.handlers.Renderer._
 import Scaranoid._
-import su.msk.dunno.scage.screens.physics.objects.{StaticBox, StaticLine}
 import su.msk.dunno.scage.single.support.ScageColors._
 import net.phys2d.math.Vector2f
 import org.lwjgl.opengl.GL11
+import su.msk.dunno.scage.screens.support.physics.Physical
+import su.msk.dunno.scage.screens.support.physics.objects.StaticBox
 
 object Level {
   private var boxes:IndexedSeq[Physical] = null
@@ -18,10 +18,10 @@ object Level {
     boxes = level_map.load
   }
 
-  new LevelEdge(Vec(30,  10),   Vec(30,  height-10))
-  new LevelEdge(Vec(30,  height-10),  Vec(width-10, height-10))
-  new LevelEdge(Vec(width-10, height-10),  Vec(width-10, 10))
-  new LevelEdge(Vec(width-10, 10),   Vec(30,  10)) {
+  new LevelEdge(Vec(30,  10),   Vec(30,  screen_height-10))
+  new LevelEdge(Vec(30,  screen_height-10),  Vec(screen_width-10, screen_height-10))
+  new LevelEdge(Vec(screen_width-10, screen_height-10),  Vec(screen_width-10, 10))
+  new LevelEdge(Vec(screen_width-10, 10),   Vec(30,  10)) {
     init {
       prepare()
     }
@@ -31,16 +31,16 @@ object Level {
     }
   }
 
-  val additional_platform = Scaranoid --> new StaticBox(Vec(width/4, 200), 150, 10) {
+  val additional_platform = physics.addPhysical(new StaticBox(Vec(screen_width/4, 200), 150, 10) {
     init {
-      coord = Vec(width/4, 200)
+      coord = Vec(screen_width/4, 200)
     }
 
     private var dir = 1
     action {
       if(isTouching(PlayerBall)) PlayerBall.ball_color = WHITE
       move(Vec(dir,0))
-      if(coord.x > width-90) dir = -1
+      if(coord.x > screen_width-90) dir = -1
       else if(coord.x < 110) dir = 1
     }
 
@@ -53,5 +53,5 @@ object Level {
         GL11.glEnd();
       GL11.glEnable(GL11.GL_TEXTURE_2D);
     }
-  }
+  })
 }

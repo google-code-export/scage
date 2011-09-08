@@ -1,11 +1,11 @@
 package su.msk.dunno.scar
 
-import su.msk.dunno.scage.screens.physics.objects.StaticLine
 import su.msk.dunno.scage.single.support.Vec
 import Scaranoid._
 import net.phys2d.math.Vector2f
 import su.msk.dunno.scage.screens.handlers.Renderer._
 import su.msk.dunno.scage.single.support.ScageColors._
+import su.msk.dunno.scage.screens.support.physics.objects.StaticLine
 
 class LevelEdge (from:Vec, to:Vec) extends StaticLine(from, to) {
   render {
@@ -15,5 +15,5 @@ class LevelEdge (from:Vec, to:Vec) extends StaticLine(from, to) {
              Vec(verts(1).getX, verts(1).getY))
   }
 
-  Scaranoid --> this
+  physics.addPhysical(this)
 }

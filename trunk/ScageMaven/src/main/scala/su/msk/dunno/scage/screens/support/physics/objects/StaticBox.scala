@@ -4,12 +4,13 @@ import net.phys2d.raw.StaticBody
 import net.phys2d.raw.shapes.Box
 import su.msk.dunno.scage.single.support.Vec
 import su.msk.dunno.scage.screens.support.physics.Physical
+import su.msk.dunno.scage.single.support.ScageProperties._
 
 class StaticBox(init_coord:Vec, val box_width:Float, val box_height:Float) extends Physical {
   val box = new Box(box_width, box_height)
 
   val body = new StaticBody("StaticBox", box)
-  body.setRestitution(1.0f)
+  if(property("physics.restitution", false)) body.setRestitution(1.0f)
   body.setPosition(init_coord.x, init_coord.y)
 
   def points = {

@@ -5,22 +5,4 @@
   <groupId>net.sourceforge.javaocr</groupId>
   <artifactId>javaocr</artifactId>
   <version>1.0</version>
-  <description>POM was created from install:install-file</description>
-  
-  <build>
-    <extensions>
-         <extension>
-            <groupId>org.apache.maven.wagon</groupId>
-            <artifactId>wagon-webdav-jackrabbit</artifactId>
-            <version>1.0-beta-7</version>
-         </extension>
-     </extensions>
-  </build> 
-  
-  <distributionManagement>
-    <repository>
-      <id>googlecode.scage.repo</id>
-      <url>dav:https://scage.googlecode.com/svn/maven-repository/</url>
-    </repository>
-  </distributionManagement>
 </project>

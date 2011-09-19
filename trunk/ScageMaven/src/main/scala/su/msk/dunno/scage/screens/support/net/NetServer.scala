@@ -41,9 +41,7 @@ object NetServer {
   def addOutgoingData(key:Any, data:Any) {sd.put(key.toString, data)}
   def addOutgoingData(key:Any) {sd.put(key.toString, "")}
 
-  private var greetingsMessage:(ClientHandler) => Unit = (client) => client.send("This is Scage NetServer")
-  def serverGreetings = greetingsMessage
-  def serverGreetings_=(s:(ClientHandler) => Unit) {greetingsMessage = s}
+  var serverGreetings:ClientHandler => Unit = (client) => client.send("This is Scage NetServer")
   private var next_client = 0
 
   private var is_running = false
@@ -60,7 +58,7 @@ object NetServer {
             val client = new ClientHandler(next_client, socket, is_running)
             client_handlers = client :: client_handlers
             log.info("established connection with "+socket.getInetAddress.getHostAddress)
-            greetingsMessage(client)
+            serverGreetings(client)
             has_new_connection = true
             next_client += 1
           }

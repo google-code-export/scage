@@ -9,14 +9,12 @@ trait Physical {
   val body:Body
 
   def prepare() {
-    is_active = true
+    isActive = true
     is_touching = false
     touching_bodies = new BodyList
   }
 
-  private var is_active = true
-  def isActive = is_active
-  def isActive_=(activity:Boolean) {is_active = activity}
+  private var isActive = true
 
   def addForce(force:Vec) {
     body.setIsResting(false)

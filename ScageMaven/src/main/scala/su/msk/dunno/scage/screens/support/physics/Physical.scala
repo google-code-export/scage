@@ -14,7 +14,7 @@ trait Physical {
     touching_bodies = new BodyList
   }
 
-  private var isActive = true
+  var isActive = true
 
   def addForce(force:Vec) {
     body.setIsResting(false)

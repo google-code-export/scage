@@ -13,8 +13,9 @@ import org.lwjgl.BufferUtils
 import org.apache.log4j.Logger
 import su.msk.dunno.scage.screens.support.ScageId._
 import org.newdawn.slick.util.ResourceLoader
-import scala.Float._
 import collection.mutable.HashMap
+import java.awt.Toolkit
+import scala.Float._
 
 object Renderer {
   protected val log = Logger.getLogger(this.getClass);
@@ -54,8 +55,13 @@ object Renderer {
   lazy val initgl = {
     Display.setDisplayMode(new DisplayMode(screen_width, screen_height));
     Display.setVSyncEnabled(true);
+
     Display.create();
     Display.setTitle(property("app.name", "Scage")+" - "+property("app.version", "Release"));
+
+    val toolkit = Toolkit.getDefaultToolkit
+    val d = toolkit.getScreenSize
+    Display.setLocation((d.width - screen_width)/2, (d.height - screen_height)/2)
 
     GL11.glEnable(GL11.GL_TEXTURE_2D);
     GL11.glClearColor(0,0,0,0);

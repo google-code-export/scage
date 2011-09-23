@@ -162,6 +162,8 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
       trace <- tracesInPoint(near_point)
     } yield trace).toList
   }
+  def traces(point:Vec, xrange:Range, condition:(T) => Boolean):List[T] = traces(point, xrange, xrange, condition)
+  def traces(point:Vec, xrange:Range):List[T] = traces(point, xrange, xrange)
   
   def updateLocation(trace:T, _new_point:Vec):Vec = {
     if(traces_in_point.contains(trace.id)) {

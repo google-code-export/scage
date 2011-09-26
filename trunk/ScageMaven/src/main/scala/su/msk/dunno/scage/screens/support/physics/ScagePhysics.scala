@@ -6,6 +6,7 @@ import net.phys2d.math.Vector2f
 import net.phys2d.raw.strategies.QuadSpaceStrategy
 import su.msk.dunno.scage.single.support.Vec
 import org.apache.log4j.Logger
+import collection.mutable.{Set, ArrayBuffer}
 
 object ScagePhysics {
   def apply(physicals:Physical*) = {
@@ -28,10 +29,10 @@ class ScagePhysics {
   val world = new World(new Vector2f(gravity.x, gravity.y), 10, new QuadSpaceStrategy(20,10));
   world.enableRestingBodyDetection(0.01f, 0.000001f, 0.01f)
   
-  private var physicals:List[Physical] = Nil
+  private var physicals = Set[Physical]()
   def addPhysical(physical:Physical) = {
     if(!world.getBodies.contains(physical.body)) world.add(physical.body)
-    if(!physicals.contains(physical)) physicals = physical :: physicals
+    physicals += physical
     physical.prepare()
     physical
   }

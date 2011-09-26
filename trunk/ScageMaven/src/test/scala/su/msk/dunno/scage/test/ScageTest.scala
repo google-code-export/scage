@@ -12,9 +12,9 @@ import su.msk.dunno.scage.screens.support.net.ClientHandler
 import junit.framework._
 import Assert._
 import su.msk.dunno.scage.screens.support.physics.ScagePhysics
-import su.msk.dunno.scage.screens.support.physics.objects.DynaBall
 import su.msk.dunno.scage.single.support.messages.ScageMessage
 import su.msk.dunno.scage.screens.support.tracer._
+import su.msk.dunno.scage.screens.support.physics.objects.{StaticPolygon, DynaBall}
 
 object ScageTest {
     def suite: Test = {
@@ -59,9 +59,14 @@ class ScageTest extends TestCase("app") {
           mouse_coord => tracer.updateLocation(trace, mouse_coord)
         })*/
 
-        val poly = displayList {
-          drawPolygon(Array(Vec(100, 300), Vec(150, 250), Vec(300, 300), Vec(300, 450), Vec(200, 400)), CYAN)
+        val physics = new ScagePhysics
+
+        val poly_render = displayList {
+          color = CYAN
+          drawPolygon(Vec(100, 300), Vec(150, 250), Vec(300, 300), Vec(300, 450), Vec(200, 400))
         }
+        val poly_physical = new StaticPolygon(Vec(100, 300), Vec(150, 250), Vec(300, 300), Vec(300, 450), Vec(200, 400))
+        physics.addPhysical(poly_physical)
 
         val stars = displayList {
           for(i <- 1 to 100) {
@@ -74,13 +79,11 @@ class ScageTest extends TestCase("app") {
           mouse_coord =>
             target_point = (mouse_coord - trace.coord).n * 20
         }
-
-        val physics = new ScagePhysics
         private var x = 0.0f
         def period = {
           x += 0.01f
           if(x > 2*math.Pi) x = 0
-          (250 * (math.sin(x)+1)).toLong
+          (250 * 0.25f*(math.sin(x)) + 1).toLong
         }
         action(period) {
           physics.step()
@@ -117,7 +120,9 @@ class ScageTest extends TestCase("app") {
           drawFilledCircle(trace.coord, 10, RED)
           drawLine(trace.coord, trace.coord + target_point)
           drawCircle(another_trace.coord, 10, GREEN)
-          drawDisplayList(poly)
+
+          drawDisplayList(poly_render)
+          for((point, _) <- poly_physical.touchingPoints(physics)) drawFilledCircle(point, 5, BLUE)
         }
 
         /*startServer()

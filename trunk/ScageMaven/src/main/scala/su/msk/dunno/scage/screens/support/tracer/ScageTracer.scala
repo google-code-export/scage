@@ -7,25 +7,37 @@ import su.msk.dunno.scage.screens.handlers.Renderer._
 import su.msk.dunno.scage.single.support.Vec
 import su.msk.dunno.scage.screens.support.ScageId._
 
-/*object ScageTracer {
-  private val log = Logger.getLogger(this.getClass);
-
-  private var next_trace_id = 0
-  def nextTraceID:Int = {
-    next_trace_id += 1
-    next_trace_id
+object ScageTracer {
+  def apply[T <: Trace](traces:(Vec, T)*) = {
+    val tracer = new ScageTracer[T]
+    for((coord, trace) <- traces) tracer.addTrace(coord, trace)
+    tracer
   }
+
+  /*def apply[T <: Trace](coords:Vec*) = {
+    val tracer = new ScageTracer[T]
+    for(coord <- coords) tracer.addTrace(coord, new Trace {
+      def changeState(changer: Trace, state: State) {}
+      def getState: State = new State
+    })
+    tracer
+  }*/
+
+  def emptyTrace = new EmptyTrace
 }
 
-import ScageTracer._*/
-
 trait Trace {
-  val id = /*nextTraceID*/nextId
+  val id = nextId
 
   val point:Vec = Vec(-1,-1)
 
   def changeState(changer:Trace, state:State)
   def getState:State
+}
+
+class EmptyTrace extends Trace {
+  def changeState(changer:Trace, state:State) {}
+  def getState = new State
 }
 
 class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from.x", 0),

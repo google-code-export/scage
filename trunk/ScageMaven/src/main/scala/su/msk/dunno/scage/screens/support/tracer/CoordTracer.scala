@@ -4,8 +4,32 @@ import su.msk.dunno.scage.single.support.Vec
 import su.msk.dunno.scage.single.support.ScageProperties._
 import su.msk.dunno.scage.screens.handlers.Renderer._
 
+object CoordTracer {
+  def apply[CT <: CoordTrace](traces:(Vec, CT)*) = {
+    val tracer = new CoordTracer[CT]
+    for((coord, trace) <- traces) tracer.addTrace(coord, trace)
+    tracer
+  }
+
+  /*def apply[CT <: CoordTrace](coords:Vec*) = {
+    val tracer = new ScageTracer[CT]
+    for(coord <- coords) tracer.addTrace(coord, new CoordTrace {
+      def changeState(changer: Trace, state: State) {}
+      def getState: State = new State
+    })
+    tracer
+  }*/
+
+  def emptyCoordTrace = new EmptyCoordTrace
+}
+
 trait CoordTrace extends Trace {
   val coord:Vec = Vec(-1,-1)
+}
+
+class EmptyCoordTrace extends CoordTrace {
+  def changeState(changer:Trace, state:State) {}
+  def getState = new State
 }
 
 class CoordTracer[CT <: CoordTrace](field_from_x:Int        = property("field.from.x", 0),

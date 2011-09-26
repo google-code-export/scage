@@ -60,4 +60,6 @@ trait Physical {
   }
 
   def points:Array[Vec]
+
+  def touchingPoints(physics:ScagePhysics) = physics.touchingPoints(this)
 }

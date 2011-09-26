@@ -14,8 +14,8 @@ import org.apache.log4j.Logger
 import su.msk.dunno.scage.screens.support.ScageId._
 import org.newdawn.slick.util.ResourceLoader
 import collection.mutable.HashMap
-import java.awt.Toolkit
 import scala.Float._
+import java.awt.{Dimension, GraphicsEnvironment, Toolkit}
 
 object Renderer {
   protected val log = Logger.getLogger(this.getClass);
@@ -59,9 +59,24 @@ object Renderer {
     Display.create();
     Display.setTitle(property("app.name", "Scage")+" - "+property("app.version", "Release"));
 
-    val toolkit = Toolkit.getDefaultToolkit
-    val d = toolkit.getScreenSize
-    Display.setLocation((d.width - screen_width)/2, (d.height - screen_height)/2)
+    val (monitor_width, monitor_height) = {
+      /*val gd_arr = GraphicsEnvironment.getLocalGraphicsEnvironment.getScreenDevices
+      if(gd_arr.length > 0) {
+        val dm = {
+          val preferred_monitor_num = {
+            if(gd_arr.length > 1 && property("screen.monitor", 0) < gd_arr.length) property("screen.monitor", 0)
+            else 0
+          }
+          gd_arr(preferred_monitor_num).getDisplayMode
+        }
+        (dm.getWidth, dm.getHeight)
+      } else {*/
+        val d = Toolkit.getDefaultToolkit.getScreenSize
+        (d.width, d.height)
+      /*}*/
+    }
+
+    Display.setLocation((monitor_width - screen_width)/2, (monitor_height - screen_height)/2)
 
     GL11.glEnable(GL11.GL_TEXTURE_2D);
     GL11.glClearColor(0,0,0,0);

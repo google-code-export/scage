@@ -11,10 +11,10 @@ import su.msk.dunno.scage.screens.support.net.ClientHandler
 
 import junit.framework._
 import Assert._
-import su.msk.dunno.scage.screens.support.tracer.{Trace, State, CoordTrace, CoordTracer}
 import su.msk.dunno.scage.screens.support.physics.ScagePhysics
 import su.msk.dunno.scage.screens.support.physics.objects.DynaBall
 import su.msk.dunno.scage.single.support.messages.ScageMessage
+import su.msk.dunno.scage.screens.support.tracer._
 
 object ScageTest {
     def suite: Test = {
@@ -39,15 +39,8 @@ class ScageTest extends TestCase("app") {
       new ScageScreen(screen_name = "Hello World", is_main_screen = true, properties = "scagetest-properties.txt") {
         val tracer = new CoordTracer[CoordTrace]
 
-        val trace = tracer.addTrace(Vec(screen_width/2, screen_height/2), new CoordTrace() {
-          def getState = new State
-          def changeState(changer:Trace, state:State) {}
-        })
-
-        val another_trace = tracer.addTrace(Vec(screen_width/4, screen_height/2), new CoordTrace() {
-          def getState = new State
-          def changeState(changer:Trace, state:State) {}
-        })
+        val trace = tracer.addTrace(Vec(screen_width/2, screen_height/2), new EmptyCoordTrace)
+        val another_trace = tracer.addTrace(Vec(screen_width/4, screen_height/2), new EmptyCoordTrace)
 
         def moveIfFreeLocation(trace:CoordTrace, delta:Vec) {
           val new_location = trace.coord + delta
@@ -94,10 +87,7 @@ class ScageTest extends TestCase("app") {
         }
         leftMouse(onBtnDown = {
           mouse_coord => physics.addPhysical(new DynaBall(trace.coord + target_point, 2) {
-            val ball_trace = tracer.addTrace(trace.coord + target_point, new CoordTrace() {
-              def getState = new State
-              def changeState(changer:Trace, state:State) {}
-            })
+            val ball_trace = tracer.addTrace(trace.coord + target_point, new EmptyCoordTrace)
             val action_id:Int = action {
               tracer.updateLocation(ball_trace, coord)
               coord = ball_trace.coord

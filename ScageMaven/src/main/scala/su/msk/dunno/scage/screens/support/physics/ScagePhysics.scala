@@ -7,6 +7,14 @@ import net.phys2d.raw.strategies.QuadSpaceStrategy
 import su.msk.dunno.scage.single.support.Vec
 import org.apache.log4j.Logger
 
+object ScagePhysics {
+  def apply(physicals:Physical*) = {
+    val physics = new ScagePhysics
+    for(p <- physicals) physics.addPhysical(p)
+    physics
+  }
+}
+
 class ScagePhysics {
   protected val log = Logger.getLogger(this.getClass)
   private var _dt = property("physics.dt", 5)
@@ -15,7 +23,6 @@ class ScagePhysics {
     if(new_dt > 0) _dt = new_dt
     else log.error("failed to update dt: must be more then zero but the value is "+new_dt)
   }
-
 
   val gravity = Vec(property("physics.gravity.x", 0.0f), property("physics.gravity.y", 0.0f))
   val world = new World(new Vector2f(gravity.x, gravity.y), 10, new QuadSpaceStrategy(20,10));
@@ -49,5 +56,13 @@ class ScagePhysics {
         p.isTouching = p.isTouching || p.body.getTouching.size > 0
       }
     }
+  }
+
+  def touchingPoints(p:Physical) = {
+    (for(ce <- world.getContacts(p.body)) yield {
+      val phys2d_point= ce.getPoint
+      val phys2d_normal = ce.getNormal
+      (new Vec(phys2d_point), new Vec(phys2d_normal))
+    }).toList
   }
 }

@@ -13,3 +13,6 @@ field.N_y = 24
 field.solid_edges = off
 
 screen.splash = resources/images/scage-logo.png
+
+physics.restitution = on
+physics.dt = 1

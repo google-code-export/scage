@@ -6,7 +6,7 @@ import net.phys2d.math.Vector2f
 import net.phys2d.raw.strategies.QuadSpaceStrategy
 import su.msk.dunno.scage.single.support.Vec
 import org.apache.log4j.Logger
-import collection.mutable.{Set, ArrayBuffer}
+import collection.mutable.Set
 
 object ScagePhysics {
   def apply(physicals:Physical*) = {
@@ -36,25 +36,32 @@ class ScagePhysics {
     physical.prepare()
     physical
   }
-
-  def removeAll() {
-    physicals.foreach(p => world.remove(p.body))
-    physicals = Nil
+  def addPhysicals(physicals:Physical*) {
+    physicals.foreach(addPhysical(_))
   }
 
-  def step() {
-    for(p <- physicals) {
-      if(!p.isActive) {
-        world.remove(p.body)
-        physicals = physicals.filterNot(_ == p)
-      }
-      else p.isTouching = false
+  // TODO: мб запилить по аналогии removePhysical, возвращающий, кого удалил.
+  // TODO: И метод, принимающий условие в качестве параметра. И все такое
+  def removePhysicals(physicals_to_delete:Physical*) {
+    for(p <- physicals_to_delete) {
+      world.remove(p.body)
+      physicals -= p
     }
+  }
+  def removeAll() {
+    world.clear()
+    physicals.clear()
+  }
+
+  def containsPhysical(p:Physical) = physicals.contains(p)
+
+  def step() {
+    physicals.foreach(_.prepare())
 
     for(i <- 1 to _dt) {
       world.step()
       for(p <- physicals) {
-        p.isTouching = p.isTouching || p.body.getTouching.size > 0
+        p.updateCollisions(world.getContacts(p.body))
       }
     }
   }

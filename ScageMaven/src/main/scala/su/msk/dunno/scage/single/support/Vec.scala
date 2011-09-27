@@ -1,6 +1,7 @@
 package su.msk.dunno.scage.single.support
 
-import _root_.net.phys2d.math.ROVector2f
+import net.phys2d.math.{Vector2f, ROVector2f}
+
 case class Vec(private var _x:Float, private var _y:Float) {
   def x = _x
   def y = _y
@@ -61,6 +62,8 @@ case class Vec(private var _x:Float, private var _y:Float) {
   }
 
   def copy = new Vec(x, y)
+
+  def toPhys2dVec = new Vector2f(x, y)
 
   override def toString() = "{"+x+" : "+y+"}"
 }

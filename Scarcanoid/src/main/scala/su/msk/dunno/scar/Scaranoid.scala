@@ -10,26 +10,27 @@ import su.msk.dunno.scage.single.support.messages.ScageMessage._
 import su.msk.dunno.scage.screens.support.physics.ScagePhysics
 
 object Scaranoid extends ScageScreen("Scaranoid", is_main_screen = true, "scaranoid.properties") {
-  val physics = new ScagePhysics
+  val physics = ScagePhysics(PlayerBall, PlayerPlatform)
+  action {
+    physics.step()
+  }
 
   var count = 0
-  var bonus = 0
+  var bonus = 1
   private var current_level = 1
   val max_level = property("level.max", 1)
   init {
     bonus = 0
     current_level match {
-      case 1 => Level.load(LevelMap1)
-      case _ => Level.load(LevelMap1)
+      case 1 => Level.loadMap(LevelMap1)
+      case _ => Level.loadMap(LevelMap1)
     }
   }
-  physics.addPhysical(PlayerBall)
-  physics.addPhysical(PlayerPlatform)
 
   interface {
     print(count, 5, screen_height-20, WHITE)
     print("+"+bonus, 5, screen_height-40, WHITE)
-    print(physics.world.getBodies().size(), 5, screen_height-60, WHITE)
+    print(physics.world.getBodies.size(), 5, screen_height-60, WHITE)
 
     if(onPause) {
       if(Level.winCondition) print(xml("game.win"), screen_width/2, screen_height/2, WHITE)
@@ -42,8 +43,7 @@ object Scaranoid extends ScageScreen("Scaranoid", is_main_screen = true, "scaran
     if(Level.winCondition) {
       if(current_level == max_level) current_level = 1
       else current_level += 1
-    }
-    else {
+    } else {
       count = 0
       current_level = 1
     }
@@ -52,10 +52,6 @@ object Scaranoid extends ScageScreen("Scaranoid", is_main_screen = true, "scaran
     pauseOff()
   })
   key(KEY_N, onKeyDown = if(onPause) stop())
-
-  action {
-    physics.step()
-  }
 
   new ScageScreen("Help Screen") {
     key(KEY_SPACE, onKeyDown = stop())

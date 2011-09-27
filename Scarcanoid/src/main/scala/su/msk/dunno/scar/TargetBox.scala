@@ -35,16 +35,21 @@ class TargetBox(leftup_coord:Vec) extends StaticBox(leftup_coord, 40, 40) {
     else 1
   }
 
+  def isActive = physics.containsPhysical(this)
+
   action {
-    if(isActive && isTouching(PlayerBall)) {
-      Scaranoid.bonus = colorModificator(box_color)
-      Scaranoid.count += Scaranoid.bonus
+    if(isActive) {
+      if(isTouching(PlayerBall)) {
+        Scaranoid.count += Scaranoid.bonus
+        Scaranoid.bonus = colorModificator(box_color)
 
-      PlayerBall.ball_color = box_color
-      isActive = false
+        PlayerBall.ball_color = box_color
+        physics.removePhysical(this)
 
-      if(Level.winCondition) pause()
-    }
+        if(Level.winCondition) pause()
+        delActions(currentOperation)
+      }
+    } else delActions(currentOperation)
   }
 
   render {
@@ -57,6 +62,6 @@ class TargetBox(leftup_coord:Vec) extends StaticBox(leftup_coord, 40, 40) {
         GL11.glEnd();
       GL11.glEnable(GL11.GL_TEXTURE_2D);*/
       drawFilledRectCentered(coord, box_width, box_height, box_color)
-    }
+    } else delRenders(currentOperation)
   }
 }

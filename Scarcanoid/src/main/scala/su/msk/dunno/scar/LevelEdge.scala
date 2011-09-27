@@ -14,6 +14,4 @@ class LevelEdge (from:Vec, to:Vec) extends StaticLine(from, to) {
     drawLine(Vec(verts(0).getX, verts(0).getY),
              Vec(verts(1).getX, verts(1).getY))
   }
-
-  physics.addPhysical(this)
 }

@@ -15,6 +15,7 @@ import su.msk.dunno.scage.screens.support.physics.ScagePhysics
 import su.msk.dunno.scage.single.support.messages.ScageMessage
 import su.msk.dunno.scage.screens.support.tracer._
 import su.msk.dunno.scage.screens.support.physics.objects.{StaticPolygon, DynaBall}
+import collection.mutable.ListBuffer
 
 object ScageTest {
     def suite: Test = {
@@ -122,7 +123,22 @@ class ScageTest extends TestCase("app") {
           drawCircle(another_trace.coord, 10, GREEN)
 
           drawDisplayList(poly_render)
-          for((point, _) <- poly_physical.touchingPoints) drawFilledCircle(point, 5, RED)
+        }
+
+        private var touches:ListBuffer[(Vec, Long)] = ListBuffer()
+        action {
+          for {
+            (point, _) <- poly_physical.touchingPoints
+            if !touches.exists(_._1 == point)
+          } touches += ((point, System.currentTimeMillis))
+
+          for {
+            t <- touches
+            if System.currentTimeMillis - t._2 > 5000
+          } touches -= t
+        }
+        render {
+          for((point, _) <- touches) drawFilledCircle(point, 3, RED)
         }
 
         /*startServer()

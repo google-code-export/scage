@@ -1,20 +1,12 @@
 package su.msk.dunno.scage.screens.support.physics
 
-import net.phys2d.raw.Body
-import net.phys2d.raw.BodyList
 import net.phys2d.math.Vector2f
 import su.msk.dunno.scage.single.support.Vec
+import net.phys2d.raw.{CollisionEvent, Body, BodyList}
+import collection.mutable.{ListBuffer, ArrayBuffer}
 
 trait Physical {
   val body:Body
-
-  def prepare() {
-    isActive = true
-    is_touching = false
-    touching_bodies = new BodyList
-  }
-
-  var isActive = true
 
   def addForce(force:Vec) {
     body.setIsResting(false)
@@ -44,9 +36,34 @@ trait Physical {
 
   private var is_touching = false
   private var touching_bodies:BodyList = new BodyList
+  private var touching_points:ListBuffer[(Vec, Vec)] = ListBuffer()
   def isTouching = is_touching
   def isTouching(p:Physical) = touching_bodies.contains(p.body)
-  private[physics] def isTouching_=(new_is_touching:Boolean) {
+
+  def prepare() {
+    is_touching = false
+    touching_bodies.clear()
+    touching_points.clear()
+  }
+
+  def updateCollisions(collisions:Array[CollisionEvent]) {
+    val new_touching_bodies =  body.getTouching
+    is_touching = new_touching_bodies.size > 0
+    if(is_touching) {
+      for {
+        i <- 0 until new_touching_bodies.size
+        body = new_touching_bodies.get(i)
+        if !touching_bodies.contains(body)
+      } touching_bodies.add(body)
+      for {
+        ce <- collisions
+        new_tp = (new Vec(ce.getPoint), new Vec(ce.getNormal))
+        if !touching_points.exists(tp => tp._1 == new_tp._1 && tp._2 == new_tp._2)
+      } touching_points += new_tp
+    }
+  }
+
+  /*private[physics] def isTouching_=(new_is_touching:Boolean) {
     is_touching = new_is_touching
     if(is_touching) {
       val new_touching_bodies =  body.getTouching
@@ -57,9 +74,9 @@ trait Physical {
       } touching_bodies.add(body)
     }
     else touching_bodies.clear()
-  }
+  }*/
 
   def points:Array[Vec]
 
-  def touchingPoints(physics:ScagePhysics) = physics.touchingPoints(this)
+  def touchingPoints = touching_points.toList
 }

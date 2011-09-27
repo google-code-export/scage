@@ -102,7 +102,7 @@ class ScageTest extends TestCase("app") {
 
             velocity = (mouse_coord - trace.coord).n*10
             render {
-              if(isActive) drawFilledCircle(coord, 2, YELLOW)
+              if(physics.containsPhysical(this)) drawFilledCircle(coord, 2, YELLOW)
             }
           })
         })
@@ -122,7 +122,7 @@ class ScageTest extends TestCase("app") {
           drawCircle(another_trace.coord, 10, GREEN)
 
           drawDisplayList(poly_render)
-          for((point, _) <- poly_physical.touchingPoints(physics)) drawFilledCircle(point, 5, BLUE)
+          for((point, _) <- poly_physical.touchingPoints) drawFilledCircle(point, 5, RED)
         }
 
         /*startServer()

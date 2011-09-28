@@ -13,14 +13,14 @@ import su.msk.dunno.scage.single.support.ScageProperties._
 
 object Level {
   private var boxes:List[Physical] = Nil
-  def winCondition = boxes.forall(!_.isActive)
+  def winCondition = boxes.forall(!physics.containsPhysical(_))
 
   def loadMap(level_map:LevelMap) {
-    physics.removePhysicals(boxes)
+    physics.removePhysicals(boxes:_*)
     boxes = level_map.load
   }
 
-  physics.addPhysical(
+  physics.addPhysicals(
     new LevelEdge(Vec(30,              10),                Vec(30,              screen_height-10)),
     new LevelEdge(Vec(30,              screen_height-10),  Vec(screen_width-10, screen_height-10)),
     new LevelEdge(Vec(screen_width-10, screen_height-10),  Vec(screen_width-10, 10)),

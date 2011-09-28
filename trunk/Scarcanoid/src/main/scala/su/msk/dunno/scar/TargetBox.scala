@@ -7,6 +7,7 @@ import org.lwjgl.opengl.GL11
 import su.msk.dunno.scage.single.support.ScageColors._
 import Scaranoid._
 import su.msk.dunno.scage.screens.support.physics.objects.StaticBox
+import su.msk.dunno.scage.screens.ScageScreen._
 
 class TargetBox(leftup_coord:Vec) extends StaticBox(leftup_coord, 40, 40) {
   val box_color = {
@@ -44,7 +45,7 @@ class TargetBox(leftup_coord:Vec) extends StaticBox(leftup_coord, 40, 40) {
         Scaranoid.bonus = colorModificator(box_color)
 
         PlayerBall.ball_color = box_color
-        physics.removePhysical(this)
+        physics.removePhysicals(this)
 
         if(Level.winCondition) pause()
         delActions(currentOperation)

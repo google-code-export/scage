@@ -5,6 +5,10 @@
     </message>
 
     <message code="hello.world">
-        [rП][gр][bи][yвет], [rМир]!
+        Привет, Мир!
+    </message>
+
+    <message code="help">
+        WASD и Левая Кнопка Мыши
     </message>
 </messages>

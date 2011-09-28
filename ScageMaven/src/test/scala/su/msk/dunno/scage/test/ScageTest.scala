@@ -84,7 +84,7 @@ class ScageTest extends TestCase("app") {
         def period = {
           x += 0.01f
           if(x > 2*math.Pi) x = 0
-          (250 * 0.25f*(math.sin(x)) + 1).toLong
+          (125 * 0.25f*(math.sin(x)) + 1).toLong
         }
         action(period) {
           physics.step()
@@ -112,7 +112,7 @@ class ScageTest extends TestCase("app") {
         val another_font = new ScageMessage(font_size = 12)
         interface {
           another_font.print(xml("hello.world"), screen_width/2, screen_height/2+20,    WHITE)
-          print(xml("hello.world"), screen_width/2, screen_height/2,    WHITE)
+          print(xml("help"), screen_width/2, screen_height/2,    WHITE)
           print(trace.point,        screen_width/2, screen_height/2-20, WHITE)
           print(fps, 10, screen_height-20, WHITE)
         }

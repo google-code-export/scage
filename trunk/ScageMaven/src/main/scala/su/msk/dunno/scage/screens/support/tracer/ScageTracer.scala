@@ -2,10 +2,10 @@ package su.msk.dunno.scage.screens.support.tracer
 
 import org.apache.log4j.Logger
 import su.msk.dunno.scage.single.support.ScageProperties.property
-import collection.mutable.HashMap
 import su.msk.dunno.scage.screens.handlers.Renderer._
 import su.msk.dunno.scage.single.support.Vec
 import su.msk.dunno.scage.screens.support.ScageId._
+import collection.mutable.{ArrayBuffer, HashMap}
 
 object ScageTracer {
   def apply[T <: Trace](traces:(Vec, T)*) = {
@@ -83,9 +83,9 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
 
   // it is very critical for the structures below to be changed only inside ScageTracer
   // but for convenience I keep them protected, so client classes - children of ScageTracer can read them
-  protected val point_matrix = Array.ofDim[List[T]](N_x, N_y)
+  protected val point_matrix = Array.ofDim[List[T]](N_x, N_y)  // cannot operate with ArrayBuffer because if so I have to add additional toList everywhere
   initMatrix(point_matrix)
-  protected val traces_in_point = new HashMap[Int, Vec]()
+  protected val traces_by_ids = HashMap[Int, T]()
   protected var traces_list:List[T] = Nil
   def tracesList = traces_list
 
@@ -93,53 +93,36 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
     if(isPointOnArea(point)) {
       trace.point is point
       point_matrix(point.ix)(point.iy) = trace :: point_matrix(point.ix)(point.iy)
-      traces_in_point += trace.id -> trace.point.copy
+      traces_by_ids += trace.id -> trace
       traces_list = trace :: traces_list
       log.debug("added new trace #"+trace.id+" in point ("+trace.point+")")
-    }
-    else log.warn("failed to add trace: point ("+point+") is out of area")
+    } else log.warn("failed to add trace: point ("+point+") is out of area")
     trace
   }
 
-  def containsTrace(trace:T) = traces_in_point.contains(trace.id)
-  def containsTraceById(id:Int) = traces_in_point.contains(id)
+  def containsTrace(trace:T) = traces_by_ids.contains(trace.id)
+  def containsTraceById(id:Int) = traces_by_ids.contains(id)
 
-  def removeTraces(traces:T*) { // TODO: add existence check (plan it carefully), log messages and return result
-    if(traces.size > 0) {
-      traces.foreach(trace => {
+  def removeTraces(traces_to_remove:T*) { // TODO: add existence check (plan it carefully), log messages and return result
+    if(!traces_to_remove.isEmpty) {
+      traces_to_remove.foreach(trace => {
         point_matrix(trace.point.ix)(trace.point.iy) = point_matrix(trace.point.ix)(trace.point.iy).filterNot(_.id == trace.id)
-        traces_in_point -= trace.id
-        traces_list = traces_list.filterNot(other_trace => other_trace.id == trace.id)
+        traces_by_ids -= trace.id
       })
-    }
-    else {
+      traces_list = traces_list.filterNot(trace => traces_to_remove.contains(trace))
+    } else {
       initMatrix(point_matrix)
-      traces_in_point.clear()
+      traces_by_ids.clear()
       traces_list = Nil
       log.info("deleted all traces")
     }
   }
-  def removeTraces(traces:List[T]) {
+  /*def removeTraces(traces:List[T]) {    // I think its unnecessary
     removeTraces(traces:_*)
-  }
+  }*/
 
   def removeTracesById(trace_ids:Int*) { // TODO: add log messages
-    if(trace_ids.size > 0) {
-      trace_ids.foreach(trace_id => {
-        val trace_point = traces_in_point(trace_id)
-        if(trace_point != null) {
-          point_matrix(trace_point.ix)(trace_point.iy) = point_matrix(trace_point.ix)(trace_point.iy).filterNot(_.id == trace_id)
-          traces_in_point -= trace_id
-          traces_list = traces_list.filterNot(other_trace => other_trace.id == trace_id)
-        }
-      })
-    }
-    else {
-      initMatrix(point_matrix)
-      traces_in_point.clear()
-      traces_list = Nil
-      log.info("deleted all traces")
-    }
+    removeTraces(trace_ids.filter(traces_by_ids.contains(_)).map(traces_by_ids(_)):_*)
   }
 
   def tracesInPoint(point:Vec, condition:(T) => Boolean) = {
@@ -153,7 +136,7 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
   }
   def tracesInPoint(point:Vec) = {
     if(!isPointOnArea(point)) Nil
-    else point_matrix(point.ix)(point.iy)
+    else (point_matrix(point.ix)(point.iy))
   }
   
   def traces(point:Vec, xrange:Range, yrange:Range, condition:(T) => Boolean):List[T] = {
@@ -176,19 +159,19 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
   }
   def traces(point:Vec, xrange:Range, condition:(T) => Boolean):List[T] = traces(point, xrange, xrange, condition)
   def traces(point:Vec, xrange:Range):List[T] = traces(point, xrange, xrange)
-  
-  def updateLocation(trace:T, _new_point:Vec):Vec = {
-    if(traces_in_point.contains(trace.id)) {
-      val old_point = traces_in_point(trace.id)
+
+  def updateLocation(trace:T, _new_point:Vec):Vec = { // TODO: maybe instead of warnings return tuple where second field is operation status... smth like that
+    if(traces_by_ids.contains(trace.id)) {  // seems necessary: if we failed to add trace but missed that fact and then trying to update trace's location,
+      val old_point = trace.point           // we must not succeed in doing this too
       val new_point = outsidePoint(_new_point)
-      if(isPointOnArea(new_point) && old_point != new_point) {
-        point_matrix(old_point.ix)(old_point.iy) = point_matrix(old_point.ix)(old_point.iy).filterNot(_.id == trace.id)
-        point_matrix(new_point.ix)(new_point.iy) = trace :: point_matrix(new_point.ix)(new_point.iy)
-        traces_in_point(trace.id) is new_point
-        trace.point is new_point
-      }
-    }
-    else log.warn("trace with id "+trace.id+" not found")
+      if(isPointOnArea(new_point)) {
+        if(old_point != new_point) {
+          point_matrix(old_point.ix)(old_point.iy) = point_matrix(old_point.ix)(old_point.iy).filterNot(_.id == trace.id)
+          point_matrix(new_point.ix)(new_point.iy) = trace :: point_matrix(new_point.ix)(new_point.iy)
+          trace.point is new_point
+        }
+      } else log.warn("failed to update trace "+trace.id+": new point is out of area")
+    } else log.warn("trace with id "+trace.id+" not found")
     trace.point
   }
 

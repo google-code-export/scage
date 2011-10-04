@@ -10,9 +10,9 @@ import collection.mutable.HashMap
 import su.msk.dunno.scage.screens.support.ScageId._
 
 object ScageScreen {
-  private var isAllScreensStop = false
-  def isAppRunning = !isAllScreensStop
-  def allStop() {isAllScreensStop = true}
+  private var is_al_screens_stop = false
+  def isAppRunning = !is_al_screens_stop
+  def stopApp() {is_al_screens_stop = true}
 
   private var operation_id = 0
   def nextOperationId = {
@@ -224,7 +224,7 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
     init()
     is_running = true
     log.info(screen_name+": run")
-    while(is_running && !isAllScreensStop) {
+    while(is_running && !is_al_screens_stop) {
       controller.checkControls
       for((action_id, action_operation, is_action_pausable) <- actions) {
         currentOperation = action_id
@@ -240,7 +240,7 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
     }
   }
   def stop() {
-    if(is_main_screen) allStop()
+    if(is_main_screen) stopApp()
     else is_running = false 
   }
 

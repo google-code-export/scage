@@ -1,0 +1,40 @@
+app.name = Blamer
+app.version = 0.2
+
+screen.width = 800
+screen.height = 600
+
+screen.splash = resources/images/blamer_0_6.png
+
+#field.visible.width = 600
+#field.visible.height = 495
+
+symbol.width = 12
+symbol.height = 24
+
+field.from.x = 0
+field.to.x = 1600
+
+field.from.y = 0
+field.to.y = 2000
+
+field.N_x = 100
+field.N_y = 100
+
+framerate = 60
+
+#font.file = resources/fonts/FreeMono.ttf
+
+#strings.base = resources/strings/blamer_strings
+strings.lang = ru
+
+weapon.from.x = 0
+weapon.to.x = 800
+
+weapon.from.y = 0
+weapon.to.y = 380
+
+weapon.N_x = 40
+weapon.N_y = 19
+
+#dov.default = 1

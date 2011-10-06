@@ -14,11 +14,11 @@ object ScageScreen {
   def isAppRunning = !is_al_screens_stop
   def stopApp() {is_al_screens_stop = true}
 
-  private var operation_id = 0
+  /*private var operation_id = 0
   def nextOperationId = {
     operation_id += 1
     operation_id
-  }
+  }*/
 
   private var current_operation_id = 0
   def currentOperation = current_operation_id
@@ -51,8 +51,7 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
         else log.warn("operation with id "+operation_id+" not found among inits so wasn't deleted")
         overall_result && deletion_result
       })
-    }
-    else {
+    } else {
       inits = Nil
       log.info("deleted all init operations")
       true

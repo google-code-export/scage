@@ -45,7 +45,7 @@ class ScageTest extends TestCase("app") {
 
         def moveIfFreeLocation(trace:CoordTrace, delta:Vec) {
           val new_location = trace.coord + delta
-          if(!tracer.hasCollisions(trace, new_location, 20))
+          if(!tracer.hasCollisions(trace, new_location, 20))    // test collisions using tracer
             tracer.updateLocation(trace, new_location)
         }
 
@@ -54,7 +54,7 @@ class ScageTest extends TestCase("app") {
         key(KEY_S, 10, onKeyDown = moveIfFreeLocation(trace, Vec(0,-1)))
         key(KEY_D, 10, onKeyDown = moveIfFreeLocation(trace, Vec(1,0)))
 
-        anykey(onKeyDown = println("any key pressed =)"))
+        anykey(onKeyDown = println("any key pressed =)"))   // test special method to obtain "press any key" event
 
         /*leftMouse(onBtnDown = {
           mouse_coord => tracer.updateLocation(trace, mouse_coord)
@@ -62,21 +62,21 @@ class ScageTest extends TestCase("app") {
 
         val physics = new ScagePhysics
 
-        val poly_render = displayList {
+        val poly_render = displayList {   // test special method to save any opengl code as display list
           color = CYAN
           drawPolygon(Vec(100, 300), Vec(150, 250), Vec(300, 300), Vec(300, 450), Vec(200, 400))
         }
         val poly_physical = new StaticPolygon(Vec(100, 300), Vec(150, 250), Vec(300, 300), Vec(300, 450), Vec(200, 400))
         physics.addPhysical(poly_physical)
 
-        val stars = displayList {
+        val stars = displayList {   // I like "starry sky" since high school =)
           for(i <- 1 to 100) {
             drawPoint(Vec(math.random.toFloat*screen_width, math.random.toFloat*screen_height), randomColor)
           }
         }
 
         private var target_point = trace.coord
-        mouseMotion {
+        mouseMotion {   // test mouse motion event
           mouse_coord =>
             target_point = (mouse_coord - trace.coord).n * 20
         }
@@ -86,10 +86,10 @@ class ScageTest extends TestCase("app") {
           if(x > 2*math.Pi) x = 0
           (125 * 0.25f*(math.sin(x)) + 1).toLong
         }
-        action(period) {
+        action(period) {  // test actions with non-static period defined as function
           physics.step()
         }
-        leftMouse(onBtnDown = {
+        leftMouse(onBtnDown = {  // test left mouse event
           mouse_coord => physics.addPhysical(new DynaBall(trace.coord + target_point, 2) {
             val ball_trace = tracer.addTrace(trace.coord + target_point, new EmptyCoordTrace)
             val action_id:Int = action {
@@ -108,11 +108,11 @@ class ScageTest extends TestCase("app") {
           })
         })
 
-        backgroundColor = colorFromString("BLACK")
-        val another_font = new ScageMessage(font_size = 12)
+        backgroundColor = colorFromString("BLACK")    // test method to obtain color by name
+        val another_font = new ScageMessage(font_size = 12) // test using two different fonts in one app
         interface {
           another_font.print(xml("hello.world"), screen_width/2, screen_height/2+20,    WHITE)
-          print(xml("help"), screen_width/2, screen_height/2,    WHITE)
+          print(xml("help"), screen_width/2, screen_height/2,    WHITE) // test obtaining string from xml
           print(trace.point,        screen_width/2, screen_height/2-20, WHITE)
           print(fps, 10, screen_height-20, WHITE)
         }
@@ -125,7 +125,7 @@ class ScageTest extends TestCase("app") {
           drawDisplayList(poly_render)
         }
 
-        private var touches:ListBuffer[(Vec, Long)] = ListBuffer()
+        private var touches:ListBuffer[(Vec, Long)] = ListBuffer()    // test obtaining touching points for physical objects
         action {
           for {
             (point, _) <- poly_physical.touchingPoints
@@ -141,6 +141,7 @@ class ScageTest extends TestCase("app") {
           for((point, _) <- touches) drawFilledCircle(point, 3, RED)
         }
 
+        // test network features: simple echo server
         /*startServer()
         action {
           clients.foreach(client => {

@@ -158,3 +158,5 @@ class ScageTest extends TestCase("app") {
       assertTrue(true)
     };
 }
+
+/*test*/

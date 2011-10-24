@@ -54,7 +54,7 @@ class MouseDragListener(button:Int, onDrag: Vec => Any) extends UIListener {
   }
 }
 
-class MouseWheelFactory {
+object MouseWheelFactory {
   def wheelUpListener(onWheelUp: Vec => Any) = {
     if(Mouse.hasWheel) {
       new UIListener {
@@ -74,6 +74,21 @@ class MouseWheelFactory {
         def check() {
           if(Mouse.getDWheel < 0) {
             onWheelDown(mouseCoord)
+          }
+        }
+      }
+    }
+    else new UIListener {def check() {}}
+  }
+
+  def wheelListener(onWheelUp: Vec => Any, onWheelDown: Vec => Any) = {
+    if(Mouse.hasWheel) {
+      new UIListener {
+        def check() {
+          Mouse.getDWheel match {
+            case x if(x > 0) => onWheelUp(mouseCoord)
+            case x if(x < 0) => onWheelDown(mouseCoord)
+            case _ =>
           }
         }
       }

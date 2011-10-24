@@ -157,10 +157,13 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
     controller.addListener(new MouseDragListener(1, onMotion))
   }
   def mouseWheelUp(onWheelUp: Vec => Any) {
-    controller.addListener(new MouseWheelFactory().wheelUpListener(onWheelUp))
+    controller.addListener(MouseWheelFactory.wheelUpListener(onWheelUp))
   }
   def mouseWheelDown(onWheelDown: Vec => Any) {
-    controller.addListener(new MouseWheelFactory().wheelDownListener(onWheelDown))
+    controller.addListener(MouseWheelFactory.wheelDownListener(onWheelDown))
+  }
+  def mouseWheel(onWheelUp: Vec => Any, onWheelDown: Vec => Any) {
+    controller.addListener(MouseWheelFactory.wheelListener(onWheelUp, onWheelDown))
   }
   def mouseCoord = Vec(Mouse.getX, Mouse.getY)
 

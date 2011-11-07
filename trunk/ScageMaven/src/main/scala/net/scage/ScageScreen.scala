@@ -131,39 +131,34 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
     }
   }
 
-  private val controller = new Controller
+  private val controller = new Controller2
   def key(key: => Int, repeatTime: => Long = 0, onKeyDown: => Any, onKeyUp: => Any = {}) {
-    controller.addListener(new KeyListener(key, repeatTime, onKeyDown, onKeyUp))
+    controller.key(key, repeatTime, onKeyDown, onKeyUp)
     //controller.key(key, repeatTime, onKeyDown, onKeyUp)
   }
-  def anykey(onKeyDown: => Any, onKeyUp: => Any = {}) {
-    controller.addListener(new AnyKeyListener(onKeyDown, onKeyUp))
+  def anykey(onKeyDown: => Any) {
+    controller.anykey(onKeyDown)
   }
   def leftMouse(repeatTime: => Long = 0, onBtnDown: Vec => Any, onBtnUp: Vec => Any = Vec => {}) {
-    controller.addListener(new MouseButtonsListener(0, repeatTime, onBtnDown, onBtnUp))
-    //controller.leftMouse(repeatTime, onBtnDown, onBtnUp)
+    controller.leftMouse(repeatTime, onBtnDown, onBtnUp)
   }
   def rightMouse(repeatTime: => Long = 0, onBtnDown: Vec => Any, onBtnUp: Vec => Any = Vec => {}) {
-    controller.addListener(new MouseButtonsListener(1, repeatTime, onBtnDown, onBtnUp))
-    //controller.rightMouse(repeatTime, onBtnDown, onBtnUp)
+    controller.rightMouse(repeatTime, onBtnDown, onBtnUp)
   }
   def mouseMotion(onMotion: Vec => Any) {
-    controller.addListener(new MouseMotionListener(onMotion))
+    controller.mouseMotion(onMotion)
   }
-  def leftMouseDrag(onMotion: Vec => Any) {
-    controller.addListener(new MouseDragListener(0, onMotion))
+  def leftMouseDrag(onDragMotion: Vec => Any) {
+    controller.leftMouseDrag(onDragMotion)
   }
-  def rightMouseDrag(onMotion: Vec => Any) {
-    controller.addListener(new MouseDragListener(1, onMotion))
+  def rightMouseDrag(onDragMotion: Vec => Any) {
+    controller.rightMouseDrag(onDragMotion)
   }
   def mouseWheelUp(onWheelUp: Vec => Any) {
-    controller.addListener(MouseWheelFactory.wheelUpListener(onWheelUp))
+    controller.mouseWheelUp(onWheelUp)
   }
   def mouseWheelDown(onWheelDown: Vec => Any) {
-    controller.addListener(MouseWheelFactory.wheelDownListener(onWheelDown))
-  }
-  def mouseWheel(onWheelUp: Vec => Any, onWheelDown: Vec => Any) {
-    controller.addListener(MouseWheelFactory.wheelListener(onWheelUp, onWheelDown))
+    controller.mouseWheelDown(onWheelDown)
   }
   def mouseCoord = Vec(Mouse.getX, Mouse.getY)
 
@@ -220,7 +215,7 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
     is_running = true
     log.info(screen_name+": run")
     while(is_running && !is_al_screens_stop) {
-      controller.checkControls
+      controller.checkControls()
       for((action_id, action_operation, is_action_pausable) <- actions) {
         currentOperation = action_id
         if(!on_pause || !is_action_pausable) action_operation()

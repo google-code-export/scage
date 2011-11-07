@@ -8,6 +8,7 @@ import _root_.net.scage.ScageScreen
 import _root_.net.scage.support.Vec
 import net.scage.support.net.NetServer._
 import net.scage.support.net.ClientHandler
+import concurrent.ops._
 
 import junit.framework._
 import Assert._
@@ -16,6 +17,7 @@ import _root_.net.scage.support.messages.ScageMessage
 import net.scage.support.tracer._
 import net.scage.support.physics.objects.{StaticPolygon, DynaBall}
 import collection.mutable.ListBuffer
+import javax.swing.JOptionPane
 
 object ScageTest {
     def suite: Test = {
@@ -53,6 +55,17 @@ class ScageTest extends TestCase("app") {
         key(KEY_A, 10, onKeyDown = moveIfFreeLocation(trace, Vec(-1,0)))
         key(KEY_S, 10, onKeyDown = moveIfFreeLocation(trace, Vec(0,-1)))
         key(KEY_D, 10, onKeyDown = moveIfFreeLocation(trace, Vec(1,0)))
+
+        private var input_text = ""
+        key(KEY_F1, onKeyDown = spawn {
+          input_text = JOptionPane.showInputDialog("Input text here")
+        })
+        interface {
+          print("F1: enter text", screen_width/2, screen_height/2-40, WHITE)
+          if(input_text != "") {
+            print("Here is your text: "+input_text, screen_width/2, screen_height/2-60, WHITE)
+          }
+        }
 
         anykey(onKeyDown = println("any key pressed =)"))   // test special method to obtain "press any key" event
 

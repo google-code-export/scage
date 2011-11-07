@@ -55,9 +55,8 @@ object Renderer {
   lazy val initgl = {
     Display.setDisplayMode(new DisplayMode(screen_width, screen_height));
     Display.setVSyncEnabled(true);
-
-    Display.create();
     Display.setTitle(property("app.name", "Scage")+" - "+property("app.version", "Release"));
+    Display.create();
 
     val (monitor_width, monitor_height) = {
       /*val gd_arr = GraphicsEnvironment.getLocalGraphicsEnvironment.getScreenDevices
@@ -100,11 +99,13 @@ object Renderer {
     Thread.sleep(1000)
 
     // drawing scage logo
-    GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
-    val logo_texture = getTexture("resources/images/scage-logo.png")
-    drawDisplayList(image(logo_texture, screen_width, screen_height, 0, 0, logo_texture.getImageWidth, logo_texture.getImageHeight), Vec(screen_width/2, screen_height/2))
-    update()
-    Thread.sleep(1000)
+    if(property("screen.scagelogo", true)) {
+      GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
+      val logo_texture = getTexture("resources/images/scage-logo.png")
+      drawDisplayList(image(logo_texture, screen_width, screen_height, 0, 0, logo_texture.getImageWidth, logo_texture.getImageHeight), Vec(screen_width/2, screen_height/2))
+      update()
+      Thread.sleep(1000)
+    }
 
     // drawing app logo or welcome message
     stringProperty("screen.splash") match {

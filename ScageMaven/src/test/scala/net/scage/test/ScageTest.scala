@@ -51,7 +51,11 @@ class ScageTest extends TestCase("app") {
             tracer.updateLocation(trace, new_location)
         }
 
+        anykey(onKeyDown = println("any key pressed =)"))   // test special method to obtain "press any key" event
+
         key(KEY_W, 10, onKeyDown = moveIfFreeLocation(trace, Vec(0,1)))
+        key(KEY_W, onKeyDown = println("also, W was pressed :3"))   // test for multiple functions on one key
+
         key(KEY_A, 10, onKeyDown = moveIfFreeLocation(trace, Vec(-1,0)))
         key(KEY_S, 10, onKeyDown = moveIfFreeLocation(trace, Vec(0,-1)))
         key(KEY_D, 10, onKeyDown = moveIfFreeLocation(trace, Vec(1,0)))
@@ -66,8 +70,6 @@ class ScageTest extends TestCase("app") {
             print("Here is your text: "+input_text, screen_width/2, screen_height/2-60, WHITE)
           }
         }
-
-        anykey(onKeyDown = println("any key pressed =)"))   // test special method to obtain "press any key" event
 
         /*leftMouse(onBtnDown = {
           mouse_coord => tracer.updateLocation(trace, mouse_coord)

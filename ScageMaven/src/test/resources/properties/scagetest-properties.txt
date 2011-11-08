@@ -1,6 +1,8 @@
 app.name=ScageTest
 app.version = v1.0
 
+#scage.controller.type = multi
+
 strings.lang = ru
 
 screen.width=640

@@ -1,13 +1,13 @@
 package net.scage
 
 import handlers.controller._
+import handlers.controller2.{MultiController, SingleController}
 import handlers.Renderer
 import org.apache.log4j.Logger
-import _root_.net.scage.support.Vec
-import _root_.net.scage.support.ScageProperties
 import org.lwjgl.input.Mouse
 import collection.mutable.HashMap
 import net.scage.support.ScageId._
+import support.{ScageProperties, Vec}
 
 object ScageScreen {
   private var is_al_screens_stop = false
@@ -131,10 +131,13 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
     }
   }
 
-  private val controller = new Controller2
+  private val controller = ScageProperties.property("scage.controller", "single") match {
+    case "single" => new SingleController
+    case "multi" => new MultiController
+    case _ => new SingleController
+  }
   def key(key: => Int, repeatTime: => Long = 0, onKeyDown: => Any, onKeyUp: => Any = {}) {
     controller.key(key, repeatTime, onKeyDown, onKeyUp)
-    //controller.key(key, repeatTime, onKeyDown, onKeyUp)
   }
   def anykey(onKeyDown: => Any) {
     controller.anykey(onKeyDown)

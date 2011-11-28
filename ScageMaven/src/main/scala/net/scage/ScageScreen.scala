@@ -4,9 +4,9 @@ import handlers.controller2.ScageController
 import handlers.Renderer
 import org.apache.log4j.Logger
 import org.lwjgl.input.Mouse
-import collection.mutable.HashMap
 import net.scage.support.ScageId._
 import support.{ScageProperties, Vec}
+import collection.mutable.{ArrayBuffer, HashMap}
 
 object ScageScreen {
   private var is_al_screens_stop = false
@@ -26,35 +26,41 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
   if(properties != "") ScageProperties.properties = properties
   else if(is_main_screen) ScageProperties.properties = screen_name.toLowerCase+".properties"
 
-  private var inits:List[(Int, () => Any)] = Nil
+  private val inits = ArrayBuffer[(Int, () => Any)]()
   def init(init_func: => Any) = {
     val operation_id = /*nextOperationId*/nextId
-    inits = (operation_id, () => init_func) :: inits
+    inits += (operation_id, () => init_func)
     if(is_running) init_func
     operation_id
   }
   def delInits(operation_ids:Int*) = {
     if(operation_ids.size > 0) {
       operation_ids.foldLeft(true)((overall_result, operation_id) => {
-        val old_inits_size = inits.size
-        inits = inits.filterNot(_._1 == operation_id)
-        val deletion_result = inits.size != old_inits_size
-        if(deletion_result) log.debug("deleted init operation with id "+operation_id)
-        else log.warn("operation with id "+operation_id+" not found among inits so wasn't deleted")
+        val deletion_result = inits.find(_._1 == operation_id) match {
+          case Some(i) => {
+            inits -= i
+            log.debug("deleted init operation with id "+operation_id)
+            true
+          }
+          case None => {
+            log.warn("operation with id "+operation_id+" not found among inits so wasn't deleted")
+            false
+          }
+        }
         overall_result && deletion_result
       })
     } else {
-      inits = Nil
+      inits.clear()
       log.info("deleted all init operations")
       true
     }
   }
 
   // (operation_id, operation, is_pausable)
-  private var actions:List[(Int, () => Any, Boolean)] = Nil
+  private var actions = ArrayBuffer[(Int, () => Any, Boolean)]()
   private def addAction(operation: => Any, is_pausable:Boolean) = {
     val operation_id = nextId
-    actions = (operation_id, () => operation, is_pausable) :: actions
+    actions += (operation_id, () => operation, is_pausable)
     operation_id
   }
 
@@ -66,7 +72,7 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
     val action_waiter = new ActionWaiterDynamic(action_period, action_func)
     addAction(action_waiter.doAction(), true)
   }
-  def actionWithStaticPeriod(action_period:Long)(action_func: => Unit) = {
+  def actionWithStaticPeriod(action_period:Long)(action_func: => Unit) = {  // TODO: мб ActionStaticPeriod
     if(action_period > 0) {
       val action_waiter = new ActionWaiterStatic(action_period, action_func)
       addAction(action_waiter.doAction(), true)
@@ -81,7 +87,7 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
     val action_waiter = new ActionWaiterDynamic(action_period, action_func)
     addAction(action_waiter.doAction(), false)
   }
-  def actionWithStaticPeriodNoPause(action_period:Long)(action_func: => Unit) = {
+  def actionWithStaticPeriodNoPause(action_period:Long)(action_func: => Unit) = { // TODO: мб ActionStaticPeriodNoPause
     if(action_period > 0) {
       val action_waiter = new ActionWaiterStatic(action_period, action_func)
       addAction(action_waiter.doAction(), false)
@@ -91,40 +97,50 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
   def delActions(operation_ids:Int*) = {
     if(operation_ids.size > 0) {
       operation_ids.foldLeft(true)((overall_result, operation_id) => {
-        val old_actions_size = actions.size
-        actions = actions.filterNot(_._1 == operation_id)
-        val deletion_result = actions.size != old_actions_size
-        if(deletion_result) log.debug("deleted action operation with id "+operation_id)
-        else log.warn("operation with id "+operation_id+" not found among actions so wasn't deleted")
+        val deletion_result = actions.find(_._1 == operation_id) match {
+          case Some(a) => {
+            actions -= a
+            log.debug("deleted action operation with id "+operation_id)
+            true
+          }
+          case None => {
+            log.warn("operation with id "+operation_id+" not found among actions so wasn't deleted")
+            false
+          }
+        }
         overall_result && deletion_result
       })
-    }
-    else {
-      actions = Nil
+    } else {
+      actions.clear()
       log.info("deleted all action operations")
       true
     }
   }
 
-  private var exits:List[(Int, () => Any)] = Nil
+  private var exits = ArrayBuffer[(Int, () => Any)]()
   def exit(exit_func: => Any) = {
     val operation_id = /*nextOperationId*/nextId
-    exits = (operation_id, () => exit_func) :: exits
+    exits += (operation_id, () => exit_func)
     operation_id
   }
   def delExits(operation_ids:Int*) = {
     if(operation_ids.size > 0) {
       operation_ids.foldLeft(true)((overall_result, operation_id) => {
-        val old_exits_size = exits.size
-        exits = exits.filterNot(_._1 == operation_id)
-        val deletion_result = exits.size != old_exits_size
-        if(deletion_result) log.debug("deleted exit operation with id "+operation_id)
-        else log.warn("operation with id "+operation_id+" not found among exits so wasn't deleted")
+        val deletion_result = exits.find(_._1 == operation_id) match {
+          case Some(e) => {
+            exits -= e
+            log.debug("deleted exit operation with id "+operation_id)
+            true
+          }
+          case None => {
+            log.warn("operation with id "+operation_id+" not found among exits so wasn't deleted")
+            false
+          }
+        }
         overall_result && deletion_result
       })
-    }
-    else {
-      exits = Nil
+    } else {
+      exits.clear()
       log.info("deleted all exit operations")
       true
     }
@@ -162,6 +178,7 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
 
   private val renderer = new Renderer
   def render(render_func: => Unit) = {renderer.render(render_func)}
+  def render(position:Int)(render_func: => Unit) = {renderer.render(position)(render_func)}
   def delRenders(render_ids:Int*) = renderer.delRenders(render_ids:_*)
   def interface(interface_func: => Unit) = {renderer.interface(interface_func)}
   def delInterfaces(interface_ids:Int*) = renderer.delInterfaces(interface_ids:_*)

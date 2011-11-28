@@ -40,6 +40,14 @@ class ScageTest extends TestCase("app") {
      */
     def testOK() {
       new ScageScreen(screen_name = "Hello World", is_main_screen = true, properties = "scagetest-properties.txt") {
+        render {
+          drawFilledRect(Vec(30, 30), 60, 20, GREEN)
+        }
+
+        render(10) {
+          drawFilledRect(Vec(100, 30), 60, 20, YELLOW)
+        }
+
         val tracer = new CoordTracer[CoordTrace]
 
         val trace = tracer.addTrace(Vec(screen_width/2, screen_height/2), new EmptyCoordTrace)

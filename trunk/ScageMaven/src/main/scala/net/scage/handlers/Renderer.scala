@@ -6,16 +6,15 @@ import org.newdawn.slick.opengl.{TextureLoader, Texture}
 import org.lwjgl.opengl.{DisplayMode, GL11, Display}
 import org.lwjgl.util.glu.GLU
 import _root_.net.scage.support.ScageProperties._
-import _root_.net.scage.support.{ScageColor, Vec}
 import _root_.net.scage.support.ScageColors._
 import _root_.net.scage.support.messages.ScageMessage._
 import org.lwjgl.BufferUtils
 import org.apache.log4j.Logger
 import net.scage.support.ScageId._
 import org.newdawn.slick.util.ResourceLoader
-import collection.mutable.HashMap
-import scala.Float._
-import java.awt.{Dimension, GraphicsEnvironment, Toolkit}
+import java.awt.Toolkit
+import net.scage.support.{SortedBuffer, ScageColor, Vec}
+import collection.mutable.ArrayBuffer
 
 object Renderer {
   protected val log = Logger.getLogger(this.getClass);
@@ -166,8 +165,8 @@ object Renderer {
       }
     GL11.glEnd();
   }
-  def drawCircle(coord:Vec, radius:Float, _color:ScageColor = color) {
-    color = _color
+  def drawCircle(coord:Vec, radius:Float, _color:ScageColor = DEFAULT_COLOR) {
+    if(_color != DEFAULT_COLOR) color = _color
     GL11.glDisable(GL11.GL_TEXTURE_2D);
       GL11.glPushMatrix();
       GL11.glTranslatef(coord.x, coord.y, 0.0f);
@@ -186,8 +185,8 @@ object Renderer {
       }
     GL11.glEnd();
   }
-  def drawFilledCircle(coord:Vec, radius:Float, _color:ScageColor = color) {
-    color = _color
+  def drawFilledCircle(coord:Vec, radius:Float, _color:ScageColor = DEFAULT_COLOR) {
+    if(_color != DEFAULT_COLOR) color = _color
     GL11.glDisable(GL11.GL_TEXTURE_2D);
       GL11.glPushMatrix();
       GL11.glTranslatef(coord.x, coord.y, 0.0f);
@@ -197,8 +196,8 @@ object Renderer {
     GL11.glEnable(GL11.GL_TEXTURE_2D);
   }
 
-  def drawLine(v1:Vec, v2:Vec, _color:ScageColor = color) {
-    color = _color
+  def drawLine(v1:Vec, v2:Vec, _color:ScageColor = DEFAULT_COLOR) {
+    if(_color != DEFAULT_COLOR) color = _color
     GL11.glDisable(GL11.GL_TEXTURE_2D);
     	GL11.glBegin(GL11.GL_LINES);
     		GL11.glVertex2f(v1.x, v1.y);
@@ -213,17 +212,17 @@ object Renderer {
     	GL11.glEnd();
     GL11.glEnable(GL11.GL_TEXTURE_2D);
   }
-  def drawLines(edges:Array[Vec], _color:ScageColor = color) {
-    color = _color
+  def drawLines(edges:Array[Vec], _color:ScageColor = DEFAULT_COLOR) {
+    if(_color != DEFAULT_COLOR) color = _color
     drawLines(edges:_*)
   }
   def drawLines(edges:List[Vec], _color:ScageColor) {
-    color = _color
+    if(_color != DEFAULT_COLOR) color = _color
     drawLines(edges:_*)
   }
 
-  def drawRect(coord:Vec, width:Float, height:Float, _color:ScageColor = color) {
-    color = _color
+  def drawRect(coord:Vec, width:Float, height:Float, _color:ScageColor = DEFAULT_COLOR) {
+    if(_color != DEFAULT_COLOR) color = _color
     GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glBegin(GL11.GL_LINE_LOOP);
           GL11.glVertex2f(coord.x, coord.y)
@@ -233,8 +232,8 @@ object Renderer {
         GL11.glEnd();
     GL11.glEnable(GL11.GL_TEXTURE_2D);
   }
-  def drawFilledRect(coord:Vec, width:Float, height:Float, _color:ScageColor = color) {
-    color = _color
+  def drawFilledRect(coord:Vec, width:Float, height:Float, _color:ScageColor = DEFAULT_COLOR) {
+    if(_color != DEFAULT_COLOR) color = _color
     GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glBegin(GL11.GL_QUADS);
         GL11.glVertex2f(coord.x, coord.y)
@@ -244,8 +243,8 @@ object Renderer {
       GL11.glEnd();
     GL11.glEnable(GL11.GL_TEXTURE_2D);
   }
-  def drawRectCentered(coord:Vec, width:Float, height:Float, _color:ScageColor = color) {
-    color = _color
+  def drawRectCentered(coord:Vec, width:Float, height:Float, _color:ScageColor = DEFAULT_COLOR) {
+    if(_color != DEFAULT_COLOR) color = _color
     GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glBegin(GL11.GL_LINE_LOOP);
           GL11.glVertex2f(coord.x - width/2, coord.y - height/2)
@@ -255,8 +254,8 @@ object Renderer {
         GL11.glEnd();
     GL11.glEnable(GL11.GL_TEXTURE_2D);
   }
-  def drawFilledRectCentered(coord:Vec, width:Float, height:Float, _color:ScageColor = color) {
-    color = _color
+  def drawFilledRectCentered(coord:Vec, width:Float, height:Float, _color:ScageColor = DEFAULT_COLOR) {
+    if(_color != DEFAULT_COLOR) color = _color
     GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glBegin(GL11.GL_QUADS);
         GL11.glVertex2f(coord.x - width/2, coord.y - height/2)
@@ -274,12 +273,12 @@ object Renderer {
       GL11.glEnd();
     GL11.glEnable(GL11.GL_TEXTURE_2D);
   }
-  def drawPolygon(coords:Array[Vec], _color:ScageColor = color) {
-    color = _color
+  def drawPolygon(coords:Array[Vec], _color:ScageColor = DEFAULT_COLOR) {
+    if(_color != DEFAULT_COLOR) color = _color
     drawPolygon(coords:_*)
   }
   def drawPolygon(coords:List[Vec], _color:ScageColor) {
-    color = _color
+    if(_color != DEFAULT_COLOR) color = _color
     drawPolygon(coords:_*)
   }
   def drawFilledPolygon(coords:Vec*) {
@@ -291,17 +290,17 @@ object Renderer {
       GL11.glEnd();
     GL11.glEnable(GL11.GL_TEXTURE_2D);
   }
-  def drawFilledPolygon(coords:Array[Vec], _color:ScageColor = color) {
-    color = _color
+  def drawFilledPolygon(coords:Array[Vec], _color:ScageColor = DEFAULT_COLOR) {
+    if(_color != DEFAULT_COLOR) color = _color
     drawFilledPolygon(coords:_*)
   }
   def drawFilledPolygon(coords:List[Vec], _color:ScageColor) {
-    color = _color
+    if(_color != DEFAULT_COLOR) color = _color
     drawFilledPolygon(coords:_*)
   }
 
-  def drawPoint(coord:Vec, _color:ScageColor = color) {
-    color = _color
+  def drawPoint(coord:Vec, _color:ScageColor = DEFAULT_COLOR) {
+    if(_color != DEFAULT_COLOR) color = _color
     GL11.glDisable(GL11.GL_TEXTURE_2D)
       GL11.glBegin(GL11.GL_POINTS)
         GL11.glVertex2f(coord.x, coord.y)
@@ -315,18 +314,18 @@ object Renderer {
       GL11.glEnd()
     GL11.glEnable(GL11.GL_TEXTURE_2D)
   }
-  def drawPoints(coords:Array[Vec], _color:ScageColor = color) {
-    color = _color
+  def drawPoints(coords:Array[Vec], _color:ScageColor = DEFAULT_COLOR) {
+    if(_color != DEFAULT_COLOR) color = _color
     drawPoints(coords:_*)
   }
   def drawPoints(coords:List[Vec], _color:ScageColor) {
-    color = _color
+    if(_color != DEFAULT_COLOR) color = _color
     drawPoints(coords:_*)
   }
 
   // white color by default for display lists to draw in natural colors
   def drawDisplayList(list_code:Int, coord:Vec = Vec(0,0), _color:ScageColor = WHITE) {
-    color = _color
+    if(_color != DEFAULT_COLOR) color = _color
     GL11.glPushMatrix();
 	  GL11.glTranslatef(coord.x, coord.y, 0.0f);
 	  GL11.glCallList(list_code)
@@ -415,49 +414,65 @@ class Renderer {
   def center = central_coord()
   def center_= (coord: => Vec) {central_coord = () => coord}
 
-  private var renders:List[(Int, () => Unit)] = Nil
-  def render(render_func: => Unit) = {
+  case class RenderElement(operation_id:Int, render_func:() => Unit, position:Int = 0) extends Ordered[RenderElement] {
+    def compare(that:RenderElement) = this.position - that.position
+  }
+  private val renders = SortedBuffer[RenderElement]()
+  private def addRender(render_func: => Unit, position:Int = 0) = {
     val operation_id = /*nextOperationId*/nextId
-    renders = renders ::: List((operation_id, () => render_func))
+    renders +=  RenderElement(operation_id, () => render_func, position)
     operation_id
   }
+
+  def render(render_func: => Unit) = addRender(render_func)
+  def render(position:Int = 0)(render_func: => Unit) = addRender(render_func, position)
   def delRenders(render_ids:Int*) = {
     if(render_ids.size > 0) {
       render_ids.foldLeft(true)((overall_result, render_id) => {
-        val old_renders_size = renders.size
-        renders = renders.filterNot(_._1 == render_id)
-        val deletion_result = renders.size != old_renders_size
-        if(deletion_result) log.debug("deleted render with id "+render_id)
-        else log.warn("render with id "+render_id+" not found among renders so wasn't deleted")
+        val deletion_result = renders.find(_.operation_id == render_id) match {
+          case Some(r) => {
+            renders -= r
+            log.debug("deleted render with id "+render_id)
+            true
+          }
+          case None => {
+            log.warn("render with id "+render_id+" not found among renders so wasn't deleted")
+            false
+          }
+        }
         overall_result && deletion_result
       })
-    }
-    else {
-      renders = Nil
+    } else {
+      renders.clear()
       log.info("deleted all render operations")
       true
     }
   }
 
-  private var interfaces:List[(Int, () => Unit)] = Nil
+  private val interfaces = ArrayBuffer[(Int, () => Unit)]()
   def interface(interface_func: => Unit) = {
     val operation_id = /*nextOperationId*/nextId
-    interfaces = (operation_id, () => interface_func) :: interfaces
+    interfaces += (operation_id, () => interface_func)
     operation_id
   }
   def delInterfaces(interface_ids:Int*) = {
     if(interface_ids.size > 0) {
       interface_ids.foldLeft(true)((overall_result, interface_id) => {
-        val old_interfaces_size = interfaces.size
-        interfaces = interfaces.filterNot(_._1 == interface_id)
-        val deletion_result = interfaces.size != old_interfaces_size
-        if(deletion_result) log.debug("deleted interface with id "+interface_id)
-        else log.warn("interface with id "+interface_id+" not found among interfaces so wasn't deleted")
+        val deletion_result = interfaces.find(_._1 == interface_id) match {
+          case Some(i) => {
+            interfaces -= i
+            log.debug("deleted interface with id "+interface_id)
+            true
+          }
+          case None => {
+            log.warn("interface with id "+interface_id+" not found among interfaces so wasn't deleted")
+            false
+          }
+        }
         overall_result && deletion_result
       })
-    }
-    else {
-      interfaces = Nil
+    } else {
+      interfaces.clear()
       log.info("deleted all interface operations")
       true
     }
@@ -472,7 +487,7 @@ class Renderer {
         val coord = window_center() - central_coord()*_scale
         GL11.glTranslatef(coord.x , coord.y, 0.0f)
         GL11.glScalef(_scale, _scale, 1)
-        for((render_id, render_operation) <- renders) {
+        for(RenderElement(render_id, render_operation, _) <- renders) {
           currentOperation = render_id
           render_operation()
         }

@@ -9,17 +9,17 @@ import support.{ScageProperties, Vec}
 import collection.mutable.{ArrayBuffer, HashMap}
 
 object ScageScreen {
-  private var is_al_screens_stop = false
-  def isAppRunning = !is_al_screens_stop
-  def stopApp() {is_al_screens_stop = true}
+  private var is_all_screens_stop = false
+  def isAppRunning = !is_all_screens_stop
+  def stopApp() {is_all_screens_stop = true}
 
   private var current_operation_id = 0
-  var currentOperation = current_operation_id
+  def currentOperation = current_operation_id
 }
 
 import ScageScreen._
 
-class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean = false, properties:String = "") {
+class ScageScreen(val screen_name:String = "Scage App", val is_main_screen:Boolean = false, properties:String = "") {
   protected val log = Logger.getLogger(this.getClass)
 
   if(is_main_screen) log.info("starting main screen "+screen_name+"...")
@@ -28,7 +28,7 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
 
   private val inits = ArrayBuffer[(Int, () => Any)]()
   def init(init_func: => Any) = {
-    val operation_id = /*nextOperationId*/nextId
+    val operation_id = nextId
     inits += (operation_id, () => init_func)
     if(is_running) init_func
     operation_id
@@ -119,7 +119,7 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
 
   private var exits = ArrayBuffer[(Int, () => Any)]()
   def exit(exit_func: => Any) = {
-    val operation_id = /*nextOperationId*/nextId
+    val operation_id = nextId
     exits += (operation_id, () => exit_func)
     operation_id
   }
@@ -213,14 +213,14 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
   def init() {
     log.info(screen_name+": init")
     for((init_id, init_operation) <- inits) {
-      currentOperation = init_id
+      current_operation_id = init_id
       init_operation()
     }
   }
   def exit() {
     log.info(screen_name+": exit")
     for((exit_id, exit_operation) <- exits) {
-      currentOperation = exit_id
+      current_operation_id = exit_id
       exit_operation()
     }
   }
@@ -229,13 +229,13 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
     init()
     is_running = true
     log.info(screen_name+": run")
-    while(is_running && !is_al_screens_stop) {
+    while(is_running && !is_all_screens_stop) {
       controller.checkControls()
       for((action_id, action_operation, is_action_pausable) <- actions) {
-        currentOperation = action_id
+        current_operation_id = action_id
         if(!on_pause || !is_action_pausable) action_operation()
       }
-      renderer.render()
+      renderer.render(current_operation_id = _)
     }
     exit()
     log.info(screen_name+" was stopped")
@@ -245,8 +245,8 @@ class ScageScreen(val screen_name:String = "Scage App", is_main_screen:Boolean =
     }
   }
   def stop() {
+    is_running = false
     if(is_main_screen) stopApp()
-    else is_running = false 
   }
 
   private val events = new HashMap[String, List[() => Unit]]()

@@ -1,9 +1,9 @@
 package net.scage.support
 
-import collection.generic.Growable
 import collection.mutable.ArrayBuffer
+import collection.generic.{Shrinkable, Growable}
 
-class SortedBuffer[A <: Ordered[A]](init_arr:ArrayBuffer[A]) extends Growable[A] with Traversable[A] {
+class SortedBuffer[A <: Ordered[A]](init_arr:ArrayBuffer[A]) extends Growable[A] with Traversable[A] with Shrinkable[A] {
   def this(elems:A*) {this(ArrayBuffer(elems:_*))}
 
   private val arr = init_arr.sortWith(_ < _)
@@ -14,7 +14,6 @@ class SortedBuffer[A <: Ordered[A]](init_arr:ArrayBuffer[A]) extends Growable[A]
     def pos = arr.indexWhere(elem < _)
     if(pos == -1) arr += elem
     else arr.insert(pos, elem)
-    arr.contains(elem)
     this
   }
 

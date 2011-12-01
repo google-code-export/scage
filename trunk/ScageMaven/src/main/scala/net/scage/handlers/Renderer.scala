@@ -478,7 +478,7 @@ class Renderer {
     }
   }
 
-  def render() {
+  def render(setCurrentOperation:Int => Unit) {
     if(Display.isCloseRequested) stopApp()
     else {
       GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
@@ -488,13 +488,13 @@ class Renderer {
         GL11.glTranslatef(coord.x , coord.y, 0.0f)
         GL11.glScalef(_scale, _scale, 1)
         for(RenderElement(render_id, render_operation, _) <- renders) {
-          currentOperation = render_id
+          setCurrentOperation(render_id)
           render_operation()
         }
       GL11.glPopMatrix()
 
       for((interface_id, interface_operation) <- interfaces) {
-        currentOperation = interface_id
+        setCurrentOperation(interface_id)
         interface_operation()
       }
 

@@ -259,7 +259,7 @@ class ScageScreen(val screen_name:String = "Scage App", val is_main_screen:Boole
     else log.warn("event "+event_name+" not found")
   }
 
-  private[ScageScreen] abstract class ActionWaiter(action_func: => Unit) {
+  private[ScageScreen] sealed abstract class ActionWaiter(action_func: => Unit) {
     private var last_action_time:Long = 0
     protected def period:Long
 

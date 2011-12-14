@@ -24,13 +24,12 @@ trait Trace {
   def state:List[(String, Any)]
 }
 
-trait HaveId {
-  val id:Int
-}
-
-trait HaveLocation {   // maybe make HaveId as separate trait
+trait HaveLocationAndId {   // maybe make HaveId as separate trait
+  def id:Int
   def location:Vec
 }
+
+trait LocationImmutableTrace extends Trace with HaveLocationAndId
 
 class ScageTracer(val field_from_x:Int        = property("field.from.x", 0),
                   val field_to_x:Int          = property("field.to.x", screen_width),
@@ -41,13 +40,12 @@ class ScageTracer(val field_from_x:Int        = property("field.from.x", 0),
                   init_N_x:Int                = if(property("field.h_x", 0) == 0) property("field.N_x", screen_width/50) else 0,
                   init_N_y:Int                = if(property("field.h_y", 0) == 0) property("field.N_y", screen_height/50) else 0,
                   val are_solid_edges:Boolean = property("field.solid_edges", true)) {
-  protected[this] class PointUpdateableTrace(var location:Vec, trace:Trace) extends Trace with HaveLocation with HaveId {
+  protected[this] class LocationUpdateableTrace(var location:Vec, trace:Trace) extends LocationImmutableTrace {
     val id = nextId
     override def changeState(changer:Trace, state:List[(String, Any)]) {trace.changeState(changer, state)}
     override def state:List[(String, Any)] = trace.state
     override def toString = "{id="+id+", location="+location+"}"
   }
-  type PointImmutableTrace = Trace with HaveLocation with HaveId
 
   protected val log = Logger.getLogger(this.getClass);
 
@@ -77,25 +75,25 @@ class ScageTracer(val field_from_x:Int        = property("field.from.x", 0),
                              ((v.y - field_from_y)/field_height*N_y).toInt)
   def pointCenter(p:Vec):Vec = Vec(field_from_x + p.x*h_x + h_x/2, field_from_y + p.y*h_y + h_y/2)
 
-  protected def initMatrix(matrix:Array[Array[List[PointImmutableTrace]]]) {
+  protected def initMatrix(matrix:Array[Array[List[LocationImmutableTrace]]]) {
     for(i <- 0 until matrix.length; j <- 0 until matrix.head.length) {matrix(i)(j) = Nil}
   }
 
   // it is very critical for the structures below to be changed only inside ScageTracer
   // but for convenience I keep them protected, so client classes - children of ScageTracer can read them
-  protected val point_matrix = Array.ofDim[List[PointImmutableTrace]](N_x, N_y)  // cannot operate with ArrayBuffer because if so I have to add additional toList everywhere
+  protected val point_matrix = Array.ofDim[List[LocationImmutableTrace]](N_x, N_y)  // cannot operate with ArrayBuffer because if so I have to add additional toList everywhere
   initMatrix(point_matrix)
-  protected val traces_by_ids = HashMap[Int, PointUpdateableTrace]()
-  protected var traces_list:List[PointImmutableTrace] = Nil
+  protected val traces_by_ids = HashMap[Int, LocationUpdateableTrace]()
+  protected var traces_list:List[LocationImmutableTrace] = Nil
   def tracesList = traces_list
   
   def addTrace(point:Vec, trace:Trace = Trace()) = {
     val updateable_trace = trace match {
-      case updateable:PointUpdateableTrace => {
+      case updateable:LocationUpdateableTrace => {
         updateable.location = point
         updateable
       }
-      case _ => new PointUpdateableTrace(point, trace)
+      case _ => new LocationUpdateableTrace(point, trace)
     }
     if(isPointOnArea(point)) {
       point_matrix(point.ix)(point.iy) = updateable_trace :: point_matrix(point.ix)(point.iy)
@@ -103,18 +101,20 @@ class ScageTracer(val field_from_x:Int        = property("field.from.x", 0),
       traces_list = updateable_trace :: traces_list
       log.debug("added new trace #"+updateable_trace.id+" in point ("+updateable_trace.location+")")
     } else log.warn("failed to add trace: point ("+point+") is out of area")
-    val nonupdateable_trace:PointImmutableTrace = updateable_trace
+    val nonupdateable_trace:LocationImmutableTrace = updateable_trace
     nonupdateable_trace
   }
 
-  def containsTrace(trace:HaveId) = traces_by_ids.contains(trace.id)
   def containsTraceById(id:Int) = traces_by_ids.contains(id)
 
-  def removeTraces(traces_to_remove:HaveLocation with HaveId*) { // TODO: add existence check (plan it carefully), log messages and return result
+  def removeTraces(traces_to_remove:HaveLocationAndId*) {
     if(!traces_to_remove.isEmpty) {
       traces_to_remove.foreach(trace => {
-        point_matrix(trace.location.ix)(trace.location.iy) = point_matrix(trace.location.ix)(trace.location.iy).filterNot(_.id == trace.id)
-        traces_by_ids -= trace.id
+        if(traces_by_ids.contains(trace.id)) {
+          point_matrix(trace.location.ix)(trace.location.iy) = point_matrix(trace.location.ix)(trace.location.iy).filterNot(_.id == trace.id)
+          traces_by_ids -= trace.id
+          log.debug("removed trace #"+trace.id)
+        } else log.warn("trace #"+trace.id+" not found")
       })
       traces_list = traces_list.filterNot(trace => traces_to_remove.contains(trace))
     } else {
@@ -125,11 +125,11 @@ class ScageTracer(val field_from_x:Int        = property("field.from.x", 0),
     }
   }
   
-  def removeTracesById(trace_ids:Int*) { // TODO: add log messages
+  def removeTracesById(trace_ids:Int*) {
     removeTraces(trace_ids.filter(traces_by_ids.contains(_)).map(traces_by_ids(_)):_*)
   }
 
-  def tracesInPoint(point:Vec, condition:PointImmutableTrace => Boolean) = {
+  def tracesInPoint(point:Vec, condition:LocationImmutableTrace => Boolean) = {
     if(!isPointOnArea(point)) Nil
     else {
       for {
@@ -143,7 +143,7 @@ class ScageTracer(val field_from_x:Int        = property("field.from.x", 0),
     else (point_matrix(point.ix)(point.iy))
   }
 
-  def traces(point:Vec, xrange:Range, yrange:Range, condition:PointImmutableTrace => Boolean):IndexedSeq[PointImmutableTrace] = {
+  def tracesNearPoint(point:Vec, xrange:Range, yrange:Range, condition:LocationImmutableTrace => Boolean):IndexedSeq[LocationImmutableTrace] = {
     (for {
       i <- xrange
       j <- yrange
@@ -152,8 +152,8 @@ class ScageTracer(val field_from_x:Int        = property("field.from.x", 0),
       trace <- tracesInPoint(near_point, condition)
     } yield trace)
   }
-  def traces(point:Vec, xrange:Range, condition:(PointImmutableTrace) => Boolean):IndexedSeq[PointImmutableTrace] = traces(point, xrange, xrange, condition)
-  def traces(point:Vec, xrange:Range, yrange:Range):IndexedSeq[PointImmutableTrace] = {
+  def tracesNear(point:Vec, xrange:Range, condition:(LocationImmutableTrace) => Boolean):IndexedSeq[LocationImmutableTrace] = tracesNearPoint(point, xrange, xrange, condition)
+  def tracesNearPoint(point:Vec, xrange:Range, yrange:Range):IndexedSeq[LocationImmutableTrace] = {
     (for {
       i <- xrange
       j <- yrange
@@ -162,15 +162,15 @@ class ScageTracer(val field_from_x:Int        = property("field.from.x", 0),
       trace <- tracesInPoint(near_point)
     } yield trace)
   }
-  def traces(point:Vec, xrange:Range):IndexedSeq[PointImmutableTrace] = traces(point, xrange, xrange)
+  def tracesNear(point:Vec, xrange:Range):IndexedSeq[LocationImmutableTrace] = tracesNearPoint(point, xrange, xrange)
 
-  val POINT_UPDATED = 0
-  val SAME_POINT = 1
-  val OUT_OF_AREA = 2
-  val TRACE_NOT_FOUND = 3
-  def updateLocation(trace_id:Int, new_point:Vec):Int = { // TODO: maybe instead of warnings return tuple where second field is operation status... smth like that
-    traces_by_ids.find(_._1 == trace_id) match {    // seems necessary: if we failed to add trace but missed that fact and then trying to update trace's location,
-      case Some((_, updateable_trace)) => {           // we must not succeed in doing this too
+  val LOCATION_UPDATED = 0
+  val SAME_LOCATION    = 1
+  val OUT_OF_AREA      = 2
+  val TRACE_NOT_FOUND  = 3
+  def updateLocation(trace_id:Int, new_point:Vec):Int = { // TODO: maybe return tuple (new_location, operation_status)
+    traces_by_ids.get(trace_id) match {
+      case Some(updateable_trace) => {
         val old_point = updateable_trace.location
         val new_point_edges_affected = outsidePoint(new_point)
         if(isPointOnArea(new_point_edges_affected)) {
@@ -178,11 +178,10 @@ class ScageTracer(val field_from_x:Int        = property("field.from.x", 0),
             point_matrix(old_point.ix)(old_point.iy) = point_matrix(old_point.ix)(old_point.iy).filterNot(_.id == trace_id)
             point_matrix(new_point_edges_affected.ix)(new_point_edges_affected.iy) = updateable_trace :: point_matrix(new_point_edges_affected.ix)(new_point_edges_affected.iy)
             updateable_trace.location = new_point_edges_affected
-            POINT_UPDATED
+            LOCATION_UPDATED
           } else {
-            // don'tknow exactly if I need such debug message
-            //log.warn("didn't update trace "+trace.id+": new point is the same as the old one")
-            SAME_POINT
+            //log.warn("didn't update trace "+trace.id+": new point is the same as the old one")  // don'tknow exactly if I need such debug message
+            SAME_LOCATION
           }
         } else {
           log.warn("failed to update trace "+trace_id+": new point is out of area")
@@ -196,7 +195,7 @@ class ScageTracer(val field_from_x:Int        = property("field.from.x", 0),
     }
   }
 
-  def move(trace:HaveLocation with HaveId, delta:Vec) = {
+  def move(trace:HaveLocationAndId, delta:Vec) = {
     updateLocation(trace.id, trace.location + delta)
   }
 

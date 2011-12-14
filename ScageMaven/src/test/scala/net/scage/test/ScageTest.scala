@@ -14,7 +14,9 @@ import junit.framework._
 import Assert._
 import net.scage.support.physics.ScagePhysics
 import _root_.net.scage.support.messages.ScageMessage
-import net.scage.support.tracer._
+import net.scage.support.tracer3.{LocationImmutableTrace, Trace, CoordTracer}
+
+/*import net.scage.support.tracer._*/
 import net.scage.support.physics.objects.{StaticPolygon, DynaBall}
 import collection.mutable.ListBuffer
 import javax.swing.JOptionPane
@@ -48,15 +50,15 @@ class ScageTest extends TestCase("app") {
           drawFilledRect(Vec(100, 30), 60, 20, YELLOW)
         }
 
-        val tracer = new CoordTracer[CoordTrace]
+        val tracer = new CoordTracer
 
-        val trace = tracer.addTrace(Vec(screen_width/2, screen_height/2), new EmptyCoordTrace)
-        val another_trace = tracer.addTrace(Vec(screen_width/4, screen_height/2), new EmptyCoordTrace)
+        val trace = tracer.addTrace(Vec(screen_width/2, screen_height/2))
+        val another_trace = tracer.addTrace(Vec(screen_width/4, screen_height/2))
 
-        def moveIfFreeLocation(trace:CoordTrace, delta:Vec) {
-          val new_location = trace.coord + delta
-          if(!tracer.hasCollisions(trace, new_location, 20))    // test collisions using tracer
-            tracer.updateLocation(trace, new_location)
+        def moveIfFreeLocation(trace:LocationImmutableTrace, delta:Vec) {
+          val new_location = trace.location + delta
+          if(!tracer.hasCollisions(trace.id, new_location, 20))    // test collisions using tracer
+            tracer.updateLocation(trace.id, new_location)
         }
 
         anykey(onKeyDown = println("any key pressed =)"))   // test special method to obtain "press any key" event
@@ -98,10 +100,10 @@ class ScageTest extends TestCase("app") {
           }
         }
 
-        private var target_point = trace.coord
+        private var target_point = trace.location
         mouseMotion {   // test mouse motion event
           mouse_coord =>
-            target_point = (mouse_coord - trace.coord).n * 20
+            target_point = (mouse_coord - trace.location).n * 20
         }
         private var x = 0.0f
         def period = {
@@ -113,18 +115,18 @@ class ScageTest extends TestCase("app") {
           physics.step()
         }
         leftMouse(onBtnDown = {  // test left mouse event
-          mouse_coord => physics.addPhysical(new DynaBall(trace.coord + target_point, 2) {
-            val ball_trace = tracer.addTrace(trace.coord + target_point, new EmptyCoordTrace)
+          mouse_coord => physics.addPhysical(new DynaBall(trace.location + target_point, 2) {
+            val ball_trace = tracer.addTrace(trace.location + target_point)
             val action_id:Int = action {
-              tracer.updateLocation(ball_trace, coord)
-              coord = ball_trace.coord
+              tracer.updateLocation(ball_trace.id, coord)
+              coord = ball_trace.location
               /*if(!tracer.isCoordOnArea(coord)) {
                 isActive = false
                 delActionOperation(action_id)
               }*/
             }
 
-            velocity = (mouse_coord - trace.coord).n*10
+            velocity = (mouse_coord - trace.location).n*10
             render {
               if(physics.containsPhysical(this)) drawFilledCircle(coord, 2, YELLOW)
             }
@@ -136,14 +138,14 @@ class ScageTest extends TestCase("app") {
         interface {
           another_font.print(xml("hello.world"), screen_width/2, screen_height/2+20,    WHITE)
           print(xml("help"), screen_width/2, screen_height/2,    WHITE) // test obtaining string from xml
-          print(trace.point,        screen_width/2, screen_height/2-20, WHITE)
+          print(trace.location, screen_width/2, screen_height/2-20, WHITE)
           print(fps, 10, screen_height-20, WHITE)
         }
         render {
           drawDisplayList(stars)
-          drawFilledCircle(trace.coord, 10, RED)
-          drawLine(trace.coord, trace.coord + target_point)
-          drawCircle(another_trace.coord, 10, GREEN)
+          drawFilledCircle(trace.location, 10, RED)
+          drawLine(trace.location, trace.location + target_point)
+          drawCircle(another_trace.location, 10, GREEN)
 
           drawDisplayList(poly_render)
         }

@@ -1,8 +1,8 @@
 package net.scage.support.tracer
 
-import _root_.net.scage.support.Vec
-import _root_.net.scage.support.ScageProperties._
-import _root_.net.scage.handlers.Renderer._
+import net.scage.support.Vec
+import net.scage.support.ScageProperties._
+import net.scage.handlers.Renderer._
 
 object CoordTracer {
   def apply[CT <: CoordTrace](traces:(Vec, CT)*) = {

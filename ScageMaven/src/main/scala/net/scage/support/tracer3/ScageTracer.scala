@@ -3,9 +3,9 @@ package net.scage.support.tracer3
 import net.scage.support.Vec
 import net.scage.support.ScageId._
 import net.scage.support.ScageProperties._
-import org.apache.log4j.Logger
 import collection.mutable.HashMap
 import _root_.net.scage.handlers.Renderer._
+import com.weiglewilczek.slf4s.Logger
 
 object Trace {
   def apply(changeState:(Trace, List[(String, Any)]) => Unit = (changer, state) => {},
@@ -47,7 +47,7 @@ class ScageTracer(val field_from_x:Int        = property("field.from.x", 0),
     override def toString = "{id="+id+", location="+location+"}"
   }
 
-  protected val log = Logger.getLogger(this.getClass);
+  private val log = Logger(this.getClass.getName)
 
   log.debug("creating tracer "+this.getClass.getName)
 

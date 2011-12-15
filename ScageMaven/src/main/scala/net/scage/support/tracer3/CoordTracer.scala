@@ -3,6 +3,7 @@ package net.scage.support.tracer3
 import net.scage.support.Vec
 import net.scage.support.ScageProperties._
 import net.scage.handlers.Renderer._
+import com.weiglewilczek.slf4s.Logger
 
 class CoordTracer(field_from_x:Int        = property("field.from.x", 0),
                   field_to_x:Int          = property("field.to.x", screen_width),
@@ -14,6 +15,7 @@ class CoordTracer(field_from_x:Int        = property("field.from.x", 0),
                   init_N_y:Int            = if(property("field.h_y", 0) == 0) property("field.N_y", screen_height/50) else 0,
                   are_solid_edges:Boolean = property("field.solid_edges", true))
 extends ScageTracer(field_from_x,field_to_x,field_from_y,field_to_y,init_h_x,init_h_y,init_N_x,init_N_y,are_solid_edges) {
+  private val log = Logger(this.getClass.getName);
   override def addTrace(coord:Vec, trace:Trace = Trace()) = {
     val updateable_trace = trace match {
       case updateable:LocationUpdateableTrace => {

@@ -1,12 +1,11 @@
 package net.scage.support
 
-import java.io.{FileInputStream, FileNotFoundException}
 import java.util.Properties
-import org.apache.log4j.Logger
 import org.newdawn.slick.util.ResourceLoader
+import com.weiglewilczek.slf4s.Logger
 
 object ScageProperties {
-  private val log = Logger.getLogger(this.getClass)
+  private val log = Logger(this.getClass.getName)
 
   private var _file:String = null
   def properties = _file

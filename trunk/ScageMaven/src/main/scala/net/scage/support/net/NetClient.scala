@@ -1,13 +1,13 @@
 package net.scage.support.net
 
-import org.apache.log4j.Logger
 import _root_.net.scage.support.ScageProperties._
 import java.io.{InputStreamReader, OutputStreamWriter, BufferedReader, PrintWriter}
 import java.net.{SocketException, Socket}
 import org.json.{JSONException, JSONObject}
+import com.weiglewilczek.slf4s.Logger
 
 object NetClient {
-  private val log = Logger.getLogger(this.getClass)
+  private val log = Logger(this.getClass.getName)
 
   val server_url =  property("server", "127.0.0.1")
   val port = property("port", 9800)

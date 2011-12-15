@@ -5,8 +5,8 @@ import _root_.net.scage.support.ScageProperties._
 import net.phys2d.math.Vector2f
 import net.phys2d.raw.strategies.QuadSpaceStrategy
 import _root_.net.scage.support.Vec
-import org.apache.log4j.Logger
 import collection.mutable.Set
+import com.weiglewilczek.slf4s.Logger
 
 object ScagePhysics {
   def apply(physicals:Physical*) = {
@@ -17,7 +17,7 @@ object ScagePhysics {
 }
 
 class ScagePhysics {
-  protected val log = Logger.getLogger(this.getClass)
+  private val log = Logger(this.getClass.getName);
   private var _dt = property("physics.dt", 5)
   def dt = _dt
   def dt_=(new_dt:Int) {

@@ -9,15 +9,16 @@ import _root_.net.scage.support.ScageProperties._
 import _root_.net.scage.support.ScageColors._
 import _root_.net.scage.support.messages.ScageMessage._
 import org.lwjgl.BufferUtils
-import org.apache.log4j.Logger
 import net.scage.support.ScageId._
 import org.newdawn.slick.util.ResourceLoader
 import java.awt.Toolkit
 import net.scage.support.{SortedBuffer, ScageColor, Vec}
 import collection.mutable.ArrayBuffer
+import net.scage.support.tracer3.ScageTracer
+import com.weiglewilczek.slf4s.Logger
 
 object Renderer {
-  protected val log = Logger.getLogger(this.getClass);
+  private val log = Logger(this.getClass.getName)
 
   val screen_width = property("screen.width", 800)
   val screen_height = property("screen.height", 600)
@@ -332,6 +333,13 @@ object Renderer {
 	  GL11.glCallList(list_code)
 	  GL11.glPopMatrix()
   }
+  
+  def drawTraceGrid(tracer:ScageTracer, _color:ScageColor = DEFAULT_COLOR) {
+    import tracer._
+    val x_lines = (field_from_x to field_to_x by h_x).foldLeft(List[Vec]())((lines, x) => Vec(x, field_from_y) :: Vec(x, field_to_y) :: lines)
+    val y_lines = (field_from_y to field_to_y by h_y).foldLeft(List[Vec]())((lines, y) => Vec(field_from_x, y) :: Vec(field_to_x, y) :: lines)
+    drawLines(x_lines ::: y_lines, _color)
+  }
 
   private def getTexture(format:String, in:InputStream):Texture = TextureLoader.getTexture(format, in)
   private def getTexture(filename:String):Texture = {
@@ -401,7 +409,7 @@ import Renderer._
 class Renderer {
   initgl
 
-  protected val log = Logger.getLogger(this.getClass);
+  private val log = Logger(this.getClass.getName)
 
   private var _scale:Float = 1.0f
   def scale = _scale

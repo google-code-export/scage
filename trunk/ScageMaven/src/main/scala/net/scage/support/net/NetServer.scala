@@ -1,13 +1,13 @@
 package net.scage.support.net
 
-import org.apache.log4j.Logger
 import _root_.net.scage.support.ScageProperties._
 import java.io.{InputStreamReader, BufferedReader, OutputStreamWriter, PrintWriter}
 import java.net.{SocketException, ServerSocket, Socket}
 import org.json.{JSONException, JSONObject}
+import com.weiglewilczek.slf4s.Logger
 
 object NetServer {
-  private val log = Logger.getLogger(this.getClass)
+  private val log = Logger(this.getClass.getName)
 
   val port = property("port", 9800)
   val max_clients = property("max_clients", 20)
@@ -95,7 +95,7 @@ object NetServer {
 import NetServer._
 
 class ClientHandler(val id:Int, socket:Socket, isRunning: => Boolean) {
-  private val log = Logger.getLogger(this.getClass)
+  private val log = Logger(this.getClass.getName)
 
   private val out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream))
   private val in = new BufferedReader(new InputStreamReader(socket.getInputStream))

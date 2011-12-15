@@ -51,6 +51,9 @@ class ScageTest extends TestCase("app") {
         }
 
         val tracer = new CoordTracer
+        render(-10) {
+          drawTraceGrid(tracer, DARK_GRAY)
+        }
 
         val trace = tracer.addTrace(Vec(screen_width/2, screen_height/2))
         val another_trace = tracer.addTrace(Vec(screen_width/4, screen_height/2))
@@ -86,13 +89,10 @@ class ScageTest extends TestCase("app") {
         })*/
 
         val physics = new ScagePhysics
-
+        val poly_physical = physics.addPhysical(new StaticPolygon(Vec(100, 300), Vec(150, 250), Vec(300, 300), Vec(300, 450), Vec(200, 400)))
         val poly_render = displayList {   // test special method to save any opengl code as display list
-          color = CYAN
-          drawPolygon(Vec(100, 300), Vec(150, 250), Vec(300, 300), Vec(300, 450), Vec(200, 400))
+          drawPolygon(poly_physical.points, CYAN)
         }
-        val poly_physical = new StaticPolygon(Vec(100, 300), Vec(150, 250), Vec(300, 300), Vec(300, 450), Vec(200, 400))
-        physics.addPhysical(poly_physical)
 
         val stars = displayList {   // I like "starry sky" since high school =)
           for(i <- 1 to 100) {

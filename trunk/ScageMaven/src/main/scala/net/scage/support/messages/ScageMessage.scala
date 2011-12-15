@@ -6,10 +6,10 @@ import collection.mutable.HashMap
 import org.xml.sax.Attributes
 import org.xml.sax.helpers.DefaultHandler
 import javax.xml.parsers.SAXParserFactory
-import org.apache.log4j.Logger
 import org.newdawn.slick.util.ResourceLoader
 import net.scage.support.messages.unicode.UnicodeFont
 import net.scage.support.{Vec, ScageColor}
+import com.weiglewilczek.slf4s.Logger
 
 object ScageMessage extends ScageMessage (
   lang          = property("strings.lang", "en"),
@@ -30,7 +30,7 @@ class ScageMessage(
   val glyph_from:Int       = property("glyph.from", 1024),
   val glyph_to:Int         = property("glyph.to", 1279)
 ) {
-  private val log = Logger.getLogger(this.getClass)
+  private val log = Logger(this.getClass.getName)
 
   val messages_file = messages_base + "_" + lang + ".xml"
   private val xmlmh = new XMLMessageHandler

@@ -2,11 +2,11 @@ package net.scage
 
 import handlers.controller2.ScageController
 import handlers.Renderer
-import org.apache.log4j.Logger
 import org.lwjgl.input.Mouse
 import net.scage.support.ScageId._
 import support.{ScageProperties, Vec}
 import collection.mutable.{ArrayBuffer, HashMap}
+import com.weiglewilczek.slf4s.{Logging, Logger}
 
 object ScageScreen {
   private var is_all_screens_stop = false
@@ -20,8 +20,7 @@ object ScageScreen {
 import ScageScreen._
 
 class ScageScreen(val screen_name:String = "Scage App", val is_main_screen:Boolean = false, properties:String = "") {
-  protected val log = Logger.getLogger(this.getClass)
-
+  protected val log = Logger(this.getClass.getName)
   if(is_main_screen) log.info("starting main screen "+screen_name+"...")
   if(properties != "") ScageProperties.properties = properties
   else if(is_main_screen) ScageProperties.properties = screen_name.toLowerCase+".properties"

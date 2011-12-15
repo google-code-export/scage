@@ -1,7 +1,7 @@
 package net.scage.support
 
 import collection.mutable.HashMap
-import org.apache.log4j.Logger
+import com.weiglewilczek.slf4s.Logger
 
 class ScageColor(r:Float, g:Float, b:Float) {
   val red:Float   = if(r >= 0 && r <= 1) r else if(r > 1 && r < 256) r/256 else -1
@@ -17,7 +17,7 @@ class ScageColor(r:Float, g:Float, b:Float) {
 }
 
 object ScageColors {
-  protected val log = Logger.getLogger(this.getClass)
+  private val log = Logger(this.getClass.getName)
 
   val DEFAULT_COLOR = new ScageColor(-1, -1, -1)
 

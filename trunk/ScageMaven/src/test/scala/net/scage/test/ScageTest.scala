@@ -165,6 +165,11 @@ class ScageTest extends TestCase("app") {
         render {
           for((point, _) <- touches) drawFilledCircle(point, 3, RED)
         }
+        
+        // scaling test
+        mouseWheelUp(onWheelUp = m => scale += 1)
+        mouseWheelDown(onWheelDown = m => if(scale > 1) scale -= 1)
+        center = if(scale > 1) trace.location else screen_center
 
         // test network features: simple echo server
         /*startServer()

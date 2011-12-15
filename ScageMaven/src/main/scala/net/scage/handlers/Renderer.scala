@@ -21,6 +21,7 @@ object Renderer {
 
   val screen_width = property("screen.width", 800)
   val screen_height = property("screen.height", 600)
+  val screen_center = Vec(screen_width/2, screen_height/2)
   
   val framerate = property("framerate", 100)
 

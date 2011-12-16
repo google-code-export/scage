@@ -24,13 +24,13 @@ extends ScageTracer(field_from_x,field_to_x,field_from_y,field_to_y,init_h_x,ini
       }
       case _ => new LocationUpdateableTrace(coord, trace)
     }
-    val p = point(coord)
-    if(isPointOnArea(p)) {
+    if(isCoordOnArea(coord)) {
+      val p = point(coord)
       point_matrix(p.ix)(p.iy) = updateable_trace :: point_matrix(p.ix)(p.iy)
       traces_by_ids += updateable_trace.id -> updateable_trace
       traces_list = updateable_trace :: traces_list
-      log.debug("added new trace #"+updateable_trace.id+" in point ("+updateable_trace.location+")")
-    } else log.warn("failed to add trace: point ("+p+") is out of area")
+      log.debug("added new trace #"+updateable_trace.id+" in coord "+updateable_trace.location)
+    } else log.warn("failed to add trace: coord "+updateable_trace.location+" is out of area")
     val nonupdateable_trace:LocationImmutableTrace = updateable_trace
     nonupdateable_trace
   }

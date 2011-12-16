@@ -8,20 +8,20 @@ import _root_.net.scage.handlers.Renderer._
 import com.weiglewilczek.slf4s.Logger
 
 object Trace {
-  def apply(changeState:(Trace, List[(String, Any)]) => Unit = (changer, state) => {},
-            state:List[(String, Any)] = Nil) = {
+  def apply(changeState:(Trace, State) => Unit = (changer, state) => {},
+            state:State = State()) = {
     val (_changeState, _state) = (changeState, state)
     new Trace {
-      def changeState(changer:Trace,  state:List[(String, Any)]) {_changeState(changer, state)}
-      def state:List[(String, Any)] = _state
+      def changeState(changer:Trace,  state:State) {_changeState(changer, state)}
+      def state:State = _state
     }
   }
 }
 
 trait Trace {
-  def changeState(changer:Trace,  state:List[(String, Any)])
-  def changeState(state:List[(String, Any)]) {changeState(null, state)}
-  def state:List[(String, Any)]
+  def changeState(changer:Trace,  state:State)
+  def changeState(state:State) {changeState(null, state)}
+  def state:State
 }
 
 trait HaveLocationAndId {   // maybe make HaveId as separate trait
@@ -42,8 +42,8 @@ class ScageTracer(val field_from_x:Int        = property("field.from.x", 0),
                   val are_solid_edges:Boolean = property("field.solid_edges", true)) {
   protected[this] class LocationUpdateableTrace(var location:Vec, trace:Trace) extends LocationImmutableTrace {
     val id = nextId
-    override def changeState(changer:Trace, state:List[(String, Any)]) {trace.changeState(changer, state)}
-    override def state:List[(String, Any)] = trace.state
+    override def changeState(changer:Trace, state:State) {trace.changeState(changer, state)}
+    override def state:State = trace.state
     override def toString = "{id="+id+", location="+location+"}"
   }
 
@@ -105,7 +105,8 @@ class ScageTracer(val field_from_x:Int        = property("field.from.x", 0),
     nonupdateable_trace
   }
 
-  def containsTraceById(id:Int) = traces_by_ids.contains(id)
+  def containsTrace(trace_id:Int) = traces_by_ids.contains(trace_id)
+  def containsTrace(have_id:HaveLocationAndId) = traces_by_ids.contains(have_id.id)
 
   def removeTraces(traces_to_remove:HaveLocationAndId*) {
     if(!traces_to_remove.isEmpty) {
@@ -124,7 +125,6 @@ class ScageTracer(val field_from_x:Int        = property("field.from.x", 0),
       log.info("deleted all traces")
     }
   }
-  
   def removeTracesById(trace_ids:Int*) {
     removeTraces(trace_ids.filter(traces_by_ids.contains(_)).map(traces_by_ids(_)):_*)
   }
@@ -152,7 +152,7 @@ class ScageTracer(val field_from_x:Int        = property("field.from.x", 0),
       trace <- tracesInPoint(near_point, condition)
     } yield trace)
   }
-  def tracesNear(point:Vec, xrange:Range, condition:(LocationImmutableTrace) => Boolean):IndexedSeq[LocationImmutableTrace] = tracesNearPoint(point, xrange, xrange, condition)
+  def tracesNearPoint(point:Vec, xrange:Range, condition:(LocationImmutableTrace) => Boolean):IndexedSeq[LocationImmutableTrace] = tracesNearPoint(point, xrange, xrange, condition)
   def tracesNearPoint(point:Vec, xrange:Range, yrange:Range):IndexedSeq[LocationImmutableTrace] = {
     (for {
       i <- xrange
@@ -162,7 +162,7 @@ class ScageTracer(val field_from_x:Int        = property("field.from.x", 0),
       trace <- tracesInPoint(near_point)
     } yield trace)
   }
-  def tracesNear(point:Vec, xrange:Range):IndexedSeq[LocationImmutableTrace] = tracesNearPoint(point, xrange, xrange)
+  def tracesNearPoint(point:Vec, xrange:Range):IndexedSeq[LocationImmutableTrace] = tracesNearPoint(point, xrange, xrange)
 
   val LOCATION_UPDATED = 0
   val SAME_LOCATION    = 1
@@ -194,6 +194,7 @@ class ScageTracer(val field_from_x:Int        = property("field.from.x", 0),
       }
     }
   }
+  def updateLocation(trace:HaveLocationAndId, new_point:Vec):Int = updateLocation(trace.id, new_point)
 
   def move(trace:HaveLocationAndId, delta:Vec) = {
     updateLocation(trace.id, trace.location + delta)

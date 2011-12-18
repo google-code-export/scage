@@ -5,18 +5,18 @@ import net.scage.support.ScageProperties._
 import net.scage.handlers.Renderer._
 import com.weiglewilczek.slf4s.Logger
 
-class CoordTracer(field_from_x:Int        = property("field.from.x", 0),
-                  field_to_x:Int          = property("field.to.x", screen_width),
-                  field_from_y:Int        = property("field.from.y", 0),
-                  field_to_y:Int          = property("field.to.y", screen_height),
-                  init_h_x:Int            = property("field.h_x", 0),
-                  init_h_y:Int            = property("field.h_y", 0),
-                  init_N_x:Int            = if(property("field.h_x", 0) == 0) property("field.N_x", screen_width/50) else 0,
-                  init_N_y:Int            = if(property("field.h_y", 0) == 0) property("field.N_y", screen_height/50) else 0,
-                  are_solid_edges:Boolean = property("field.solid_edges", true))
-extends ScageTracer(field_from_x,field_to_x,field_from_y,field_to_y,init_h_x,init_h_y,init_N_x,init_N_y,are_solid_edges) {
+class CoordTracer[T <: Trace](field_from_x:Int        = property("field.from.x", 0),
+                              field_to_x:Int          = property("field.to.x", screen_width),
+                              field_from_y:Int        = property("field.from.y", 0),
+                              field_to_y:Int          = property("field.to.y", screen_height),
+                              init_h_x:Int            = property("field.h_x", 0),
+                              init_h_y:Int            = property("field.h_y", 0),
+                              init_N_x:Int            = if(property("field.h_x", 0) == 0) property("field.N_x", screen_width/50) else 0,
+                              init_N_y:Int            = if(property("field.h_y", 0) == 0) property("field.N_y", screen_height/50) else 0,
+                              are_solid_edges:Boolean = property("field.solid_edges", true))
+extends ScageTracer[T](field_from_x,field_to_x,field_from_y,field_to_y,init_h_x,init_h_y,init_N_x,init_N_y,are_solid_edges) {
   private val log = Logger(this.getClass.getName);
-  override def addTrace(coord:Vec, trace:Trace = Trace()) = {
+  override def addTrace(coord:Vec, trace:T):LocationImmutableTrace = {
     val updateable_trace = trace match {
       case updateable:LocationUpdateableTrace => {
         updateable.location = coord
@@ -110,11 +110,11 @@ extends ScageTracer(field_from_x,field_to_x,field_from_y,field_to_y,init_h_x,ini
     }
   }
 
-  def isCoordOnArea(coord:Vec) = {
+  def isCoordOnArea(coord:Vec):Boolean = {
     coord.x >= field_from_x && coord.x < field_to_x && coord.y >= field_from_y && coord.y < field_to_y
   }
 
-  def hasCollisions(target_trace_id:Int, tested_coord:Vec, min_dist:Float, condition:LocationImmutableTrace => Boolean = (trace) => true) = {
+  def hasCollisions(target_trace_id:Int, tested_coord:Vec, min_dist:Float, condition:LocationImmutableTrace => Boolean = (trace) => true):Boolean = {
     if(are_solid_edges && !isCoordOnArea(tested_coord)) true
     else {
       val tested_coord_edges_affected = outsideCoord(tested_coord)
@@ -126,5 +126,34 @@ extends ScageTracer(field_from_x,field_to_x,field_from_y,field_to_y,init_h_x,ini
       tracesNearCoord(tested_coord_edges_affected, -xrange to xrange, -yrange to yrange, modified_condition)
         .exists(trace => (trace.location dist2 tested_coord_edges_affected) < min_dist2)
     }
+  }
+}
+
+object CoordTracer {
+  def apply(field_from_x:Int        = property("field.from.x", 0),
+            field_to_x:Int          = property("field.to.x", screen_width),
+            field_from_y:Int        = property("field.from.y", 0),
+            field_to_y:Int          = property("field.to.y", screen_height),
+            init_h_x:Int            = property("field.h_x", 0),
+            init_h_y:Int            = property("field.h_y", 0),
+            init_N_x:Int            = if(property("field.h_x", 0) == 0) property("field.N_x", screen_width/50) else 0,
+            init_N_y:Int            = if(property("field.h_y", 0) == 0) property("field.N_y", screen_height/50) else 0,
+            are_solid_edges:Boolean = property("field.solid_edges", true)) = {
+    new CoordTracer[Trace](field_from_x,field_to_x,field_from_y,field_to_y,init_h_x,init_h_y,init_N_x,init_N_y,are_solid_edges) {
+      def addTrace(coord:Vec):LocationImmutableTrace = {addTrace(coord, Trace())}
+    }
+  }
+
+  // maybe some other name for this factory method (like 'newTracer', etc)
+  def create[T <: Trace](field_from_x:Int        = property("field.from.x", 0),
+                         field_to_x:Int          = property("field.to.x", screen_width),
+                         field_from_y:Int        = property("field.from.y", 0),
+                         field_to_y:Int          = property("field.to.y", screen_height),
+                         init_h_x:Int            = property("field.h_x", 0),
+                         init_h_y:Int            = property("field.h_y", 0),
+                         init_N_x:Int            = if(property("field.h_x", 0) == 0) property("field.N_x", screen_width/50) else 0,
+                         init_N_y:Int            = if(property("field.h_y", 0) == 0) property("field.N_y", screen_height/50) else 0,
+                         are_solid_edges:Boolean = property("field.solid_edges", true)) = {
+    new CoordTracer[T](field_from_x,field_to_x,field_from_y,field_to_y,init_h_x,init_h_y,init_N_x,init_N_y,are_solid_edges)
   }
 }

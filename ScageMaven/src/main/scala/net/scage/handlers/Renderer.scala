@@ -333,8 +333,13 @@ object Renderer {
 	  GL11.glCallList(list_code)
 	  GL11.glPopMatrix()
   }
-  
-  def drawTraceGrid(tracer:ScageTracer, _color:ScageColor = DEFAULT_COLOR) {
+
+  // ugly structural typing, but I don't know what to do with tracer's generic type
+  def drawTraceGrid(tracer:{
+    def field_from_x:Int; def field_to_x:Int;
+    def field_from_y:Int; def field_to_y:Int;
+    def h_x:Int; def h_y:Int
+  }, _color:ScageColor = DEFAULT_COLOR) {
     import tracer._
     val x_lines = (field_from_x to field_to_x by h_x).foldLeft(List[Vec]())((lines, x) => Vec(x, field_from_y) :: Vec(x, field_to_y) :: lines)
     val y_lines = (field_from_y to field_to_y by h_y).foldLeft(List[Vec]())((lines, y) => Vec(field_from_x, y) :: Vec(field_to_x, y) :: lines)

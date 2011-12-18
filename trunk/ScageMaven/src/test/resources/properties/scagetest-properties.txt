@@ -8,10 +8,14 @@ strings.lang = ru
 screen.width=640
 screen.height=480
 
-field.to.x = 640
-field.N_x = 32
-field.to.y = 480
-field.N_y = 24
+field.from.x = 20
+field.to.x = 580
+field.N_x = 14
+
+field.from.y = 20
+field.to.y = 460
+field.N_y = 11
+
 field.solid_edges = off
 
 screen.splash = resources/images/scage-logo.png

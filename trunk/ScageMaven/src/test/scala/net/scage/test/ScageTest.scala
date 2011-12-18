@@ -14,9 +14,7 @@ import junit.framework._
 import Assert._
 import net.scage.support.physics.ScagePhysics
 import _root_.net.scage.support.messages.ScageMessage
-import net.scage.support.tracer3.{LocationImmutableTrace, Trace, CoordTracer}
-
-/*import net.scage.support.tracer._*/
+import net.scage.support.tracer3.{Trace, CoordTracer}
 import net.scage.support.physics.objects.{StaticPolygon, DynaBall}
 import collection.mutable.ListBuffer
 import javax.swing.JOptionPane
@@ -50,7 +48,7 @@ class ScageTest extends TestCase("app") {
           drawFilledRect(Vec(100, 30), 60, 20, YELLOW)
         }
 
-        val tracer = new CoordTracer
+        val tracer = CoordTracer()
         render(-10) {
           drawTraceGrid(tracer, DARK_GRAY)
         }
@@ -58,7 +56,7 @@ class ScageTest extends TestCase("app") {
         val trace = tracer.addTrace(Vec(screen_width/2, screen_height/2))
         val another_trace = tracer.addTrace(Vec(screen_width/4, screen_height/2))
 
-        def moveIfFreeLocation(trace:LocationImmutableTrace, delta:Vec) {
+        def moveIfFreeLocation(trace:tracer.LocationImmutableTrace, delta:Vec) {
           val new_location = trace.location + delta
           if(!tracer.hasCollisions(trace.id, new_location, 20))    // test collisions using tracer
             tracer.updateLocation(trace.id, new_location)
@@ -78,9 +76,9 @@ class ScageTest extends TestCase("app") {
           input_text = JOptionPane.showInputDialog("Input text here")
         })
         interface {
-          print("F1: enter text", screen_width/2, screen_height/2-40, WHITE)
+          print("F1: enter text", screen_width/2, screen_height/2-80, WHITE)
           if(input_text != "") {
-            print("Here is your text: "+input_text, screen_width/2, screen_height/2-60, WHITE)
+            print("Here is your text: "+input_text, screen_width/2, screen_height/2-100, WHITE)
           }
         }
 
@@ -101,9 +99,13 @@ class ScageTest extends TestCase("app") {
         }
 
         private var target_point = trace.location
+        def scaledCoord(coord:Vec, scale:Float, center:Vec) = {
+          if(scale == 1) coord
+          else (coord / scale) + (center - Vec(screen_width / scale / 2, screen_height / scale / 2))
+        }  
         mouseMotion {   // test mouse motion event
           mouse_coord =>
-            target_point = (mouse_coord - trace.location).n * 20
+            target_point = (scaledCoord(mouse_coord, scale, trace.location) - trace.location).n * 20
         }
         private var x = 0.0f
         def period = {
@@ -138,7 +140,8 @@ class ScageTest extends TestCase("app") {
         interface {
           another_font.print(xml("hello.world"), screen_width/2, screen_height/2+20,    WHITE)
           print(xml("help"), screen_width/2, screen_height/2,    WHITE) // test obtaining string from xml
-          print(trace.location, screen_width/2, screen_height/2-20, WHITE)
+          print(trace.location, screen_width/2, screen_height/2-40, WHITE)
+          print(tracer.point(trace.location), screen_width/2, screen_height/2-60, WHITE)
           print(fps, 10, screen_height-20, WHITE)
         }
         render {

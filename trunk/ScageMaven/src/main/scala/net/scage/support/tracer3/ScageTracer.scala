@@ -29,21 +29,24 @@ trait HaveLocationAndId {   // maybe make HaveId as separate trait
   def location:Vec
 }
 
-trait LocationImmutableTrace extends Trace with HaveLocationAndId
+class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from.x", 0),
+                              val field_to_x:Int          = property("field.to.x", screen_width),
+                              val field_from_y:Int        = property("field.from.y", 0),
+                              val field_to_y:Int          = property("field.to.y", screen_height),
+                              init_h_x:Int                = property("field.h_x", 0),
+                              init_h_y:Int                = property("field.h_y", 0),
+                              init_N_x:Int                = if(property("field.h_x", 0) == 0) property("field.N_x", screen_width/50) else 0,
+                              init_N_y:Int                = if(property("field.h_y", 0) == 0) property("field.N_y", screen_height/50) else 0,
+                              val are_solid_edges:Boolean = property("field.solid_edges", true)) {
+  trait LocationImmutableTrace extends Trace with HaveLocationAndId {
+    def inner_trace:T // if we use tracer only for one type of objects, than inner_trace would represent all its props,
+                      // otherwise we may use property 'state' from Trace trait to handle different props of different objects
+  }
 
-class ScageTracer(val field_from_x:Int        = property("field.from.x", 0),
-                  val field_to_x:Int          = property("field.to.x", screen_width),
-                  val field_from_y:Int        = property("field.from.y", 0),
-                  val field_to_y:Int          = property("field.to.y", screen_height),
-                  init_h_x:Int                = property("field.h_x", 0),
-                  init_h_y:Int                = property("field.h_y", 0),
-                  init_N_x:Int                = if(property("field.h_x", 0) == 0) property("field.N_x", screen_width/50) else 0,
-                  init_N_y:Int                = if(property("field.h_y", 0) == 0) property("field.N_y", screen_height/50) else 0,
-                  val are_solid_edges:Boolean = property("field.solid_edges", true)) {
-  protected[this] class LocationUpdateableTrace(var location:Vec, trace:Trace) extends LocationImmutableTrace {
+  protected[this] class LocationUpdateableTrace(var location:Vec, val inner_trace:T) extends LocationImmutableTrace {
     val id = nextId
-    override def changeState(changer:Trace, state:State) {trace.changeState(changer, state)}
-    override def state:State = trace.state
+    override def changeState(changer:Trace, state:State) {inner_trace.changeState(changer, state)}
+    override def state:State = inner_trace.state
     override def toString = "{id="+id+", location="+location+"}"
   }
 
@@ -87,7 +90,7 @@ class ScageTracer(val field_from_x:Int        = property("field.from.x", 0),
   protected var traces_list:List[LocationImmutableTrace] = Nil
   def tracesList = traces_list
   
-  def addTrace(point:Vec, trace:Trace = Trace()) = {
+  def addTrace(point:Vec, trace:T) = {
     val updateable_trace = trace match {
       case updateable:LocationUpdateableTrace => {
         updateable.location = point
@@ -152,7 +155,7 @@ class ScageTracer(val field_from_x:Int        = property("field.from.x", 0),
       trace <- tracesInPoint(near_point, condition)
     } yield trace)
   }
-  def tracesNearPoint(point:Vec, xrange:Range, condition:(LocationImmutableTrace) => Boolean):IndexedSeq[LocationImmutableTrace] = tracesNearPoint(point, xrange, xrange, condition)
+  def tracesNearPoint(point:Vec, xrange:Range, condition:LocationImmutableTrace => Boolean):IndexedSeq[LocationImmutableTrace] = tracesNearPoint(point, xrange, xrange, condition)
   def tracesNearPoint(point:Vec, xrange:Range, yrange:Range):IndexedSeq[LocationImmutableTrace] = {
     (for {
       i <- xrange
@@ -207,5 +210,34 @@ class ScageTracer(val field_from_x:Int        = property("field.from.x", 0),
   }
   def randomCoord(leftup_x:Int = field_from_x, leftup_y:Int = field_to_y-1, width:Int = field_to_x - field_from_x, height:Int = field_to_y - field_from_y) = {
     randomPoint(leftup_x, leftup_y, width, height)
+  }
+}
+
+object ScageTracer {
+  def apply(field_from_x:Int        = property("field.from.x", 0),
+            field_to_x:Int          = property("field.to.x", screen_width),
+            field_from_y:Int        = property("field.from.y", 0),
+            field_to_y:Int          = property("field.to.y", screen_height),
+            init_h_x:Int            = property("field.h_x", 0),
+            init_h_y:Int            = property("field.h_y", 0),
+            init_N_x:Int            = if(property("field.h_x", 0) == 0) property("field.N_x", screen_width/50) else 0,
+            init_N_y:Int            = if(property("field.h_y", 0) == 0) property("field.N_y", screen_height/50) else 0,
+            are_solid_edges:Boolean = property("field.solid_edges", true)) = {
+    new ScageTracer[Trace](field_from_x,field_to_x,field_from_y,field_to_y,init_h_x,init_h_y,init_N_x,init_N_y,are_solid_edges) {
+      def addTrace(point:Vec):LocationImmutableTrace = {addTrace(point, Trace())}
+    }
+  }
+
+  // maybe some other name for this factory method (like 'newTracer', etc)
+  def create[T <: Trace](field_from_x:Int        = property("field.from.x", 0),
+                         field_to_x:Int          = property("field.to.x", screen_width),
+                         field_from_y:Int        = property("field.from.y", 0),
+                         field_to_y:Int          = property("field.to.y", screen_height),
+                         init_h_x:Int            = property("field.h_x", 0),
+                         init_h_y:Int            = property("field.h_y", 0),
+                         init_N_x:Int            = if(property("field.h_x", 0) == 0) property("field.N_x", screen_width/50) else 0,
+                         init_N_y:Int            = if(property("field.h_y", 0) == 0) property("field.N_y", screen_height/50) else 0,
+                         are_solid_edges:Boolean = property("field.solid_edges", true)) = {
+    new ScageTracer[T](field_from_x,field_to_x,field_from_y,field_to_y,init_h_x,init_h_y,init_N_x,init_N_y,are_solid_edges)
   }
 }

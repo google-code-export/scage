@@ -9,6 +9,7 @@
     </message>
 
     <message code="help">
-        WASD и Левая Кнопка Мыши
+        WASD и Левая Кнопка Мыши,
+Колесико - приблизить/отдалить
     </message>
 </messages>

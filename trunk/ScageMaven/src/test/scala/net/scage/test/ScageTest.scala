@@ -39,7 +39,7 @@ class ScageTest extends TestCase("app") {
      * Rigourous Tests :-)
      */
     def testOK() {
-      new ScageScreen(screen_name = "Hello World", is_main_screen = true, properties = "scagetest-properties.txt") {
+      new ScageScreen(unit_name = "Hello World", is_main_unit = true, properties = "scagetest-properties.txt") {
         render {
           drawFilledRect(Vec(30, 30), 60, 20, GREEN)
         }

@@ -16,9 +16,10 @@ import net.scage.support.{SortedBuffer, ScageColor, Vec}
 import collection.mutable.ArrayBuffer
 import net.scage.support.tracer3.ScageTracer
 import com.weiglewilczek.slf4s.Logger
+import net.scage.Scage
 
 object Renderer {
-  private val log = Logger(this.getClass.getName)
+  protected val log = Logger(this.getClass.getName)
 
   val screen_width = property("screen.width", 800)
   val screen_height = property("screen.height", 600)
@@ -411,7 +412,7 @@ object Renderer {
 
 import Renderer._
 
-class Renderer {
+trait Renderer extends Scage {
   initgl
 
   private val log = Logger(this.getClass.getName)
@@ -435,6 +436,7 @@ class Renderer {
   private def addRender(render_func: => Unit, position:Int = 0) = {
     val operation_id = /*nextOperationId*/nextId
     renders +=  RenderElement(operation_id, () => render_func, position)
+    operations_mapping += operation_id -> RenderOperations.Render
     operation_id
   }
 
@@ -467,6 +469,7 @@ class Renderer {
   def interface(interface_func: => Unit) = {
     val operation_id = /*nextOperationId*/nextId
     interfaces += (operation_id, () => interface_func)
+    operations_mapping += operation_id -> RenderOperations.Interface
     operation_id
   }
   def delInterfaces(interface_ids:Int*) = {
@@ -492,8 +495,8 @@ class Renderer {
     }
   }
 
-  def render(setCurrentOperation:Int => Unit) {
-    if(Display.isCloseRequested) stopApp()
+  def render() {
+    if(Display.isCloseRequested) Scage.stopApp()
     else {
       GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
       GL11.glLoadIdentity();
@@ -502,13 +505,13 @@ class Renderer {
         GL11.glTranslatef(coord.x , coord.y, 0.0f)
         GL11.glScalef(_scale, _scale, 1)
         for(RenderElement(render_id, render_operation, _) <- renders) {
-          setCurrentOperation(render_id)
+          current_operation_id = render_id
           render_operation()
         }
       GL11.glPopMatrix()
 
       for((interface_id, interface_operation) <- interfaces) {
-        setCurrentOperation(interface_id)
+        current_operation_id = interface_id
         interface_operation()
       }
 
@@ -524,5 +527,44 @@ class Renderer {
 
     Thread.sleep(1000)
     Display.destroy()
+  }
+
+  object RenderOperations extends Enumeration {
+    val Render, Interface = Value
+  }
+
+  override def delOperation(operation_id:Int) = {
+    operations_mapping.get(operation_id) match {
+      case Some(operation_type) => {
+        operation_type match {
+          case RenderOperations.Render => delRenders(operation_id)
+          case RenderOperations.Interface => delInterfaces(operation_id)
+          case _ => super.delOperation(operation_id)
+        }
+      }
+      case None =>  super.delOperation(operation_id)
+    }
+  }
+  override def delOperations(operation_ids:Int*) = {
+    if(operation_ids.size > 0) {
+      operation_ids.foldLeft(true)((overall_result, operation_id) => {
+        val deletion_result = delOperation(operation_id)
+        overall_result && deletion_result
+      })
+    } else {
+      delRenders() &&
+      delInterfaces() &&
+      super.delOperations()
+    }
+  }
+
+  action {
+    render()
+  }
+
+  if(is_main_unit) {
+    exit {
+      exitRender()
+    }
   }
 }

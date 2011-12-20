@@ -3,8 +3,9 @@ package net.scage.handlers.controller2
 import net.scage.support.Vec
 import collection.mutable.HashMap
 import org.lwjgl.input.{Keyboard, Mouse}
+import net.scage.Scage
 
-class SingleController extends ScageController {
+trait SingleController extends ScageController with Scage {
   private var keyboard_keys = HashMap[Int, KeyData]()  // was_pressed, last_pressed_time, repeat_time, onKeyDown, onKeyUp
   private var anykey: () => Any = () => {}
   private var mouse_buttons = HashMap[Int, MouseButtonData]()
@@ -72,9 +73,8 @@ class SingleController extends ScageController {
     if(Keyboard.next && Keyboard.getEventKeyState) anykey()
 
     val mouse_coord = mouseCoord
-
     val is_mouse_moved = isMouseMoved
-    if(is_mouse_moved) on_mouse_motion(mouseCoord)
+    if(is_mouse_moved) on_mouse_motion(mouse_coord)
 
     for {
       (button, button_data) <- mouse_buttons
@@ -106,5 +106,9 @@ class SingleController extends ScageController {
       case x if(x < 0) => on_mouse_wheel_down(mouse_coord)
       case _ =>
     }
+  }
+
+  action {
+    checkControls()
   }
 }

@@ -25,13 +25,3 @@ trait ScageController {
 
   def checkControls()
 }
-
-object ScageController {
-  def apply() = {
-    ScageProperties.property("controller.type", "single") match {
-      case "single" => new SingleController
-      case "multi" => new MultiController
-      case _ => new SingleController
-    }
-  }
-}

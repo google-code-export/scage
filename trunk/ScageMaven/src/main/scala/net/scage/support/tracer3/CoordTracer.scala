@@ -26,30 +26,30 @@ extends ScageTracer[T](field_from_x,field_to_x,field_from_y,field_to_y,init_h_x,
     }
     if(isCoordOnArea(coord)) {
       val p = point(coord)
-      point_matrix(p.ix)(p.iy) = updateable_trace :: point_matrix(p.ix)(p.iy)
+      point_matrix(p.ix)(p.iy) += updateable_trace
       traces_by_ids += updateable_trace.id -> updateable_trace
-      traces_list = updateable_trace :: traces_list
+      traces_list += updateable_trace
       log.debug("added new trace #"+updateable_trace.id+" in coord "+updateable_trace.location)
     } else log.warn("failed to add trace: coord "+updateable_trace.location+" is out of area")
     val nonupdateable_trace:LocationImmutableTrace = updateable_trace
     nonupdateable_trace
   }
 
-  override def removeTraces(traces_to_remove:HaveLocationAndId*) {
+  override def removeTraces(traces_to_remove:LocationImmutableTrace*) {
     if(!traces_to_remove.isEmpty) {
       traces_to_remove.foreach(trace => {
         if(traces_by_ids.contains(trace.id)) {
           val trace_point = point(trace.location)
-          point_matrix(trace_point.ix)(trace_point.iy) = point_matrix(trace_point.ix)(trace_point.iy).filterNot(_.id == trace.id)
+          point_matrix(trace_point.ix)(trace_point.iy) -= trace
           traces_by_ids -= trace.id
+          traces_list -= trace
           log.debug("removed trace #"+trace.id)
         } else log.warn("trace #"+trace.id+" not found")
       })
-      traces_list = traces_list.filterNot(trace => traces_to_remove.contains(trace))
     } else {
-      initMatrix(point_matrix)
+      clearMatrix(point_matrix)
       traces_by_ids.clear()
-      traces_list = Nil
+      traces_list.clear()
       log.info("deleted all traces")
     }
   }
@@ -74,8 +74,8 @@ extends ScageTracer[T](field_from_x,field_to_x,field_from_y,field_to_y,init_h_x,
         if(isCoordOnArea(new_coord_edges_affected)) {
           val new_point_edges_affected = point(new_coord_edges_affected)
           if(old_coord != new_coord_edges_affected) {
-            point_matrix(old_point.ix)(old_point.iy) = point_matrix(old_point.ix)(old_point.iy).filterNot(_.id == trace_id)
-            point_matrix(new_point_edges_affected.ix)(new_point_edges_affected.iy) = updateable_trace :: point_matrix(new_point_edges_affected.ix)(new_point_edges_affected.iy)
+            point_matrix(old_point.ix)(old_point.iy) -= updateable_trace
+            point_matrix(new_point_edges_affected.ix)(new_point_edges_affected.iy) += updateable_trace
             updateable_trace.location = new_coord_edges_affected
             LOCATION_UPDATED
           } else {

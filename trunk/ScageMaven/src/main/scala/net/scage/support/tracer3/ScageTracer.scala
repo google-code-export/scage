@@ -7,28 +7,6 @@ import _root_.net.scage.handlers.Renderer._
 import com.weiglewilczek.slf4s.Logger
 import collection.mutable.{ArrayBuffer, HashMap}
 
-object Trace {
-  def apply(changeState:(Trace, State) => Unit = (changer, state) => {},
-            state:State = State()) = {
-    val (_changeState, _state) = (changeState, state)
-    new Trace {
-      def changeState(changer:Trace,  state:State) {_changeState(changer, state)}
-      def state:State = _state
-    }
-  }
-}
-
-trait Trace {
-  def changeState(changer:Trace,  state:State)
-  def changeState(state:State) {changeState(null, state)}
-  def state:State
-}
-
-trait HaveLocationAndId {   // maybe make HaveId as separate trait
-  def id:Int
-  def location:Vec
-}
-
 class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from.x", 0),
                               val field_to_x:Int          = property("field.to.x", screen_width),
                               val field_from_y:Int        = property("field.from.y", 0),

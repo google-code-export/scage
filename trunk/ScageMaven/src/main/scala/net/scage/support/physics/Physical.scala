@@ -6,7 +6,7 @@ import net.phys2d.raw.{CollisionEvent, Body, BodyList}
 import collection.mutable.{ListBuffer, ArrayBuffer}
 
 trait Physical {
-  val body:Body
+  def body:Body
 
   def addForce(force:Vec) {
     body.setIsResting(false)
@@ -46,7 +46,7 @@ trait Physical {
     touching_points.clear()
   }
 
-  def updateCollisions(collisions:Array[CollisionEvent]) {
+  private[physics] def updateCollisions(collisions:Array[CollisionEvent]) {
     val new_touching_bodies =  body.getTouching
     is_touching = new_touching_bodies.size > 0
     if(is_touching) {

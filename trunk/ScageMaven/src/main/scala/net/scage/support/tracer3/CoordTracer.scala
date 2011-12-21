@@ -36,22 +36,15 @@ extends ScageTracer[T](field_from_x,field_to_x,field_from_y,field_to_y,init_h_x,
   }
 
   override def removeTraces(traces_to_remove:LocationImmutableTrace*) {
-    if(!traces_to_remove.isEmpty) {
-      traces_to_remove.foreach(trace => {
-        if(traces_by_ids.contains(trace.id)) {
-          val trace_point = point(trace.location)
-          point_matrix(trace_point.ix)(trace_point.iy) -= trace
-          traces_by_ids -= trace.id
-          traces_list -= trace
-          log.debug("removed trace #"+trace.id)
-        } else log.warn("trace #"+trace.id+" not found")
-      })
-    } else {
-      clearMatrix(point_matrix)
-      traces_by_ids.clear()
-      traces_list.clear()
-      log.info("deleted all traces")
-    }
+    traces_to_remove.foreach(trace => {
+      if(traces_by_ids.contains(trace.id)) {
+        val trace_point = point(trace.location)
+        point_matrix(trace_point.ix)(trace_point.iy) -= trace
+        traces_by_ids -= trace.id
+        traces_list -= trace
+        log.debug("removed trace #"+trace.id)
+      } else log.warn("trace #"+trace.id+" not found")
+    })
   }
 
   def tracesNearCoord(coord:Vec, xrange:Range, yrange:Range, condition:LocationImmutableTrace => Boolean):IndexedSeq[LocationImmutableTrace] = {

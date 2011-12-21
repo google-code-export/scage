@@ -14,7 +14,6 @@ import org.newdawn.slick.util.ResourceLoader
 import java.awt.Toolkit
 import net.scage.support.{SortedBuffer, ScageColor, Vec}
 import collection.mutable.ArrayBuffer
-import net.scage.support.tracer3.ScageTracer
 import com.weiglewilczek.slf4s.Logger
 import net.scage.Scage
 
@@ -443,26 +442,24 @@ trait Renderer extends Scage {
   def render(render_func: => Unit) = addRender(render_func)
   def render(position:Int = 0)(render_func: => Unit) = addRender(render_func, position)
   def delRenders(render_ids:Int*) = {
-    if(render_ids.size > 0) {
-      render_ids.foldLeft(true)((overall_result, render_id) => {
-        val deletion_result = renders.find(_.operation_id == render_id) match {
-          case Some(r) => {
-            renders -= r
-            log.debug("deleted render with id "+render_id)
-            true
-          }
-          case None => {
-            log.warn("render with id "+render_id+" not found among renders so wasn't deleted")
-            false
-          }
+    render_ids.foldLeft(true)((overall_result, render_id) => {
+      val deletion_result = renders.find(_.operation_id == render_id) match {
+        case Some(r) => {
+          renders -= r
+          log.debug("deleted render with id "+render_id)
+          true
         }
-        overall_result && deletion_result
-      })
-    } else {
-      renders.clear()
-      log.info("deleted all render operations")
-      true
-    }
+        case None => {
+          log.warn("render with id "+render_id+" not found among renders so wasn't deleted")
+          false
+        }
+      }
+      overall_result && deletion_result
+    })
+  }
+  def delAllRenders() {
+    renders.clear()
+    log.info("deleted all render operations")
   }
 
   private val interfaces = ArrayBuffer[(Int, () => Unit)]()
@@ -473,26 +470,24 @@ trait Renderer extends Scage {
     operation_id
   }
   def delInterfaces(interface_ids:Int*) = {
-    if(interface_ids.size > 0) {
-      interface_ids.foldLeft(true)((overall_result, interface_id) => {
-        val deletion_result = interfaces.find(_._1 == interface_id) match {
-          case Some(i) => {
-            interfaces -= i
-            log.debug("deleted interface with id "+interface_id)
-            true
-          }
-          case None => {
-            log.warn("interface with id "+interface_id+" not found among interfaces so wasn't deleted")
-            false
-          }
+    interface_ids.foldLeft(true)((overall_result, interface_id) => {
+      val deletion_result = interfaces.find(_._1 == interface_id) match {
+        case Some(i) => {
+          interfaces -= i
+          log.debug("deleted interface with id "+interface_id)
+          true
         }
-        overall_result && deletion_result
-      })
-    } else {
-      interfaces.clear()
-      log.info("deleted all interface operations")
-      true
-    }
+        case None => {
+          log.warn("interface with id "+interface_id+" not found among interfaces so wasn't deleted")
+          false
+        }
+      }
+      overall_result && deletion_result
+    })
+  }
+  def delAllInterfaces() {
+    interfaces.clear()
+    log.info("deleted all interface operations")
   }
 
   def render() {
@@ -545,26 +540,19 @@ trait Renderer extends Scage {
       case None =>  super.delOperation(operation_id)
     }
   }
-  override def delOperations(operation_ids:Int*) = {
-    if(operation_ids.size > 0) {
-      operation_ids.foldLeft(true)((overall_result, operation_id) => {
-        val deletion_result = delOperation(operation_id)
-        overall_result && deletion_result
-      })
-    } else {
-      delRenders() &&
-      delInterfaces() &&
-      super.delOperations()
-    }
+  override def delAllOperations() {
+    delAllRenders()
+    delAllInterfaces()
+    super.delAllOperations()
   }
 
-  action {
+  actionNoPause {
     render()
   }
 
   if(is_main_unit) {
-    exit {
-      exitRender()
+    dispose {
+      if(!Scage.isAppRunning) exitRender()
     }
   }
 }

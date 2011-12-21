@@ -4,7 +4,6 @@ import _root_.net.scage.support.ScageColors._
 import _root_.net.scage.handlers.Renderer._
 import org.lwjgl.input.Keyboard._
 import _root_.net.scage.support.messages.ScageMessage._
-import _root_.net.scage.ScageScreen
 import _root_.net.scage.support.Vec
 import net.scage.support.net.NetServer._
 import net.scage.support.net.ClientHandler
@@ -18,6 +17,7 @@ import net.scage.support.tracer3.{Trace, CoordTracer}
 import net.scage.support.physics.objects.{StaticPolygon, DynaBall}
 import collection.mutable.ListBuffer
 import javax.swing.JOptionPane
+import net.scage.{MultiControlledScreen, ScageScreen}
 
 object ScageTest {
     def suite: Test = {
@@ -39,7 +39,7 @@ class ScageTest extends TestCase("app") {
      * Rigourous Tests :-)
      */
     def testOK() {
-      new ScageScreen(unit_name = "Hello World", is_main_unit = true, properties = "scagetest-properties.txt") {
+      new MultiControlledScreen(unit_name = "Hello World", is_main_unit = true, properties = "scagetest-properties.txt") {
         render {
           drawFilledRect(Vec(30, 30), 60, 20, GREEN)
         }

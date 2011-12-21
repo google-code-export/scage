@@ -34,6 +34,7 @@ class ScagePhysics {
     if(!world.getBodies.contains(physical.body)) world.add(physical.body)
     physicals += physical
     physical.prepare()
+    log.debug("added new physical "+physical)
     physical
   }
   def addPhysicals(physicals:Physical*) {
@@ -44,13 +45,17 @@ class ScagePhysics {
   // TODO: И метод, принимающий условие в качестве параметра. И все такое
   def removePhysicals(physicals_to_delete:Physical*) {
     for(p <- physicals_to_delete) {
-      world.remove(p.body)
-      physicals -= p
+      if(physicals.contains(p)) {
+        world.remove(p.body)
+        physicals -= p
+        log.debug("removed physical "+p)
+      } else log.warn("physical "+p+" not found")
     }
   }
   def removeAll() {
     world.clear()
     physicals.clear()
+    log.info("deleted all physical objects")
   }
 
   def containsPhysical(p:Physical) = physicals.contains(p)

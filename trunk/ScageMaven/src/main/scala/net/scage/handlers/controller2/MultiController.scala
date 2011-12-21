@@ -5,7 +5,7 @@ import org.lwjgl.input.{Keyboard, Mouse}
 import collection.mutable.{HashMap, ArrayBuffer}
 import net.scage.Scage
 
-trait MultiController extends ScageController with Scage {
+trait MultiController extends ScageController {
   private var keyboard_keys = HashMap[Int, ArrayBuffer[KeyData]]()  // was_pressed, last_pressed_time, repeat_time, onKeyDown, onKeyUp
   private var anykeys = ArrayBuffer[() => Any]()
   private var mouse_buttons = HashMap[Int, ArrayBuffer[MouseButtonData]]()
@@ -114,9 +114,5 @@ trait MultiController extends ScageController with Scage {
       case x if(x < 0) => mouse_wheel_downs.foreach(onWheelDown => onWheelDown(mouse_coord))
       case _ =>
     }
-  }
-
-  action {
-    checkControls()
   }
 }

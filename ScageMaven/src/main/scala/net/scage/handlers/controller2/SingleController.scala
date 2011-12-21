@@ -5,7 +5,7 @@ import collection.mutable.HashMap
 import org.lwjgl.input.{Keyboard, Mouse}
 import net.scage.Scage
 
-trait SingleController extends ScageController with Scage {
+trait SingleController extends ScageController {
   private var keyboard_keys = HashMap[Int, KeyData]()  // was_pressed, last_pressed_time, repeat_time, onKeyDown, onKeyUp
   private var anykey: () => Any = () => {}
   private var mouse_buttons = HashMap[Int, MouseButtonData]()
@@ -106,9 +106,5 @@ trait SingleController extends ScageController with Scage {
       case x if(x < 0) => on_mouse_wheel_down(mouse_coord)
       case _ =>
     }
-  }
-
-  action {
-    checkControls()
   }
 }

@@ -92,26 +92,26 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
   def containsTrace(trace_id:Int) = traces_by_ids.contains(trace_id)
   def containsTrace(have_id:HaveLocationAndId) = traces_by_ids.contains(have_id.id)
 
-  def removeTraces(traces_to_remove:LocationImmutableTrace*) {
-    if(!traces_to_remove.isEmpty) {
-      traces_to_remove.foreach(trace => {
-        if(traces_by_ids.contains(trace.id)) {
-          point_matrix(trace.location.ix)(trace.location.iy) -= trace
-          traces_by_ids -= trace.id
-          traces_list -= trace
-          log.debug("removed trace #"+trace.id)
-        } else log.warn("trace #"+trace.id+" not found")
-      })
-    } else {
-      clearMatrix(point_matrix)
-      traces_by_ids.clear()
-      traces_list.clear()
-      log.info("deleted all traces")
-    }
+  def removeTraces(traces_to_remove:LocationImmutableTrace*) {  // maybe return result (true/false)
+    traces_to_remove.foreach(trace => {
+      if(traces_by_ids.contains(trace.id)) {
+        point_matrix(trace.location.ix)(trace.location.iy) -= trace
+        traces_by_ids -= trace.id
+        traces_list -= trace
+        log.debug("removed trace #"+trace.id)
+      } else log.warn("trace #"+trace.id+" not found")
+    })
   }
   def removeTracesById(trace_ids:Int*) {
     removeTraces(traces_list.filter(elem => trace_ids.contains(elem.id)):_*)
   }
+  def removeAllTraces() {
+    clearMatrix(point_matrix)
+    traces_by_ids.clear()
+    traces_list.clear()
+    log.info("deleted all traces")
+  }
+  def removeTracesInPoint(point:Vec) {removeTraces(tracesInPoint(point):_*)}
 
   def tracesInPoint(point:Vec, condition:LocationImmutableTrace => Boolean) = {
     if(!isPointOnArea(point)) Nil

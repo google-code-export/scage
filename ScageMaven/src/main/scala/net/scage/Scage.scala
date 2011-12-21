@@ -11,6 +11,8 @@ trait Scage {
   def properties:String
 
   private val log = Logger(this.getClass.getName)
+
+  if(is_main_unit) log.info("starting main unit "+unit_name+"...")
   if(properties != "") ScageProperties.properties = properties
   else if(is_main_unit) ScageProperties.properties = unit_name.replaceAll(" ", "").toLowerCase+".properties"
 
@@ -18,7 +20,7 @@ trait Scage {
   def currentOperation = current_operation_id
 
   object ScageOperations extends Enumeration {
-    val Init, Action, Exit = Value
+    val Init, Action, Exit, Dispose = Value
   }
 
   protected val operations_mapping = HashMap[Int, Any]()
@@ -29,6 +31,7 @@ trait Scage {
           case ScageOperations.Init => delInits(operation_id)
           case ScageOperations.Action => delActions(operation_id)
           case ScageOperations.Exit => delExits(operation_id)
+          case ScageOperations.Dispose => delDisposes(operation_id)
           case _ => {
             log.warn("operation with id "+operation_id+" not found so wasn't deleted")
             false
@@ -43,16 +46,16 @@ trait Scage {
   }
   def deleteSelf() = delOperation(current_operation_id)
   def delOperations(operation_ids:Int*) = {
-    if(operation_ids.size > 0) {
-      operation_ids.foldLeft(true)((overall_result, operation_id) => {
-        val deletion_result = delOperation(operation_id)
-        overall_result && deletion_result
-      })
-    } else {
-      delInits() &&
-      delActions() &&
-      delExits()
-    }
+    operation_ids.foldLeft(true)((overall_result, operation_id) => {
+      val deletion_result = delOperation(operation_id)
+      overall_result && deletion_result
+    })
+  }
+  def delAllOperations() {
+    dellAllInits()
+    delAllActions()
+    delAllExits()
+    delAllDisposes()
   }
 
   private val inits = ArrayBuffer[(Int, () => Any)]()
@@ -64,26 +67,24 @@ trait Scage {
     operation_id
   }
   def delInits(operation_ids:Int*) = {
-    if(operation_ids.size > 0) {
-      operation_ids.foldLeft(true)((overall_result, operation_id) => {
-        val deletion_result = inits.find(_._1 == operation_id) match {
-          case Some(i) => {
-            inits -= i
-            log.debug("deleted init operation with id "+operation_id)
-            true
-          }
-          case None => {
-            log.warn("operation with id "+operation_id+" not found among inits so wasn't deleted")
-            false
-          }
+    operation_ids.foldLeft(true)((overall_result, operation_id) => {
+      val deletion_result = inits.find(_._1 == operation_id) match {
+        case Some(i) => {
+          inits -= i
+          log.debug("deleted init operation with id "+operation_id)
+          true
         }
-        overall_result && deletion_result
-      })
-    } else {
-      inits.clear()
-      log.info("deleted all init operations")
-      true
-    }
+        case None => {
+          log.warn("operation with id "+operation_id+" not found among inits so wasn't deleted")
+          false
+        }
+      }
+      overall_result && deletion_result
+    })
+  }
+  def dellAllInits() {
+    inits.clear()
+    log.info("deleted all init operations")
   }
 
   // (operation_id, operation, is_pausable)
@@ -142,26 +143,24 @@ trait Scage {
   private[this] class ActionWaiterStatic(val period:Long, action_func: => Unit) extends ActionWaiter(action_func)
 
   def delActions(operation_ids:Int*) = {
-    if(operation_ids.size > 0) {
-      operation_ids.foldLeft(true)((overall_result, operation_id) => {
-        val deletion_result = actions.find(_._1 == operation_id) match {
-          case Some(a) => {
-            actions -= a
-            log.debug("deleted action operation with id "+operation_id)
-            true
-          }
-          case None => {
-            log.warn("operation with id "+operation_id+" not found among actions so wasn't deleted")
-            false
-          }
+    operation_ids.foldLeft(true)((overall_result, operation_id) => {
+      val deletion_result = actions.find(_._1 == operation_id) match {
+        case Some(a) => {
+          actions -= a
+          log.debug("deleted action operation with id "+operation_id)
+          true
         }
-        overall_result && deletion_result
-      })
-    } else {
-      actions.clear()
-      log.info("deleted all action operations")
-      true
-    }
+        case None => {
+          log.warn("operation with id "+operation_id+" not found among actions so wasn't deleted")
+          false
+        }
+      }
+      overall_result && deletion_result
+    })
+  }
+  def delAllActions() {
+    actions.clear()
+    log.info("deleted all action operations")
   }
 
   private var exits = ArrayBuffer[(Int, () => Any)]()
@@ -172,27 +171,53 @@ trait Scage {
     operation_id
   }
   def delExits(operation_ids:Int*) = {
-    if(operation_ids.size > 0) {
+    operation_ids.foldLeft(true)((overall_result, operation_id) => {
+      val deletion_result = exits.find(_._1 == operation_id) match {
+        case Some(e) => {
+          exits -= e
+          log.debug("deleted exit operation with id "+operation_id)
+          true
+        }
+        case None => {
+          log.warn("operation with id "+operation_id+" not found among exits so wasn't deleted")
+          false
+        }
+      }
+      overall_result && deletion_result
+    })
+  }
+  def delAllExits() {
+    exits.clear()
+    log.info("deleted all exit operations")
+  }
+  
+  private var disposes = ArrayBuffer[(Int, () => Any)]()
+    def dispose(dispose_func: => Any) = {
+      val operation_id = nextId
+      disposes += (operation_id, () => dispose_func)
+      operations_mapping += operation_id -> ScageOperations.Dispose
+      operation_id
+    }
+    def delDisposes(operation_ids:Int*) = {
       operation_ids.foldLeft(true)((overall_result, operation_id) => {
-        val deletion_result = exits.find(_._1 == operation_id) match {
-          case Some(e) => {
-            exits -= e
-            log.debug("deleted exit operation with id "+operation_id)
+        val deletion_result = disposes.find(_._1 == operation_id) match {
+          case Some(d) => {
+            disposes -= d
+            log.debug("deleted dispose operation with id "+operation_id)
             true
           }
           case None => {
-            log.warn("operation with id "+operation_id+" not found among exits so wasn't deleted")
+            log.warn("operation with id "+operation_id+" not found among disposes so wasn't deleted")
             false
           }
         }
         overall_result && deletion_result
       })
-    } else {
-      exits.clear()
-      log.info("deleted all exit operations")
-      true
     }
-  }
+    def delAllDisposes() {
+      disposes.clear()
+      log.info("deleted all dispose operations")
+    }
 
   private var on_pause = false
   private def logPause() {log.info("pause = " + on_pause)}
@@ -217,8 +242,15 @@ trait Scage {
       exit_operation()
     }
   }
+  def dispose() {
+      log.info(unit_name+": dispose")
+      for((dispose_id, dispose_operation) <- disposes) {
+        current_operation_id = dispose_id
+        dispose_operation()
+      }
+    }
   def run() {
-    log.info("starting "+(if(is_main_unit) "main " else "")+"unit "+unit_name+"...")
+    if(!is_main_unit) log.info("starting unit "+unit_name+"...")
     init()
     is_running = true
     log.info(unit_name+": run")
@@ -229,14 +261,11 @@ trait Scage {
       }
     }
     exit()
+    dispose()
     log.info(unit_name+" was stopped")
-    if(is_main_unit) {
-      System.exit(0)
-    }
   }
   def stop() {
     is_running = false
-    if(is_main_unit) Scage.stopApp()
   }
 
   private val events = new HashMap[String, List[() => Unit]]()

@@ -545,14 +545,4 @@ trait Renderer extends Scage {
     delAllInterfaces()
     super.delAllOperations()
   }
-
-  actionNoPause {
-    render()
-  }
-
-  if(is_main_unit) {
-    dispose {
-      if(!Scage.isAppRunning) exitRender()
-    }
-  }
 }

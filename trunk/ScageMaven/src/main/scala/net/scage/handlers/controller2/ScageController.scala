@@ -25,8 +25,4 @@ trait ScageController extends Scage {
   def mouseWheelDown(onWheelDown: Vec => Any)
 
   def checkControls()
-
-  actionNoPause {
-    checkControls()
-  }
 }

@@ -4,26 +4,30 @@ import collection.mutable.HashMap
 import collection.mutable.ArrayBuffer
 import collection.mutable.Stack
 import collection.JavaConversions._
+import net.scage.support.ScageColor
+import net.scage.support.ScageColors._
 
-class ColoredString(original_text:String) {
-  def colorSwitches():java.util.Map[Int, String] = color_switches
+class ColoredString(original_text:String, default_color:ScageColor) {
+  def colorSwitches():java.util.Map[Int, ScageColor] = color_switches
   def originalText() = original_text
   def text() = new_text.mkString
 
-  private val color_switches = HashMap[Int, String]()
+  private val color_switches = HashMap[Int, ScageColor]()
   private val new_text = ArrayBuffer[Char]()
-  private val previous_colors = Stack[String]()
+  private val previous_colors = Stack[ScageColor]()
   private var pos_offset = 0
 
-  private def findColorSwitches(text_arr:Array[Char], pos:Int, current_color:String) {
+  private def findColorSwitches(text_arr:Array[Char], pos:Int, current_color:ScageColor) {
+    var disable_color_switch_symbol = false
     if(pos < text_arr.length) {
       text_arr(pos) match {
-        case '[' if pos < text_arr.length-1 => {
+        case '\\' => disable_color_switch_symbol = true
+        case '[' if !disable_color_switch_symbol && pos < text_arr.length-1 => {
           val color_char = text_arr(pos+1) match {
-            case 'r' => Some("Red")
-            case 'g' => Some("Green")
-            case 'b' => Some("Blue")
-            case 'y' => Some("Yellow")
+            case 'r' => Some(RED)
+            case 'g' => Some(GREEN)
+            case 'b' => Some(BLUE)
+            case 'y' => Some(YELLOW)
             case _ => None
           }
           color_char match {
@@ -39,20 +43,21 @@ class ColoredString(original_text:String) {
             }
           }
         }
-        case ']' => {
-          val previous_color = if(previous_colors.length > 0) previous_colors.pop() else "DefaultColor"
+        case ']' if !disable_color_switch_symbol => {
+          val previous_color = if(previous_colors.length > 0) previous_colors.pop() else default_color
           color_switches += (pos - pos_offset) -> previous_color
           pos_offset += 1
           if(pos < text_arr.length-1) findColorSwitches(text_arr, pos+1, previous_color)
         }
         case _ => {
+          disable_color_switch_symbol = false
           new_text += text_arr(pos)
           if(pos < text_arr.length-1) findColorSwitches(text_arr, pos+1, current_color)
         }
       }
     }
   }
-  findColorSwitches(original_text.toCharArray, 0, "DefaultColor")
+  findColorSwitches(original_text.toCharArray, 0, default_color)
 
   override def toString = "ColoredString("+original_text+", "+text+", "+color_switches+")"
 }

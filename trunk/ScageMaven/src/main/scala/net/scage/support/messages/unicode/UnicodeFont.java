@@ -412,7 +412,7 @@ public class UnicodeFont implements org.newdawn.slick.Font {
 		clearGlyphs();
 	}
 
-    private class ColoredString
+    /*private class ColoredString
         {
             public HashMap<Integer, Color> color_switches = new HashMap<Integer, Color>();
             public String colored_text;
@@ -444,7 +444,7 @@ public class UnicodeFont implements org.newdawn.slick.Font {
                 }
                 return new_text;
             }
-        }
+        }*/
 
 	/**
 	 * Identical to {@link #drawString(float, float, String, Color, int, int)} but returns a

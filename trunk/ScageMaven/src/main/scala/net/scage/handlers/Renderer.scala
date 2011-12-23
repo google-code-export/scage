@@ -8,6 +8,7 @@ import org.lwjgl.util.glu.GLU
 import _root_.net.scage.support.ScageProperties._
 import _root_.net.scage.support.ScageColors._
 import _root_.net.scage.support.messages.ScageMessage._
+import _root_.net.scage.support.messages.ScageXML._
 import org.lwjgl.BufferUtils
 import net.scage.support.ScageId._
 import org.newdawn.slick.util.ResourceLoader
@@ -20,7 +21,7 @@ import net.scage.Scage
 object Renderer {
   protected val log = Logger(this.getClass.getName)
 
-  val screen_width = property("screen.width", 800)
+  val screen_width  = property("screen.width", 800)
   val screen_height = property("screen.height", 600)
   val screen_center = Vec(screen_width/2, screen_height/2)
   

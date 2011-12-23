@@ -4,9 +4,8 @@ import _root_.net.scage.support.ScageColors._
 import _root_.net.scage.handlers.Renderer._
 import org.lwjgl.input.Keyboard._
 import _root_.net.scage.support.messages.ScageMessage._
+import _root_.net.scage.support.messages.ScageXML._
 import _root_.net.scage.support.Vec
-import net.scage.support.net.NetServer._
-import net.scage.support.net.ClientHandler
 import concurrent.ops._
 
 import junit.framework._
@@ -17,7 +16,7 @@ import net.scage.support.tracer3.{Trace, CoordTracer}
 import net.scage.support.physics.objects.{StaticPolygon, DynaBall}
 import collection.mutable.ListBuffer
 import javax.swing.JOptionPane
-import net.scage.{MultiControlledScreen, ScageScreen}
+import net.scage.MultiControlledScreen
 
 object ScageTest {
     def suite: Test = {

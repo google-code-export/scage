@@ -38,6 +38,13 @@ class ScageMessage(
   def print(message:Any, coord:Vec) {
     print(message, coord, color)
   }
+  def printStrings(messages:TraversableOnce[Any], x:Float, y:Float, y_interval:Float, color:ScageColor) {
+    var y_pos = y
+    for(message <- messages) {
+      print(message, x, y_pos, color)
+      y_pos += y_interval
+    }
+  }
 }
 
 object ScageMessage extends ScageMessage (

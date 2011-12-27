@@ -6,8 +6,8 @@ import collection.mutable.HashMap
 import xml.XML
 import org.newdawn.slick.util.ResourceLoader
 
-case class InterfaceData(interface_id:String, x:Int, y:Int, xinterval:Int, yinterval:Int, rows:Array[RowData])
-case class RowData(message_id:String, x:Int, y:Int, placeholders_in_row:Int, overall_placeholder_position:Int)
+case class InterfaceData(interface_id:String, x:Int = -1, y:Int = -1, xinterval:Int = 0, yinterval:Int = 0, rows:Array[RowData])
+case class RowData(message_id:String, x:Int = -1, y:Int = -1, placeholders_in_row:Int, overall_placeholder_position:Int)
 
 class ScageXML(val lang:String          = property("strings.lang", "en"),
                val messages_base:String = property("strings.base", "resources/strings/" +stringProperty("app.name").toLowerCase+"_strings"),
@@ -76,18 +76,18 @@ class ScageXML(val lang:String          = property("strings.lang", "en"),
       HashMap((for {
         interface @ <interface>{rows_list @ _*}</interface> <- interfaces_list
         interface_id = (interface \ "@id").text
-        x = (interface \ "@x").text
-        y = (interface \ "@y").text
-        xinterval = (interface \ "@xinterval").text
-        yinterval = (interface \ "@yinterval").text
+        x = try{(interface \ "@x").text.toInt} catch {case ex:Exception => -1}
+        y = try{(interface \ "@y").text.toInt} catch {case ex:Exception => -1}
+        xinterval = try{(interface \ "@xinterval").text.toInt} catch {case ex:Exception => 0}
+        yinterval = try{(interface \ "@yinterval").text.toInt} catch {case ex:Exception => 0}
         if interface_id != ""
       } yield {
         var overall_placeholder_position = 0
         val messages = (for {
           row @ <row>{_*}</row> <- rows_list
           message_id = (row \ "@message_id").text
-          x = (row \ "@x").text
-          y = (row \ "@y").text
+          x = try{(row \ "@x").text.toInt} catch {case ex:Exception => -1}
+          y = try{(row \ "@y").text.toInt} catch {case ex:Exception => -1}
           placeholders_in_row = placeholdersAmount(message_id)
         } yield {
           val to_yield = RowData(message_id, x, y, placeholders_in_row, overall_placeholder_position)
@@ -100,17 +100,13 @@ class ScageXML(val lang:String          = property("strings.lang", "en"),
     case _ => HashMap[String, InterfaceData]()
   }
   
-  def xmlInterface(interface_id:String, parameters:Any*):Array[String] = {
+  def xmlInterface(interface_id:String, parameters:Any*):InterfaceData = {
     xml_interfaces.get(interface_id) match {
-      case Some(interface) => {
-        ((for {
-          (RowData(message_id, _), params_from, params_take) <- interface
-        } yield xml(message_id, (parameters.drop(params_from).take(params_take)):_*))).toArray
-      }
+      case Some(interface) => interface
       case None => {
         log.warn("failed to find interface with id "+interface_id)
-        xml_interfaces += (interface_id -> Array((interface_id, 0, 0)))
-        Array(interface_id)
+        xml_interfaces += (interface_id -> InterfaceData(interface_id, rows = Array[RowData]()))
+        xml_interfaces(interface_id)
       }
     }  
   }

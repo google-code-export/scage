@@ -47,6 +47,9 @@ class ScageMessage(
       y_pos += y_interval
     }
   }
+  def printInterface(interface_id:String, x:Float, y:Float, x_interval:Float = 0, y_interval:Float = -20, color:ScageColor) {
+
+  }
 }
 
 object ScageMessage extends ScageMessage (

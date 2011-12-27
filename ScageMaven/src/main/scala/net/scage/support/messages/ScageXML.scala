@@ -6,6 +6,9 @@ import collection.mutable.HashMap
 import xml.XML
 import org.newdawn.slick.util.ResourceLoader
 
+case class InterfaceData(interface_id:String, x:Int, y:Int, xinterval:Int, yinterval:Int, rows:Array[RowData])
+case class RowData(message_id:String, x:Int, y:Int, placeholders_in_row:Int, overall_placeholder_position:Int)
+
 class ScageXML(val lang:String          = property("strings.lang", "en"),
                val messages_base:String = property("strings.base", "resources/strings/" +stringProperty("app.name").toLowerCase+"_strings"),
                val interfaces_file:String = property("interfaces.file", "resources/"+stringProperty("app.name").toLowerCase+"_interfaces.xml")
@@ -73,29 +76,35 @@ class ScageXML(val lang:String          = property("strings.lang", "en"),
       HashMap((for {
         interface @ <interface>{rows_list @ _*}</interface> <- interfaces_list
         interface_id = (interface \ "@id").text
+        x = (interface \ "@x").text
+        y = (interface \ "@y").text
+        xinterval = (interface \ "@xinterval").text
+        yinterval = (interface \ "@yinterval").text
         if interface_id != ""
       } yield {
         var overall_placeholder_position = 0
         val messages = (for {
           row @ <row>{_*}</row> <- rows_list
           message_id = (row \ "@message_id").text
+          x = (row \ "@x").text
+          y = (row \ "@y").text
           placeholders_in_row = placeholdersAmount(message_id)
         } yield {
-          val to_yield = (message_id, placeholders_in_row, overall_placeholder_position)
+          val to_yield = RowData(message_id, x, y, placeholders_in_row, overall_placeholder_position)
           overall_placeholder_position += placeholders_in_row
           to_yield
         }).toArray
-        (interface_id, messages)
+        (interface_id, InterfaceData(interface_id, x, y, xinterval, yinterval, messages))
       }):_*)
     }
-    case _ => HashMap[String, Array[(String, Int, Int)]]()
+    case _ => HashMap[String, InterfaceData]()
   }
   
   def xmlInterface(interface_id:String, parameters:Any*):Array[String] = {
     xml_interfaces.get(interface_id) match {
       case Some(interface) => {
         ((for {
-          (message_id, params_from, params_take) <- interface
+          (RowData(message_id, _), params_from, params_take) <- interface
         } yield xml(message_id, (parameters.drop(params_from).take(params_take)):_*))).toArray
       }
       case None => {

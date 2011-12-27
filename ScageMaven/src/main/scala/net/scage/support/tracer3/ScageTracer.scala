@@ -28,6 +28,13 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
   val h_x = if(init_h_x == 0) field_width/init_N_x else init_h_x
   val h_y = if(init_h_y == 0) field_height/init_N_y else init_h_y
 
+  // for client classes - children of ScageTracer
+  protected def setTraceLocation(trace:T, new_location:Vec) {trace._location = new_location}
+  protected implicit def trace2updateable(trace:T) = new ScalaObject {
+    def __location = trace._location
+    def __location_=(new_location:Vec) {trace._location = new_location}
+  }
+
   def isPointOnArea(point:Vec):Boolean = point.x >= 0 && point.x < N_x && point.y >= 0 && point.y < N_y
   def outsidePoint(point:Vec):Vec = {
     def checkC(c:Float, dist:Int):Float = {

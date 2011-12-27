@@ -50,9 +50,9 @@ def restart() {
 --
 пример xml:
 <interfaces>
-    <interface id="player.stats">
-        <row message_id="player.health" />
-        <row message_id="player.energy" />
+    <interface id="player.stats" x="20" y = 300 xinterval="5" yinterval="20">
+        <row message_id="player.health" x="20" y="300" />
+        <row message_id="player.energy" x="20" y="300" />
         <row message_id="player.defence" />
         <row message_id="player.infection" />
     </interface>

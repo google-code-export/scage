@@ -3,8 +3,9 @@ package net.scage.support.messages
 import _root_.net.scage.handlers.Renderer._
 import _root_.net.scage.support.ScageProperties._
 import net.scage.support.messages.unicode.UnicodeFont
-import net.scage.support.{Vec, ScageColor}
 import com.weiglewilczek.slf4s.Logger
+import net.scage.support.{Vec, ScageColor}
+import net.scage.support.ScageColors._
 
 class ScageMessage(
   val fonts_base:String    = property("fonts.base", "resources/fonts/"),
@@ -26,19 +27,15 @@ class ScageMessage(
     }
   }
 
-  def print(message:Any, x:Float, y:Float, color:ScageColor) {
-    font.drawString(x, y, message.toString, new org.newdawn.slick.Color(color.red, color.green, color.blue))
+  def print(message:Any, x:Float, y:Float, color:ScageColor = DEFAULT_COLOR) {
+    val draw_color = if(color != DEFAULT_COLOR) color else currentColor
+    font.drawString(x, y, message.toString, new org.newdawn.slick.Color(draw_color.red, draw_color.green, draw_color.blue))
   }
-  def print(message:Any, x:Float, y:Float) {
-    print(message, x, y, color)
+  def print(message:Any, coord:Vec, color:ScageColor = DEFAULT_COLOR) {
+    val draw_color = if(color != DEFAULT_COLOR) color else currentColor
+    font.drawString(coord.x, coord.y, message.toString, new org.newdawn.slick.Color(draw_color.red, draw_color.green, draw_color.blue))
   }
-  def print(message:Any, coord:Vec, color:ScageColor) {
-    font.drawString(coord.x, coord.y, message.toString, new org.newdawn.slick.Color(color.red, color.green, color.blue))
-  }
-  def print(message:Any, coord:Vec) {
-    print(message, coord, color)
-  }
-  def printStrings(messages:TraversableOnce[Any], x:Float, y:Float, x_interval:Float = 0, y_interval:Float = -20, color:ScageColor) {
+  def printStrings(messages:TraversableOnce[Any], x:Float, y:Float, x_interval:Float = 0, y_interval:Float = -20, color:ScageColor = DEFAULT_COLOR) {
     var x_pos = x
     var y_pos = y
     for(message <- messages) {
@@ -47,8 +44,16 @@ class ScageMessage(
       y_pos += y_interval
     }
   }
-  def printInterface(interface_id:String, x:Float, y:Float, x_interval:Float = 0, y_interval:Float = -20, color:ScageColor) {
-
+  def printInterface(messages:TraversableOnce[MessageData], x:Float = -1, y:Float = -1, x_interval:Float = 0, y_interval:Float = -20, color:ScageColor = DEFAULT_COLOR) {
+    var x_pos = x
+    var y_pos = y
+    for(MessageData(message, message_x, message_y) <- messages) {
+      val print_x = if(message_x != -1) message_x else x_pos  // priority to coords inside xml
+      val print_y = if(message_y != -1) message_y else y_pos
+      print(message, print_x, print_y, color)
+      x_pos += x_interval
+      y_pos += y_interval
+    }    
   }
 }
 

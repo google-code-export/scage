@@ -144,12 +144,12 @@ object Renderer {
   }
   def backgroundColor_=(c:ScageColor) {GL11.glClearColor(c.red, c.green, c.blue, 0)}
   
-  def color = {
+  def currentColor = {
     val _color = BufferUtils.createFloatBuffer(16)
     GL11.glGetFloat(GL11.GL_CURRENT_COLOR, _color)
     new ScageColor(_color.get(0), _color.get(1), _color.get(2))
   }
-  def color_=(c:ScageColor) {GL11.glColor3f(c.red, c.green, c.blue)}
+  def currentColor_=(c:ScageColor) {GL11.glColor3f(c.red, c.green, c.blue)}
 
   def displayList(func: => Unit) = {
     val list_code = /*nextDisplayListKey*/nextId

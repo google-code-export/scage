@@ -53,6 +53,7 @@ def restart() {
     <interface id="player.stats" x="20" y = "300" xinterval="5" yinterval="20">
         <row message_id="player.health" x="20" y="300" />
         <row message_id="player.energy" x="20" y="300" />
+        <row />
         <row message_id="player.defence" />
         <row message_id="player.infection" />
     </interface>
@@ -67,6 +68,10 @@ interface {
 из этого набора параметров только то, что имеет отношение к ней.
 20 - межстрочное расстояние. xmlInterface() возвращает массив строк, они печатаются одна под другой функцией
 printStrings(), которая принимает массив строк
+--
+мб передавать в тегах row также аттрибут message:
+<row message_id="player.defence" message="Defence: ?" />
+и использовать эту строку согласно какому-нибудь критерию (типа если по айдишнику найти не удалось/айдишника нет)
 
 перепилить функции-удалялки через няшное collections api (done, перепилено вроде. Во всяком случае, все эти места уже основательно
 переебашены и не один раз)

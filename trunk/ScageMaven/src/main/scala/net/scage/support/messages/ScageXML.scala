@@ -8,6 +8,7 @@ import org.newdawn.slick.util.ResourceLoader
 
 case class InterfaceData(interface_id:String, x:Int = -1, y:Int = -1, xinterval:Int = 0, yinterval:Int = 0, rows:Array[RowData])
 case class RowData(message_id:String, x:Int = -1, y:Int = -1, placeholders_in_row:Int, overall_placeholder_position:Int)
+case class MessageData(message:String, x:Int = -1, y:Int = -1)
 
 class ScageXML(val lang:String          = property("strings.lang", "en"),
                val messages_base:String = property("strings.base", "resources/strings/" +stringProperty("app.name").toLowerCase+"_strings"),
@@ -100,13 +101,23 @@ class ScageXML(val lang:String          = property("strings.lang", "en"),
     case _ => HashMap[String, InterfaceData]()
   }
   
-  def xmlInterface(interface_id:String, parameters:Any*):InterfaceData = {
+  def xmlInterface(interface_id:String, parameters:Any*):Array[MessageData] = {
     xml_interfaces.get(interface_id) match {
-      case Some(interface) => interface
+      case Some(interface) => {
+        var xpos = interface.x
+        var ypos = interface.y
+        (for {
+          RowData(message_id, x, y, params_from, params_take) <- interface.rows
+        } yield {
+          val to_yield = MessageData(xml(message_id, (parameters.drop(params_from).take(params_take)):_*), if(x != -1) x else xpos, if(y != -1) y else ypos)
+          xpos += interface.xinterval
+          ypos += interface.yinterval
+          to_yield
+        }).toArray
+      }
       case None => {
         log.warn("failed to find interface with id "+interface_id)
-        xml_interfaces += (interface_id -> InterfaceData(interface_id, rows = Array[RowData]()))
-        xml_interfaces(interface_id)
+        Array(MessageData(interface_id))
       }
     }  
   }

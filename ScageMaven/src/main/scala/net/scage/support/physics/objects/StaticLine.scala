@@ -20,7 +20,7 @@ class StaticLine(start:Vec, end:Vec) extends Physical {
 
   /*def render() {
     val verts:Array[Vector2f] = line.getVertices(body.getPosition(), body.getRotation());
-    Renderer.color = WHITE
+    Renderer.currentColor = WHITE
     Renderer.drawLine(Vec(verts(0).getX, verts(0).getY),
                       Vec(verts(1).getX, verts(1).getY))
   }*/

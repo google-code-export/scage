@@ -20,7 +20,7 @@ class StaticBox(init_coord:Vec, val box_width:Float, val box_height:Float) exten
 
   /*def render() {
     val verts:Array[Vector2f] = box.getPoints(body.getPosition(), body.getRotation());
-    Renderer.color = WHITE
+    Renderer.currentColor = WHITE
     GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glBegin(GL11.GL_LINE_LOOP);
         verts.foreach(v => GL11.glVertex2f(v.getX, v.getY))

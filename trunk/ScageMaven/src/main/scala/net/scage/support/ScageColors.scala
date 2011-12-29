@@ -2,8 +2,10 @@ package net.scage.support
 
 import collection.mutable.HashMap
 import com.weiglewilczek.slf4s.Logger
+import org.newdawn.slick.Color
 
 class ScageColor(r:Float, g:Float, b:Float) {       // TODO: add color name as value parameter
+  def this(c:Color) {this(c.r, c.g, c.b)}
   val red:Float   = if(r >= 0 && r <= 1) r else if(r > 1 && r < 256) r/256 else -1
   val green:Float = if(g >= 0 && g <= 1) g else if(g > 1 && g < 256) g/256 else -1
   val blue:Float  = if(b >= 0 && b <= 1) b else if(b > 1 && b < 256) b/256 else -1
@@ -12,6 +14,8 @@ class ScageColor(r:Float, g:Float, b:Float) {       // TODO: add color name as v
     red   == other_color.red &&
     green == other_color.green &&
     blue  == other_color.blue
+
+  def toSlickColor = new Color(r, g, b)
 
   override def toString = "{red="+red+" green="+green+" blue="+blue+"}"
 }
@@ -134,7 +138,10 @@ object ScageColors {
     field.setAccessible(false)
   })
   def colorFromString(color_string:String) = {
-    if(colors.contains(color_string.toUpperCase)) colors(color_string) else WHITE
+    colors.get(color_string.toUpperCase) match {
+      case Some(color) => color
+      case None => DEFAULT_COLOR
+    }
   }
 
   def randomColor = new ScageColor(math.random.toFloat, math.random.toFloat, math.random.toFloat)

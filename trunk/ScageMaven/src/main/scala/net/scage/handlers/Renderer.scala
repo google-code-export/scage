@@ -149,7 +149,7 @@ object Renderer {
     GL11.glGetFloat(GL11.GL_CURRENT_COLOR, _color)
     new ScageColor(_color.get(0), _color.get(1), _color.get(2))
   }
-  def currentColor_=(c:ScageColor) {GL11.glColor3f(c.red, c.green, c.blue)}
+  def currentColor_=(c:ScageColor) {if(c != DEFAULT_COLOR) GL11.glColor3f(c.red, c.green, c.blue)}
 
   def displayList(func: => Unit) = {
     val list_code = /*nextDisplayListKey*/nextId
@@ -168,8 +168,8 @@ object Renderer {
       }
     GL11.glEnd();
   }
-  def drawCircle(coord:Vec, radius:Float, _color:ScageColor = DEFAULT_COLOR) {
-    if(_color != DEFAULT_COLOR) color = _color
+  def drawCircle(coord:Vec, radius:Float, color:ScageColor = DEFAULT_COLOR) {
+    if(color != DEFAULT_COLOR) currentColor = color
     GL11.glDisable(GL11.GL_TEXTURE_2D);
       GL11.glPushMatrix();
       GL11.glTranslatef(coord.x, coord.y, 0.0f);
@@ -188,8 +188,8 @@ object Renderer {
       }
     GL11.glEnd();
   }
-  def drawFilledCircle(coord:Vec, radius:Float, _color:ScageColor = DEFAULT_COLOR) {
-    if(_color != DEFAULT_COLOR) color = _color
+  def drawFilledCircle(coord:Vec, radius:Float, color:ScageColor = DEFAULT_COLOR) {
+    if(color != DEFAULT_COLOR) currentColor = color
     GL11.glDisable(GL11.GL_TEXTURE_2D);
       GL11.glPushMatrix();
       GL11.glTranslatef(coord.x, coord.y, 0.0f);
@@ -199,8 +199,8 @@ object Renderer {
     GL11.glEnable(GL11.GL_TEXTURE_2D);
   }
 
-  def drawLine(v1:Vec, v2:Vec, _color:ScageColor = DEFAULT_COLOR) {
-    if(_color != DEFAULT_COLOR) color = _color
+  def drawLine(v1:Vec, v2:Vec, color:ScageColor = DEFAULT_COLOR) {
+    if(color != DEFAULT_COLOR) currentColor = color
     GL11.glDisable(GL11.GL_TEXTURE_2D);
     	GL11.glBegin(GL11.GL_LINES);
     		GL11.glVertex2f(v1.x, v1.y);
@@ -215,17 +215,17 @@ object Renderer {
     	GL11.glEnd();
     GL11.glEnable(GL11.GL_TEXTURE_2D);
   }
-  def drawLines(edges:Array[Vec], _color:ScageColor = DEFAULT_COLOR) {
-    if(_color != DEFAULT_COLOR) color = _color
+  def drawLines(edges:Array[Vec], color:ScageColor = DEFAULT_COLOR) {
+    if(color != DEFAULT_COLOR) currentColor = color
     drawLines(edges:_*)
   }
-  def drawLines(edges:List[Vec], _color:ScageColor) {
-    if(_color != DEFAULT_COLOR) color = _color
+  def drawLines(edges:List[Vec], color:ScageColor) {
+    if(color != DEFAULT_COLOR) currentColor = color
     drawLines(edges:_*)
   }
 
-  def drawRect(coord:Vec, width:Float, height:Float, _color:ScageColor = DEFAULT_COLOR) {
-    if(_color != DEFAULT_COLOR) color = _color
+  def drawRect(coord:Vec, width:Float, height:Float, color:ScageColor = DEFAULT_COLOR) {
+    if(color != DEFAULT_COLOR) currentColor = color
     GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glBegin(GL11.GL_LINE_LOOP);
           GL11.glVertex2f(coord.x, coord.y)
@@ -235,8 +235,8 @@ object Renderer {
         GL11.glEnd();
     GL11.glEnable(GL11.GL_TEXTURE_2D);
   }
-  def drawFilledRect(coord:Vec, width:Float, height:Float, _color:ScageColor = DEFAULT_COLOR) {
-    if(_color != DEFAULT_COLOR) color = _color
+  def drawFilledRect(coord:Vec, width:Float, height:Float, color:ScageColor = DEFAULT_COLOR) {
+    if(color != DEFAULT_COLOR) currentColor = color
     GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glBegin(GL11.GL_QUADS);
         GL11.glVertex2f(coord.x, coord.y)
@@ -246,8 +246,8 @@ object Renderer {
       GL11.glEnd();
     GL11.glEnable(GL11.GL_TEXTURE_2D);
   }
-  def drawRectCentered(coord:Vec, width:Float, height:Float, _color:ScageColor = DEFAULT_COLOR) {
-    if(_color != DEFAULT_COLOR) color = _color
+  def drawRectCentered(coord:Vec, width:Float, height:Float, color:ScageColor = DEFAULT_COLOR) {
+    if(color != DEFAULT_COLOR) currentColor = color
     GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glBegin(GL11.GL_LINE_LOOP);
           GL11.glVertex2f(coord.x - width/2, coord.y - height/2)
@@ -257,8 +257,8 @@ object Renderer {
         GL11.glEnd();
     GL11.glEnable(GL11.GL_TEXTURE_2D);
   }
-  def drawFilledRectCentered(coord:Vec, width:Float, height:Float, _color:ScageColor = DEFAULT_COLOR) {
-    if(_color != DEFAULT_COLOR) color = _color
+  def drawFilledRectCentered(coord:Vec, width:Float, height:Float, color:ScageColor = DEFAULT_COLOR) {
+    if(color != DEFAULT_COLOR) currentColor = color
     GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glBegin(GL11.GL_QUADS);
         GL11.glVertex2f(coord.x - width/2, coord.y - height/2)
@@ -276,12 +276,12 @@ object Renderer {
       GL11.glEnd();
     GL11.glEnable(GL11.GL_TEXTURE_2D);
   }
-  def drawPolygon(coords:Array[Vec], _color:ScageColor = DEFAULT_COLOR) {
-    if(_color != DEFAULT_COLOR) color = _color
+  def drawPolygon(coords:Array[Vec], color:ScageColor = DEFAULT_COLOR) {
+    if(color != DEFAULT_COLOR) currentColor = color
     drawPolygon(coords:_*)
   }
-  def drawPolygon(coords:List[Vec], _color:ScageColor) {
-    if(_color != DEFAULT_COLOR) color = _color
+  def drawPolygon(coords:List[Vec], color:ScageColor) {
+    if(color != DEFAULT_COLOR) currentColor = color
     drawPolygon(coords:_*)
   }
   def drawFilledPolygon(coords:Vec*) {
@@ -293,17 +293,17 @@ object Renderer {
       GL11.glEnd();
     GL11.glEnable(GL11.GL_TEXTURE_2D);
   }
-  def drawFilledPolygon(coords:Array[Vec], _color:ScageColor = DEFAULT_COLOR) {
-    if(_color != DEFAULT_COLOR) color = _color
+  def drawFilledPolygon(coords:Array[Vec], color:ScageColor = DEFAULT_COLOR) {
+    if(color != DEFAULT_COLOR) currentColor = color
     drawFilledPolygon(coords:_*)
   }
-  def drawFilledPolygon(coords:List[Vec], _color:ScageColor) {
-    if(_color != DEFAULT_COLOR) color = _color
+  def drawFilledPolygon(coords:List[Vec], color:ScageColor) {
+    if(color != DEFAULT_COLOR) currentColor = color
     drawFilledPolygon(coords:_*)
   }
 
-  def drawPoint(coord:Vec, _color:ScageColor = DEFAULT_COLOR) {
-    if(_color != DEFAULT_COLOR) color = _color
+  def drawPoint(coord:Vec, color:ScageColor = DEFAULT_COLOR) {
+    if(color != DEFAULT_COLOR) currentColor = color
     GL11.glDisable(GL11.GL_TEXTURE_2D)
       GL11.glBegin(GL11.GL_POINTS)
         GL11.glVertex2f(coord.x, coord.y)
@@ -317,18 +317,18 @@ object Renderer {
       GL11.glEnd()
     GL11.glEnable(GL11.GL_TEXTURE_2D)
   }
-  def drawPoints(coords:Array[Vec], _color:ScageColor = DEFAULT_COLOR) {
-    if(_color != DEFAULT_COLOR) color = _color
+  def drawPoints(coords:Array[Vec], color:ScageColor = DEFAULT_COLOR) {
+    if(color != DEFAULT_COLOR) currentColor = color
     drawPoints(coords:_*)
   }
-  def drawPoints(coords:List[Vec], _color:ScageColor) {
-    if(_color != DEFAULT_COLOR) color = _color
+  def drawPoints(coords:List[Vec], color:ScageColor) {
+    if(color != DEFAULT_COLOR) currentColor = color
     drawPoints(coords:_*)
   }
 
   // white color by default for display lists to draw in natural colors
-  def drawDisplayList(list_code:Int, coord:Vec = Vec(0,0), _color:ScageColor = WHITE) {
-    if(_color != DEFAULT_COLOR) color = _color
+  def drawDisplayList(list_code:Int, coord:Vec = Vec(0,0), color:ScageColor = WHITE) {
+    if(color != DEFAULT_COLOR) currentColor = color
     GL11.glPushMatrix();
 	  GL11.glTranslatef(coord.x, coord.y, 0.0f);
 	  GL11.glCallList(list_code)
@@ -340,11 +340,11 @@ object Renderer {
     def field_from_x:Int; def field_to_x:Int;
     def field_from_y:Int; def field_to_y:Int;
     def h_x:Int; def h_y:Int
-  }, _color:ScageColor = DEFAULT_COLOR) {
+  }, color:ScageColor = DEFAULT_COLOR) {
     import tracer._
     val x_lines = (field_from_x to field_to_x by h_x).foldLeft(List[Vec]())((lines, x) => Vec(x, field_from_y) :: Vec(x, field_to_y) :: lines)
     val y_lines = (field_from_y to field_to_y by h_y).foldLeft(List[Vec]())((lines, y) => Vec(field_from_x, y) :: Vec(field_to_x, y) :: lines)
-    drawLines(x_lines ::: y_lines, _color)
+    drawLines(x_lines ::: y_lines, color)
   }
 
   private def getTexture(format:String, in:InputStream):Texture = TextureLoader.getTexture(format, in)
@@ -464,7 +464,7 @@ trait Renderer extends Scage {
   }
 
   private val interfaces = ArrayBuffer[(Int, () => Unit)]()
-  def interface(interface_func: => Unit) = {
+  def interface(interface_func: => Unit):Int = {
     val operation_id = /*nextOperationId*/nextId
     interfaces += (operation_id, () => interface_func)
     operations_mapping += operation_id -> RenderOperations.Interface

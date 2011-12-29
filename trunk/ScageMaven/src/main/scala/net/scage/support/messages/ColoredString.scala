@@ -6,8 +6,11 @@ import collection.mutable.Stack
 import collection.JavaConversions._
 import net.scage.support.ScageColor
 import net.scage.support.ScageColors._
+import org.newdawn.slick.Color
 
 class ColoredString(original_text:String, default_color:ScageColor) {
+  def this(original_text:String, c:Color) {this(original_text, new ScageColor(c))}
+
   def colorSwitches():java.util.Map[Int, ScageColor] = color_switches
   def originalText() = original_text
   def text() = new_text.mkString

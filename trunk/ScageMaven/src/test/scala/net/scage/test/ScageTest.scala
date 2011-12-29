@@ -75,10 +75,7 @@ class ScageTest extends TestCase("app") {
           input_text = JOptionPane.showInputDialog("Input text here")
         })
         interface {
-          print("F1: enter text", screen_width/2, screen_height/2-80, WHITE)
-          if(input_text != "") {
-            print("Here is your text: "+input_text, screen_width/2, screen_height/2-100, WHITE)
-          }
+          printInterface(xmlInterface("scagetest.inputtext", input_text))
         }
 
         /*leftMouse(onBtnDown = {
@@ -137,12 +134,13 @@ class ScageTest extends TestCase("app") {
         backgroundColor = colorFromString("BLACK")    // test method to obtain color by name
         val another_font = new ScageMessage(font_size = 12) // test using two different fonts in one app
         interface {
-          another_font.print(xml("hello.world"), screen_width/2, screen_height/2+20,    WHITE)
-          print(xml("help"), screen_width/2, screen_height/2,    WHITE) // test obtaining string from xml
-          print(trace.location, screen_width/2, screen_height/2-40, WHITE)
-          print(tracer.point(trace.location), screen_width/2, screen_height/2-60, WHITE)
-          print(fps, 10, screen_height-20, WHITE)
+          another_font.print(xml("hello.world"), screen_width/2, screen_height/2+20, WHITE)
         }
+
+        interface {
+          printInterface(xmlInterface("scagetest.help", trace.location, tracer.point(trace.location), fps))
+        }
+
         render {
           drawDisplayList(stars)
           drawFilledCircle(trace.location, 10, RED)

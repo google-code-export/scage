@@ -1,5 +1,8 @@
 package net.scage.support.messages.unicode;
 
+import net.scage.support.ScageColor;
+import net.scage.support.messages.ColoredString;
+import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.font.HieroSettings;
@@ -454,11 +457,9 @@ public class UnicodeFont implements org.newdawn.slick.Font {
 	 * @param x The horizontal location to render at
 	 * @param y The vertical location to render at
 	 * @param color The colour to apply as a filter on the text
-	 * @param startIndex The start index into the string to start rendering at
-	 * @param endIndex The end index into the string to render to
 	 * @return The reference to the display list that was drawn and potentiall ygenerated
 	 */
-	public DisplayList drawDisplayList (float x, float y, String text, Color color, int startIndex, int endIndex) {
+	public DisplayList drawDisplayList (float x, float y, String text, Color color/*, int startIndex, int endIndex*/) {
 		if (text == null) throw new IllegalArgumentException("text cannot be null.");
 		if (text.length() == 0) return EMPTY_DISPLAY_LIST;
 		if (color == null) throw new IllegalArgumentException("color cannot be null.");
@@ -466,7 +467,7 @@ public class UnicodeFont implements org.newdawn.slick.Font {
 		x -= paddingLeft;
 		y -= paddingTop;
 
-		String displayListKey = text.substring(startIndex, endIndex);
+		String displayListKey = text/*.substring(startIndex, endIndex)*/;
 
 		color.bind();
 		TextureImpl.bindNone();
@@ -509,7 +510,9 @@ public class UnicodeFont implements org.newdawn.slick.Font {
 
 		if (displayList != null) GL.glNewList(displayList.id, SGL.GL_COMPILE_AND_EXECUTE);
 
-		char[] chars = text.substring(0, endIndex).toCharArray();
+        ColoredString colored_text = new ColoredString(text, color);
+        
+		char[] chars = colored_text.text()/*.substring(0, endIndex)*/.toCharArray();
 		GlyphVector vector = font.layoutGlyphVector(GlyphPage.renderContext, chars, 0, chars.length, Font.LAYOUT_LEFT_TO_RIGHT);
 
 		int maxWidth = 0, totalHeight = 0, lines = 0;
@@ -518,9 +521,14 @@ public class UnicodeFont implements org.newdawn.slick.Font {
 		Texture lastBind = null;
 		for (int glyphIndex = 0, n = vector.getNumGlyphs(); glyphIndex < n; glyphIndex++) {
 			int charIndex = vector.getGlyphCharIndex(glyphIndex);
-			if (charIndex < startIndex) continue;
-			if (charIndex > endIndex) break;
-
+			/*if (charIndex < startIndex) continue;*/
+			if (charIndex > colored_text.text().length()) break;
+            
+            if(colored_text.colorSwitches().containsKey(charIndex)) {
+                Color c = colored_text.colorSwitches().get(charIndex).toSlickColor();
+                GL11.glColor3f(c.r, c.g, c.b);
+            }
+            
 			int codePoint = text.codePointAt(charIndex);
 
 			Rectangle bounds = getGlyphBounds(vector, glyphIndex, codePoint);
@@ -577,7 +585,7 @@ public class UnicodeFont implements org.newdawn.slick.Font {
 	}
 
 	public void drawString (float x, float y, String text, Color color, int startIndex, int endIndex) {
-		drawDisplayList(x, y, text, color, startIndex, endIndex);
+		drawDisplayList(x, y, text, color/*, startIndex, endIndex*/);
 	}
 
 	public void drawString (float x, float y, String text) {

@@ -1,0 +1,28 @@
+<interfaces>
+    <interface id="scagetest.help" x="320" y="240" yinterval="-20" color="yellow">
+        <row id="help">
+            WASD и Левая Кнопка Мыши,
+Колесико - приблизить/отдалить                
+        </row>
+        <row />
+        <row/>
+        <row id="trace.location" color="green">
+            Location: $0            
+        </row>
+        <row id="trace.point">
+            Point: $0            
+        </row>
+        <row id="fps" x="20" y="460">
+            FPS: $0
+        </row>
+    </interface>
+        
+    <interface id="scagetest.inputtext" x="320" y="120" yinterval="-20" color="white">
+        <row id="inputtext">
+            F1: [gInp[rut te]xt]
+        </row>
+        <row id="heretext">
+            Your text: $0
+        </row>
+    </interface>
+</interfaces>

@@ -1,6 +1,5 @@
 package net.scage.support.messages.unicode;
 
-import net.scage.support.ScageColor;
 import net.scage.support.messages.ColoredString;
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.Color;
@@ -529,7 +528,7 @@ public class UnicodeFont implements org.newdawn.slick.Font {
                 GL11.glColor3f(c.r, c.g, c.b);
             }
             
-			int codePoint = text.codePointAt(charIndex);
+			int codePoint = colored_text.text().codePointAt(charIndex);
 
 			Rectangle bounds = getGlyphBounds(vector, glyphIndex, codePoint);
 			Glyph glyph = getGlyph(vector.getGlyphCode(glyphIndex), codePoint, bounds, vector, glyphIndex);

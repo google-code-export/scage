@@ -124,7 +124,7 @@ class ScageTest extends TestCase("app") {
               }*/
             }
 
-            velocity = (mouse_coord - trace.location).n*10
+            velocity = (target_point).n*10
             render {
               if(physics.containsPhysical(this)) drawFilledCircle(coord, 2, YELLOW)
             }

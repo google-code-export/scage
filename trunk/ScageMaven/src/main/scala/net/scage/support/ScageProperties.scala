@@ -3,6 +3,7 @@ package net.scage.support
 import java.util.Properties
 import org.newdawn.slick.util.ResourceLoader
 import com.weiglewilczek.slf4s.Logger
+import collection.mutable.ArrayBuffer
 
 object ScageProperties {
   private val log = Logger(this.getClass.getName)
@@ -17,7 +18,7 @@ object ScageProperties {
 
   private lazy val defaultPropsWarning = {
     log.warn("warning: no properties file set, using defaults")
-    _file = "scage-properties.txt"
+    _file = "scage.properties"
   }
   def file = {
     if(_file == null) defaultPropsWarning
@@ -39,29 +40,27 @@ object ScageProperties {
       val p = new Properties
       p.load(ResourceLoader.getResourceAsStream(file))   // can be loaded as resource from jar
       log.info("loaded properties file "+file)
-      props_already_read = Nil
+      props_already_read.clear()
       p
-    }
-    catch {
+    } catch {
       //case ex:FileNotFoundException =>
       case ex:Exception =>
         if(!file.contains("properties/")) {
-          log.error("failed to load properties: file "+_file+" not found")
+          log.warn("failed to load properties: file "+_file+" not found")
           //log.debug("development mode: looking for properties file in the properties folder")
           _file = "properties/" + _file
           load
-        }
-        else fileNotFound
+        } else fileNotFound
     }
   }
 
-  private var props_already_read:List[String] = Nil
+  private var props_already_read = ArrayBuffer[String]()
   private def getProperty(key:String) = {
     props.getProperty(key) match {
       case p:String =>
         if(!props_already_read.contains(key)) {
           log.info("read property "+key+": "+p)
-          props_already_read = key :: props_already_read
+          props_already_read += key
         }
         p.trim
       case _ =>
@@ -72,15 +71,15 @@ object ScageProperties {
   private def defaultValue[A](key:String, default:A) = {
     log.info("default value for property "+key+" is "+(if("".equals(default.toString)) "empty string" else default))
     props.put(key, default.toString)
-    props_already_read = key :: props_already_read
+    props_already_read += key
     default
   }
 
-  def property[A](key:String, default:A)(implicit m:Manifest[A]):A = {
+  def property[A : Manifest](key:String, default:A):A = {
     getProperty(key) match {
       case p:String =>
         try {
-          m.toString match {
+          manifest[A].toString match {
             case "Int" => p.toInt.asInstanceOf[A]
             case "Long" => p.toLong.asInstanceOf[A]
             case "Float" => p.toFloat.asInstanceOf[A]
@@ -100,7 +99,7 @@ object ScageProperties {
         }
         catch {
           case e:Exception =>
-            log.warn("failed to use property ("+key+" : "+p+") as "+m)
+            log.warn("failed to use property ("+key+" : "+p+") as "+manifest[A])
             defaultValue(key, default)
         }
       case _ => defaultValue(key, default)

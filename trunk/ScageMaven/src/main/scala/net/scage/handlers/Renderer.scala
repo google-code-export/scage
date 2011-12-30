@@ -142,7 +142,7 @@ object Renderer {
     GL11.glGetFloat(GL11.GL_COLOR_CLEAR_VALUE, background_color)
     new ScageColor(background_color.get(0), background_color.get(1), background_color.get(2))
   }
-  def backgroundColor_=(c:ScageColor) {GL11.glClearColor(c.red, c.green, c.blue, 0)}
+  def backgroundColor_=(c:ScageColor) {if(c != DEFAULT_COLOR) GL11.glClearColor(c.red, c.green, c.blue, 0)}
   
   def currentColor = {
     val _color = BufferUtils.createFloatBuffer(16)

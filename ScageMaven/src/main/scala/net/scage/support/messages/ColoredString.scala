@@ -26,14 +26,13 @@ class ColoredString(original_text:String, default_color:ScageColor) {
       text_arr(pos) match {
         case '\\' => disable_color_switch_symbol = true
         case '[' if !disable_color_switch_symbol && pos < text_arr.length-1 => {
-          val color_char = text_arr(pos+1) match {
+          (text_arr(pos+1) match {
             case 'r' => Some(RED)
             case 'g' => Some(GREEN)
             case 'b' => Some(BLUE)
             case 'y' => Some(YELLOW)
             case _ => None
-          }
-          color_char match {
+          }) match {
             case Some(color) => {
               color_switches += (pos - pos_offset) -> color
               pos_offset += 2

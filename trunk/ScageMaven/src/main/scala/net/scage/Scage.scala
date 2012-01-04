@@ -5,10 +5,10 @@ import collection.mutable.{HashMap, ArrayBuffer}
 import support.ScageProperties
 import support.ScageId._
 
-trait Scage {
-  def unit_name:String      // those three values _must_ be constructor parameters in any non-virtual child!!!
-  def is_main_unit:Boolean
-  def properties:String
+class Scage(
+  val unit_name:String,      // those three values _must_ be constructor parameters in any non-virtual child!!!
+  val is_main_unit:Boolean,
+  val properties:String) {
 
   private val log = Logger(this.getClass.getName)
 
@@ -31,7 +31,7 @@ trait Scage {
           case ScageOperations.Init => delInits(operation_id)
           case ScageOperations.Action => delActions(operation_id)
           case ScageOperations.Exit => delExits(operation_id)
-          case ScageOperations.Dispose => delDisposes(operation_id)
+          /*case ScageOperations.Dispose => delDisposes(operation_id)*/
           case _ => {
             log.warn("operation with id "+operation_id+" not found so wasn't deleted")
             false
@@ -55,7 +55,7 @@ trait Scage {
     dellAllInits()
     delAllActions()
     delAllExits()
-    delAllDisposes()
+    /*delAllDisposes()*/
   }
 
   private val inits = ArrayBuffer[(Int, () => Any)]()
@@ -88,7 +88,7 @@ trait Scage {
   }
 
   // (operation_id, operation, is_pausable)
-  private var actions = ArrayBuffer[(Int, () => Any, Boolean)]()
+  protected var actions = ArrayBuffer[(Int, () => Any, Boolean)]()
   private def addAction(operation: => Any, is_pausable:Boolean) = {
     val operation_id = nextId
     actions += (operation_id, () => operation, is_pausable)
@@ -219,14 +219,14 @@ trait Scage {
       log.info("deleted all dispose operations")
     }
 
-  private var on_pause = false
+  protected var on_pause = false
   private def logPause() {log.info("pause = " + on_pause)}
   def onPause = on_pause
   def switchPause() {on_pause = !on_pause; logPause()}
   def pause() {on_pause = true; logPause()}
   def pauseOff() {on_pause = false; logPause()}
 
-  private var is_running = false
+  protected var is_running = false
   def isRunning = is_running
   def init() {
     log.info(unit_name+": init")
@@ -243,12 +243,12 @@ trait Scage {
     }
   }
   def dispose() {
-      log.info(unit_name+": dispose")
-      for((dispose_id, dispose_operation) <- disposes) {
-        current_operation_id = dispose_id
-        dispose_operation()
-      }
+    log.info(unit_name+": dispose")
+    for((dispose_id, dispose_operation) <- disposes) {
+      current_operation_id = dispose_id
+      dispose_operation()
     }
+  }
   def run() {
     if(!is_main_unit) log.info("starting unit "+unit_name+"...")
     init()
@@ -266,6 +266,7 @@ trait Scage {
   }
   def stop() {
     is_running = false
+    if(is_main_unit) Scage.stopApp()
   }
 
   private val events = new HashMap[String, List[() => Unit]]()

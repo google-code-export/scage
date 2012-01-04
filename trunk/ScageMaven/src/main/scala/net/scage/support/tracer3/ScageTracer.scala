@@ -2,18 +2,17 @@ package net.scage.support.tracer3
 
 import net.scage.support.Vec
 import net.scage.support.ScageProperties._
-import _root_.net.scage.handlers.Renderer._
 import com.weiglewilczek.slf4s.Logger
 import collection.mutable.{ArrayBuffer, HashMap}
 
 class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from.x", 0),
-                              val field_to_x:Int          = property("field.to.x", screen_width),
+                              val field_to_x:Int          = property("field.to.x", property("screen.width", 800)),
                               val field_from_y:Int        = property("field.from.y", 0),
-                              val field_to_y:Int          = property("field.to.y", screen_height),
+                              val field_to_y:Int          = property("field.to.y", property("screen.height", 600)),
                               init_h_x:Int                = property("field.h_x", 0),
                               init_h_y:Int                = property("field.h_y", 0),
-                              init_N_x:Int                = if(property("field.h_x", 0) == 0) property("field.N_x", screen_width/50) else 0,
-                              init_N_y:Int                = if(property("field.h_y", 0) == 0) property("field.N_y", screen_height/50) else 0,
+                              init_N_x:Int                = if(property("field.h_x", 0) == 0) property("field.N_x", property("screen.width", 800)/50) else 0,
+                              init_N_y:Int                = if(property("field.h_y", 0) == 0) property("field.N_y", property("screen.height", 600)/50) else 0,
                               val are_solid_edges:Boolean = property("field.solid_edges", true)) {
   private val log = Logger(this.getClass.getName)
 
@@ -46,9 +45,11 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
     else Vec(checkC(point.x, N_x), checkC(point.y, N_y))
   }
 
-  def point(v:Vec):Vec = Vec(((v.x - field_from_x)/field_width*N_x).toInt,
-                             ((v.y - field_from_y)/field_height*N_y).toInt)
-  def pointCenter(p:Vec):Vec = Vec(field_from_x + p.x*h_x + h_x/2, field_from_y + p.y*h_y + h_y/2)
+  def point(x:Float, y:Float):Vec = Vec(((x - field_from_x)/field_width*N_x).toInt,
+                                        ((y - field_from_y)/field_height*N_y).toInt)
+  def point(p:Vec):Vec = point(p.x, p.y)
+  def pointCenter(x:Float, y:Float):Vec = Vec(field_from_x + x*h_x + h_x/2, field_from_y + y*h_y + h_y/2)
+  def pointCenter(p:Vec):Vec = pointCenter(p.x, p.y)
 
   protected def initMatrix(matrix:Array[Array[ArrayBuffer[T]]]) {
     for(i <- 0 until matrix.length; j <- 0 until matrix.head.length) {matrix(i)(j) = ArrayBuffer[T]()}
@@ -155,7 +156,7 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
             SAME_LOCATION
           }
         } else {
-          log.warn("failed to update trace "+trace_id+": new point is out of area")
+          log.debug("failed to update trace "+trace_id+": new point is out of area")
           OUT_OF_AREA
         }
       }
@@ -176,20 +177,46 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
     val y = leftup_y - (math.random*height).toInt
     Vec(x,y)
   }
+  def randomPointWithCondition(leftup_x:Int = 0,
+                  leftup_y:Int = N_y-1, 
+                  width:Int = N_x, 
+                  height:Int = N_y,
+                  condition:Vec => Boolean,
+                  num_tries:Int = 10):Option[Vec] = {
+    for(i <- 0 until num_tries) {
+      log.debug("generating random point, try "+i)
+      val point = randomPoint()
+      if(condition(point)) return Some(point)
+    }      
+    return None  
+  }
   def randomCoord(leftup_x:Int = field_from_x, leftup_y:Int = field_to_y-1, width:Int = field_to_x - field_from_x, height:Int = field_to_y - field_from_y) = {
-    randomPoint(leftup_x, leftup_y, width, height)
+    pointCenter(point(randomPoint(leftup_x, leftup_y, width, height)))
+  }
+  def randomCoordWithCondition(leftup_x:Int = field_from_x,
+                  leftup_y:Int = field_to_y-1, 
+                  width:Int = field_to_x - field_from_x, 
+                  height:Int = field_to_y - field_from_y,
+                  condition:Vec => Boolean,
+                  num_tries:Int = 10):Option[Vec] = {
+    for(i <- 0 until num_tries) {
+      log.debug("generating random coord, try "+i)
+      val coord = randomCoord()
+      if(condition(coord)) return Some(coord)
+    }      
+    return None
   }
 }
 
 object ScageTracer {
   def apply(field_from_x:Int        = property("field.from.x", 0),
-            field_to_x:Int          = property("field.to.x", screen_width),
+            field_to_x:Int          = property("field.to.x", property("screen.width", 800)),
             field_from_y:Int        = property("field.from.y", 0),
-            field_to_y:Int          = property("field.to.y", screen_height),
+            field_to_y:Int          = property("field.to.y", property("screen.height", 600)),
             init_h_x:Int            = property("field.h_x", 0),
             init_h_y:Int            = property("field.h_y", 0),
-            init_N_x:Int            = if(property("field.h_x", 0) == 0) property("field.N_x", screen_width/50) else 0,
-            init_N_y:Int            = if(property("field.h_y", 0) == 0) property("field.N_y", screen_height/50) else 0,
+            init_N_x:Int            = if(property("field.h_x", 0) == 0) property("field.N_x", property("screen.width", 800)/50) else 0,
+            init_N_y:Int            = if(property("field.h_y", 0) == 0) property("field.N_y", property("screen.height", 600)/50) else 0,
             are_solid_edges:Boolean = property("field.solid_edges", true)) = {
     new ScageTracer[Trace](field_from_x,field_to_x,field_from_y,field_to_y,init_h_x,init_h_y,init_N_x,init_N_y,are_solid_edges) {
       def addTrace(point:Vec):Trace = {addTrace(point, Trace())}
@@ -198,13 +225,13 @@ object ScageTracer {
 
   // maybe some other name for this factory method (like 'newTracer', etc)
   def create[T <: Trace](field_from_x:Int        = property("field.from.x", 0),
-                         field_to_x:Int          = property("field.to.x", screen_width),
+                         field_to_x:Int          = property("field.to.x", property("screen.width", 800)),
                          field_from_y:Int        = property("field.from.y", 0),
-                         field_to_y:Int          = property("field.to.y", screen_height),
+                         field_to_y:Int          = property("field.to.y", property("screen.height", 600)),
                          init_h_x:Int            = property("field.h_x", 0),
                          init_h_y:Int            = property("field.h_y", 0),
-                         init_N_x:Int            = if(property("field.h_x", 0) == 0) property("field.N_x", screen_width/50) else 0,
-                         init_N_y:Int            = if(property("field.h_y", 0) == 0) property("field.N_y", screen_height/50) else 0,
+                         init_N_x:Int            = if(property("field.h_x", 0) == 0) property("field.N_x", property("screen.width", 800)/50) else 0,
+                         init_N_y:Int            = if(property("field.h_y", 0) == 0) property("field.N_y", property("screen.height", 600)/50) else 0,
                          are_solid_edges:Boolean = property("field.solid_edges", true)) = {
     new ScageTracer[T](field_from_x,field_to_x,field_from_y,field_to_y,init_h_x,init_h_y,init_N_x,init_N_y,are_solid_edges)
   }

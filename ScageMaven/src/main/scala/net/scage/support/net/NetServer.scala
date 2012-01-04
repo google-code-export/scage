@@ -5,6 +5,8 @@ import java.io.{InputStreamReader, BufferedReader, OutputStreamWriter, PrintWrit
 import java.net.{SocketException, ServerSocket, Socket}
 import org.json.{JSONException, JSONObject}
 import com.weiglewilczek.slf4s.Logger
+import concurrent.ops._
+import collection.mutable.ArrayBuffer
 
 object NetServer {
   private val log = Logger(this.getClass.getName)
@@ -15,7 +17,7 @@ object NetServer {
 
   private var server_socket:ServerSocket = null
 
-  private var client_handlers:List[ClientHandler] = Nil
+  private var client_handlers = ArrayBuffer[ClientHandler]()
   def clients = client_handlers
   def client(num:Int) = client_handlers(num)
   def numClients = client_handlers.length
@@ -41,44 +43,53 @@ object NetServer {
   def addOutgoingData(key:Any, data:Any) {sd.put(key.toString, data)}
   def addOutgoingData(key:Any) {sd.put(key.toString, "")}
 
-  var serverGreetings:ClientHandler => Unit = (client) => client.send("This is Scage NetServer")
+  var serverGreetings:ClientHandler => (Boolean, String) = (client) => {
+    client.send("This is Scage NetServer")
+    (true, "")
+  }
   private var next_client = 0
 
   private var is_running = false
-  def startServer() {
+  def startServer(new_serverGreetings:ClientHandler => (Boolean, String) = serverGreetings) {
     log.info("starting net server...")
+    serverGreetings = new_serverGreetings
     is_running = true
-    new Thread() {  // awaiting new connections
-      override def run() {
-        server_socket = new ServerSocket(port)
-        while(is_running) {
-          if(max_clients == 0 || client_handlers.length < max_clients) {
-            log.info("listening port "+port+", "+client_handlers.length+"/"+max_clients+" client(s) are connected")
-            val socket = server_socket.accept
-            val client = new ClientHandler(next_client, socket, is_running)
-            client_handlers = client :: client_handlers
-            log.info("established connection with "+socket.getInetAddress.getHostAddress)
-            serverGreetings(client)
+    spawn {
+      server_socket = new ServerSocket(port)
+      while(is_running) {
+        if(max_clients == 0 || client_handlers.length < max_clients) {
+          log.info("listening port "+port+", "+client_handlers.length+"/"+max_clients+" client(s) are connected")
+          val socket = server_socket.accept
+          log.info("incoming connection from "+socket.getInetAddress.getHostAddress)
+          val client = new ClientHandler(next_client, socket, is_running)
+          val (is_client_accepted, reason) = serverGreetings(client)
+          if(is_client_accepted) {
+            client_handlers += client
+            log.info("established connection with "+socket.getInetAddress.getHostAddress)          
             has_new_connection = true
             next_client += 1
+          } else {
+            log.info("refused connection from "+socket.getInetAddress.getHostAddress+": "+reason)
+            client.send(new JSONObject().put("quit", ""))
+            client.disconnect()
           }
-          else Thread.sleep(1000)
-        }
-      }
-    }.start()
+        } else Thread.sleep(1000)
+      }      
+    }
 
-    new Thread() {
-      override def run() {
+    if(check_timeout > 0) {
+      spawn {
         while(is_running) {
-          client_handlers.filter(client => !client.isOnline).foreach(client => {
+          val oofline_clients = client_handlers.filter(client => !client.isOnline)
+          oofline_clients.foreach(client => {
             client.send(new JSONObject().put("quit", "no responce from you for "+check_timeout+" msecs"))
             client.disconnect()
           })
-          client_handlers = client_handlers.filter(client => client.isOnline)
+          client_handlers --= oofline_clients
           Thread.sleep(1000)
         }
       }
-    }.start()
+    }
   }
 
   def stopServer() {
@@ -122,23 +133,25 @@ class ClientHandler(val id:Int, socket:Socket, isRunning: => Boolean) {
   private var last_answer_time = System.currentTimeMillis
   def isOnline = check_timeout == 0 || System.currentTimeMillis - last_answer_time < check_timeout
 
-  new Thread() {
-    override def run() {
-      while(isRunning) {
-        if(in.ready) {
-          last_answer_time = System.currentTimeMillis
-          val message = try{in.readLine}
-          catch {
-            case e:SocketException => return
-          }
+  spawn {
+    while(isRunning) {
+      if(in.ready) {
+        last_answer_time = System.currentTimeMillis
+        try {
+          val message = in.readLine
           cd = try{new JSONObject(message)}
           catch {
             case e:JSONException => cd.put("raw", message)
           }
           if(cd.length > 0) has_new_data = true
+        } catch {
+          case e:SocketException => {
+            log.error("error while receiving data from client "+id+": "+e)
+            // dsiconnect maybe?
+          }
         }
-        Thread.sleep(10)
       }
+      Thread.sleep(10)
     }
-  }.start()
+  }
 }

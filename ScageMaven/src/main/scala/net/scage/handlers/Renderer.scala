@@ -429,6 +429,11 @@ trait Renderer extends Scage {
   def center = central_coord()
   def center_= (coord: => Vec) {central_coord = () => coord}
 
+  def scaledCoord(coord:Vec) = {
+    if(scale == 1) coord
+    else (coord / scale) + (center - windowCenter/scale)
+  }
+
   case class RenderElement(operation_id:Int, render_func:() => Unit, position:Int = 0) extends Ordered[RenderElement] {
     def compare(that:RenderElement) = this.position - that.position
   }
@@ -515,7 +520,7 @@ trait Renderer extends Scage {
     }
   }
 
-  def exitRender() {
+  protected def exitRender() {
     backgroundColor = BLACK
     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
     print(xmlOrDefault("renderer.exiting", "Exiting..."), 20, screen_height-25, GREEN)

@@ -2,8 +2,17 @@ package net.scage.support.tracer3
 
 import collection.mutable.HashMap
 
-class State(args:(String, Any)*) extends HashMap[String, Any] {
-  this ++= args
+class State(args:Any*) extends HashMap[String, Any] {
+  //def this(args:String*) {this(args.map((_, true)):_*)}
+  
+  args.foreach(arg => {
+    arg match {
+      case elem:(String, Any) => this += elem
+      case elem:Any => this += (elem.toString -> true)
+    }
+  })
+
+  //this ++= args
   def neededKeys(needed_keys:String*)(foreach_func:((String, Any)) => Any) {
     foreach(elem => if(needed_keys.contains(elem._1)) foreach_func(elem))
   }

@@ -2,27 +2,39 @@ package net.scage
 
 import handlers.controller2.{ScageController, MultiController, SingleController}
 import handlers.Renderer
+import com.weiglewilczek.slf4s.Logger
 
-trait Screen extends Scage with Renderer with ScageController {
-  actionNoPause {
-    checkControls()
-  }
+abstract class Screen(unit_name:String = "Scage App", is_main_unit:Boolean = false, properties:String = "")
+extends Scage(unit_name, is_main_unit, properties) with Renderer with ScageController {
+  private val log = Logger(this.getClass.getName)
 
-  actionNoPause {
-    render()
-  }
-
-  if(is_main_unit) {            // There is a problem here if no main screen set. We suppose that client app is starting
-    dispose {                   // from the point of some main screen (is_main_unit=true and its a first screen
-      if(!Scage.isAppRunning) { // to start and the last to exit) but for now we have no ways to control it
-        exitRender()
+  // I could override del operations instead to not delete action operations from here (checlControls(), render() etc),
+  // or I could set new operation type - some kind of 'important' ops...
+  override def run() {
+    if(!is_main_unit) log.info("starting unit "+unit_name+"...")
+    init()
+    is_running = true
+    log.info(unit_name+": run")
+    while(is_running && Scage.isAppRunning) {
+      checkControls()
+      for((action_id, action_operation, is_action_pausable) <- actions) {
+        current_operation_id = action_id
+        if(!on_pause || !is_action_pausable) action_operation()
       }
+      render()
+    }
+    exit()
+    dispose()
+    log.info(unit_name+" was stopped")
+    if(is_main_unit/* && !Scage.isAppRunning*/) {
+      exitRender()
+      System.exit(0)
     }
   }
 }
 
-class ScageScreen(val unit_name:String = "Scage App", val is_main_unit:Boolean = false, val properties:String = "")
-extends Screen with SingleController
+class ScageScreen(unit_name:String = "Scage App", is_main_unit:Boolean = false, properties:String = "")
+extends Screen(unit_name, is_main_unit, properties) with SingleController
 
-class MultiControlledScreen(val unit_name:String = "Scage App", val is_main_unit:Boolean = false, val properties:String = "")
-extends Screen with MultiController
+class MultiControlledScreen(unit_name:String = "Scage App", is_main_unit:Boolean = false, properties:String = "")
+extends Screen(unit_name, is_main_unit, properties) with MultiController

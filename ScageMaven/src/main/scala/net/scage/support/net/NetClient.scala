@@ -5,6 +5,7 @@ import java.io.{InputStreamReader, OutputStreamWriter, BufferedReader, PrintWrit
 import java.net.{SocketException, Socket}
 import org.json.{JSONException, JSONObject}
 import com.weiglewilczek.slf4s.Logger
+import concurrent.ops._
 
 object NetClient {
   private val log = Logger(this.getClass.getName)
@@ -18,7 +19,7 @@ object NetClient {
   private var out:PrintWriter = null
   private var in:BufferedReader = null
 
-  def connect() {
+  private def connect() {
     log.info("start connecting to server "+server_url+" at port "+port)
     socket = try {new Socket(server_url, port)}
     catch {
@@ -74,34 +75,37 @@ object NetClient {
 
   private var is_running = false
   def startClient() {
+    connect()
     is_running = true
-    new Thread() {
-      override def run() {
-        while(is_running) {
-          if(!isServerOnline) { // connection checker
-            if(is_connected) disconnect()
-            connect()
-          }
-          if(is_connected) {
-            if(in.ready) {
-              last_answer_time = System.currentTimeMillis
-              val message = try{in.readLine}
-              catch {
-                case e:SocketException => return
-              }
+    spawn {
+      while(is_running) {
+        if(!isServerOnline) { // connection checker
+          if(is_connected) disconnect()
+          connect()
+        }
+        if(is_connected) {
+          if(in.ready) {
+            last_answer_time = System.currentTimeMillis
+            try {
+              val message = in.readLine
               sd = try{new JSONObject(message)}
               catch {
                 case e:JSONException => sd.put("raw", message)
               }
               if(sd.length > 0) has_new_data = true
+            } catch {
+              case e:SocketException => {
+                log.error("error while receiving data from server: "+e)
+                // disconnect maybe?
+              }
             }
           }
-          Thread.sleep(10)
         }
+        Thread.sleep(10)
       }
-    }.start()
+    }
   }
-  def stopServer() {
+  def stopClient() {
     is_running = false
     disconnect()
   }

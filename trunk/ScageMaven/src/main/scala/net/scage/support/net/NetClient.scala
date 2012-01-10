@@ -3,7 +3,7 @@ package net.scage.support.net
 import _root_.net.scage.support.ScageProperties._
 import java.io.{InputStreamReader, OutputStreamWriter, BufferedReader, PrintWriter}
 import java.net.{SocketException, Socket}
-import org.json.{JSONException, JSONObject}
+import net.scage.support.State
 import com.weiglewilczek.slf4s.Logger
 import concurrent.ops._
 
@@ -39,17 +39,17 @@ object NetClient {
 
   def send() {
     if(is_connected) {
-      out.println(cd)
+      out.println(cd.toJsonString)
       out.flush()
     }
   }
-  def send(data:JSONObject) {
+  def send(data:State) {
     cd = data
     send()
   }
-  def send(data:String) {send(new JSONObject().put("raw", data))}
+  def send(data:String) {send(State(("raw" -> data)))}
 
-  private var sd = new JSONObject
+  private var sd = State()
   private var has_new_data = false
   def incomingData = {
     has_new_data = false
@@ -57,11 +57,11 @@ object NetClient {
   }
   def hasNewIncomingData = has_new_data
 
-  private var cd = new JSONObject
+  private var cd = State()
   def outgoingData = cd
-  def eraseOutgoingData() {cd = new JSONObject}
-  def addOutgoingData(key:Any, data:Any) {cd.put(key.toString, data)}
-  def addOutgoingData(key:Any) {cd.put(key.toString, "")}
+  def eraseOutgoingData() {cd.clear()}
+  def addOutgoingData(key:Any, data:Any) {cd += (key.toString -> data)}
+  def addOutgoingData(key:Any) {cd.add(key)}
 
   private val check_timeout = intProperty("check_timeout")
   private var last_answer_time = System.currentTimeMillis
@@ -88,11 +88,11 @@ object NetClient {
             last_answer_time = System.currentTimeMillis
             try {
               val message = in.readLine
-              sd = try{new JSONObject(message)}
+              sd = try{State.fromJson(message)}
               catch {
-                case e:JSONException => sd.put("raw", message)
+                case e:Exception => State(("raw" -> message))
               }
-              if(sd.length > 0) has_new_data = true
+              if(sd.size > 0) has_new_data = true
             } catch {
               case e:SocketException => {
                 log.error("error while receiving data from server: "+e)

@@ -5,8 +5,10 @@ import com.weiglewilczek.slf4s.Logger
 import collection.mutable.HashMap
 import xml.XML
 import org.newdawn.slick.util.ResourceLoader
-import net.scage.support.ScageColor
 import net.scage.support.ScageColors._
+import net.scage.support.ScageColor
+import net.scage.handlers.Renderer
+import net.scage.support.parsers.FormulaParser
 
 case class InterfaceData(interface_id:String, x:Int = -1, y:Int = -1, xinterval:Int = 0, yinterval:Int = 0, rows:Array[RowData], color:ScageColor = DEFAULT_COLOR)
 case class RowData(message_id:String, x:Int = -1, y:Int = -1, placeholders_before:Int = 0, placeholders_in_row:Int = 0, color:ScageColor = DEFAULT_COLOR)
@@ -81,6 +83,11 @@ class ScageXML(val lang:String          = property("strings.lang", "en"),
     message.foldLeft(0)((sum, char) => sum + (if(char == '$') 1 else 0))
   }
 
+  private val formula_parser = new FormulaParser(
+      constants = Map("window_width"  -> Renderer.window_width,
+                      "window_height" -> Renderer.window_height)
+  )
+
   lazy val interfaces_file = interfaces_base + "_" + lang + ".xml"
   private lazy val xml_interfaces = try {
     XML.load(ResourceLoader.getResourceAsStream(interfaces_file)) match {
@@ -90,32 +97,40 @@ class ScageXML(val lang:String          = property("strings.lang", "en"),
           interface @ <interface>{rows_list @ _*}</interface> <- interfaces_list
           interface_id = (interface \ "@id").text
           if interface_id != ""
-          interface_x = try{(interface \ "@x").text.toInt} catch {case ex:Exception => -1}
-          interface_y = try{(interface \ "@y").text.toInt} catch {case ex:Exception => -1}
-          interface_xinterval = try{(interface \ "@xinterval").text.toInt} catch {case ex:Exception => 0}
-          interface_yinterval = try{(interface \ "@yinterval").text.toInt} catch {case ex:Exception => 0}
-          interface_color_str = (interface \ "@color").text
+          interface_x = try{formula_parser.evaluate((interface \ "@x").text).toInt} catch {case ex:Exception => -1}
+          interface_y = try{formula_parser.evaluate((interface \ "@y").text).toInt} catch {case ex:Exception => -1}
+          interface_xinterval = try{formula_parser.evaluate((interface \ "@xinterval").text).toInt} catch {case ex:Exception => 0}
+          interface_yinterval = try{formula_parser.evaluate((interface \ "@yinterval").text).toInt} catch {case ex:Exception => 0}
+          interface_color = colorFromString((interface \ "@color").text)
         } yield {
           var placeholders_before = 0
+          var xpos = interface_x
+          var ypos = interface_y
+          var curcolor = interface_color
           val messages = (for {
             row @ <row>{_*}</row> <- rows_list
             message_id = (row \ "@id").text
             message = row.text.trim
-            message_x = try{(row \ "@x").text.toInt} catch {case ex:Exception => -1}
-            message_y = try{(row \ "@y").text.toInt} catch {case ex:Exception => -1}
+            message_x = try{formula_parser.evaluate((row \ "@x").text).toInt} catch {case ex:Exception => -1}
+            message_y = try{formula_parser.evaluate((row \ "@y").text).toInt} catch {case ex:Exception => -1}
             placeholders_in_row = placeholdersAmount(message)
-            message_color_str = (row \ "@color").text
+            message_color = colorFromString((row \ "@color").text)
           } yield {
             if(message != "") {
               xml_messages += (message_id -> message)
               log.debug("added message "+message_id)
             }
-            val to_yield = RowData(message_id, message_x, message_y, placeholders_before, placeholders_in_row, colorFromString(message_color_str))
+            val to_yield_x = if(message_x != -1) message_x else xpos  // priority to coords and color in tag row
+            val to_yield_y = if(message_y != -1) message_y else ypos
+            if(message_color != DEFAULT_COLOR) curcolor = message_color
+            val to_yield = RowData(message_id, to_yield_x, to_yield_y, placeholders_before, placeholders_in_row, curcolor)
             placeholders_before += placeholders_in_row
+            if(message_x == -1) xpos += interface_xinterval
+            if(message_y == -1) ypos += interface_yinterval
             to_yield
           }).toArray
           log.debug("added interface "+interface_id)
-          (interface_id, InterfaceData(interface_id, interface_x, interface_y, interface_xinterval, interface_yinterval, messages, colorFromString(interface_color_str)))
+          (interface_id, InterfaceData(interface_id, interface_x, interface_y, interface_xinterval, interface_yinterval, messages, interface_color))
         }):_*)
       }
       case _ => HashMap[String, InterfaceData]()  // TODO: log messages
@@ -127,26 +142,16 @@ class ScageXML(val lang:String          = property("strings.lang", "en"),
   def xmlInterface(interface_id:String, parameters:Any*):Array[MessageData] = {
     xml_interfaces.get(interface_id) match {
       case Some(InterfaceData(_, interface_x, interface_y, interface_xinterval, interface_yinterval, rows, interface_color)) => {
-        var xpos = interface_x
-        var ypos = interface_y
-        var curcolor = interface_color
         (for {
           RowData(message_id, message_x, message_y, params_from, params_take, message_color) <- rows
         } yield {
-          // TODO: we can resolve this while loading xml!
-          val to_yield_x = if(message_x != -1) message_x else xpos  // priority to coords and color in tag row
-          val to_yield_y = if(message_y != -1) message_y else ypos
-          if(message_color != DEFAULT_COLOR) curcolor = message_color
-
-          val to_yield = MessageData(xml(message_id, (parameters.drop(params_from).take(params_take)):_*), to_yield_x, to_yield_y, curcolor)
-          if(message_x == -1) xpos += interface_xinterval
-          if(message_y == -1) ypos += interface_yinterval
+          val to_yield = MessageData(xml(message_id, (parameters.drop(params_from).take(params_take)):_*), message_x, message_y, message_color)
           to_yield
         }).toArray
       }
       case None => {
         log.warn("failed to find interface with id "+interface_id)
-        xml_interfaces += (interface_id -> InterfaceData(interface_id, rows = Array(RowData(interface_id))))
+        xml_interfaces += (interface_id -> InterfaceData(interface_id, rows = Array(/*RowData(interface_id)*/)))
         xml_messages += (interface_id -> interface_id)
         Array(MessageData(interface_id))
       }

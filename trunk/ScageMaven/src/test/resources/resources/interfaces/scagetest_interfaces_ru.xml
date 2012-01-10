@@ -1,5 +1,5 @@
 <interfaces>
-    <interface id="scagetest.help" x="320" y="240" yinterval="-20" color="yellow">
+    <interface id="scagetest.help" x="window_width/2" y="window_height/2" yinterval="-20" color="yellow">
         <row id="help">
             WASD и Ле[rвая К[yн[bопк]а Мы[gши,
 Кол]есико - пр]иблизить/отд]алить
@@ -12,12 +12,10 @@
         <row id="trace.point">
             Point: $0            
         </row>
-        <row id="fps" x="20" y="460">
+        <row id="fps" x="20" y="window_height-20">
             FPS: $0
         </row>
-    </interface>
-        
-    <interface id="scagetest.inputtext" x="320" y="120" yinterval="-20" color="white">
+
         <row id="inputtext">
             F1: [gInp[rut te]xt]
         </row>

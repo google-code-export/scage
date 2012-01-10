@@ -13,7 +13,7 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
                               init_h_y:Int                = property("field.h_y", 0),
                               init_N_x:Int                = if(property("field.h_x", 0) == 0) property("field.N_x", property("screen.width", 800)/50) else 0,
                               init_N_y:Int                = if(property("field.h_y", 0) == 0) property("field.N_y", property("screen.height", 600)/50) else 0,
-                              val are_solid_edges:Boolean = property("field.solid_edges", true)) {
+                              val solid_edges:Boolean     = property("field.solid_edges", true)) {
   private val log = Logger(this.getClass.getName)
 
   log.debug("creating tracer "+this.getClass.getName)
@@ -41,7 +41,7 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
       else if(c < 0) checkC(c + dist, dist)
       else c
     }
-    if(are_solid_edges) point
+    if(solid_edges) point
     else Vec(checkC(point.x, N_x), checkC(point.y, N_y))
   }
 
@@ -217,8 +217,8 @@ object ScageTracer {
             init_h_y:Int            = property("field.h_y", 0),
             init_N_x:Int            = if(property("field.h_x", 0) == 0) property("field.N_x", property("screen.width", 800)/50) else 0,
             init_N_y:Int            = if(property("field.h_y", 0) == 0) property("field.N_y", property("screen.height", 600)/50) else 0,
-            are_solid_edges:Boolean = property("field.solid_edges", true)) = {
-    new ScageTracer[Trace](field_from_x,field_to_x,field_from_y,field_to_y,init_h_x,init_h_y,init_N_x,init_N_y,are_solid_edges) {
+            solid_edges:Boolean     = property("field.solid_edges", true)) = {
+    new ScageTracer[Trace](field_from_x,field_to_x,field_from_y,field_to_y,init_h_x,init_h_y,init_N_x,init_N_y,solid_edges) {
       def addTrace(point:Vec):Trace = {addTrace(point, Trace())}
     }
   }
@@ -232,7 +232,7 @@ object ScageTracer {
                          init_h_y:Int            = property("field.h_y", 0),
                          init_N_x:Int            = if(property("field.h_x", 0) == 0) property("field.N_x", property("screen.width", 800)/50) else 0,
                          init_N_y:Int            = if(property("field.h_y", 0) == 0) property("field.N_y", property("screen.height", 600)/50) else 0,
-                         are_solid_edges:Boolean = property("field.solid_edges", true)) = {
-    new ScageTracer[T](field_from_x,field_to_x,field_from_y,field_to_y,init_h_x,init_h_y,init_N_x,init_N_y,are_solid_edges)
+                         solid_edges:Boolean     = property("field.solid_edges", true)) = {
+    new ScageTracer[T](field_from_x,field_to_x,field_from_y,field_to_y,init_h_x,init_h_y,init_N_x,init_N_y,solid_edges)
   }
 }

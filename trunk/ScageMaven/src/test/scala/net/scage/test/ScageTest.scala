@@ -3,7 +3,6 @@ package net.scage.test
 import _root_.net.scage.support.ScageColors._
 import _root_.net.scage.handlers.Renderer._
 import org.lwjgl.input.Keyboard._
-import _root_.net.scage.support.messages.ScageMessage._
 import _root_.net.scage.support.messages.ScageXML._
 import _root_.net.scage.support.Vec
 import concurrent.ops._
@@ -52,8 +51,8 @@ class ScageTest extends TestCase("app") {
           drawTraceGrid(tracer, DARK_GRAY)
         }
 
-        val trace = tracer.addTrace(Vec(screen_width/2, screen_height/2))
-        val another_trace = tracer.addTrace(Vec(screen_width/4, screen_height/2))
+        val trace = tracer.addTrace(Vec(window_width/2, window_height/2))
+        val another_trace = tracer.addTrace(Vec(window_width/4, window_height/2))
 
         def moveIfFreeLocation(trace:Trace, delta:Vec) {
           val new_location = trace.location + delta
@@ -74,9 +73,6 @@ class ScageTest extends TestCase("app") {
         key(KEY_F1, onKeyDown = spawn {
           input_text = JOptionPane.showInputDialog("Input text here")
         })
-        interface {
-          printInterface(xmlInterface("scagetest.inputtext", input_text))
-        }
 
         /*leftMouse(onBtnDown = {
           mouse_coord => tracer.updateLocation(trace, mouse_coord)
@@ -90,14 +86,14 @@ class ScageTest extends TestCase("app") {
 
         val stars = displayList {   // I like "starry sky" since high school =)
           for(i <- 1 to 100) {
-            drawPoint(Vec(math.random.toFloat*screen_width, math.random.toFloat*screen_height), randomColor)
+            drawPoint(Vec(math.random.toFloat*window_width, math.random.toFloat*window_height), randomColor)
           }
         }
 
         private var target_point = trace.location
         def scaledCoord(coord:Vec, scale:Float, center:Vec) = {
           if(scale == 1) coord
-          else (coord / scale) + (center - Vec(screen_width / scale / 2, screen_height / scale / 2))
+          else (coord / scale) + (center - Vec(window_width / scale / 2, window_height / scale / 2))
         }  
         mouseMotion {   // test mouse motion event
           mouse_coord =>
@@ -134,12 +130,10 @@ class ScageTest extends TestCase("app") {
         backgroundColor = colorFromString("BLACK")    // test method to obtain color by name
         val another_font = new ScageMessage(font_size = 12) // test using two different fonts in one app
         interface {
-          another_font.print(xml("hello.world"), screen_width/2, screen_height/2+20, WHITE)
+          another_font.print(xml("hello.world"), window_width/2, window_height/2+20, WHITE)
         }
 
-        interface {
-          printInterface(xmlInterface("scagetest.help", trace.location, tracer.point(trace.location), fps))
-        }
+        interface("scagetest.help", Array(trace.location, tracer.point(trace.location), fps, input_text))
 
         render {
           drawDisplayList(stars)
@@ -169,7 +163,7 @@ class ScageTest extends TestCase("app") {
         // scaling test
         mouseWheelUp(onWheelUp = m => scale += 1)
         mouseWheelDown(onWheelDown = m => if(scale > 1) scale -= 1)
-        center = if(scale > 1) trace.location else screen_center
+        center = if(scale > 1) trace.location else default_window_center
 
         // test network features: simple echo server
         /*startServer()

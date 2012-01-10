@@ -17,15 +17,16 @@ import net.scage.support.{SortedBuffer, ScageColor, Vec}
 import collection.mutable.ArrayBuffer
 import com.weiglewilczek.slf4s.Logger
 import net.scage.Scage
+import net.scage.support.messages.ScageMessage
 
 object Renderer {
   protected val log = Logger(this.getClass.getName)
 
-  val screen_width  = property("screen.width", 800)
-  val screen_height = property("screen.height", 600)
-  val screen_center = Vec(screen_width/2, screen_height/2)
+  val window_width  = property("screen.width", 800)
+  val window_height = property("screen.height", 600)
+  val default_window_center = Vec(window_width/2, window_height/2)
   
-  val framerate = property("framerate", 100)
+  val framerate = property("screen.framerate", 100)
 
   private var _fps:Int = 0
   def fps = _fps
@@ -55,7 +56,7 @@ object Renderer {
   }*/
 
   lazy val initgl = {
-    Display.setDisplayMode(new DisplayMode(screen_width, screen_height));
+    Display.setDisplayMode(new DisplayMode(window_width, window_height));
     Display.setVSyncEnabled(true);
     Display.setTitle(property("app.name", "Scage")+" - "+property("app.version", "Release"));
     Display.create();
@@ -77,7 +78,7 @@ object Renderer {
       /*}*/
     }
 
-    Display.setLocation((monitor_width - screen_width)/2, (monitor_height - screen_height)/2)
+    Display.setLocation((monitor_width - window_width)/2, (monitor_height - window_height)/2)
 
     GL11.glEnable(GL11.GL_TEXTURE_2D);
     GL11.glClearColor(0,0,0,0);
@@ -88,7 +89,7 @@ object Renderer {
 
     GL11.glMatrixMode(GL11.GL_PROJECTION); // Select The Projection Matrix
     GL11.glLoadIdentity(); // Reset The Projection Matrix
-    GLU.gluOrtho2D(0, screen_width, 0, screen_height);
+    GLU.gluOrtho2D(0, window_width, 0, window_height);
     //GL11.glOrtho(0, width, height, 0, 1, -1);
 
     GL11.glMatrixMode(GL11.GL_MODELVIEW);
@@ -96,7 +97,7 @@ object Renderer {
 
     // printing "Loading..." message. It is also necessary to properly initialize our main font (I guess)
     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
-    print(xmlOrDefault("renderer.loading", "Loading..."), 20, Renderer.screen_height-25, GREEN)
+    print(xmlOrDefault("renderer.loading", "Loading..."), 20, Renderer.window_height-25, GREEN)
     update()
     Thread.sleep(1000)
 
@@ -104,7 +105,7 @@ object Renderer {
     if(property("screen.scagelogo", true)) {
       GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
       val logo_texture = getTexture("resources/images/scage-logo.png")
-      drawDisplayList(image(logo_texture, screen_width, screen_height, 0, 0, logo_texture.getImageWidth, logo_texture.getImageHeight), Vec(screen_width/2, screen_height/2))
+      drawDisplayList(image(logo_texture, window_width, window_height, 0, 0, logo_texture.getImageWidth, logo_texture.getImageHeight), Vec(window_width/2, window_height/2))
       update()
       Thread.sleep(1000)
     }
@@ -115,7 +116,7 @@ object Renderer {
         try {
           GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
           val splash_texture = getTexture(screen_splash_path)
-          drawDisplayList(image(splash_texture, screen_width, screen_height, 0, 0, splash_texture.getImageWidth, splash_texture.getImageHeight), Vec(screen_width/2, screen_height/2))
+          drawDisplayList(image(splash_texture, window_width, window_height, 0, 0, splash_texture.getImageWidth, splash_texture.getImageHeight), Vec(window_width/2, window_height/2))
           update()
           Thread.sleep(1000)  // TODO: custom pause
         }
@@ -125,7 +126,7 @@ object Renderer {
       case _ => xmlOrDefault("app.welcome", "") match {
         case welcome_message if "" != welcome_message => {
           GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
-          print(welcome_message, 20, Renderer.screen_height-25, GREEN) // TODO: custom color and position
+          print(welcome_message, 20, Renderer.window_height-25, GREEN) // TODO: custom color and position
           update()
           Thread.sleep(1000)  // TODO: custom pause
         }
@@ -421,7 +422,7 @@ trait Renderer extends Scage {
   def scale = _scale
   def scale_= (value:Float) {_scale = value}
 
-  private var window_center = () => Vec(Renderer.screen_width/2, Renderer.screen_height/2)
+  private var window_center = () => Renderer.default_window_center
   def windowCenter = window_center()
   def windowCenter_= (coord: => Vec) {window_center = () => coord}
   
@@ -475,6 +476,11 @@ trait Renderer extends Scage {
     operations_mapping += operation_id -> RenderOperations.Interface
     operation_id
   }
+  def interface(interface_id:String, parameters: => Array[Any]):Int = {
+    interface {
+      ScageMessage.printInterface(interface_id, parameters:_*)
+    }
+  }
   def delInterfaces(interface_ids:Int*) = {
     interface_ids.foldLeft(true)((overall_result, interface_id) => {
       val deletion_result = interfaces.find(_._1 == interface_id) match {
@@ -523,7 +529,7 @@ trait Renderer extends Scage {
   protected def exitRender() {
     backgroundColor = BLACK
     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
-    print(xmlOrDefault("renderer.exiting", "Exiting..."), 20, screen_height-25, GREEN)
+    print(xmlOrDefault("renderer.exiting", "Exiting..."), 20, window_height-25, GREEN)
     update()
 
     Thread.sleep(1000)

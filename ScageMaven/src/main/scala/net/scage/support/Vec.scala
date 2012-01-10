@@ -53,5 +53,5 @@ case class Vec(private var _x:Float, private var _y:Float) {
 
   def toPhys2dVec = new Vector2f(x, y)
 
-  override def toString = "{"+x+" : "+y+"}"
+  override def toString = "Vec(x="+x+", y="+y+")"
 }

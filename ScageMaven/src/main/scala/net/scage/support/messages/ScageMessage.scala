@@ -28,10 +28,12 @@ class ScageMessage(
   }
 
   def print(message:Any, x:Float, y:Float, color:ScageColor) {
-    font.drawString(x, y, message.toString, new org.newdawn.slick.Color(color.red, color.green, color.blue))
+    val print_color = if(color != DEFAULT_COLOR) color.toSlickColor else currentColor.toSlickColor
+    font.drawString(x, y, message.toString, print_color)
   }
   def print(message:Any, x:Float, y:Float) {print(message, x, y, currentColor)}
   def print(message:Any, coord:Vec, color:ScageColor) {
+    val print_color = if(color != DEFAULT_COLOR) color.toSlickColor else currentColor.toSlickColor
     font.drawString(coord.x, coord.y, message.toString, new org.newdawn.slick.Color(color.red, color.green, color.blue))
   }
   def print(message:Any, coord:Vec) {print(message, coord, currentColor)}
@@ -44,16 +46,10 @@ class ScageMessage(
       y_pos += y_interval
     }
   }
-  def printInterface(messages:TraversableOnce[MessageData], x:Float = -1, y:Float = -1, x_interval:Float = 0, y_interval:Float = -20, color:ScageColor = DEFAULT_COLOR) {
-    var x_pos = x
-    var y_pos = y
+  def printInterface(interface_id:String, parameters:Any*) {
+    val messages = ScageXML.xmlInterface(interface_id, parameters:_*)
     for(MessageData(message, message_x, message_y, message_color) <- messages) {
-      val print_x = if(message_x != -1) message_x else x_pos  // priority to coords and color inside xml
-      val print_y = if(message_y != -1) message_y else y_pos
-      val print_color = if(message_color != DEFAULT_COLOR) message_color else color
-      print(message, print_x, print_y, print_color)
-      if(message_x == -1) x_pos += x_interval
-      if(message_y == -1) y_pos += y_interval
+      print(message, message_x, message_y, message_color)
     }    
   }
 }

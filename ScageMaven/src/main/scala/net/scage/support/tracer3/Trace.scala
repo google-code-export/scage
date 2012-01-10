@@ -1,9 +1,10 @@
 package net.scage.support.tracer3
 
-import net.scage.support.Vec
 import net.scage.support.ScageId._
+import net.scage.support.{State, Vec}
 
-trait Trace {
+trait
+Trace {
   type ChangerType <: Trace // changer type must be the type of actual Trace's child in client code
   def changeState(changer:ChangerType, state:State) // maybe 'changeState' is not the right name..
   def state:State

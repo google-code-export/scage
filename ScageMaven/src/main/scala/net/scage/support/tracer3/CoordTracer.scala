@@ -12,8 +12,8 @@ class CoordTracer[T <: Trace](field_from_x:Int        = property("field.from.x",
                               init_h_y:Int            = property("field.h_y", 0),
                               init_N_x:Int            = if(property("field.h_x", 0) == 0) property("field.N_x", property("screen.width", 800)/50) else 0,
                               init_N_y:Int            = if(property("field.h_y", 0) == 0) property("field.N_y", property("screen.height", 600)/50) else 0,
-                              are_solid_edges:Boolean = property("field.solid_edges", true))
-extends ScageTracer[T](field_from_x,field_to_x,field_from_y,field_to_y,init_h_x,init_h_y,init_N_x,init_N_y,are_solid_edges) {
+                              solid_edges:Boolean = property("field.solid_edges", true))
+extends ScageTracer[T](field_from_x,field_to_x,field_from_y,field_to_y,init_h_x,init_h_y,init_N_x,init_N_y,solid_edges) {
   private val log = Logger(this.getClass.getName);
   override def addTrace(coord:Vec, trace:T):T = {
     if(isCoordOnArea(coord)) {
@@ -87,7 +87,7 @@ extends ScageTracer[T](field_from_x,field_to_x,field_from_y,field_to_y,init_h_x,
       else c
     }
 
-    if(are_solid_edges) coord else {
+    if(solid_edges) coord else {
       val x = checkC(coord.x, field_from_x, field_to_x)
       val y = checkC(coord.y, field_from_y, field_to_y)
 
@@ -100,7 +100,7 @@ extends ScageTracer[T](field_from_x,field_to_x,field_from_y,field_to_y,init_h_x,
   }
 
   def hasCollisions(target_trace_id:Int, tested_coord:Vec, min_dist:Float, condition:T => Boolean = (trace) => true):Boolean = {
-    if(are_solid_edges && !isCoordOnArea(tested_coord)) true
+    if(solid_edges && !isCoordOnArea(tested_coord)) true
     else {
       val tested_coord_edges_affected = outsideCoord(tested_coord)
       val min_dist2 = min_dist*min_dist
@@ -123,8 +123,8 @@ object CoordTracer {
             init_h_y:Int            = property("field.h_y", 0),
             init_N_x:Int            = if(property("field.h_x", 0) == 0) property("field.N_x", property("screen.width", 800)/50) else 0,
             init_N_y:Int            = if(property("field.h_y", 0) == 0) property("field.N_y", property("screen.height", 600)/50) else 0,
-            are_solid_edges:Boolean = property("field.solid_edges", true)) = {
-    new CoordTracer[Trace](field_from_x,field_to_x,field_from_y,field_to_y,init_h_x,init_h_y,init_N_x,init_N_y,are_solid_edges) {
+            solid_edges:Boolean     = property("field.solid_edges", true)) = {
+    new CoordTracer[Trace](field_from_x,field_to_x,field_from_y,field_to_y,init_h_x,init_h_y,init_N_x,init_N_y,solid_edges) {
       def addTrace(coord:Vec):Trace = {addTrace(coord, Trace())}
     }
   }
@@ -138,7 +138,7 @@ object CoordTracer {
                          init_h_y:Int            = property("field.h_y", 0),
                          init_N_x:Int            = if(property("field.h_x", 0) == 0) property("field.N_x", property("screen.width", 800)/50) else 0,
                          init_N_y:Int            = if(property("field.h_y", 0) == 0) property("field.N_y", property("screen.height", 600)/50) else 0,
-                         are_solid_edges:Boolean = property("field.solid_edges", true)) = {
-    new CoordTracer[T](field_from_x,field_to_x,field_from_y,field_to_y,init_h_x,init_h_y,init_N_x,init_N_y,are_solid_edges)
+                         solid_edges:Boolean     = property("field.solid_edges", true)) = {
+    new CoordTracer[T](field_from_x,field_to_x,field_from_y,field_to_y,init_h_x,init_h_y,init_N_x,init_N_y,solid_edges)
   }
 }

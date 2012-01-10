@@ -4,7 +4,7 @@
   <groupId>su.msk.dunno</groupId>
   <artifactId>scage</artifactId>
   <packaging>jar</packaging>
-  <version>0.7-SNAPSHOT</version>
+  <version>0.8-SNAPSHOT</version>
   <inceptionYear>2011</inceptionYear>
 
   <name>Scage</name>
@@ -116,9 +116,9 @@
           <version>274</version>
       </dependency>
       <dependency>
-          <groupId>org.json</groupId>
-          <artifactId>json</artifactId>
-          <version>20090211</version>
+          <groupId>org.scalaz</groupId>
+          <artifactId>scalaz-core_${scala.version}</artifactId>
+          <version>6.0.3</version>
       </dependency>
   </dependencies>
 

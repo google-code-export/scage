@@ -3,7 +3,7 @@ package net.scage.support.net
 import _root_.net.scage.support.ScageProperties._
 import java.io.{InputStreamReader, BufferedReader, OutputStreamWriter, PrintWriter}
 import java.net.{SocketException, ServerSocket, Socket}
-import org.json.{JSONException, JSONObject}
+import net.scage.support.State
 import com.weiglewilczek.slf4s.Logger
 import concurrent.ops._
 import collection.mutable.ArrayBuffer
@@ -21,7 +21,7 @@ object NetServer {
   def clients = client_handlers
   def client(num:Int) = client_handlers(num)
   def numClients = client_handlers.length
-  def lastConnected = client_handlers.head
+  def lastConnected = client_handlers.last
 
   private var has_new_connection = false
   def hasNewConnection = {
@@ -30,18 +30,18 @@ object NetServer {
     has_new
   }
 
-  private var sd:JSONObject = new JSONObject  // outgoing data
+  private var sd:State = State()  // outgoing data
   def send() {client_handlers.foreach(client => client.send(sd))} // data sending methods
-  def send(data:JSONObject) {
+  def send(data:State) {
     sd = data
     send()
   }
-  def send(data:String) {send(new JSONObject().put("raw", data))}
+  def send(data:String) {send(State(("raw" -> data)))}
 
-  def hasOutgoingData = sd.length != 0
-  def eraseOutgoingData() {sd = new JSONObject}
-  def addOutgoingData(key:Any, data:Any) {sd.put(key.toString, data)}
-  def addOutgoingData(key:Any) {sd.put(key.toString, "")}
+  def hasOutgoingData = sd.size != 0
+  def eraseOutgoingData() {sd.clear()}
+  def addOutgoingData(key:Any, data:Any) {sd += (key.toString -> data)}
+  def addOutgoingData(key:Any) {sd.add(key)}
 
   var serverGreetings:ClientHandler => (Boolean, String) = (client) => {
     client.send("This is Scage NetServer")
@@ -70,7 +70,7 @@ object NetServer {
             next_client += 1
           } else {
             log.info("refused connection from "+socket.getInetAddress.getHostAddress+": "+reason)
-            client.send(new JSONObject().put("quit", ""))
+            client.send(State("quit"))
             client.disconnect()
           }
         } else Thread.sleep(1000)
@@ -80,12 +80,14 @@ object NetServer {
     if(check_timeout > 0) {
       spawn {
         while(is_running) {
-          val oofline_clients = client_handlers.filter(client => !client.isOnline)
-          oofline_clients.foreach(client => {
-            client.send(new JSONObject().put("quit", "no responce from you for "+check_timeout+" msecs"))
+          val offline_clients = client_handlers.filter(client => !client.isOnline)
+          offline_clients.foreach(client => {
+            client.send(State(
+              ("quit" -> ("no responce from you for "+check_timeout+" msecs"))
+            ))
             client.disconnect()
           })
-          client_handlers --= oofline_clients
+          client_handlers --= offline_clients
           Thread.sleep(1000)
         }
       }
@@ -95,7 +97,7 @@ object NetServer {
   def stopServer() {
     log.info("shutting net server down...")
     if(client_handlers.length > 0) log.info("disconnecting all clients...")
-    client_handlers.foreach(client => client.send(new JSONObject().put("quit", "")))
+    client_handlers.foreach(client => client.send(State("quit")))
     client_handlers.foreach(client => client.disconnect())
 
     is_running = false
@@ -111,7 +113,7 @@ class ClientHandler(val id:Int, socket:Socket, isRunning: => Boolean) {
   private val out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream))
   private val in = new BufferedReader(new InputStreamReader(socket.getInputStream))
 
-  private var cd = new JSONObject
+  private var cd = State()
   private var has_new_data = false
   def incomingData = {
     has_new_data = false
@@ -119,11 +121,11 @@ class ClientHandler(val id:Int, socket:Socket, isRunning: => Boolean) {
   }
   def hasNewIncomingData = has_new_data
 
-  def send(data:JSONObject) {
-    out.println(data)
+  def send(data:State) {
+    out.println(data.toJsonString)
     out.flush()
   }
-  def send(data:String) {send(new JSONObject().put("raw", data))}
+  def send(data:String) {send(State(("raw" -> data)))}
 
   def disconnect() {
     socket.close()
@@ -139,11 +141,11 @@ class ClientHandler(val id:Int, socket:Socket, isRunning: => Boolean) {
         last_answer_time = System.currentTimeMillis
         try {
           val message = in.readLine
-          cd = try{new JSONObject(message)}
+          cd = try{State.fromJson(message)}
           catch {
-            case e:JSONException => cd.put("raw", message)
+            case e:Exception => State(("raw" -> message))
           }
-          if(cd.length > 0) has_new_data = true
+          if(cd.size > 0) has_new_data = true
         } catch {
           case e:SocketException => {
             log.error("error while receiving data from client "+id+": "+e)

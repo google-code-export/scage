@@ -13,14 +13,15 @@ object NetServer {
 
   val port = property("port", 9800)
   val max_clients = property("max_clients", 20)
-  val check_timeout = property("check_timeout", 0)
-
+  val check_timeout = property("check_timeout", 10000)
+  val ping_timeout = property("ping_timeout", check_timeout*3/4)
+  
   private var server_socket:ServerSocket = null
 
   private var client_handlers = ArrayBuffer[ClientHandler]()
-  def clients = client_handlers
+  def clients = client_handlers.toSeq
   def client(num:Int) = client_handlers(num)
-  def numClients = client_handlers.length
+  def numClients = client_handlers.size
   def lastConnected = client_handlers.last
 
   private var has_new_connection = false
@@ -77,19 +78,20 @@ object NetServer {
       }      
     }
 
-    if(check_timeout > 0) {
-      spawn {
-        while(is_running) {
-          val offline_clients = client_handlers.filter(client => !client.isOnline)
-          offline_clients.foreach(client => {
-            client.send(State(
-              ("quit" -> ("no responce from you for "+check_timeout+" msecs"))
-            ))
-            client.disconnect()
-          })
-          client_handlers --= offline_clients
-          Thread.sleep(1000)
-        }
+    spawn { // connection checker and pinger
+      while(is_running) {
+        val offline_clients = client_handlers.filter(client => !client.isOnline)
+        offline_clients.foreach(client => {
+          client.send(State(
+            ("disconnect" -> ("no responce from you for "+check_timeout+" msecs"))
+          ))
+          client.disconnect()
+        })
+        client_handlers --= offline_clients
+        if(ping_timeout > 0) {
+          client_handlers.foreach(_.send(State("ping")))
+          Thread.sleep(ping_timeout)
+        } else Thread.sleep(1000)
       }
     }
   }
@@ -121,9 +123,11 @@ class ClientHandler(val id:Int, socket:Socket, isRunning: => Boolean) {
   }
   def hasNewIncomingData = has_new_data
 
+  private var write_error = false
   def send(data:State) {
     out.println(data.toJsonString)
     out.flush()
+    write_error = out.checkError()
   }
   def send(data:String) {send(State(("raw" -> data)))}
 
@@ -133,7 +137,7 @@ class ClientHandler(val id:Int, socket:Socket, isRunning: => Boolean) {
   }
 
   private var last_answer_time = System.currentTimeMillis
-  def isOnline = check_timeout == 0 || System.currentTimeMillis - last_answer_time < check_timeout
+  def isOnline = !write_error && (check_timeout == 0 || System.currentTimeMillis - last_answer_time < check_timeout)
 
   spawn {
     while(isRunning) {
@@ -141,11 +145,12 @@ class ClientHandler(val id:Int, socket:Socket, isRunning: => Boolean) {
         last_answer_time = System.currentTimeMillis
         try {
           val message = in.readLine
-          cd = try{State.fromJson(message)}
+          log.debug("received data from client "+id+":\n"+message)
+          cd ++= (try{State.fromJson(message)}
           catch {
             case e:Exception => State(("raw" -> message))
-          }
-          if(cd.size > 0) has_new_data = true
+          })
+          has_new_data = true
         } catch {
           case e:SocketException => {
             log.error("error while receiving data from client "+id+": "+e)

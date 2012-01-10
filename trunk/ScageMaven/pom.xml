@@ -115,11 +115,11 @@
           <artifactId>slick</artifactId>
           <version>274</version>
       </dependency>
-      <dependency>
+      <!--<dependency>
           <groupId>org.scalaz</groupId>
           <artifactId>scalaz-core_${scala.version}</artifactId>
           <version>6.0.3</version>
-      </dependency>
+      </dependency>-->
   </dependencies>
 
   <build>

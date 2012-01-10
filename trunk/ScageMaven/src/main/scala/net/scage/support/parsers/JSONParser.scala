@@ -2,7 +2,7 @@ package net.scage.support.parsers
 
 import scala.util.parsing.combinator._
 import com.weiglewilczek.slf4s.Logger
-import net.scage.support.State
+import net.scage.support.{ScageColor, Vec, State}
 
 /**
  * Json parser based on example from "Programming in Scala, 2nd edition"
@@ -24,7 +24,13 @@ class JSONParser extends JavaTokenParsers {
     "\""~anyString~"\""~":"~value ^^ { case "\""~member_name~"\""~":"~member_value => (member_name, member_value) }
 
   private lazy val value: Parser[Any] = (
-    obj
+    "{\"type\":\"vec\", \"x\":"~floatingPointNumber~", \"y\":"~floatingPointNumber~"}" ^^
+      {case "{\"type\":\"vec\", \"x\":"~x~", \"y\":"~y~"}" =>
+        Vec(x.toFloat, y.toFloat)}
+    | "{\"type\":\"color\", \"name\":\""~anyString~"\", \"red\":"~floatingPointNumber~", \"green\":"~floatingPointNumber~", \"blue\":"~floatingPointNumber~"}" ^^
+      {case "{\"type\":\"color\", \"name\":\""~name~"\", \"red\":"~red~", \"green\":"~green~", \"blue\":"~blue~"}" =>
+        new ScageColor(name, red.toFloat, green.toFloat, blue.toFloat)}
+    | obj
     | arr
     | "\""~anyString~"\"" ^^ {case "\""~name~"\"" => name}
     | floatingPointNumber ^^ (_.toFloat)
@@ -36,7 +42,7 @@ class JSONParser extends JavaTokenParsers {
   def evaluate(json:String) =
     parseAll(obj, json) match {
       case Success(result, _) => {
-        log.debug("successfully parsed json:\n"+json)
+        log.debug("successfully parsed json:\n"+json+"\nresult:\n"+result)
         result
       }
       case x @ Failure(msg, _) => { // maybe throw exceptions instead

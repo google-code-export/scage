@@ -37,10 +37,12 @@ object NetClient {
     }
   }
 
+  private var write_error = false
   def send() {
     if(is_connected) {
       out.println(cd.toJsonString)
       out.flush()
+      write_error = out.checkError()
     }
   }
   def send(data:State) {
@@ -63,9 +65,11 @@ object NetClient {
   def addOutgoingData(key:Any, data:Any) {cd += (key.toString -> data)}
   def addOutgoingData(key:Any) {cd.add(key)}
 
-  private val check_timeout = intProperty("check_timeout")
+  val check_timeout = property("check_timeout", 10000)
   private var last_answer_time = System.currentTimeMillis
-  def isServerOnline = check_timeout == 0 || System.currentTimeMillis - last_answer_time < check_timeout
+  def isServerOnline = is_connected && !write_error && (check_timeout == 0 || System.currentTimeMillis - last_answer_time < check_timeout)
+  
+  val ping_timeout = property("ping_timeout", check_timeout*3/4)
 
   def disconnect() {
     if(socket != null) socket.close()
@@ -88,11 +92,12 @@ object NetClient {
             last_answer_time = System.currentTimeMillis
             try {
               val message = in.readLine
-              sd = try{State.fromJson(message)}
+              log.debug("received data from server:\n"+message)
+              sd ++= (try{State.fromJson(message)}
               catch {
                 case e:Exception => State(("raw" -> message))
-              }
-              if(sd.size > 0) has_new_data = true
+              })
+              has_new_data = true
             } catch {
               case e:SocketException => {
                 log.error("error while receiving data from server: "+e)
@@ -100,8 +105,17 @@ object NetClient {
               }
             }
           }
+          Thread.sleep(10)
+        } else Thread.sleep(1000)
+      }
+    }
+    
+    if(ping_timeout > 0) {
+      spawn { // pinger. Thread exists only if ping_timeout set to non-zero value
+        while(is_running) {
+          send(State("ping"))
+          Thread.sleep(ping_timeout)
         }
-        Thread.sleep(10)
       }
     }
   }

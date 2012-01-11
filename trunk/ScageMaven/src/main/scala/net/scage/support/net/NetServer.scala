@@ -11,10 +11,10 @@ import collection.mutable.ArrayBuffer
 object NetServer {
   private val log = Logger(this.getClass.getName)
 
-  val port = property("port", 9800)
-  val max_clients = property("max_clients", 20)
-  val check_timeout = property("check_timeout", 10000)
-  val ping_timeout = property("ping_timeout", check_timeout*3/4)
+  val port = property("net.port", 9800)
+  val max_clients = property("net.max_clients", 20)
+  val check_timeout = property("net.check_timeout", 10000)
+  val ping_timeout = property("net.ping_timeout", check_timeout*3/4)
   
   private var server_socket:ServerSocket = null
 
@@ -145,12 +145,16 @@ class ClientHandler(val id:Int, socket:Socket, isRunning: => Boolean) {
         last_answer_time = System.currentTimeMillis
         try {
           val message = in.readLine
-          log.debug("received data from client "+id+":\n"+message)
-          cd ++= (try{State.fromJson(message)}
+          val received_data = (try{State.fromJson(message)}
           catch {
             case e:Exception => State(("raw" -> message))
           })
-          has_new_data = true
+          if(received_data.contains("ping")) log.debug("received ping from client "+id)
+          else {
+            log.debug("received data from client "+id+":\n"+received_data)
+            cd = received_data
+            has_new_data = true
+          }
         } catch {
           case e:SocketException => {
             log.error("error while receiving data from client "+id+": "+e)

@@ -138,7 +138,7 @@ object ScageColors {
     field.setAccessible(false)
   })
   def colorFromString(color_string:String) = {
-    colors.get(color_string.toUpperCase) match {
+    colors.get(color_string.trim().toUpperCase) match {
       case Some(color) => color
       case None => DEFAULT_COLOR
     }

@@ -10,8 +10,8 @@ import concurrent.ops._
 object NetClient {
   private val log = Logger(this.getClass.getName)
 
-  val server_url =  property("server", "127.0.0.1")
-  val port = property("port", 9800)
+  val server_url =  property("net.server", "127.0.0.1")
+  val port = property("net.port", 9800)
 
   private var is_connected = false
   def isConnected = is_connected
@@ -65,11 +65,11 @@ object NetClient {
   def addOutgoingData(key:Any, data:Any) {cd += (key.toString -> data)}
   def addOutgoingData(key:Any) {cd.add(key)}
 
-  val check_timeout = property("check_timeout", 10000)
+  val check_timeout = property("net.check_timeout", 10000)
   private var last_answer_time = System.currentTimeMillis
   def isServerOnline = is_connected && !write_error && (check_timeout == 0 || System.currentTimeMillis - last_answer_time < check_timeout)
   
-  val ping_timeout = property("ping_timeout", check_timeout*3/4)
+  val ping_timeout = property("net.ping_timeout", check_timeout*3/4)
 
   def disconnect() {
     if(socket != null) socket.close()
@@ -92,12 +92,16 @@ object NetClient {
             last_answer_time = System.currentTimeMillis
             try {
               val message = in.readLine
-              log.debug("received data from server:\n"+message)
-              sd ++= (try{State.fromJson(message)}
+              val received_data = (try{State.fromJson(message)}
               catch {
                 case e:Exception => State(("raw" -> message))
               })
-              has_new_data = true
+              if(received_data.contains("ping")) log.debug("received ping from server")
+              else {
+                log.debug("received data from server:\n"+received_data)
+                sd = received_data
+                has_new_data = true
+              }
             } catch {
               case e:SocketException => {
                 log.error("error while receiving data from server: "+e)

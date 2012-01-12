@@ -128,7 +128,7 @@ class ScageTest extends TestCase("app") {
         })
 
         backgroundColor = colorFromString("BLACK")    // test method to obtain color by name
-        val another_font = new ScageMessage(font_size = 12) // test using two different fonts in one app
+        val another_font = new ScageMessage(max_font_size = 12) // test using two different fonts in one app
         interface {
           another_font.print(xml("hello.world"), window_width/2, window_height/2+20, WHITE)
         }

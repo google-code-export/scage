@@ -65,7 +65,7 @@ object NetClient {
   def addOutgoingData(key:Any, data:Any) {cd += (key.toString -> data)}
   def addOutgoingData(key:Any) {cd.add(key)}
 
-  val check_timeout = property("net.check_timeout", 10000)
+  val check_timeout = property("net.check_timeout", 60000)
   private var last_answer_time = System.currentTimeMillis
   def isServerOnline = is_connected && !write_error && (check_timeout == 0 || System.currentTimeMillis - last_answer_time < check_timeout)
   

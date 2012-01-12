@@ -13,7 +13,7 @@ object NetServer {
 
   val port = property("net.port", 9800)
   val max_clients = property("net.max_clients", 20)
-  val check_timeout = property("net.check_timeout", 10000)
+  val check_timeout = property("net.check_timeout", 60000)
   val ping_timeout = property("net.ping_timeout", check_timeout*3/4)
   
   private var server_socket:ServerSocket = null

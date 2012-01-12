@@ -6,18 +6,19 @@ import net.scage.support.messages.unicode.UnicodeFont
 import com.weiglewilczek.slf4s.Logger
 import net.scage.support.{Vec, ScageColor}
 import net.scage.support.ScageColors._
+import org.lwjgl.opengl.GL11
 
 class ScageMessage(
   val fonts_base:String    = property("fonts.base", "resources/fonts/"),
   val font_file:String     = property("font.file", "DroidSans.ttf"),
-  val font_size:Int        = property("font.size", 18),
-  val glyph_from:Int       = property("glyph.from", 1024),
-  val glyph_to:Int         = property("glyph.to", 1279)
+  val max_font_size:Float  = property("font.max_size", 18),
+  val glyph_from:Int       = property("font.glyph.from", 1024),
+  val glyph_to:Int         = property("font.glyph.to", 1279)
 ) {
   private val log = Logger(this.getClass.getName)
 
   private val font = try {
-    new UnicodeFont(fonts_base+font_file, font_size, glyph_from, glyph_to)
+    new UnicodeFont(fonts_base+font_file, max_font_size, glyph_from, glyph_to)
   } catch {
     case e:Exception => {
       log.error("failed to create font:\n"+e.getLocalizedMessage)
@@ -27,16 +28,27 @@ class ScageMessage(
     }
   }
 
-  def print(message:Any, x:Float, y:Float, color:ScageColor) {
+  def print(message:Any, x:Float, y:Float, size:Float, color:ScageColor) {
     val print_color = if(color != DEFAULT_COLOR) color.toSlickColor else currentColor.toSlickColor
-    font.drawString(x, y, message.toString, print_color)
+    GL11.glPushMatrix()
+    font.drawString(x, y, size, message.toString, print_color)
+    GL11.glPopMatrix()
   }
-  def print(message:Any, x:Float, y:Float) {print(message, x, y, currentColor)}
-  def print(message:Any, coord:Vec, color:ScageColor) {
+  def print(message:Any, x:Float, y:Float, size:Float) {print(message, x, y, size, DEFAULT_COLOR)}
+  def print(message:Any, x:Float, y:Float, color:ScageColor) {print(message, x, y, max_font_size, color)}
+  def print(message:Any, x:Float, y:Float) {print(message, x, y, max_font_size, currentColor)}
+
+  def print(message:Any, coord:Vec, size:Float, color:ScageColor) {
     val print_color = if(color != DEFAULT_COLOR) color.toSlickColor else currentColor.toSlickColor
-    font.drawString(coord.x, coord.y, message.toString, new org.newdawn.slick.Color(color.red, color.green, color.blue))
+    GL11.glPushMatrix()
+    font.drawString(coord.x, coord.y, size, message.toString, print_color)
+    GL11.glPopMatrix()
   }
-  def print(message:Any, coord:Vec) {print(message, coord, currentColor)}
+  def print(message:Any, coord:Vec, color:ScageColor) {print(message, coord, max_font_size, color)}
+  def print(message:Any, coord:Vec, size:Float) {print(message, coord, size, DEFAULT_COLOR)}
+  def print(message:Any, coord:Vec) {print(message, coord, max_font_size, DEFAULT_COLOR)}
+
+
   def printStrings(messages:TraversableOnce[Any], x:Float, y:Float, x_interval:Float = 0, y_interval:Float = -20, color:ScageColor = DEFAULT_COLOR) {
     var x_pos = x
     var y_pos = y
@@ -57,7 +69,7 @@ class ScageMessage(
 object ScageMessage extends ScageMessage (
   fonts_base    = property("fonts.base", "resources/fonts/"),
   font_file     = property("font.file", "DroidSans.ttf"),
-  font_size     = property("font.size", 18),
-  glyph_from    = property("glyph.from", 1024),
-  glyph_to      = property("glyph.to", 1279)
+  max_font_size      = property("font.max_size", 18),
+  glyph_from    = property("font.glyph.from", 1024),
+  glyph_to      = property("font.glyph.to", 1279)
 )

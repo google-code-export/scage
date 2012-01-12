@@ -26,7 +26,7 @@ import java.util.List;
  * for display. However, it is best to load the glyphs that are known to be needed at startup.
  * @author Nathan Sweet <misc@n4te.com>
  */
-public class UnicodeFont implements org.newdawn.slick.Font {
+public class UnicodeFont/* implements org.newdawn.slick.Font */{
 	/** The number of display lists that will be cached for strings from this font */
 	private static final int DISPLAY_LIST_CACHE_SIZE = 200;
 	/** The highest glyph code allowed */
@@ -116,6 +116,8 @@ public class UnicodeFont implements org.newdawn.slick.Font {
 	private int eldestDisplayListID;
 	/** The eldest display list  */
 	private DisplayList eldestDisplayList;
+    /** default size of the font */
+    private float max_size = 0;
 
 	/** The map fo the display list generated and cached - modified to allow removal of the oldest entry */
 	private final LinkedHashMap displayLists = new LinkedHashMap(DISPLAY_LIST_CACHE_SIZE, 1, true) {
@@ -126,8 +128,8 @@ public class UnicodeFont implements org.newdawn.slick.Font {
 		}
 	};
 
-    public UnicodeFont(String font_path, int size, int glyph_from, int glyph_to) throws SlickException {
-        this(font_path , size, false, false);
+    public UnicodeFont(String font_path, float max_size, int glyph_from, int glyph_to) throws SlickException {
+        this(font_path , max_size, false, false);
         addAsciiGlyphs();
         addGlyphs(glyph_from, glyph_to);     // other alphabets (cyrillic by default)
         effects.add(new ColorEffect(java.awt.Color.WHITE));
@@ -163,14 +165,14 @@ public class UnicodeFont implements org.newdawn.slick.Font {
 	 * Create a new unicode font based on a TTF file alone
 	 *
 	 * @param ttfFileRef The file system or classpath location of the TrueTypeFont file.
-	 * @param size The point size of the font to generated
+	 * @param max_size The point size of the font to generated
 	 * @param bold True if the font should be rendered in bold typeface
 	 * @param italic True if the font should be rendered in bold typeface
 	 * @throws SlickException if the UnicodeFont could not be initialized.
 	 */
-	public UnicodeFont (String ttfFileRef, int size, boolean bold, boolean italic) throws SlickException {
+	public UnicodeFont (String ttfFileRef, float max_size, boolean bold, boolean italic) throws SlickException {
 		this.ttfFileRef = ttfFileRef;
-		initializeFont(createFont(ttfFileRef), size, bold, italic);
+		initializeFont(createFont(ttfFileRef), max_size, bold, italic);
 	}
 
 	/**
@@ -220,13 +222,13 @@ public class UnicodeFont implements org.newdawn.slick.Font {
 	 * Initialise the font to be used based on configuration
 	 *
 	 * @param baseFont The AWT font to render
-	 * @param size The point size of the font to generated
+	 * @param max_size The point size of the font to generated
 	 * @param bold True if the font should be rendered in bold typeface
 	 * @param italic True if the font should be rendered in bold typeface
 	 */
-	private void initializeFont(Font baseFont, int size, boolean bold, boolean italic) {
+	private void initializeFont(Font baseFont, float max_size, boolean bold, boolean italic) {
 		Map attributes = baseFont.getAttributes();
-		attributes.put(TextAttribute.SIZE, new Float(size));
+		attributes.put(TextAttribute.SIZE, new Float(max_size));
 		attributes.put(TextAttribute.WEIGHT, bold ? TextAttribute.WEIGHT_BOLD : TextAttribute.WEIGHT_REGULAR);
 		attributes.put(TextAttribute.POSTURE, italic ? TextAttribute.POSTURE_OBLIQUE : TextAttribute.POSTURE_REGULAR);
 		try {
@@ -245,6 +247,7 @@ public class UnicodeFont implements org.newdawn.slick.Font {
 		char[] chars = " ".toCharArray();
 		GlyphVector vector = font.layoutGlyphVector(GlyphPage.renderContext, chars, 0, chars.length, Font.LAYOUT_LEFT_TO_RIGHT);
 		spaceWidth = vector.getGlyphLogicalBounds(0).getBounds().width;
+        this.max_size = max_size;
 	}
 
 	/**
@@ -449,7 +452,7 @@ public class UnicodeFont implements org.newdawn.slick.Font {
         }*/
 
 	/**
-	 * Identical to {@link #drawString(float, float, String, Color, int, int)} but returns a
+	 * Identical to {@link #drawString(float, float, float, String, Color, int, int)} but returns a
 	 * DisplayList which provides access to the width and height of the text drawn.
 	 *
 	 * @param text The text to render
@@ -458,7 +461,7 @@ public class UnicodeFont implements org.newdawn.slick.Font {
 	 * @param color The colour to apply as a filter on the text
 	 * @return The reference to the display list that was drawn and potentiall ygenerated
 	 */
-	public DisplayList drawDisplayList (float x, float y, String text, Color color/*, int startIndex, int endIndex*/) {
+	public DisplayList drawDisplayList (float x, float y, float size, String text, Color color/*, int startIndex, int endIndex*/) {
 		if (text == null) throw new IllegalArgumentException("text cannot be null.");
 		if (text.length() == 0) return EMPTY_DISPLAY_LIST;
 		if (color == null) throw new IllegalArgumentException("color cannot be null.");
@@ -466,7 +469,7 @@ public class UnicodeFont implements org.newdawn.slick.Font {
 		x -= paddingLeft;
 		y -= paddingTop;
 
-		String displayListKey = text/*.substring(startIndex, endIndex)*/;
+		String displayListKey = text+size/*.substring(startIndex, endIndex)*/;
 
 		color.bind();
 		TextureImpl.bindNone();
@@ -508,6 +511,7 @@ public class UnicodeFont implements org.newdawn.slick.Font {
 		GL.glTranslatef(x, y, 0);
 
 		if (displayList != null) GL.glNewList(displayList.id, SGL.GL_COMPILE_AND_EXECUTE);
+        if(size != max_size) GL.glScalef(size/max_size, size/max_size, 1);
 
         ColoredString colored_text = new ColoredString(text, color);
         
@@ -575,24 +579,22 @@ public class UnicodeFont implements org.newdawn.slick.Font {
 			if (!queuedGlyphs.isEmpty()) displayList.invalid = true;
 		}
 
-		GL.glTranslatef(-x, -y, 0);
-
 		if (displayList == null) displayList = new DisplayList();
 		displayList.width = (short)maxWidth;
 		displayList.height = (short)(lines * getLineHeight() + totalHeight);
 		return displayList;
 	}
 
-	public void drawString (float x, float y, String text, Color color, int startIndex, int endIndex) {
-		drawDisplayList(x, y, text, color/*, startIndex, endIndex*/);
+	public void drawString (float x, float y, float size, String text, Color color, int startIndex, int endIndex) {
+		drawDisplayList(x, y, size, text, color/*, startIndex, endIndex*/);
 	}
 
-	public void drawString (float x, float y, String text) {
-		drawString(x, y, text, Color.white);
+	public void drawString (float x, float y, float size, String text) {
+		drawString(x, y, size, text, Color.white);
 	}
 
-	public void drawString (float x, float y, String text, Color col) {
-		drawString(x, y, text, col, 0, text.length());
+	public void drawString (float x, float y, float size, String text, Color col) {
+		drawString(x, y, size, text, col, 0, text.length());
 	}
 
 	/**

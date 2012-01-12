@@ -10,7 +10,7 @@ import parsers.JSONParser
 class State(args:Any*) extends HashMap[String, Any] {
   add(args:_*)
 
-  def neededKeys(needed_keys:String*)(foreach_func:((String, Any)) => Any) {
+  def neededKeys(needed_keys:String*)(foreach_func:((String, Any)) => Any) { // TODO: rewrite with PartialFunction
     foreach(elem => if(needed_keys.contains(elem._1)) foreach_func(elem))
   }
   

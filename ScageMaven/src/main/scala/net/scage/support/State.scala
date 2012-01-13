@@ -10,8 +10,8 @@ import parsers.JSONParser
 class State(args:Any*) extends HashMap[String, Any] {
   add(args:_*)
 
-  def neededKeys(needed_keys:String*)(foreach_func:((String, Any)) => Any) { // TODO: rewrite with PartialFunction
-    foreach(elem => if(needed_keys.contains(elem._1)) foreach_func(elem))
+  def neededKeys(foreach_func:PartialFunction[(String, Any), Any]) {  // maybe rename this func
+    foreach(elem => if(foreach_func.isDefinedAt(elem)) foreach_func(elem))
   }
   
   def add(args:Any*):this.type = {

@@ -18,6 +18,7 @@ class State(args:Any*) extends HashMap[String, Any] {
     args.foreach(arg => {
       arg match {
         case elem:(String, Any) => this += (elem)
+        case elem:State => this ++= elem
         case elem:Any => this += ((elem.toString -> true))
       }
     })
@@ -50,11 +51,12 @@ class State(args:Any*) extends HashMap[String, Any] {
   }
   def toJsonString:String = {
     val sb = new StringBuilder("{")
+    var next_elem = 0
     for {
-      (key, index) <- keys.zipWithIndex
+      key <- keys
       value = apply(key)
-      opt_comma = if(index != keys.size-1) ", " else ""
     } {
+      val opt_comma = if(next_elem != keys.size-1) ", " else ""
       value match {
         case s:State => sb.append("\""+key+"\":"+s.toJsonString+opt_comma)
         case l:List[Any] => sb.append("\""+key+"\":"+list2JsonArrayString(l)+opt_comma)
@@ -63,6 +65,7 @@ class State(args:Any*) extends HashMap[String, Any] {
         case c:ScageColor => sb.append("\""+key+"\":"+color2Json(c)+opt_comma)
         case any_other_val => sb.append("\""+key+"\":"+any_other_val.toString+opt_comma)
       }
+      next_elem += 1
     }
     sb.append("}")
     sb.toString()

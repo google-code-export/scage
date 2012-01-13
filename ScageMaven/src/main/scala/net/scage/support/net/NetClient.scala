@@ -40,10 +40,11 @@ object NetClient {
   private var write_error = false
   def send(data:State) {
     if(is_connected) {
-      log.debug("send data to server:\n"+data)
+      log.debug("sending data to server:\n"+data)
       out.println(data.toJsonString)
       out.flush()
       write_error = out.checkError()
+      if(write_error) log.warn("failed to send data to server: write error!")
     } else log.warn("not connected to send data!")
   }
   /*def send(data:State) {

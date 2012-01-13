@@ -9,6 +9,7 @@ import actors.Actor._
 import collection.mutable.ArrayBuffer
 import actors.Actor
 import net.scage.support.{ScageId, State}
+import net.scage.Scage
 
 object NetServer {
   private val log = Logger(this.getClass.getName)
@@ -20,7 +21,7 @@ object NetServer {
 
   val clients_actor = actor {
     var client_handlers = ArrayBuffer[ClientHandler]()
-    loop {
+    loopWhile(Scage.isAppRunning) {
       react {
         case "remove_offline" =>
           val offline_clients = client_handlers.filter(client => !client.isOnline)
@@ -31,12 +32,14 @@ object NetServer {
             client.disconnect()
           })
           client_handlers --= offline_clients
-        case ("sendToAll", data:State) =>
+        case ("send_to_all", data:State) =>
           client_handlers.foreach(_.send(data))
-        case ("sendToClient", client_id:Int, data:State) =>
-          client_handlers.find(_.id == client_id) match {
-            case Some(client) => client.send(data)
-            case None =>
+        case ("send_to_clients", data:State, client_ids:List[Int]) =>
+          for(client_id <- client_ids) {
+            client_handlers.find(_.id == client_id) match {
+              case Some(client) => client.send(data)
+              case None =>
+            }
           }
         case "ping" =>
           client_handlers.foreach(_.send(State("ping")))
@@ -46,7 +49,7 @@ object NetServer {
           actor ! client_handlers.length
         case ("process", process_func:(ClientHandler => Any)) =>
           client_handlers.foreach(process_func(_))
-        case "disconnect" =>
+        case "disconnect_all" =>
           if(client_handlers.length > 0) log.info("disconnecting all clients...")
           client_handlers.foreach(client => client.send(State("disconnect" -> "bye")))
           client_handlers.foreach(client => client.disconnect())
@@ -70,11 +73,11 @@ object NetServer {
   def send() {clients_actor ! ("process", (client:ClientHandler) => client.send(sd))} // data sending methods*/
   def sendToAll(data:State) {
     /*sd = data*/
-    clients_actor ! ("sendToAll", data)
+    clients_actor ! ("send_to_all", data)
   }
   def sendToAll(data:String) {sendToAll(State(("raw" -> data)))}
-  def sendToClient(client_id:Int, data:State) {
-     clients_actor ! ("sendToClient", client_id, data)
+  def sendToClients(data:State, client_ids:Int*) {
+     clients_actor ! ("send_to_clients", data, client_ids.toList)
   }
 
   /*def hasOutgoingData = sd.size != 0
@@ -85,7 +88,7 @@ object NetServer {
   private var is_running = false
   def startServer(
     onNewConnection:ClientHandler => (Boolean, String) = client => (true, ""),
-    clientGreetings:ClientHandler => Any = client => {},
+    clientGreetings:ClientHandler => State = client => State(),
     onClientDataReceived:(ClientHandler, State) => Any = (client:ClientHandler, data:State) => {}
   ) {
     if(is_running) log.warn("server is already running!")
@@ -103,12 +106,13 @@ object NetServer {
           val socket = server_socket.accept
           log.info("incoming connection from "+socket.getInetAddress.getHostAddress)
           val client = new ClientHandler(socket, onClientDataReceived)
-          val (is_client_accepted, reason) = if(max_clients != 0 && clients_length >= max_clients) (false, "server is full") else onNewConnection(client)
+          val (is_client_accepted, reason) = if(max_clients != 0 && clients_length >= max_clients) (false, "server is full")
+                                             else onNewConnection(client)
           if(is_client_accepted) {
             clients_actor ! ("add", client)
             log.info("established connection with "+socket.getInetAddress.getHostAddress)
-            client.send(State("accepted"))
-            clientGreetings(client)
+            val client_greetings_message = State(("accepted" -> reason)).add(clientGreetings(client))
+            client.send(client_greetings_message)
           } else {
             log.info("refused connection from "+socket.getInetAddress.getHostAddress+": "+reason)
             client.send(State("refused" -> reason))
@@ -141,7 +145,7 @@ object NetServer {
 
   def stopServer() {
     log.info("shutting net server down...")
-    clients_actor ! "disconnect"
+    clients_actor ! "disconnect_all"
 
     is_running = false
   }
@@ -168,12 +172,12 @@ class ClientHandler(socket:Socket, var onClientDataReceived:(ClientHandler, Stat
   private var write_error = false
   def send(data:State) {
     if(isOnline) {
-      log.debug("send data to client #"+id+"\n:"+data)
+      log.debug("sending data to client #"+id+":\n"+data)
       out.println(data.toJsonString)
       out.flush()
       write_error = out.checkError()
       if(write_error) log.warn("failed to send data to client #"+id+": write error!")
-    } else log.warn("client #"+id+" is disconnected!")
+    } else log.warn("can't send data: client #"+id+" is offline!")
   }
   def send(data:String) {send(State(("raw" -> data)))}
 
@@ -211,6 +215,6 @@ class ClientHandler(socket:Socket, var onClientDataReceived:(ClientHandler, Stat
       Thread.sleep(10)
     }
     socket.close()
-    log.info("client #"+id+" was disconnected")
+    log.info("disconnected client #"+id)
   }
 }

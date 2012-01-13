@@ -43,7 +43,7 @@ object NetServer {
         case ("add", new_client:ClientHandler) =>
           client_handlers += new_client
         case ("length", actor:Actor) =>
-          actor ! ("clients_length", client_handlers.length)
+          actor ! client_handlers.length
         case ("process", process_func:(ClientHandler => Any)) =>
           client_handlers.foreach(process_func(_))
         case "disconnect" =>
@@ -58,13 +58,13 @@ object NetServer {
   def processClients(process_func:ClientHandler => Any) {
     clients_actor ! ("process", process_func)
   }
-  def clientsAmount = {
+  /*def clientsAmount = {
     clients_actor ! ("length", self)
     receive {
       case clients_length:Int => clients_length
     }
   }
-  def isClientsLimitReach:Boolean = max_clients != 0 && clientsAmount >= max_clients
+  def isClientsLimitReach:Boolean = max_clients != 0 && clientsAmount >= max_clients*/
   
   /*private var sd:State = State()  // outgoing data
   def send() {clients_actor ! ("process", (client:ClientHandler) => client.send(sd))} // data sending methods*/
@@ -84,24 +84,31 @@ object NetServer {
 
   private var is_running = false
   def startServer(
-    serverGreetings:ClientHandler => (Boolean, String) = client => (true, "")
+    onNewConnection:ClientHandler => (Boolean, String) = client => (true, ""),
+    clientGreetings:ClientHandler => Any = client => {},
+    onClientDataReceived:(ClientHandler, State) => Any = (client:ClientHandler, data:State) => {}
   ) {
-    if(!is_running) log.warn("server is already running!")
+    if(is_running) log.warn("server is already running!")
     else {
       log.info("starting net server...")
       is_running = true
       spawn {
-        var server_socket = new ServerSocket(port)
+        val server_socket = new ServerSocket(port)  // TODO: handle errors during startup (for example, port is busy)
         while(is_running) {
-          log.info("listening port "+port+", "+clientsAmount+(if(max_clients > 0) "/"+max_clients else "unlimited")+" client(s) are connected")
+          val clients_length = {
+            clients_actor ! ("length", self)
+            receive {case len:Int => len}
+          }
+          log.info("listening port "+port+", "+clients_length+(if(max_clients > 0) "/"+max_clients else "unlimited")+" client(s) are connected")
           val socket = server_socket.accept
           log.info("incoming connection from "+socket.getInetAddress.getHostAddress)
-          val client = new ClientHandler(socket)
-          val (is_client_accepted, reason) = if(isClientsLimitReach) (false, "server is full") else serverGreetings(client)
+          val client = new ClientHandler(socket, onClientDataReceived)
+          val (is_client_accepted, reason) = if(max_clients != 0 && clients_length >= max_clients) (false, "server is full") else onNewConnection(client)
           if(is_client_accepted) {
             clients_actor ! ("add", client)
             log.info("established connection with "+socket.getInetAddress.getHostAddress)
             client.send(State("accepted"))
+            clientGreetings(client)
           } else {
             log.info("refused connection from "+socket.getInetAddress.getHostAddress+": "+reason)
             client.send(State("refused" -> reason))
@@ -115,16 +122,17 @@ object NetServer {
       if(ping_timeout > 0) {
         spawn { // clients connection checker and pinger
           while(is_running) {
+            Thread.sleep(ping_timeout)
             clients_actor ! "remove_offline"
             clients_actor ! "ping"
-            Thread.sleep(ping_timeout)
+
           }
         }        
       } else {
         spawn { // clients connection checker only
           while(is_running) {
-            clients_actor ! "remove_offline"
             Thread.sleep(1000)  // maybe increase or make depend on check_timeout
+            clients_actor ! "remove_offline"
           }
         }        
       }
@@ -141,7 +149,7 @@ object NetServer {
 
 import NetServer._
 
-class ClientHandler(socket:Socket) {
+class ClientHandler(socket:Socket, var onClientDataReceived:(ClientHandler, State) => Any = (client:ClientHandler, data:State) => {}) {
   private val log = Logger(this.getClass.getName)
 
   val id:Int = ScageId.nextId
@@ -149,20 +157,22 @@ class ClientHandler(socket:Socket) {
   private val out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream))
   private val in = new BufferedReader(new InputStreamReader(socket.getInputStream))
 
-  private var cd = State()
+  /*private var cd = State()
   private var has_new_data = false
   def incomingData = {
     has_new_data = false
     cd
   }
-  def hasNewIncomingData = has_new_data
+  def hasNewIncomingData = has_new_data*/
 
   private var write_error = false
   def send(data:State) {
-    if(is_running) {
+    if(isOnline) {
+      log.debug("send data to client #"+id+"\n:"+data)
       out.println(data.toJsonString)
       out.flush()
       write_error = out.checkError()
+      if(write_error) log.warn("failed to send data to client #"+id+": write error!")
     } else log.warn("client #"+id+" is disconnected!")
   }
   def send(data:String) {send(State(("raw" -> data)))}
@@ -174,14 +184,14 @@ class ClientHandler(socket:Socket) {
   private var last_answer_time = System.currentTimeMillis
   def isOnline = is_running && !write_error && (check_timeout == 0 || System.currentTimeMillis - last_answer_time < check_timeout)
 
-  private var is_running = false
+  private var is_running = true
   spawn {
-    is_running = true
     while(is_running) {
       if(in.ready) {
         last_answer_time = System.currentTimeMillis
         try {
           val message = in.readLine
+          log.debug("incoming message from client #"+id+":\n"+message)
           val received_data = (try{State.fromJson(message)}
           catch {
             case e:Exception => State(("raw" -> message))
@@ -189,8 +199,7 @@ class ClientHandler(socket:Socket) {
           if(received_data.contains("ping")) log.debug("received ping from client #"+id)
           else {
             log.debug("received data from client #"+id+":\n"+received_data)
-            cd = received_data
-            has_new_data = true
+            onClientDataReceived(this, received_data)
           }
         } catch {
           case e:SocketException => {

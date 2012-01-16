@@ -4,7 +4,6 @@ import _root_.net.scage.support.ScageColors._
 import _root_.net.scage.handlers.Renderer._
 import org.lwjgl.input.Keyboard._
 import _root_.net.scage.support.messages.ScageXML._
-import _root_.net.scage.support.Vec
 import concurrent.ops._
 
 import junit.framework._
@@ -15,9 +14,10 @@ import net.scage.support.tracer3.{Trace, CoordTracer}
 import net.scage.support.physics.objects.{StaticPolygon, DynaBall}
 import collection.mutable.ListBuffer
 import javax.swing.JOptionPane
-import net.scage.ScreenApp
 import net.scage.handlers.controller2.MultiController
 import net.scage.handlers.Renderer
+import net.scage.{ScageTrait, ScreenApp}
+import net.scage.support.{ScageProperties, Vec}
 
 object ScageTest {
     def suite: Test = {
@@ -39,7 +39,10 @@ class ScageTest extends TestCase("app") {
      * Rigourous Tests :-)
      */
     def testOK() {
-      new ScreenApp(unit_name = "Hello World", properties = "scagetest-properties.txt") with Renderer with MultiController {
+      new ScreenApp("Hello World", "scagetest-properties.txt") with MultiController {
+        /*scage_log.info("starting main unit "+unit_name+"...")
+        ScageProperties.properties = properties*/
+
         render {
           drawFilledRect(Vec(30, 30), 60, 20, GREEN)
         }
@@ -135,7 +138,7 @@ class ScageTest extends TestCase("app") {
           another_font.print(xml("hello.world"), window_width/2, window_height/2+20, WHITE)
         }
 
-        interface("scagetest.help", Array(trace.location, tracer.point(trace.location), fps, input_text))
+        interfaceFromXml("scagetest.help", Array(trace.location, tracer.point(trace.location), fps, input_text))
 
         render {
           drawDisplayList(stars)
@@ -180,7 +183,7 @@ class ScageTest extends TestCase("app") {
         exit {
           stopServer()
         }*/
-      }.run()
+      }.main(Array[String]())
       assertTrue(true)
     };
 }

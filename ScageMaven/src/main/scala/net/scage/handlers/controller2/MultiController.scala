@@ -3,7 +3,9 @@ package net.scage.handlers.controller2
 import net.scage.support.Vec
 import org.lwjgl.input.{Keyboard, Mouse}
 import collection.mutable.{HashMap, ArrayBuffer}
-import net.scage.Scage
+
+case class KeyData(var was_pressed:Boolean, var last_pressed_time:Long, repeat_time: () => Long, onKeyDown: () => Any, onKeyUp: () => Any)
+case class MouseButtonData(var was_pressed:Boolean, var last_pressed_time:Long, repeat_time: () => Long, onButtonDown: Vec => Any, onButtonUp: Vec => Any)
 
 trait MultiController extends ScageController {
   private var keyboard_keys = HashMap[Int, ArrayBuffer[KeyData]]()  // was_pressed, last_pressed_time, repeat_time, onKeyDown, onKeyUp

@@ -3,9 +3,10 @@ package net.scage
 import handlers.controller2.{ScageController, MultiController, SingleController}
 import handlers.Renderer
 import com.weiglewilczek.slf4s.Logger
+import support.ScageProperties
 
 abstract class Screen(unit_name:String = "Scage Screen")
-extends Scage(unit_name, false, "") with Renderer with ScageController {
+extends Scage(unit_name) with Renderer with ScageController {
   private val log = Logger(this.getClass.getName)
 
   // I could override del operations instead to not delete action operations from here (checkControls(), render() etc),
@@ -29,7 +30,7 @@ extends Scage(unit_name, false, "") with Renderer with ScageController {
   }
 }
 abstract class ScreenApp(unit_name:String = "Scage App", properties:String)
-extends Scage(unit_name, true, properties) with Renderer with ScageController with App {
+extends ScageApp(unit_name, properties) with Renderer with ScageController {
   override def run() {
     init()
     is_running = true
@@ -49,9 +50,10 @@ extends Scage(unit_name, true, properties) with Renderer with ScageController wi
     System.exit(0)
   }
 
-  override def main(args: Array[String]) {
-    super.main(args)
-    run()
+  override protected def preinit() {
+    scage_log.info("starting main screen "+unit_name+"...")
+    ScageProperties.properties = properties
+    Renderer.initgl
   }
 }
 

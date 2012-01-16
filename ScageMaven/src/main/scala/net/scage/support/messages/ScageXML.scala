@@ -14,9 +14,9 @@ case class InterfaceData(interface_id:String, x:Int = -1, y:Int = -1, xinterval:
 case class RowData(message_id:String, x:Int = -1, y:Int = -1, placeholders_before:Int = 0, placeholders_in_row:Int = 0, color:ScageColor = DEFAULT_COLOR)
 case class MessageData(message:String, x:Int = -1, y:Int = -1, color:ScageColor = DEFAULT_COLOR)
 
-class ScageXML(val lang:String          = property("strings.lang", "en"),
-               val messages_base:String = property("strings.base", "resources/strings/" +stringProperty("app.name").toLowerCase+"_strings"),
-               val interfaces_base:String = property("interfaces.base", "resources/interfaces/"+stringProperty("app.name").toLowerCase+"_interfaces")
+class ScageXML(val lang:String          = property("xml.lang", "en"),
+               val messages_base:String = property("xml.strings.base", "resources/strings/" +stringProperty("app.name").toLowerCase+"_strings"),
+               val interfaces_base:String = property("xml.interfaces.base", "resources/interfaces/"+stringProperty("app.name").toLowerCase+"_interfaces")
 ) {
   private val log = Logger(this.getClass.getName)
   
@@ -176,7 +176,7 @@ class ScageXML(val lang:String          = property("strings.lang", "en"),
 }
 
 object ScageXML extends ScageXML(
-  lang            = property("strings.lang", "en"),
-  messages_base   = property("strings.base", "resources/strings/" +stringProperty("app.name").toLowerCase+"_strings"),
-  interfaces_base = property("interfaces.base", "resources/interfaces/"+stringProperty("app.name").toLowerCase+"_interfaces")
+  lang            = property("xml.lang", "en"),
+  messages_base   = property("xml.strings.base", "resources/strings/" +stringProperty("app.name").toLowerCase+"_strings"),
+  interfaces_base = property("xml.interfaces.base", "resources/interfaces/"+stringProperty("app.name").toLowerCase+"_interfaces")
 )

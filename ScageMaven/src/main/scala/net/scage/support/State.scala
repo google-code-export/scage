@@ -26,9 +26,6 @@ class State(args:Any*) extends HashMap[String, Any] {
   }  
   def addJson(json:String) {this ++= State.json_parser.evaluate(json)}
 
-  /*import scalaz._
-  Identity(("string": Any)).matchOrZero { case s: String => s.toSeq }*/
-
   override def toString() = mkString("State(", ", ", ")")
 
   private def vec2Json(v:Vec) = "{\"type\":\"vec\", \"x\":"+v.x+", \"y\":"+v.y+"}"
@@ -51,12 +48,13 @@ class State(args:Any*) extends HashMap[String, Any] {
   }
   def toJsonString:String = {
     val sb = new StringBuilder("{")
-    var next_elem = 0
+    val last_key_pos = keys.size-1
+    var next_elem_pos = 0
     for {
       key <- keys
       value = apply(key)
     } {
-      val opt_comma = if(next_elem != keys.size-1) ", " else ""
+      val opt_comma = if(next_elem_pos != last_key_pos) ", " else ""
       value match {
         case s:State => sb.append("\""+key+"\":"+s.toJsonString+opt_comma)
         case l:List[Any] => sb.append("\""+key+"\":"+list2JsonArrayString(l)+opt_comma)
@@ -65,7 +63,7 @@ class State(args:Any*) extends HashMap[String, Any] {
         case c:ScageColor => sb.append("\""+key+"\":"+color2Json(c)+opt_comma)
         case any_other_val => sb.append("\""+key+"\":"+any_other_val.toString+opt_comma)
       }
-      next_elem += 1
+      next_elem_pos += 1
     }
     sb.append("}")
     sb.toString()

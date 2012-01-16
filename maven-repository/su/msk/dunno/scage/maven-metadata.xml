@@ -28,7 +28,8 @@
       <version>0.6.4</version>
       <version>0.6.6</version>
       <version>0.7</version>
+      <version>0.8-SNAPSHOT</version>
     </versions>
-    <lastUpdated>20120107174719</lastUpdated>
+    <lastUpdated>20120116160601</lastUpdated>
   </versioning>
 </metadata>

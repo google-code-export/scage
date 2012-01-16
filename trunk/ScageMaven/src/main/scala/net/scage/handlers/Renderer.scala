@@ -16,8 +16,8 @@ import java.awt.Toolkit
 import net.scage.support.{SortedBuffer, ScageColor, Vec}
 import collection.mutable.ArrayBuffer
 import com.weiglewilczek.slf4s.Logger
-import net.scage.Scage
 import net.scage.support.messages.ScageMessage
+import net.scage.{ScageTrait, Scage}
 
 object Renderer {
   protected val log = Logger(this.getClass.getName)
@@ -55,7 +55,7 @@ object Renderer {
     next_key
   }*/
 
-  lazy val initgl = {
+  val initgl = {
     Display.setDisplayMode(new DisplayMode(window_width, window_height));
     Display.setVSyncEnabled(true);
     Display.setTitle(property("app.name", "Scage")+" - "+property("app.version", "Release"));
@@ -136,7 +136,6 @@ object Renderer {
 
     log.info("initialized opengl system")
   }
-  initgl
 
   def backgroundColor = {
     val background_color = BufferUtils.createFloatBuffer(16)    
@@ -413,9 +412,7 @@ object Renderer {
 
 import Renderer._
 
-trait Renderer extends Scage {
-  initgl
-
+trait Renderer extends ScageTrait {
   private val log = Logger(this.getClass.getName)
 
   private var _scale:Float = 1.0f
@@ -476,7 +473,7 @@ trait Renderer extends Scage {
     operations_mapping += operation_id -> RenderOperations.Interface
     operation_id
   }
-  def interface(interface_id:String, parameters: => Array[Any]):Int = {
+  def interfaceFromXml(interface_id:String, parameters: => Array[Any] = Array[Any]()):Int = {
     interface {
       ScageMessage.printInterface(interface_id, parameters:_*)
     }

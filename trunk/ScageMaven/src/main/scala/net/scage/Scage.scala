@@ -5,16 +5,46 @@ import collection.mutable.{HashMap, ArrayBuffer}
 import support.ScageProperties
 import support.ScageId._
 
-class Scage(
-  val unit_name:String,      // those three values _must_ be constructor parameters in any non-virtual child!!!
-  val is_main_unit:Boolean,
-  val properties:String) {
+class ScageApp(val unit_name:String = "Scage App", val properties:String) extends ScageTrait with App {
+  override def run() {
+    init()
+    is_running = true
+    scage_log.info(unit_name+": run")
+    while(is_running && Scage.isAppRunning) {
+      for((action_id, action_operation, is_action_pausable) <- actions) {
+        current_operation_id = action_id
+        if(!on_pause || !is_action_pausable) action_operation()
+      }
+    }
+    exit()
+    dispose()
+    scage_log.info(unit_name+" was stopped")
+    System.exit(0)
+  }
+  
+  override def stop() {
+    is_running = false
+    Scage.stopApp()
+  }
+
+  protected def preinit() {
+    scage_log.info("starting main unit "+unit_name+"...")
+    ScageProperties.properties = properties
+  }
+  
+  override def main(args:Array[String]) {
+    preinit()
+    super.main(args)
+    run()
+  }
+}
+
+class Scage(val unit_name:String = "Scage") extends ScageTrait
+
+trait ScageTrait {
+  def unit_name:String
 
   protected val scage_log = Logger(this.getClass.getName)
-
-  if(is_main_unit) scage_log.info("starting main unit "+unit_name+"...")
-  if(properties != "") ScageProperties.properties = properties
-  else if(is_main_unit) ScageProperties.properties = unit_name.replaceAll(" ", "").toLowerCase+".properties"
 
   protected var current_operation_id = 0
   def currentOperation = current_operation_id
@@ -250,11 +280,11 @@ class Scage(
     }
   }
   def run() {
-    if(!is_main_unit) scage_log.info("starting unit "+unit_name+"...")
+    scage_log.info("starting unit "+unit_name+"...")
     init()
     is_running = true
     scage_log.info(unit_name+": run")
-    while(is_running && !Scage.is_all_units_stop) {
+    while(is_running && Scage.isAppRunning) {
       for((action_id, action_operation, is_action_pausable) <- actions) {
         current_operation_id = action_id
         if(!on_pause || !is_action_pausable) action_operation()
@@ -263,13 +293,10 @@ class Scage(
     exit()
     dispose()
     scage_log.info(unit_name+" was stopped")
-    if(is_main_unit/* && !Scage.isAppRunning*/) { // maybe somehow replace this check with code that exists only in main unit
-      System.exit(0)
-    }
   }
+
   def stop() {
     is_running = false
-    if(is_main_unit) Scage.stopApp()
   }
 
   private val events = new HashMap[String, List[() => Unit]]()

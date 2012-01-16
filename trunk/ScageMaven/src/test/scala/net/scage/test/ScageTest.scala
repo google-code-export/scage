@@ -15,7 +15,9 @@ import net.scage.support.tracer3.{Trace, CoordTracer}
 import net.scage.support.physics.objects.{StaticPolygon, DynaBall}
 import collection.mutable.ListBuffer
 import javax.swing.JOptionPane
-import net.scage.MultiControlledScreen
+import net.scage.ScreenApp
+import net.scage.handlers.controller2.MultiController
+import net.scage.handlers.Renderer
 
 object ScageTest {
     def suite: Test = {
@@ -37,7 +39,7 @@ class ScageTest extends TestCase("app") {
      * Rigourous Tests :-)
      */
     def testOK() {
-      new MultiControlledScreen(unit_name = "Hello World", is_main_unit = true, properties = "scagetest-properties.txt") {
+      new ScreenApp(unit_name = "Hello World", properties = "scagetest-properties.txt") with Renderer with MultiController {
         render {
           drawFilledRect(Vec(30, 30), 60, 20, GREEN)
         }

@@ -10,9 +10,9 @@ class Scage(
   val is_main_unit:Boolean,
   val properties:String) {
 
-  private val log = Logger(this.getClass.getName)
+  protected val scage_log = Logger(this.getClass.getName)
 
-  if(is_main_unit) log.info("starting main unit "+unit_name+"...")
+  if(is_main_unit) scage_log.info("starting main unit "+unit_name+"...")
   if(properties != "") ScageProperties.properties = properties
   else if(is_main_unit) ScageProperties.properties = unit_name.replaceAll(" ", "").toLowerCase+".properties"
 
@@ -33,13 +33,13 @@ class Scage(
           case ScageOperations.Exit => delExits(operation_id)
           /*case ScageOperations.Dispose => delDisposes(operation_id)*/
           case _ => {
-            log.warn("operation with id "+operation_id+" not found so wasn't deleted")
+            scage_log.warn("operation with id "+operation_id+" not found so wasn't deleted")
             false
           }
         }
       }
       case None => {
-        log.warn("operation with id "+operation_id+" not found so wasn't deleted")
+        scage_log.warn("operation with id "+operation_id+" not found so wasn't deleted")
         false
       }
     }
@@ -71,11 +71,11 @@ class Scage(
       val deletion_result = inits.find(_._1 == operation_id) match {
         case Some(i) => {
           inits -= i
-          log.debug("deleted init operation with id "+operation_id)
+          scage_log.debug("deleted init operation with id "+operation_id)
           true
         }
         case None => {
-          log.warn("operation with id "+operation_id+" not found among inits so wasn't deleted")
+          scage_log.warn("operation with id "+operation_id+" not found among inits so wasn't deleted")
           false
         }
       }
@@ -84,7 +84,7 @@ class Scage(
   }
   def dellAllInits() {
     inits.clear()
-    log.info("deleted all init operations")
+    scage_log.info("deleted all init operations")
   }
 
   // (operation_id, operation, is_pausable)
@@ -147,11 +147,11 @@ class Scage(
       val deletion_result = actions.find(_._1 == operation_id) match {
         case Some(a) => {
           actions -= a
-          log.debug("deleted action operation with id "+operation_id)
+          scage_log.debug("deleted action operation with id "+operation_id)
           true
         }
         case None => {
-          log.warn("operation with id "+operation_id+" not found among actions so wasn't deleted")
+          scage_log.warn("operation with id "+operation_id+" not found among actions so wasn't deleted")
           false
         }
       }
@@ -160,7 +160,7 @@ class Scage(
   }
   def delAllActions() {
     actions.clear()
-    log.info("deleted all action operations")
+    scage_log.info("deleted all action operations")
   }
 
   private var exits = ArrayBuffer[(Int, () => Any)]()
@@ -175,11 +175,11 @@ class Scage(
       val deletion_result = exits.find(_._1 == operation_id) match {
         case Some(e) => {
           exits -= e
-          log.debug("deleted exit operation with id "+operation_id)
+          scage_log.debug("deleted exit operation with id "+operation_id)
           true
         }
         case None => {
-          log.warn("operation with id "+operation_id+" not found among exits so wasn't deleted")
+          scage_log.warn("operation with id "+operation_id+" not found among exits so wasn't deleted")
           false
         }
       }
@@ -188,7 +188,7 @@ class Scage(
   }
   def delAllExits() {
     exits.clear()
-    log.info("deleted all exit operations")
+    scage_log.info("deleted all exit operations")
   }
   
   private var disposes = ArrayBuffer[(Int, () => Any)]()
@@ -203,11 +203,11 @@ class Scage(
         val deletion_result = disposes.find(_._1 == operation_id) match {
           case Some(d) => {
             disposes -= d
-            log.debug("deleted dispose operation with id "+operation_id)
+            scage_log.debug("deleted dispose operation with id "+operation_id)
             true
           }
           case None => {
-            log.warn("operation with id "+operation_id+" not found among disposes so wasn't deleted")
+            scage_log.warn("operation with id "+operation_id+" not found among disposes so wasn't deleted")
             false
           }
         }
@@ -216,11 +216,11 @@ class Scage(
     }
     def delAllDisposes() {
       disposes.clear()
-      log.info("deleted all dispose operations")
+      scage_log.info("deleted all dispose operations")
     }
 
   protected var on_pause = false
-  private def logPause() {log.info("pause = " + on_pause)}
+  private def logPause() {scage_log.info("pause = " + on_pause)}
   def onPause = on_pause
   def switchPause() {on_pause = !on_pause; logPause()}
   def pause() {on_pause = true; logPause()}
@@ -229,31 +229,31 @@ class Scage(
   protected var is_running = false
   def isRunning = is_running
   def init() {
-    log.info(unit_name+": init")
+    scage_log.info(unit_name+": init")
     for((init_id, init_operation) <- inits) {
       current_operation_id = init_id
       init_operation()
     }
   }
   def exit() {
-    log.info(unit_name+": exit")
+    scage_log.info(unit_name+": exit")
     for((exit_id, exit_operation) <- exits) {
       current_operation_id = exit_id
       exit_operation()
     }
   }
   def dispose() {
-    log.info(unit_name+": dispose")
+    scage_log.info(unit_name+": dispose")
     for((dispose_id, dispose_operation) <- disposes) {
       current_operation_id = dispose_id
       dispose_operation()
     }
   }
   def run() {
-    if(!is_main_unit) log.info("starting unit "+unit_name+"...")
+    if(!is_main_unit) scage_log.info("starting unit "+unit_name+"...")
     init()
     is_running = true
-    log.info(unit_name+": run")
+    scage_log.info(unit_name+": run")
     while(is_running && !Scage.is_all_units_stop) {
       for((action_id, action_operation, is_action_pausable) <- actions) {
         current_operation_id = action_id
@@ -262,7 +262,10 @@ class Scage(
     }
     exit()
     dispose()
-    log.info(unit_name+" was stopped")
+    scage_log.info(unit_name+" was stopped")
+    if(is_main_unit/* && !Scage.isAppRunning*/) { // maybe somehow replace this check with code that exists only in main unit
+      System.exit(0)
+    }
   }
   def stop() {
     is_running = false
@@ -276,7 +279,7 @@ class Scage(
   }
   def callEvent(event_name:String) {
     if(events.contains(event_name)) events(event_name).foreach(event_action => event_action())
-    else log.warn("event "+event_name+" not found")
+    else scage_log.warn("event "+event_name+" not found")
   }
 }
 

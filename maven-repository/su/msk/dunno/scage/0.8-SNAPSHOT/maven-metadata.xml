@@ -26,6 +26,12 @@
         <value>0.8-20120116.160538-1</value>
         <updated>20120116160538</updated>
       </snapshotVersion>
+      <snapshotVersion>
+        <classifier>test-sources</classifier>
+        <extension>jar</extension>
+        <value>0.8-20120116.160538-1</value>
+        <updated>20120116160538</updated>
+      </snapshotVersion>
     </snapshotVersions>
   </versioning>
 </metadata>

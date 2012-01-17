@@ -4,21 +4,21 @@ import net.scage.support.Vec
 import org.lwjgl.input.{Keyboard, Mouse}
 import collection.mutable.{HashMap, ArrayBuffer}
 
-case class KeyData(var was_pressed:Boolean, var last_pressed_time:Long, repeat_time: () => Long, onKeyDown: () => Any, onKeyUp: () => Any)
-case class MouseButtonData(var was_pressed:Boolean, var last_pressed_time:Long, repeat_time: () => Long, onButtonDown: Vec => Any, onButtonUp: Vec => Any)
+case class MultiKeyEvent(var was_pressed:Boolean, var last_pressed_time:Long, repeat_time: () => Long, onKeyDown: () => Any, onKeyUp: () => Any)
+case class MultiMouseButtonEvent(var was_pressed:Boolean, var last_pressed_time:Long, repeat_time: () => Long, onButtonDown: Vec => Any, onButtonUp: Vec => Any)
 
 trait MultiController extends ScageController {
-  private var keyboard_keys = HashMap[Int, ArrayBuffer[KeyData]]()  // was_pressed, last_pressed_time, repeat_time, onKeyDown, onKeyUp
+  private var keyboard_keys = HashMap[Int, ArrayBuffer[MultiKeyEvent]]()  // was_pressed, last_pressed_time, repeat_time, onKeyDown, onKeyUp
   private var anykeys = ArrayBuffer[() => Any]()
-  private var mouse_buttons = HashMap[Int, ArrayBuffer[MouseButtonData]]()
+  private var mouse_buttons = HashMap[Int, ArrayBuffer[MultiMouseButtonEvent]]()
   private var mouse_motions = ArrayBuffer[Vec => Any]()
   private var mouse_drag_motions = HashMap[Int, ArrayBuffer[Vec => Any]]()
   private var mouse_wheel_ups = ArrayBuffer[Vec => Any]()
   private var mouse_wheel_downs = ArrayBuffer[Vec => Any]()
 
   def key(key_code:Int, repeat_time: => Long = 0, onKeyDown: => Any, onKeyUp: => Any = {}) {
-    if(keyboard_keys.contains(key_code)) keyboard_keys(key_code) += KeyData(false, 0, () => repeat_time, () => onKeyDown, () => onKeyUp)
-    else keyboard_keys(key_code) = ArrayBuffer(KeyData(false, 0, () => repeat_time, () => onKeyDown, () => onKeyUp))
+    if(keyboard_keys.contains(key_code)) keyboard_keys(key_code) += MultiKeyEvent(false, 0, () => repeat_time, () => onKeyDown, () => onKeyUp)
+    else keyboard_keys(key_code) = ArrayBuffer(MultiKeyEvent(false, 0, () => repeat_time, () => onKeyDown, () => onKeyUp))
   }
   def anykey(onKeyDown: => Any) {
     anykeys += (() => onKeyDown)
@@ -27,8 +27,8 @@ trait MultiController extends ScageController {
   def mouseCoord = Vec(Mouse.getX, Mouse.getY)
   def isMouseMoved = Mouse.getDX != 0 || Mouse.getDY != 0
   private def mouseButton(button_code:Int, repeat_time: => Long = 0, onButtonDown: Vec => Any, onButtonUp: Vec => Any = Vec => {}) {
-    if(mouse_buttons.contains(button_code)) mouse_buttons(button_code) += MouseButtonData(false, 0, () => repeat_time, onButtonDown, onButtonUp)
-    else mouse_buttons(button_code) = ArrayBuffer(MouseButtonData(false, 0, () => repeat_time, onButtonDown, onButtonUp))
+    if(mouse_buttons.contains(button_code)) mouse_buttons(button_code) += MultiMouseButtonEvent(false, 0, () => repeat_time, onButtonDown, onButtonUp)
+    else mouse_buttons(button_code) = ArrayBuffer(MultiMouseButtonEvent(false, 0, () => repeat_time, onButtonDown, onButtonUp))
   }
   def leftMouse(repeat_time: => Long = 0, onBtnDown: Vec => Any, onBtnUp: Vec => Any = Vec => {}) {
     mouseButton(0, repeat_time, onBtnDown, onBtnUp)
@@ -60,7 +60,7 @@ trait MultiController extends ScageController {
     for {
       (key, events_for_key) <- keyboard_keys
       key_data <- events_for_key
-      KeyData(was_pressed, last_pressed_time, repeat_time_func, onKeyDown, onKeyUp) = key_data
+      MultiKeyEvent(was_pressed, last_pressed_time, repeat_time_func, onKeyDown, onKeyUp) = key_data
       repeat_time = repeat_time_func()
       is_repeatable = repeat_time > 0
     } {
@@ -87,7 +87,7 @@ trait MultiController extends ScageController {
     for {
       (button, events_for_button) <- mouse_buttons
       button_data <- events_for_button
-      MouseButtonData(was_pressed, last_pressed_time, repeat_time_func, onButtonDown, onButtonUp) = button_data
+      MultiMouseButtonEvent(was_pressed, last_pressed_time, repeat_time_func, onButtonDown, onButtonUp) = button_data
       repeat_time = repeat_time_func()
       is_repeatable = repeat_time > 0
     } {

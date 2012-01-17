@@ -16,7 +16,7 @@ class ScageApp(val unit_name:String = "Scage App", val properties:String) extend
         if(!on_pause || !is_action_pausable) action_operation()
       }
     }
-    exit()
+    clear()
     dispose()
     scage_log.info(unit_name+" was stopped")
     System.exit(0)
@@ -50,7 +50,7 @@ trait ScageTrait {
   def currentOperation = current_operation_id
 
   object ScageOperations extends Enumeration {
-    val Init, Action, Exit, Dispose = Value
+    val Init, Action, Clear, Dispose = Value
   }
 
   protected val operations_mapping = HashMap[Int, Any]()
@@ -60,7 +60,7 @@ trait ScageTrait {
         operation_type match {
           case ScageOperations.Init => delInits(operation_id)
           case ScageOperations.Action => delActions(operation_id)
-          case ScageOperations.Exit => delExits(operation_id)
+          case ScageOperations.Clear => delClears(operation_id)
           /*case ScageOperations.Dispose => delDisposes(operation_id)*/
           case _ => {
             scage_log.warn("operation with id "+operation_id+" not found so wasn't deleted")
@@ -84,7 +84,7 @@ trait ScageTrait {
   def delAllOperations() {
     dellAllInits()
     delAllActions()
-    delAllExits()
+    delAllClears()
     /*delAllDisposes()*/
   }
 
@@ -193,32 +193,32 @@ trait ScageTrait {
     scage_log.info("deleted all action operations")
   }
 
-  private var exits = ArrayBuffer[(Int, () => Any)]()
-  def exit(exit_func: => Any) = {
+  private var clears = ArrayBuffer[(Int, () => Any)]()
+  def clear(clear_func: => Any) = {
     val operation_id = nextId
-    exits += (operation_id, () => exit_func)
-    operations_mapping += operation_id -> ScageOperations.Exit
+    clears += (operation_id, () => clear_func)
+    operations_mapping += operation_id -> ScageOperations.Clear
     operation_id
   }
-  def delExits(operation_ids:Int*) = {
+  def delClears(operation_ids:Int*) = {
     operation_ids.foldLeft(true)((overall_result, operation_id) => {
-      val deletion_result = exits.find(_._1 == operation_id) match {
+      val deletion_result = clears.find(_._1 == operation_id) match {
         case Some(e) => {
-          exits -= e
-          scage_log.debug("deleted exit operation with id "+operation_id)
+          clears -= e
+          scage_log.debug("deleted clear operation with id "+operation_id)
           true
         }
         case None => {
-          scage_log.warn("operation with id "+operation_id+" not found among exits so wasn't deleted")
+          scage_log.warn("operation with id "+operation_id+" not found among clears so wasn't deleted")
           false
         }
       }
       overall_result && deletion_result
     })
   }
-  def delAllExits() {
-    exits.clear()
-    scage_log.info("deleted all exit operations")
+  def delAllClears() {
+    clears.clear()
+    scage_log.info("deleted all clear operations")
   }
   
   private var disposes = ArrayBuffer[(Int, () => Any)]()
@@ -265,20 +265,28 @@ trait ScageTrait {
       init_operation()
     }
   }
-  def exit() {
-    scage_log.info(unit_name+": exit")
-    for((exit_id, exit_operation) <- exits) {
-      current_operation_id = exit_id
-      exit_operation()
+  def clear() {
+    scage_log.info(unit_name+": clear")
+    for((clear_id, clear_operation) <- clears) {
+      current_operation_id = clear_id
+      clear_operation()
     }
   }
-  def dispose() {
+
+  /**
+   * dispose() is meaned to run inside run() method when we completely end any work and exit to outside.
+   * Unfortunately we cannot make it unreachable for client code, because client code is suppose to be
+   * child of ScageTrait and so do have access to protected methods, and we unable to make dispose() private because
+   * Screen is a child too and need this method to override run()...
+   */
+  protected def dispose() {
     scage_log.info(unit_name+": dispose")
     for((dispose_id, dispose_operation) <- disposes) {
       current_operation_id = dispose_id
       dispose_operation()
     }
   }
+
   def run() {
     scage_log.info("starting unit "+unit_name+"...")
     init()
@@ -290,13 +298,18 @@ trait ScageTrait {
         if(!on_pause || !is_action_pausable) action_operation()
       }
     }
-    exit()
+    clear()
     dispose()
     scage_log.info(unit_name+" was stopped")
   }
 
   def stop() {
     is_running = false
+  }
+  
+  def restart() {
+    clear()
+    init()
   }
 
   private val events = new HashMap[String, List[() => Unit]]()

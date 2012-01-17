@@ -12,7 +12,7 @@ extends Scage(unit_name) with Renderer with ScageController {
   // I could override del operations instead to not delete action operations from here (checkControls(), render() etc),
   // or I could set new operation type - some kind of 'important' ops...
   override def run() {
-    log.info("starting unit "+unit_name+"...")
+    log.info("starting screen "+unit_name+"...")
     init()
     is_running = true
     log.info(unit_name+": run")
@@ -24,7 +24,7 @@ extends Scage(unit_name) with Renderer with ScageController {
       }
       render()
     }
-    exit()
+    clear()
     dispose()
     log.info(unit_name+" was stopped")
   }
@@ -43,7 +43,7 @@ extends ScageApp(unit_name, properties) with Renderer with ScageController {
       }
       render()
     }
-    exit()
+    clear()
     dispose()
     scage_log.info(unit_name+" was stopped")
     exitRender()

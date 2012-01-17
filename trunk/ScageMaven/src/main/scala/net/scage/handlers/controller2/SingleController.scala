@@ -4,17 +4,20 @@ import net.scage.support.Vec
 import collection.mutable.HashMap
 import org.lwjgl.input.{Keyboard, Mouse}
 
+case class SingleKeyEvent(key_code:Int, repeat_time: () => Long, onKeyDown: () => Any, onKeyUp: () => Any)
+case class SingleMouseButtonEvent(button_code:Int, repeat_time: () => Long, onButtonDown: Vec => Any, onButtonUp: Vec => Any)
+
 trait SingleController extends ScageController {
-  private var keyboard_keys = HashMap[Int, KeyEvent]()  // was_pressed, last_pressed_time, repeat_time, onKeyDown, onKeyUp
+  private var keyboard_keys = HashMap[Int, SingleKeyEvent]()  // was_pressed, last_pressed_time, repeat_time, onKeyDown, onKeyUp
   private var anykey: () => Any = () => {}
-  private var mouse_buttons = HashMap[Int, MouseButtonEvent]()
+  private var mouse_buttons = HashMap[Int, SingleMouseButtonEvent]()
   private var on_mouse_motion: Vec => Any = Vec => {}
   private var on_mouse_drag_motion = HashMap[Int, Vec => Any]()
   private var on_mouse_wheel_up: Vec => Any = Vec => {}
   private var on_mouse_wheel_down: Vec => Any = Vec => {}
 
   def key(key_code:Int, repeat_time: => Long = 0, onKeyDown: => Any, onKeyUp: => Any = {}) {
-    keyboard_keys(key_code) = KeyEvent(key_code, () => repeat_time, () => onKeyDown, () => onKeyUp)
+    keyboard_keys(key_code) = SingleKeyEvent(key_code, () => repeat_time, () => onKeyDown, () => onKeyUp)
   }
   def anykey(onKeyDown: => Any) {
     anykey = () => onKeyDown
@@ -23,7 +26,7 @@ trait SingleController extends ScageController {
   def mouseCoord = Vec(Mouse.getX, Mouse.getY)
   def isMouseMoved = Mouse.getDX != 0 || Mouse.getDY != 0
   private def mouseButton(button_code:Int, repeat_time: => Long = 0, onButtonDown: Vec => Any, onButtonUp: Vec => Any = Vec => {}) {
-    mouse_buttons(button_code) = MouseButtonEvent(button_code, () => repeat_time, onButtonDown, onButtonUp)
+    mouse_buttons(button_code) = SingleMouseButtonEvent(button_code, () => repeat_time, onButtonDown, onButtonUp)
   }
   def leftMouse(repeat_time: => Long = 0, onBtnDown: Vec => Any, onBtnUp: Vec => Any = Vec => {}) {
     mouseButton(0, repeat_time, onBtnDown, onBtnUp)
@@ -53,7 +56,7 @@ trait SingleController extends ScageController {
   def checkControls() {
     for {
       (key, key_data) <- keyboard_keys
-      KeyEvent(_, repeat_time_func, onKeyDown, onKeyUp) = key_data
+      SingleKeyEvent(_, repeat_time_func, onKeyDown, onKeyUp) = key_data
       key_press @ KeyPress(_, was_pressed, last_pressed_time) = keyPress(key)
       repeat_time = repeat_time_func()
       is_repeatable = repeat_time > 0
@@ -78,7 +81,7 @@ trait SingleController extends ScageController {
 
     for {
       (button, button_data) <- mouse_buttons
-      MouseButtonEvent(_, repeat_time_func, onButtonDown, onButtonUp) = button_data
+      SingleMouseButtonEvent(_, repeat_time_func, onButtonDown, onButtonUp) = button_data
       mouse_button_press @ MouseButtonPress(_, was_pressed, last_pressed_time) = mouseButtonPress(button)
       repeat_time = repeat_time_func()
       is_repeatable = repeat_time > 0

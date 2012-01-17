@@ -5,10 +5,7 @@ import net.scage.ScageTrait
 import collection.mutable.HashMap
 
 case class KeyPress(key_code:Int, var was_pressed:Boolean, var last_pressed_time:Long)
-case class KeyEvent(key_code:Int, repeat_time: () => Long, onKeyDown: () => Any, onKeyUp: () => Any)
-
 case class MouseButtonPress(button_code:Int, var was_pressed:Boolean, var last_pressed_time:Long)
-case class MouseButtonEvent(button_code:Int, repeat_time: () => Long, onButtonDown: Vec => Any, onButtonUp: Vec => Any)
 
 object ScageController {
   private val key_presses = HashMap[Int, KeyPress]()
@@ -25,7 +22,7 @@ trait ScageController extends ScageTrait {
         kp
     }
   }
-  protected def mouseButtonPresses = ScageController.mouse_button_presses
+
   protected def mouseButtonPress(mouse_button:Int):MouseButtonPress = {
     ScageController.mouse_button_presses.get(mouse_button) match {
       case Some(mbp:MouseButtonPress) => mbp

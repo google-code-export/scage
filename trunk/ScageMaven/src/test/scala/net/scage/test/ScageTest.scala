@@ -180,7 +180,7 @@ class ScageTest extends TestCase("app") {
             }
           })
         }
-        exit {
+        clear {
           stopServer()
         }*/
       }.main(Array[String]())

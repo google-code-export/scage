@@ -7,7 +7,6 @@ import xml.XML
 import org.newdawn.slick.util.ResourceLoader
 import net.scage.support.ScageColors._
 import net.scage.support.ScageColor
-import net.scage.handlers.Renderer
 import net.scage.support.parsers.FormulaParser
 
 case class InterfaceData(interface_id:String, x:Int = -1, y:Int = -1, xinterval:Int = 0, yinterval:Int = 0, rows:Array[RowData], color:ScageColor = DEFAULT_COLOR)
@@ -22,9 +21,9 @@ class ScageXML(val lang:String          = property("xml.lang", "en"),
   
   lazy val messages_file = messages_base + "_" + lang + ".xml"
   private lazy val xml_messages = try {
+    log.debug("parsing xml messages from file "+messages_file)
     XML.load(ResourceLoader.getResourceAsStream(messages_file)) match {
       case <messages>{messages_list @ _*}</messages> => {
-        log.debug("parsing xml messages...")
         HashMap((for {
           message @ <message>{_*}</message> <- messages_list
           message_id = (message \ "@id").text
@@ -84,15 +83,15 @@ class ScageXML(val lang:String          = property("xml.lang", "en"),
   }
 
   private val formula_parser = new FormulaParser(
-      constants = Map("window_width"  -> Renderer.window_width,
-                      "window_height" -> Renderer.window_height)
+      constants = Map("window_width"  -> property("screen.width", 800),
+                      "window_height" -> property("screen.height", 600))
   )
 
   lazy val interfaces_file = interfaces_base + "_" + lang + ".xml"
   private lazy val xml_interfaces = try {
+    log.debug("parsing xml interfaces from file "+interfaces_file)
     XML.load(ResourceLoader.getResourceAsStream(interfaces_file)) match {
       case <interfaces>{interfaces_list @ _*}</interfaces> => {
-        log.debug("parsing xml interfaces...")
         HashMap((for {
           interface @ <interface>{rows_list @ _*}</interface> <- interfaces_list
           interface_id = (interface \ "@id").text
@@ -110,7 +109,7 @@ class ScageXML(val lang:String          = property("xml.lang", "en"),
           val messages = (for {
             row @ <row>{_*}</row> <- rows_list
             message_id = (row \ "@id").text
-            message = row.text.trim
+            message = row.text
             message_x = try{formula_parser.evaluate((row \ "@x").text).toInt} catch {case ex:Exception => -1}
             message_y = try{formula_parser.evaluate((row \ "@y").text).toInt} catch {case ex:Exception => -1}
             placeholders_in_row = placeholdersAmount(message)

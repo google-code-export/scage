@@ -23,12 +23,11 @@ object NetServer {
     var client_handlers = ArrayBuffer[ClientHandler]()
     loopWhile(Scage.isAppRunning) {
       react {
-        case "remove_offline" =>
+        case ("remove_offline", onClientDisconnected:(ClientHandler => State)) =>
           val offline_clients = client_handlers.filter(client => !client.isOnline)
           offline_clients.foreach(client => {
-            client.send(State(
-              ("disconnect" -> ("no responce from you for "+check_timeout+" msecs"))
-            ))
+            client.send(State(("disconnect" -> "no responce from you for "+check_timeout+" msecs")))
+            onClientDisconnected(client)
             client.disconnect()
           })
           client_handlers --= offline_clients
@@ -61,18 +60,8 @@ object NetServer {
   def processClients(process_func:ClientHandler => Any) {
     clients_actor ! ("process", process_func)
   }
-  /*def clientsAmount = {
-    clients_actor ! ("length", self)
-    receive {
-      case clients_length:Int => clients_length
-    }
-  }
-  def isClientsLimitReach:Boolean = max_clients != 0 && clientsAmount >= max_clients*/
-  
-  /*private var sd:State = State()  // outgoing data
-  def send() {clients_actor ! ("process", (client:ClientHandler) => client.send(sd))} // data sending methods*/
+
   def sendToAll(data:State) {
-    /*sd = data*/
     clients_actor ! ("send_to_all", data)
   }
   def sendToAll(data:String) {sendToAll(State(("raw" -> data)))}
@@ -80,16 +69,12 @@ object NetServer {
      clients_actor ! ("send_to_clients", data, client_ids.toList)
   }
 
-  /*def hasOutgoingData = sd.size != 0
-  def eraseOutgoingData() {sd.clear()}
-  def addOutgoingData(key:Any, data:Any) {sd += (key.toString -> data)}
-  def addOutgoingData(key:Any) {sd.add(key)}*/
-
   private var is_running = false
   def startServer(
     onNewConnection:ClientHandler => (Boolean, String) = client => (true, ""),
-    clientGreetings:ClientHandler => State = client => State(),
-    onClientDataReceived:(ClientHandler, State) => Any = (client:ClientHandler, data:State) => {}
+    onClientAccepted:ClientHandler => Any = client => {},
+    onClientDataReceived:(ClientHandler, State) => Any = (client:ClientHandler, data:State) => {},
+    onClientDisconnected:ClientHandler => Any = client => {}
   ) {
     if(is_running) log.warn("server is already running!")
     else {
@@ -111,8 +96,8 @@ object NetServer {
           if(is_client_accepted) {
             clients_actor ! ("add", client)
             log.info("established connection with "+socket.getInetAddress.getHostAddress)
-            val client_greetings_message = State(("accepted" -> reason)).add(clientGreetings(client))
-            client.send(client_greetings_message)
+            client.send(State(("accepted" -> reason)))
+            onClientAccepted(client)
           } else {
             log.info("refused connection from "+socket.getInetAddress.getHostAddress+": "+reason)
             client.send(State("refused" -> reason))
@@ -136,7 +121,7 @@ object NetServer {
         spawn { // clients connection checker only
           while(is_running) {
             Thread.sleep(1000)  // maybe increase or make depend on check_timeout
-            clients_actor ! "remove_offline"
+            clients_actor ! ("remove_offline", onClientDisconnected)
           }
         }        
       }
@@ -153,21 +138,14 @@ object NetServer {
 
 import NetServer._
 
-class ClientHandler(socket:Socket, var onClientDataReceived:(ClientHandler, State) => Any = (client:ClientHandler, data:State) => {}) {
+class ClientHandler(socket:Socket,
+                    onClientDataReceived:(ClientHandler, State) => Any = (client:ClientHandler, data:State) => {}) {
   private val log = Logger(this.getClass.getName)
 
   val id:Int = ScageId.nextId
 
   private val out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream))
   private val in = new BufferedReader(new InputStreamReader(socket.getInputStream))
-
-  /*private var cd = State()
-  private var has_new_data = false
-  def incomingData = {
-    has_new_data = false
-    cd
-  }
-  def hasNewIncomingData = has_new_data*/
 
   private var write_error = false
   def send(data:State) {

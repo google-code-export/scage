@@ -5,56 +5,56 @@ import org.newdawn.slick.util.ResourceLoader
 import com.weiglewilczek.slf4s.Logger
 import collection.mutable.ArrayBuffer
 
-object ScageProperties {
+trait HaveProperties {
+  def property[A : Manifest](key:String, default:A):A
+  def stringProperty(key:String) = property(key, "")
+  def intProperty(key:String) = property(key, 0)
+  def floatProperty(key:String) = property(key, 0.0f)
+  def booleanProperty(key:String) = property(key, false)
+}
+
+object ScageProperties extends HaveProperties {
+  private var scage_properties = new ScageProperties {
+    val properties = "scage.properties"  
+  }
+  
+  def property[A : Manifest](key:String, default:A):A = scage_properties.property(key, default)
+}
+
+trait ScageProperties extends HaveProperties {
+  ScageProperties.scage_properties = this
   private val log = Logger(this.getClass.getName)
 
-  private var _file:String = null
-  def properties = _file
-  def properties_= (f:String) {
-    _file = f
-    log.info("properties file is "+_file)
-    _props = load
-  }
+  def properties:String
 
-  private lazy val defaultPropsWarning = {
-    log.warn("warning: no properties file set, using defaults")
-    _file = "scage.properties"
-  }
-  def file = {
-    if(_file == null) defaultPropsWarning
-    _file
-  }
-
-  private var _props:Properties = null
-  private def props = {
-    if(_props == null) _props = load
-    _props
-  }
+  private lazy val props:Properties = load(properties)
 
   private lazy val fileNotFound = {
-    log.error("failed to load properties: file "+_file+" not found")
+    log.error("failed to load properties: file "+properties+" not found")
     new Properties
   }
-  private def load:Properties = {
-    try {
-      val p = new Properties
-      p.load(ResourceLoader.getResourceAsStream(file))   // can be loaded as resource from jar
-      log.info("loaded properties file "+file)
-      props_already_read.clear()
-      p
-    } catch {
-      //case ex:FileNotFoundException =>
-      case ex:Exception =>
-        if(!file.contains("properties/")) {
-          log.warn("failed to load properties: file "+_file+" not found")
-          //log.debug("development mode: looking for properties file in the properties folder")
-          _file = "properties/" + _file
-          load
-        } else fileNotFound
+  private def load(property_filename:String):Properties = {
+    if(property_filename == "") {
+      log.warn("warning: no properties file set, using defaults")
+      load("scage.properties")
+    } else {
+      try {
+        val p = new Properties
+        p.load(ResourceLoader.getResourceAsStream(property_filename))   // can be loaded as resource from jar
+        log.info("loaded properties file "+property_filename)
+        p
+      } catch {
+        //case ex:FileNotFoundException =>
+        case ex:Exception =>
+          if(!property_filename.contains("properties/")) {
+            log.warn("failed to load properties: file "+property_filename+" not found")
+            load("properties/" + property_filename)
+          } else fileNotFound
+      }
     }
   }
 
-  private var props_already_read = ArrayBuffer[String]()
+  private val props_already_read = ArrayBuffer[String]()
   private def getProperty(key:String) = {
     props.getProperty(key) match {
       case p:String =>
@@ -105,9 +105,4 @@ object ScageProperties {
       case _ => defaultValue(key, default)
     }
   }
-
-  def stringProperty(key:String) = property(key, "")
-  def intProperty(key:String) = property(key, 0)
-  def floatProperty(key:String) = property(key, 0.0f)  
-  def booleanProperty(key:String) = property(key, false)
 }

@@ -102,7 +102,7 @@ object Renderer {
     Thread.sleep(1000)
 
     // drawing scage logo
-    if(property("screen.scagelogo", true)) {
+    if(property("screen.scagelogo", true)) {  // TODO: replace this with to different builds (under different maven profiles): with and without scagelogo
       GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
       val logo_texture = getTexture("resources/images/scage-logo.png")
       drawDisplayList(image(logo_texture, window_width, window_height, 0, 0, logo_texture.getImageWidth, logo_texture.getImageHeight), Vec(window_width/2, window_height/2))
@@ -143,6 +143,11 @@ object Renderer {
     new ScageColor(background_color.get(0), background_color.get(1), background_color.get(2))
   }
   def backgroundColor_=(c:ScageColor) {if(c != DEFAULT_COLOR) GL11.glClearColor(c.red, c.green, c.blue, 0)}
+
+  def clearScreen() {
+    GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
+    GL11.glLoadIdentity();
+  }
   
   def currentColor = {
     val _color = BufferUtils.createFloatBuffer(16)
@@ -437,6 +442,7 @@ trait Renderer extends ScageTrait {
   }
   private val renders = SortedBuffer[RenderElement]()
   private def addRender(render_func: => Unit, position:Int = 0) = {
+    initgl
     val operation_id = /*nextOperationId*/nextId
     renders +=  RenderElement(operation_id, () => render_func, position)
     operations_mapping += operation_id -> RenderOperations.Render
@@ -468,6 +474,7 @@ trait Renderer extends ScageTrait {
 
   private val interfaces = ArrayBuffer[(Int, () => Unit)]()
   def interface(interface_func: => Unit):Int = {
+    initgl
     val operation_id = /*nextOperationId*/nextId
     interfaces += (operation_id, () => interface_func)
     operations_mapping += operation_id -> RenderOperations.Interface
@@ -502,8 +509,7 @@ trait Renderer extends ScageTrait {
   def render() {
     if(Display.isCloseRequested) Scage.stopApp()
     else {
-      GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
-      GL11.glLoadIdentity();
+      clearScreen()
       GL11.glPushMatrix()
         val coord = window_center() - central_coord()*_scale
         GL11.glTranslatef(coord.x , coord.y, 0.0f)
@@ -523,9 +529,9 @@ trait Renderer extends ScageTrait {
     }
   }
 
-  protected def exitRender() {
+  private[scage] def exitRender() {
     backgroundColor = BLACK
-    GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
+    clearScreen()
     print(xmlOrDefault("renderer.exiting", "Exiting..."), 20, window_height-25, GREEN)
     update()
 
@@ -549,9 +555,11 @@ trait Renderer extends ScageTrait {
       case None =>  super.delOperation(operation_id)
     }
   }
-  override def delAllOperations() {
+
+  // I believe such method is of no use in real project
+  /*override def delAllOperations() {
     delAllRenders()
     delAllInterfaces()
     super.delAllOperations()
-  }
+  }*/
 }

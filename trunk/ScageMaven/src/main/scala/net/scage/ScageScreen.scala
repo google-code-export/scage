@@ -1,6 +1,6 @@
 package net.scage
 
-import handlers.controller2.{ScageController, MultiController, SingleController}
+import handlers.controller2.{ScageController, SingleController}
 import handlers.Renderer
 import com.weiglewilczek.slf4s.Logger
 import support.ScageProperties
@@ -18,14 +18,20 @@ extends Scage(unit_name) with Renderer with ScageController {
     log.info(unit_name+": run")
     while(is_running && Scage.isAppRunning) {
       checkControls()
-      for((action_id, action_operation, is_action_pausable) <- actions) {
+      for((action_id, action_operation) <- actions) {
         current_operation_id = action_id
-        if(!on_pause || !is_action_pausable) action_operation()
+        action_operation()
       }
       render()
     }
     clear()
-    dispose()
+
+    scage_log.info(unit_name+": dispose")
+    for((dispose_id, dispose_operation) <- disposes) {
+      current_operation_id = dispose_id
+      dispose_operation()
+    }
+
     log.info(unit_name+" was stopped")
   }
 }
@@ -37,14 +43,20 @@ extends ScageApp(unit_name, properties) with Renderer with ScageController {
     scage_log.info(unit_name+": run")
     while(is_running && Scage.isAppRunning) {
       checkControls()
-      for((action_id, action_operation, is_action_pausable) <- actions) {
+      for((action_id, action_operation) <- actions) {
         current_operation_id = action_id
-        if(!on_pause || !is_action_pausable) action_operation()
+        action_operation()
       }
       render()
     }
     clear()
-    dispose()
+
+    scage_log.info(unit_name+": dispose")
+    for((dispose_id, dispose_operation) <- disposes) {
+      current_operation_id = dispose_id
+      dispose_operation()
+    }
+
     scage_log.info(unit_name+" was stopped")
     exitRender()
     System.exit(0)
@@ -52,7 +64,6 @@ extends ScageApp(unit_name, properties) with Renderer with ScageController {
 
   override protected def preinit() {
     scage_log.info("starting main screen "+unit_name+"...")
-    ScageProperties.properties = properties
     Renderer.initgl
   }
 }

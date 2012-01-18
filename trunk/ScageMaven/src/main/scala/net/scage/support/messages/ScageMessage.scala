@@ -69,7 +69,7 @@ class ScageMessage(
 object ScageMessage extends ScageMessage (
   fonts_base    = property("fonts.base", "resources/fonts/"),
   font_file     = property("font.file", "DroidSans.ttf"),
-  max_font_size      = property("font.max_size", 18),
+  max_font_size = property("font.max_size", 18),
   glyph_from    = property("font.glyph.from", 1024),
   glyph_to      = property("font.glyph.to", 1279)
 )

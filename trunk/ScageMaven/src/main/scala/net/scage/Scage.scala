@@ -5,19 +5,25 @@ import collection.mutable.{HashMap, ArrayBuffer}
 import support.ScageProperties
 import support.ScageId._
 
-class ScageApp(val unit_name:String = "Scage App", val properties:String) extends ScageTrait with App {
+class ScageApp(val unit_name:String = "Scage App", val properties:String) extends ScageTrait with ScageProperties with App {
   override def run() {
     init()
     is_running = true
     scage_log.info(unit_name+": run")
     while(is_running && Scage.isAppRunning) {
-      for((action_id, action_operation, is_action_pausable) <- actions) {
+      for((action_id, action_operation) <- actions) {
         current_operation_id = action_id
-        if(!on_pause || !is_action_pausable) action_operation()
+        action_operation()
       }
     }
     clear()
-    dispose()
+
+    scage_log.info(unit_name+": dispose")
+    for((dispose_id, dispose_operation) <- disposes) {
+      current_operation_id = dispose_id
+      dispose_operation()
+    }
+
     scage_log.info(unit_name+" was stopped")
     System.exit(0)
   }
@@ -29,7 +35,6 @@ class ScageApp(val unit_name:String = "Scage App", val properties:String) extend
 
   protected def preinit() {
     scage_log.info("starting main unit "+unit_name+"...")
-    ScageProperties.properties = properties
   }
   
   override def main(args:Array[String]) {
@@ -46,14 +51,14 @@ trait ScageTrait {
 
   protected val scage_log = Logger(this.getClass.getName)
 
-  protected var current_operation_id = 0
+  private[scage] var current_operation_id = 0
   def currentOperation = current_operation_id
 
   object ScageOperations extends Enumeration {
     val Init, Action, Clear, Dispose = Value
   }
 
-  protected val operations_mapping = HashMap[Int, Any]()
+  private[scage] val operations_mapping = HashMap[Int, Any]()
   def delOperation(operation_id:Int) = {
     operations_mapping.get(operation_id) match {
       case Some(operation_type) => {
@@ -61,7 +66,7 @@ trait ScageTrait {
           case ScageOperations.Init => delInits(operation_id)
           case ScageOperations.Action => delActions(operation_id)
           case ScageOperations.Clear => delClears(operation_id)
-          /*case ScageOperations.Dispose => delDisposes(operation_id)*/
+          case ScageOperations.Dispose => delDisposes(operation_id)
           case _ => {
             scage_log.warn("operation with id "+operation_id+" not found so wasn't deleted")
             false
@@ -81,14 +86,16 @@ trait ScageTrait {
       overall_result && deletion_result
     })
   }
-  def delAllOperations() {
+
+  // I see exactly zero real purposes to have such method
+  /*def delAllOperations() {
     dellAllInits()
     delAllActions()
     delAllClears()
-    /*delAllDisposes()*/
-  }
+    delAllDisposes()
+  }*/
 
-  private val inits = ArrayBuffer[(Int, () => Any)]()
+  private[scage] val inits = ArrayBuffer[(Int, () => Any)]()
   def init(init_func: => Any) = {
     val operation_id = nextId
     inits += (operation_id, () => init_func)
@@ -117,11 +124,11 @@ trait ScageTrait {
     scage_log.info("deleted all init operations")
   }
 
-  // (operation_id, operation, is_pausable)
-  protected var actions = ArrayBuffer[(Int, () => Any, Boolean)]()
+  private[scage] var actions = ArrayBuffer[(Int, () => Any)]()
   private def addAction(operation: => Any, is_pausable:Boolean) = {
     val operation_id = nextId
-    actions += (operation_id, () => operation, is_pausable)
+    if(is_pausable) actions += (operation_id, () => {if(!on_pause) operation})
+    else actions += (operation_id, () => operation)
     operations_mapping += operation_id -> ScageOperations.Action
     operation_id
   }
@@ -193,7 +200,7 @@ trait ScageTrait {
     scage_log.info("deleted all action operations")
   }
 
-  private var clears = ArrayBuffer[(Int, () => Any)]()
+  private[scage] var clears = ArrayBuffer[(Int, () => Any)]()
   def clear(clear_func: => Any) = {
     val operation_id = nextId
     clears += (operation_id, () => clear_func)
@@ -220,34 +227,34 @@ trait ScageTrait {
     clears.clear()
     scage_log.info("deleted all clear operations")
   }
-  
-  private var disposes = ArrayBuffer[(Int, () => Any)]()
-    def dispose(dispose_func: => Any) = {
-      val operation_id = nextId
-      disposes += (operation_id, () => dispose_func)
-      operations_mapping += operation_id -> ScageOperations.Dispose
-      operation_id
-    }
-    def delDisposes(operation_ids:Int*) = {
-      operation_ids.foldLeft(true)((overall_result, operation_id) => {
-        val deletion_result = disposes.find(_._1 == operation_id) match {
-          case Some(d) => {
-            disposes -= d
-            scage_log.debug("deleted dispose operation with id "+operation_id)
-            true
-          }
-          case None => {
-            scage_log.warn("operation with id "+operation_id+" not found among disposes so wasn't deleted")
-            false
-          }
+
+  private[scage] var disposes = ArrayBuffer[(Int, () => Any)]()
+  def dispose(dispose_func: => Any) = {
+    val operation_id = nextId
+    disposes += (operation_id, () => dispose_func)
+    operations_mapping += operation_id -> ScageOperations.Dispose
+    operation_id
+  }
+  def delDisposes(operation_ids:Int*) = {
+    operation_ids.foldLeft(true)((overall_result, operation_id) => {
+      val deletion_result = disposes.find(_._1 == operation_id) match {
+        case Some(d) => {
+          disposes -= d
+          scage_log.debug("deleted dispose operation with id "+operation_id)
+          true
         }
-        overall_result && deletion_result
-      })
-    }
-    def delAllDisposes() {
-      disposes.clear()
-      scage_log.info("deleted all dispose operations")
-    }
+        case None => {
+          scage_log.warn("operation with id "+operation_id+" not found among disposes so wasn't deleted")
+          false
+        }
+      }
+      overall_result && deletion_result
+    })
+  }
+  def delAllDisposes() {
+    disposes.clear()
+    scage_log.info("deleted all dispose operations")
+  }
 
   protected var on_pause = false
   private def logPause() {scage_log.info("pause = " + on_pause)}
@@ -273,33 +280,26 @@ trait ScageTrait {
     }
   }
 
-  /**
-   * dispose() is meaned to run inside run() method when we completely end any work and exit to outside.
-   * Unfortunately we cannot make it unreachable for client code, because client code is suppose to be
-   * child of ScageTrait and so do have access to protected methods, and we unable to make dispose() private because
-   * Screen is a child too and need this method to override run()...
-   */
-  protected def dispose() {
-    scage_log.info(unit_name+": dispose")
-    for((dispose_id, dispose_operation) <- disposes) {
-      current_operation_id = dispose_id
-      dispose_operation()
-    }
-  }
-
   def run() {
     scage_log.info("starting unit "+unit_name+"...")
     init()
     is_running = true
     scage_log.info(unit_name+": run")
     while(is_running && Scage.isAppRunning) {
-      for((action_id, action_operation, is_action_pausable) <- actions) {
+      for((action_id, action_operation) <- actions) {
         current_operation_id = action_id
-        if(!on_pause || !is_action_pausable) action_operation()
+        action_operation()
       }
     }
     clear()
-    dispose()
+
+    // 'disposes' suppose to run after screen is completely finished. No special method exists to run them inside run-loop
+    scage_log.info(unit_name+": dispose")
+    for((dispose_id, dispose_operation) <- disposes) {
+      current_operation_id = dispose_id
+      dispose_operation()
+    }
+    
     scage_log.info(unit_name+" was stopped")
   }
 
@@ -312,7 +312,10 @@ trait ScageTrait {
     init()
   }
 
-  private val events = new HashMap[String, List[() => Unit]]()
+  /* this 'events'-functionality seems useless as the amount of usecases in real projects is zero
+     but I plan to keep it, because I still have hope that someday I construct such usecase =)
+  */
+  private[scage] val events = new HashMap[String, List[() => Unit]]()
   def onEvent(event_name:String)(event_action: => Unit) {
     if(events.contains(event_name)) events(event_name) = (() => event_action) :: events(event_name)
     else events += (event_name -> List(() => event_action))

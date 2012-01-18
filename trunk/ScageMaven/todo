@@ -21,6 +21,13 @@
 is_main_unit=true
 
 ----------------
+Включить в Scage:
+http://code.google.com/p/http-bot/source/browse/trunk/src/su/msk/dunno/httpbot/support/Conn.java
+http://code.google.com/p/http-bot/source/browse/trunk/src/su/msk/dunno/httpbot/support/parsers/HtmlParser.java
+http://code.google.com/p/http-bot/source/browse/trunk/src/su/msk/dunno/httpbot/support/parsers/FormParser.java
+для взаимодействия с http. Парсеры, конечно, лучше накарябать свои, но встроенный в Scala xml-фреймворк,
+к сожалению, скорее всего не подойдет для html(
+
 сжатие сетевого трафика. В перспективе - шифрование (опциональное, ессно). Причем, сжатие придется писать самостоятельно, потому что
 встроенный в жабу gzip немножко не так работает как нам нужно (требует закрывать канал)
 

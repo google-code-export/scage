@@ -23,7 +23,7 @@ object NetServer {
     var client_handlers = ArrayBuffer[ClientHandler]()
     loopWhile(Scage.isAppRunning) {
       react {
-        case ("remove_offline", onClientDisconnected:(ClientHandler => State)) =>
+        case "remove_offline" =>
           val offline_clients = client_handlers.filter(client => !client.isOnline)
           offline_clients.foreach(client => {
             client.send(State(("disconnect" -> "no responce from you for "+check_timeout+" msecs")))
@@ -90,7 +90,7 @@ object NetServer {
           log.info("listening port "+port+", "+clients_length+(if(max_clients > 0) "/"+max_clients else "unlimited")+" client(s) are connected")
           val socket = server_socket.accept
           log.info("incoming connection from "+socket.getInetAddress.getHostAddress)
-          val client = new ClientHandler(socket, onClientDataReceived)
+          val client = new ClientHandler(socket, onClientDataReceived, onClientDisconnected)
           val (is_client_accepted, reason) = if(max_clients != 0 && clients_length >= max_clients) (false, "server is full")
                                              else onNewConnection(client)
           if(is_client_accepted) {
@@ -121,7 +121,7 @@ object NetServer {
         spawn { // clients connection checker only
           while(is_running) {
             Thread.sleep(1000)  // maybe increase or make depend on check_timeout
-            clients_actor ! ("remove_offline", onClientDisconnected)
+            clients_actor ! "remove_offline"
           }
         }        
       }
@@ -139,7 +139,8 @@ object NetServer {
 import NetServer._
 
 class ClientHandler(socket:Socket,
-                    onClientDataReceived:(ClientHandler, State) => Any = (client:ClientHandler, data:State) => {}) {
+                    onClientDataReceived:(ClientHandler, State) => Any = (client:ClientHandler, data:State) => {},
+                    onClientDisconnected:ClientHandler => Any = client => {}) {
   private val log = Logger(this.getClass.getName)
 
   val id:Int = ScageId.nextId
@@ -192,6 +193,7 @@ class ClientHandler(socket:Socket,
       }
       Thread.sleep(10)
     }
+    onClientDisconnected(this)
     socket.close()
     log.info("disconnected client #"+id)
   }

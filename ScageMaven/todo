@@ -21,6 +21,17 @@
 is_main_unit=true
 
 ----------------
+Снова появилась идея завести один глобальный импорт, чтобы не импортить каждый раз кучу всего. Если коротко, и без
+деталей реализации, это может быть объект ScageApp, от которого надо унаследовать трейты:
+import net.scage.handlers.Renderer._
+import net.scage.support.ScageColors._
+import org.lwjgl.input.Keyboard._
+import net.scage.support.messages.ScageMessage._
+import net.scage.support.messages.ScageXML._
+import net.scage.support.ScageProperties._
+ScageId._
+Но трейты надо сначала аккуратно написать... В общем, есть о чем подумать
+
 Включить в Scage:
 http://code.google.com/p/http-bot/source/browse/trunk/src/su/msk/dunno/httpbot/support/Conn.java
 http://code.google.com/p/http-bot/source/browse/trunk/src/su/msk/dunno/httpbot/support/parsers/HtmlParser.java

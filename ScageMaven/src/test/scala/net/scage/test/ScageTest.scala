@@ -15,9 +15,8 @@ import net.scage.support.physics.objects.{StaticPolygon, DynaBall}
 import collection.mutable.ListBuffer
 import javax.swing.JOptionPane
 import net.scage.handlers.controller2.MultiController
-import net.scage.handlers.Renderer
-import net.scage.{ScageTrait, ScreenApp}
-import net.scage.support.{ScageProperties, Vec}
+import net.scage.ScreenApp
+import net.scage.support.Vec
 
 object ScageTest {
     def suite: Test = {

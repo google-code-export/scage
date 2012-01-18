@@ -26,8 +26,7 @@ object NetServer {
         case "remove_offline" =>
           val offline_clients = client_handlers.filter(client => !client.isOnline)
           offline_clients.foreach(client => {
-            client.send(State(("disconnect" -> "no responce from you for "+check_timeout+" msecs")))
-            onClientDisconnected(client)
+            client.send(State(("disconnect" -> ("no responce from you for "+check_timeout+" msecs"))))
             client.disconnect()
           })
           client_handlers --= offline_clients

@@ -6,7 +6,7 @@ import _root_.net.scage.support.ScageColors._
 import _root_.net.scage.handlers.Renderer._
 import messages.ScageMessage._
 
-object ScageColorTest extends ScageScreenApp("Color Test", properties="colortest-properties.txt") {
+object ScageColorTest extends ScageScreenApp("Color Test") {
   val fields = ScageColors.getClass.getDeclaredFields
   val colors = fields.map(f => {
     f.setAccessible(true)

@@ -35,8 +35,8 @@ extends Scage(unit_name) with Renderer with ScageController {
     log.info(unit_name+" was stopped")
   }
 }
-abstract class ScreenApp(unit_name:String = "Scage App", properties:String)
-extends ScageApp(unit_name, properties) with Renderer with ScageController {
+abstract class ScreenApp(unit_name:String = "Scage App")
+extends ScageApp(unit_name) with Renderer with ScageController {
   override def run() {
     init()
     is_running = true
@@ -57,8 +57,8 @@ extends ScageApp(unit_name, properties) with Renderer with ScageController {
       dispose_operation()
     }
 
-    scage_log.info(unit_name+" was stopped")
     exitRender()
+    scage_log.info(unit_name+" was stopped")
     System.exit(0)
   }
 
@@ -70,8 +70,8 @@ extends ScageApp(unit_name, properties) with Renderer with ScageController {
 
 class ScageScreen(unit_name:String = "Scage Screen") extends Screen(unit_name) with SingleController
 
-class ScageScreenApp(unit_name:String = "Scage App", properties:String) 
-extends ScreenApp(unit_name, properties) with SingleController
+class ScageScreenApp(unit_name:String = "Scage App")
+extends ScreenApp(unit_name) with SingleController
 
 /*class MultiControlledScreen(unit_name:String = "Scage App", is_main_unit:Boolean = false, properties:String = "")
 extends Screen(unit_name, is_main_unit, properties) with MultiController*/

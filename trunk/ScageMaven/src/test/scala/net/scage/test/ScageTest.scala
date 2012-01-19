@@ -2,7 +2,7 @@ package net.scage.test
 
 import _root_.net.scage.support.ScageColors._
 import _root_.net.scage.handlers.Renderer._
-import org.lwjgl.input.Keyboard._
+import _root_.net.scage.support.LWJGLKeyboard._
 import _root_.net.scage.support.messages.ScageXML._
 import concurrent.ops._
 
@@ -38,7 +38,7 @@ class ScageTest extends TestCase("app") {
      * Rigourous Tests :-)
      */
     def testOK() {
-      new ScreenApp("Hello World", "scagetest-properties.txt") with MultiController {
+      new ScreenApp("Hello World") with MultiController {
         /*scage_log.info("starting main unit "+unit_name+"...")
         ScageProperties.properties = properties*/
 

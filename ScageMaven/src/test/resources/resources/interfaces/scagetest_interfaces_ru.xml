@@ -1,7 +1,7 @@
 <interfaces>
     <interface id="scagetest.help" x="window_width/2" y="window_height/2" yinterval="-20" color="yellow">
         <row id="help">
-WASD и Ле[rвая К[yн[bопк]а Мы[gши,
+WASD и Ле[rвая К[yн\[bопк\]а Мы[gши,
 Кол]есико - пр]иблизить/отд]алить
         </row>
         <row />

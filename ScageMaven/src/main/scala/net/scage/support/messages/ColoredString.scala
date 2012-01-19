@@ -20,12 +20,15 @@ class ColoredString(original_text:String, default_color:ScageColor) {
   private val previous_colors = Stack[ScageColor]()
   private var pos_offset = 0
 
+  private var disable_color_switch_symbol = false
   private def findColorSwitches(text_arr:Array[Char], pos:Int, current_color:ScageColor) {
-    var disable_color_switch_symbol = false
     if(pos < text_arr.length) {
       text_arr(pos) match {
-        case '\\' => disable_color_switch_symbol = true
-        case '[' if !disable_color_switch_symbol && pos < text_arr.length-1 => {
+        case '\\' =>
+          disable_color_switch_symbol = true
+          pos_offset += 1
+          if(pos < text_arr.length-1) findColorSwitches(text_arr, pos+1, current_color)
+        case '[' if !disable_color_switch_symbol && pos < text_arr.length-1 =>
           (text_arr(pos+1) match {
             case 'r' => Some(RED)
             case 'g' => Some(GREEN)
@@ -44,18 +47,15 @@ class ColoredString(original_text:String, default_color:ScageColor) {
               findColorSwitches(text_arr, pos+1, current_color)
             }
           }
-        }
-        case ']' if !disable_color_switch_symbol => {
+        case ']' if !disable_color_switch_symbol =>
           val previous_color = if(previous_colors.length > 0) previous_colors.pop() else default_color
           color_switches += (pos - pos_offset) -> previous_color
           pos_offset += 1
           if(pos < text_arr.length-1) findColorSwitches(text_arr, pos+1, previous_color)
-        }
-        case _ => {
+        case _ =>
           disable_color_switch_symbol = false
           new_text += text_arr(pos)
           if(pos < text_arr.length-1) findColorSwitches(text_arr, pos+1, current_color)
-        }
       }
     }
   }

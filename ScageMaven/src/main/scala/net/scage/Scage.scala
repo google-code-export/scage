@@ -2,10 +2,9 @@ package net.scage
 
 import com.weiglewilczek.slf4s.Logger
 import collection.mutable.{HashMap, ArrayBuffer}
-import support.ScageProperties
 import support.ScageId._
 
-class ScageApp(val unit_name:String = "Scage App", val properties:String) extends ScageTrait with ScageProperties with App {
+class ScageApp(val unit_name:String = "Scage App") extends ScageTrait with App {
   override def run() {
     init()
     is_running = true
@@ -24,6 +23,7 @@ class ScageApp(val unit_name:String = "Scage App", val properties:String) extend
       dispose_operation()
     }
 
+    Thread.sleep(1000)  // waiting for other threads to finish correctly. Maybe move it under property
     scage_log.info(unit_name+" was stopped")
     System.exit(0)
   }

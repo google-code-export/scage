@@ -130,4 +130,6 @@ object NetClient {
   def stopClient() {
     is_running = false
   }
+  
+  println(this.getClass)
 }

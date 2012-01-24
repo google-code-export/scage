@@ -5,7 +5,7 @@ import collection.mutable.ArrayBuffer
 import collection.mutable.Stack
 import collection.JavaConversions._
 import net.scage.support.ScageColor
-import net.scage.support.ScageColors._
+import net.scage.support.ScageColor._
 import org.newdawn.slick.Color
 
 class ColoredString(original_text:String, default_color:ScageColor) {
@@ -20,15 +20,21 @@ class ColoredString(original_text:String, default_color:ScageColor) {
   private val previous_colors = Stack[ScageColor]()
   private var pos_offset = 0
 
-  private var disable_color_switch_symbol = false
+  private var is_previous_slash = false
   private def findColorSwitches(text_arr:Array[Char], pos:Int, current_color:ScageColor) {
     if(pos < text_arr.length) {
       text_arr(pos) match {
         case '\\' =>
-          disable_color_switch_symbol = true
-          pos_offset += 1
-          if(pos < text_arr.length-1) findColorSwitches(text_arr, pos+1, current_color)
-        case '[' if !disable_color_switch_symbol && pos < text_arr.length-1 =>
+          if(!is_previous_slash) {
+            is_previous_slash = true
+            pos_offset += 1
+            if(pos < text_arr.length-1) findColorSwitches(text_arr, pos+1, current_color)
+          } else {
+            is_previous_slash = false
+            new_text += text_arr(pos)
+            if(pos < text_arr.length-1) findColorSwitches(text_arr, pos+1, current_color)
+          }
+        case '[' if !is_previous_slash && pos < text_arr.length-1 =>
           (text_arr(pos+1) match {
             case 'r' => Some(RED)
             case 'g' => Some(GREEN)
@@ -47,13 +53,13 @@ class ColoredString(original_text:String, default_color:ScageColor) {
               findColorSwitches(text_arr, pos+1, current_color)
             }
           }
-        case ']' if !disable_color_switch_symbol =>
+        case ']' if !is_previous_slash =>
           val previous_color = if(previous_colors.length > 0) previous_colors.pop() else default_color
           color_switches += (pos - pos_offset) -> previous_color
           pos_offset += 1
           if(pos < text_arr.length-1) findColorSwitches(text_arr, pos+1, previous_color)
         case _ =>
-          disable_color_switch_symbol = false
+          is_previous_slash = false
           new_text += text_arr(pos)
           if(pos < text_arr.length-1) findColorSwitches(text_arr, pos+1, current_color)
       }

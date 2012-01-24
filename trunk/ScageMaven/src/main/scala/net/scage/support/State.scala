@@ -24,7 +24,7 @@ class State(args:Any*) extends HashMap[String, Any] {
     })
     this
   }  
-  def addJson(json:String) {this ++= State.json_parser.evaluate(json)}
+  def addJson(json:String) {this ++= State.fromJsonStringOrDefault(json)}
 
   override def toString() = mkString("State(", ", ", ")")
 
@@ -80,5 +80,9 @@ object State {
   }
 
   private lazy val json_parser = new JSONParser
-  def fromJson(json:String):State = new State() ++= json_parser.evaluate(json)  // we catch exceptions in JSONParser. Maybe we should do it here.
+  def fromJsonString(json:String):Option[State] = json_parser.evaluate(json)
+  def fromJsonStringOrDefault(json:String, default_state:State = State()):State = json_parser.evaluate(json) match {
+    case Some(s:State) => s
+    case None => default_state
+  }
 }

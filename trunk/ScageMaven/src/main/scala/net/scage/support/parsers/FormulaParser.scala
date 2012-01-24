@@ -4,6 +4,7 @@ import scala.math._
 import scala.util.parsing.combinator._
 import scala.util.Random
 import com.weiglewilczek.slf4s.Logger
+import collection.mutable.HashMap
 
 /**
  * Simple parser for arithmetic expressions based on Scala's Combinator Parsers framework
@@ -24,12 +25,14 @@ import com.weiglewilczek.slf4s.Logger
  * println(formulaParser.evaluate("m/sqrt(1-v^2/c^2)"))  // 80.00000000003415
  */
 
-class FormulaParser(val constants: Map[String,Double] = Map(), val userFcts: Map[String,String => Double] = Map(), random: Random = new Random) extends JavaTokenParsers {
+class FormulaParser(val constants:HashMap[String,Double] = HashMap[String,Double](),
+                    val userFcts: HashMap[String, String => Double] = HashMap[String, String => Double](),
+                    random: Random = new Random) extends JavaTokenParsers {
   require(constants.keySet.intersect(userFcts.keySet).isEmpty)
+  constants ++= Map("E" -> E, "PI" -> Pi, "Pi" -> Pi)
 
   private val log = Logger(this.getClass.getName)
 
-  private lazy val allConstants = constants ++ Map("E" -> E, "PI" -> Pi, "Pi" -> Pi) // shouldn´t be empty
   private lazy val unaryOps: Map[String,Double => Double] = Map(
    "sqrt" -> (sqrt(_)), "abs" -> (abs(_)), "floor" -> (floor(_)), "ceil" -> (ceil(_)), "ln" -> (math.log(_)), "round" -> (round(_)), "signum" -> (signum(_))
   )
@@ -40,13 +43,14 @@ class FormulaParser(val constants: Map[String,Double] = Map(), val userFcts: Map
    "max" -> (max(_,_)), "min" -> (min(_,_))
   )
   private def fold(d: Double, l: List[~[String,Double]]) = l.foldLeft(d){ case (d1,op~d2) => binaryOps1(op)(d1,d2) }
+  private implicit def hashmap2Parser[V](m: HashMap[String,V]) = m.keys.map(_ ^^ (identity)).reduceLeft(_ | _)
   private implicit def map2Parser[V](m: Map[String,V]) = m.keys.map(_ ^^ (identity)).reduceLeft(_ | _)
   private lazy val expression:  Parser[Double] = sign~term~rep(("+"|"-")~term) ^^ { case s~t~l => fold(s * t,l) }
   private lazy val sign:        Parser[Double] = opt("+" | "-") ^^ { case None => 1; case Some("+") => 1; case Some("-") => -1 }
   private lazy val term:        Parser[Double] = longFactor~rep(("*"|"/")~longFactor) ^^ { case d~l => fold(d,l) }
   private lazy val longFactor:  Parser[Double] = shortFactor~rep("^"~shortFactor) ^^ { case d~l => fold(d,l) }
   private lazy val shortFactor: Parser[Double] = fpn | sign~(constant | rnd | unaryFct | binaryFct | userFct | "("~>expression<~")") ^^ { case s~x => s * x }
-  private lazy val constant:    Parser[Double] = allConstants ^^ (allConstants(_))
+  private lazy val constant:    Parser[Double] = constants ^^ (constants(_))
   private lazy val rnd:         Parser[Double] = "rnd"~>"("~>fpn~","~fpn<~")" ^^ { case x~_~y => require(y > x); x + (y-x) * random.nextDouble } | "rnd" ^^ { _ => random.nextDouble() }
   private lazy val fpn:         Parser[Double] = floatingPointNumber ^^ (_.toDouble)
   private lazy val unaryFct:    Parser[Double] = unaryOps~"("~expression~")" ^^ { case op~_~d~_ => unaryOps(op)(d) }

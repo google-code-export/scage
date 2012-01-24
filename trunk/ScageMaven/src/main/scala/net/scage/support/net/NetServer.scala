@@ -174,10 +174,7 @@ class ClientHandler(socket:Socket,
         try {
           val message = in.readLine
           log.debug("incoming message from client #"+id+":\n"+message)
-          val received_data = (try{State.fromJson(message)}
-          catch {
-            case e:Exception => State(("raw" -> message))
-          })
+          val received_data = State.fromJsonStringOrDefault(message, State(("raw" -> message)))
           if(received_data.contains("ping")) log.debug("received ping from client #"+id)
           else {
             log.debug("received data from client #"+id+":\n"+received_data)

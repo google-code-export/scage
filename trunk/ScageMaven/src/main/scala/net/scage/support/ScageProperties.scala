@@ -4,6 +4,8 @@ import java.util.Properties
 import org.newdawn.slick.util.ResourceLoader
 import com.weiglewilczek.slf4s.Logger
 import collection.mutable.ArrayBuffer
+import parsers.FormulaParser
+import parsers.FormulaParser._
 
 object ScageProperties {
   private val log = Logger(this.getClass.getName)
@@ -56,15 +58,23 @@ object ScageProperties {
     default
   }
 
+  // will make it non-private on real purpose appeared
+  private val formula_parser = new FormulaParser()
+
   def property[A : Manifest](key:String, default:A):A = {
     getProperty(key) match {
       case p:String =>
         try {
           manifest[A].toString match {
-            case "Int" => p.toInt.asInstanceOf[A]
-            case "Long" => p.toLong.asInstanceOf[A]
-            case "Float" => p.toFloat.asInstanceOf[A]
-            case "Double" => p.toDouble.asInstanceOf[A]
+            case "Int" | "Long" | "Float" | "Double" =>
+              val result = formula_parser.evaluate(p)
+              formula_parser.constants += (key -> result)
+              manifest[A].toString match {
+                case "Int" => result.toInt.asInstanceOf[A]
+                case "Long" => result.toLong.asInstanceOf[A]
+                case "Float" => result.toFloat.asInstanceOf[A]
+                case _ => result.asInstanceOf[A]  // I believe it will be 'Double' =)
+              }
             case "Boolean" =>
               if(p.equalsIgnoreCase("yes")  || p.equalsIgnoreCase("1") ||
                  p.equalsIgnoreCase("true") || p.equalsIgnoreCase("on")) true.asInstanceOf[A]
@@ -75,11 +85,14 @@ object ScageProperties {
                 log.info("supported boolean properties are: yes/no, 1/0, true/false, on/off")
                 defaultValue(key, default)
               }
+            case "ScageColor" => ScageColor.fromStringOrDefault(p, defaultValue(key, default).asInstanceOf[ScageColor]).asInstanceOf[A]
+            case "ScageVec" => Vec.fromStringOrDefault(p, defaultValue(key, default).asInstanceOf[Vec]).asInstanceOf[A]
             case _ => p.asInstanceOf[A]
           }
         }
         catch {
           case e:Exception =>
+            log.error(e.getLocalizedMessage)
             log.warn("failed to use property ("+key+" : "+p+") as "+manifest[A])
             defaultValue(key, default)
         }

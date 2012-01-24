@@ -5,7 +5,7 @@ import _root_.net.scage.support.ScageProperties._
 import net.scage.support.messages.unicode.UnicodeFont
 import com.weiglewilczek.slf4s.Logger
 import net.scage.support.{Vec, ScageColor}
-import net.scage.support.ScageColors._
+import net.scage.support.ScageColor._
 import org.lwjgl.opengl.GL11
 
 class ScageMessage(

@@ -95,10 +95,7 @@ object NetClient {
             try {
               val message = in.readLine
               log.debug("incoming message from server:\n"+message)
-              val received_data = (try{State.fromJson(message)}
-              catch {
-                case e:Exception => State(("raw" -> message))
-              })
+              val received_data = State.fromJsonStringOrDefault(message, State(("raw" -> message)))
               if(received_data.contains("ping")) log.debug("received ping from server")
               else {
                 log.debug("received data from server:\n"+received_data)

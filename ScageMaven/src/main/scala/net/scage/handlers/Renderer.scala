@@ -6,7 +6,7 @@ import org.newdawn.slick.opengl.{TextureLoader, Texture}
 import org.lwjgl.opengl.{DisplayMode, GL11, Display}
 import org.lwjgl.util.glu.GLU
 import _root_.net.scage.support.ScageProperties._
-import _root_.net.scage.support.ScageColors._
+import _root_.net.scage.support.ScageColor._
 import _root_.net.scage.support.messages.ScageMessage._
 import _root_.net.scage.support.messages.ScageXML._
 import org.lwjgl.BufferUtils

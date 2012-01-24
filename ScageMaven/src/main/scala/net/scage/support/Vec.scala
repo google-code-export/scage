@@ -1,13 +1,31 @@
 package net.scage.support
 
 import _root_.net.phys2d.math.{ROVector2f, Vector2f}
+import parsers.VecParser
 
-case class Vec(private var _x:Float, private var _y:Float) {
-  def x = _x
-  def y = _y
+object Vec {
+  def apply(x:Float, y:Float) = new Vec(x, y)
+  def apply(v:Vec) = v.copy
+  def apply(v:ROVector2f) = new Vec(v.getX, v.getY)
+  def apply(x:Double, y:Double) = new Vec(x.toFloat, y.toFloat)
+  def apply() = new Vec(0, 0)
+  
+  def unapply(data:Any):Option[(Float, Float)] = data match {
+    case v:Vec => Some(v.x, v.y)
+    case _ => None
+  }
+  
+  private lazy val vec_parser= new VecParser()
+  def fromString(vec_str:String):Option[Vec] = vec_parser.evaluate(vec_str)
+  def fromStringOrDefault(vec_str:String, default_vec:Vec = Vec()):Vec = vec_parser.evaluate(vec_str) match {
+    case Some(v:Vec) => v
+    case None => default_vec
+  } 
+}
 
-  def ix = _x.toInt
-  def iy = _y.toInt
+class Vec(val x:Float = 0, val y:Float = 0) {
+  def ix = x.toInt
+  def iy = y.toInt
 
   def this(v:Vec) = this(v.x, v.y)
   def this(v:ROVector2f) = this(v.getX, v.getY)
@@ -35,8 +53,8 @@ case class Vec(private var _x:Float, private var _y:Float) {
   def dist2(v:Vec) = (x - v.x)*(x - v.x) + (y - v.y)*(y - v.y)
   def dist(v:Vec) = math.sqrt(dist2(v)).toFloat
 
-  def notZero() = x != 0 || y != 0
-  def isZero = _x == 0 && _y == 0
+  def notZero = x != 0 || y != 0
+  def isZero = x == 0 && y == 0
   def ==(v:Vec) = x == v.x && y == v.y
   def !=(v:Vec) = null == v || x != v.x || y != v.y
 
@@ -51,7 +69,7 @@ case class Vec(private var _x:Float, private var _y:Float) {
 
   def copy = new Vec(x, y)
 
-  def toPhys2dVec = new Vector2f(x, y)
+  def toPhys2dVec:ROVector2f = new Vector2f(x, y)
 
   override def toString = "Vec(x="+x+", y="+y+")"
 }

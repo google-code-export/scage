@@ -5,7 +5,7 @@ import com.weiglewilczek.slf4s.Logger
 import collection.mutable.HashMap
 import xml.XML
 import org.newdawn.slick.util.ResourceLoader
-import net.scage.support.ScageColors._
+import net.scage.support.ScageColor._
 import net.scage.support.ScageColor
 import net.scage.support.parsers.FormulaParser
 
@@ -82,9 +82,9 @@ class ScageXML(val lang:String          = property("xml.lang", "en"),
     message.foldLeft(0)((sum, char) => sum + (if(char == '$') 1 else 0))
   }
 
-  private val formula_parser = new FormulaParser(
-      constants = Map("window_width"  -> property("screen.width", 800),
-                      "window_height" -> property("screen.height", 600))
+  private lazy val formula_parser = new FormulaParser(  // maybe use formula_parser from ScageProperties
+      constants = HashMap("window_width"  -> property("screen.width", 800),
+                          "window_height" -> property("screen.height", 600))
   )
 
   lazy val interfaces_file = interfaces_base + "_" + lang + ".xml"
@@ -100,7 +100,7 @@ class ScageXML(val lang:String          = property("xml.lang", "en"),
           interface_y = try{formula_parser.evaluate((interface \ "@y").text).toInt} catch {case ex:Exception => -1}
           interface_xinterval = try{formula_parser.evaluate((interface \ "@xinterval").text).toInt} catch {case ex:Exception => 0}
           interface_yinterval = try{formula_parser.evaluate((interface \ "@yinterval").text).toInt} catch {case ex:Exception => 0}
-          interface_color = colorFromString((interface \ "@color").text)
+          interface_color = fromStringOrDefault((interface \ "@color").text)
         } yield {
           var placeholders_before = 0
           var xpos = interface_x
@@ -113,7 +113,7 @@ class ScageXML(val lang:String          = property("xml.lang", "en"),
             message_x = try{formula_parser.evaluate((row \ "@x").text).toInt} catch {case ex:Exception => -1}
             message_y = try{formula_parser.evaluate((row \ "@y").text).toInt} catch {case ex:Exception => -1}
             placeholders_in_row = placeholdersAmount(message)
-            message_color = colorFromString((row \ "@color").text)
+            message_color = fromStringOrDefault((row \ "@color").text)
           } yield {
             if(message != "") {
               xml_messages += (message_id -> message)

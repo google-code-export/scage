@@ -1,6 +1,6 @@
 package net.scage.test
 
-import _root_.net.scage.support.ScageColors._
+import _root_.net.scage.support.ScageColor._
 import _root_.net.scage.handlers.Renderer._
 import _root_.net.scage.support.LWJGLKeyboard._
 import _root_.net.scage.support.messages.ScageXML._
@@ -131,7 +131,7 @@ class ScageTest extends TestCase("app") {
           })
         })
 
-        backgroundColor = colorFromString("BLACK")    // test method to obtain color by name
+        backgroundColor = fromStringOrDefault("BLACK", BLACK)    // test method to obtain color by name
         val another_font = new ScageMessage(max_font_size = 12) // test using two different fonts in one app
         interface {
           another_font.print(xml("hello.world"), window_width/2, window_height/2+20, WHITE)

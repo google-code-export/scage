@@ -7,11 +7,9 @@ import net.scage.support.{ScageColor, Vec, State}
 /**
  * Json parser based on example from "Programming in Scala, 2nd edition"
  */
-// TODO: add deserialization for Vec and ScageColor
 class JSONParser extends JavaTokenParsers {
   private val log = Logger(this.getClass.getName)
 
-  // TODO: def => private lazy val
   private lazy val obj: Parser[State] =
     "{"~> repsep(member, ",") <~"}" ^^ (State() ++= _)  // State instead of Map[String, Any] because of issues with deserialization from json of structures like array of objects
 
@@ -20,8 +18,9 @@ class JSONParser extends JavaTokenParsers {
 
   private lazy val anyString = ("""([^"\p{Cntrl}\\]|\\[\\/bfnrt]|\\u[a-fA-F0-9]{4})*""").r
 
-  private lazy val member: Parser[(String, Any)] =
-    "\""~anyString~"\""~":"~value ^^ { case "\""~member_name~"\""~":"~member_value => (member_name, member_value) }
+  private lazy val member: Parser[(String, Any)] = (
+    "\""~ident~"\""~":"~value ^^ { case "\""~member_name~"\""~":"~member_value => (member_name, member_value) }
+  )
 
   private lazy val value: Parser[Any] = (
     "{\"type\":\"vec\", \"x\":"~floatingPointNumber~", \"y\":"~floatingPointNumber~"}" ^^
@@ -39,19 +38,16 @@ class JSONParser extends JavaTokenParsers {
     | "false" ^^ (x => false)
   )
 
-  def evaluate(json:String) =
+  def evaluate(json:String):Option[State] =
     parseAll(obj, json) match {
-      case Success(result, _) => {
+      case Success(result, _) =>
         log.debug("successfully parsed json:\n"+json+"\nresult:\n"+result)
-        result
-      }
-      case x @ Failure(msg, _) => { // maybe throw exceptions instead
+        Some(result)
+      case x @ Failure(msg, _) => // maybe throw exceptions instead
         log.error("failed to parse json: "+msg+"\njson string corrupted:\n"+json)
-        Map[String, Any]()
-      }
-      case x @ Error(msg, _) => {
+        None
+      case x @ Error(msg, _) =>
         log.error("failed to parse json: "+msg+"\njson string corrupted:\n"+json)
-        Map[String, Any]()
-      }
+        None
     }
 }

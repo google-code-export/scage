@@ -1,8 +1,6 @@
 app.name=ScageTest
 app.version = v1.0
 
-controller.type = multi
-
 xml.lang = ru
 
 screen.width=640

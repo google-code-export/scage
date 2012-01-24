@@ -144,8 +144,8 @@ class ClientHandler(socket:Socket,
 
   val id:Int = ScageId.nextId
 
-  private val out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream))
-  private val in = new BufferedReader(new InputStreamReader(socket.getInputStream))
+  private val out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream, "UTF-8"))
+  private val in = new BufferedReader(new InputStreamReader(socket.getInputStream, "UTF-8"))
 
   private var write_error = false
   def send(data:State) {

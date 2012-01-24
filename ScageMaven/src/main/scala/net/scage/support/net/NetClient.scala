@@ -29,8 +29,8 @@ object NetClient {
       }
     }
     if(socket != null) {
-      out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream))
-      in = new BufferedReader(new InputStreamReader(socket.getInputStream))
+      out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream, "UTF-8"))
+      in = new BufferedReader(new InputStreamReader(socket.getInputStream, "UTF-8"))
       is_connected = true
       last_answer_time = System.currentTimeMillis
       log.info("connected")

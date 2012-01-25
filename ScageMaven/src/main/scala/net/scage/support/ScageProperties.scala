@@ -3,9 +3,9 @@ package net.scage.support
 import java.util.Properties
 import org.newdawn.slick.util.ResourceLoader
 import com.weiglewilczek.slf4s.Logger
-import collection.mutable.ArrayBuffer
 import parsers.FormulaParser
 import parsers.FormulaParser._
+import collection.mutable.{HashMap, ArrayBuffer}
 
 object ScageProperties {
   private val log = Logger(this.getClass.getName)
@@ -37,14 +37,10 @@ object ScageProperties {
     }
   }
 
-  private val props_already_read = ArrayBuffer[String]()
   private def getProperty(key:String) = {
     props.getProperty(key) match {
       case p:String =>
-        if(!props_already_read.contains(key)) {
-          log.info("read property "+key+": "+p)
-          props_already_read += key
-        }
+        log.debug("read property "+key+": "+p)
         p.trim
       case _ =>
         log.warn("failed to find property "+key)
@@ -54,7 +50,6 @@ object ScageProperties {
   private def defaultValue[A](key:String, default:A) = {
     log.info("default value for property "+key+" is "+(if("".equals(default.toString)) "empty string" else default))
     props.put(key, default.toString)
-    props_already_read += key
     default
   }
 
@@ -66,14 +61,14 @@ object ScageProperties {
       case p:String =>
         try {
           manifest[A].toString match {
-            case "Int" | "Long" | "Float" | "Double" =>
-              val result = formula_parser.evaluate(p)
+            case manifest_type @ ("Int" | "Long" | "Float" | "Double") =>
+              val result = formula_parser.calculate(p)
               formula_parser.constants += (key -> result)
-              manifest[A].toString match {
+              manifest_type match {
                 case "Int" => result.toInt.asInstanceOf[A]
                 case "Long" => result.toLong.asInstanceOf[A]
                 case "Float" => result.toFloat.asInstanceOf[A]
-                case _ => result.asInstanceOf[A]  // I believe it will be 'Double' =)
+                case _ => result.asInstanceOf[A]  // I believe its 'Double' here =)
               }
             case "Boolean" =>
               if(p.equalsIgnoreCase("yes")  || p.equalsIgnoreCase("1") ||
@@ -85,14 +80,21 @@ object ScageProperties {
                 log.info("supported boolean properties are: yes/no, 1/0, true/false, on/off")
                 defaultValue(key, default)
               }
-            case "ScageColor" => ScageColor.fromStringOrDefault(p, defaultValue(key, default).asInstanceOf[ScageColor]).asInstanceOf[A]
-            case "ScageVec" => Vec.fromStringOrDefault(p, defaultValue(key, default).asInstanceOf[Vec]).asInstanceOf[A]
+            case "net.scage.support.ScageColor" =>
+              ScageColor.fromString(p) match {
+                case Some(c) => c.asInstanceOf[A]
+                case None => defaultValue(key, default) 
+              }
+            case "net.scage.support.Vec" =>
+              Vec.fromString(p) match {
+                case Some(v) => v.asInstanceOf[A]
+                case None =>  defaultValue(key, default)
+              }
             case _ => p.asInstanceOf[A]
           }
         }
         catch {
           case e:Exception =>
-            log.error(e.getLocalizedMessage)
             log.warn("failed to use property ("+key+" : "+p+") as "+manifest[A])
             defaultValue(key, default)
         }

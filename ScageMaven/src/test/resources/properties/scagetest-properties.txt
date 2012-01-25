@@ -20,3 +20,6 @@ screen.splash = resources/images/scage-logo.png
 
 physics.restitution = on
 physics.dt = 1
+physics.gravity = [-1, -1]
+
+rect.color = green

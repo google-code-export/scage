@@ -2,7 +2,6 @@ package net.scage.support.net
 
 import _root_.net.scage.support.ScageProperties._
 import java.io.{InputStreamReader, BufferedReader, OutputStreamWriter, PrintWriter}
-import java.net.{SocketException, ServerSocket, Socket}
 import com.weiglewilczek.slf4s.Logger
 import concurrent.ops._
 import actors.Actor._
@@ -10,14 +9,58 @@ import collection.mutable.ArrayBuffer
 import actors.Actor
 import net.scage.support.{ScageId, State}
 import net.scage.Scage
+import java.net.{DatagramSocket, ServerSocket, SocketException, Socket}
 
-object NetServer {
+/**
+ * This is a naive but very simple and reliable network server implementation, using text json messages.
+ * It starting one thread for new connections listening and two threads for every new connection (one for sending and one for receiveing)
+ * It should be replaced with Netty Server in future releases
+ */
+object NetServer extends NetServer(
+  port          = property("net.port", 9800),
+  max_clients   = property("net.max_clients", 20),
+  check_timeout = property("net.check_timeout", 60000),
+  ping_timeout  = property("net.ping_timeout", property("net.check_timeout", 60000)*3/4)
+) {
   private val log = Logger(this.getClass.getName)
 
-  val port = property("net.port", 9800)
-  val max_clients = property("net.max_clients", 20)
-  val check_timeout = property("net.check_timeout", 60000)
-  val ping_timeout = property("net.ping_timeout", check_timeout*3/4)
+  /**
+   * returns next available port starting from given number
+   */
+  def nextAvailablePort(port:Int):Int = {
+    def available(port:Int):Boolean = {
+      var ss:ServerSocket = null
+      var ds:DatagramSocket = null
+      try {
+        ss = new ServerSocket(port)
+        ss.setReuseAddress(true)
+        ds = new DatagramSocket(port)
+        ds.setReuseAddress(true)
+        return true
+      } catch {
+        case e:Exception => return false
+      } finally {
+        if(ds != null) ds.close()
+        if(ss != null) ss.close()
+      }
+      false
+    } 
+    log.info("trying port "+port+"...")
+    if(available(port)) {
+      log.info("the port is available!")
+      port
+    } else {
+      log.info("the port is busy")
+      nextAvailablePort(port+1)
+    }
+  }
+}
+
+class NetServer(val port:Int          = property("net.port", 9800),
+                val max_clients:Int   = property("net.max_clients", 20),
+                val check_timeout:Int = property("net.check_timeout", 60000),
+                val ping_timeout:Int  = property("net.ping_timeout", check_timeout*3/4)) {
+  private val log = Logger(this.getClass.getName)
 
   val clients_actor = actor {
     var client_handlers = ArrayBuffer[ClientHandler]()
@@ -80,13 +123,14 @@ object NetServer {
       log.info("starting net server...")
       is_running = true
       spawn {
-        val server_socket = new ServerSocket(port)  // TODO: handle errors during startup (for example, port is busy)
+        val available_port = NetServer.nextAvailablePort(port)
+        val server_socket = new ServerSocket(available_port)  // TODO: handle errors during startup (for example, port is busy)
         while(is_running) {
           val clients_length = {
             clients_actor ! ("length", self)
             receive {case len:Int => len}
           }
-          log.info("listening port "+port+", "+clients_length+(if(max_clients > 0) "/"+max_clients else "unlimited")+" client(s) are connected")
+          log.info("listening port "+available_port+", "+clients_length+(if(max_clients > 0) "/"+max_clients else "unlimited")+" client(s) are connected")
           val socket = server_socket.accept
           log.info("incoming connection from "+socket.getInetAddress.getHostAddress)
           val client = new ClientHandler(socket, onClientDataReceived, onClientDisconnected)
@@ -148,19 +192,31 @@ class ClientHandler(socket:Socket,
   private val in = new BufferedReader(new InputStreamReader(socket.getInputStream, "UTF-8"))
 
   private var write_error = false
-  def send(data:State) {
-    if(isOnline) {
-      log.debug("sending data to client #"+id+":\n"+data)
-      out.println(data.toJsonString)
-      out.flush()
-      write_error = out.checkError()
-      if(write_error) log.warn("failed to send data to client #"+id+": write error!")
-    } else log.warn("can't send data: client #"+id+" is offline!")
+
+  private val connection_actor = actor {
+    loopWhile(Scage.isAppRunning) {
+      react {
+        case ("send", data:State) =>
+          if(is_running) {
+            log.debug("sending data to client #"+id+":\n"+data)
+            out.println(data.toJsonString)
+            out.flush()
+            write_error = out.checkError()
+            if(write_error) log.warn("failed to send data to client #"+id+": write error!")
+          } else log.warn("can't send data to client #"+id+": client handler is offline!")
+        case "disconnect" => is_running = false
+      }
+    }
   }
+
+  def send(data:State) {
+    connection_actor ! ("send", data)
+  }
+
   def send(data:String) {send(State(("raw" -> data)))}
 
   def disconnect() {
-    is_running = false
+    connection_actor ! "disconnect"
   }
 
   private var last_answer_time = System.currentTimeMillis
@@ -183,7 +239,7 @@ class ClientHandler(socket:Socket,
         } catch {
           case e:SocketException => {
             log.error("error while receiving data from client #"+id+":\n"+e)
-            // dsiconnect maybe?
+            // disconnect maybe?
           }
         }
       }

@@ -96,10 +96,10 @@ class ScageXML(val lang:String          = property("xml.lang", "en"),
           interface @ <interface>{rows_list @ _*}</interface> <- interfaces_list
           interface_id = (interface \ "@id").text
           if interface_id != ""
-          interface_x = try{formula_parser.evaluate((interface \ "@x").text).toInt} catch {case ex:Exception => -1}
-          interface_y = try{formula_parser.evaluate((interface \ "@y").text).toInt} catch {case ex:Exception => -1}
-          interface_xinterval = try{formula_parser.evaluate((interface \ "@xinterval").text).toInt} catch {case ex:Exception => 0}
-          interface_yinterval = try{formula_parser.evaluate((interface \ "@yinterval").text).toInt} catch {case ex:Exception => 0}
+          interface_x = try{formula_parser.calculate((interface \ "@x").text).toInt} catch {case ex:Exception => -1}
+          interface_y = try{formula_parser.calculate((interface \ "@y").text).toInt} catch {case ex:Exception => -1}
+          interface_xinterval = try{formula_parser.calculate((interface \ "@xinterval").text).toInt} catch {case ex:Exception => 0}
+          interface_yinterval = try{formula_parser.calculate((interface \ "@yinterval").text).toInt} catch {case ex:Exception => 0}
           interface_color = fromStringOrDefault((interface \ "@color").text)
         } yield {
           var placeholders_before = 0
@@ -110,8 +110,8 @@ class ScageXML(val lang:String          = property("xml.lang", "en"),
             row @ <row>{_*}</row> <- rows_list
             message_id = (row \ "@id").text
             message = row.text
-            message_x = try{formula_parser.evaluate((row \ "@x").text).toInt} catch {case ex:Exception => -1}
-            message_y = try{formula_parser.evaluate((row \ "@y").text).toInt} catch {case ex:Exception => -1}
+            message_x = try{formula_parser.calculate((row \ "@x").text).toInt} catch {case ex:Exception => -1}
+            message_y = try{formula_parser.calculate((row \ "@y").text).toInt} catch {case ex:Exception => -1}
             placeholders_in_row = placeholdersAmount(message)
             message_color = fromStringOrDefault((row \ "@color").text)
           } yield {

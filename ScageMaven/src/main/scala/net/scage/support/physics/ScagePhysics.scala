@@ -25,7 +25,7 @@ class ScagePhysics {
     else log.error("failed to update dt: must be more then zero but the value is "+new_dt)
   }
 
-  val gravity = Vec(property("physics.gravity.x", 0.0f), property("physics.gravity.y", 0.0f))
+  val gravity = property("physics.gravity", Vec.zero)
   val world = new World(new Vector2f(gravity.x, gravity.y), 10, new QuadSpaceStrategy(20,10));
   world.enableRestingBodyDetection(0.01f, 0.000001f, 0.01f)
   

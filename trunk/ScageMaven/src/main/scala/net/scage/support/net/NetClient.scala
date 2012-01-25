@@ -6,12 +6,23 @@ import java.net.{SocketException, Socket}
 import net.scage.support.State
 import com.weiglewilczek.slf4s.Logger
 import concurrent.ops._
+import actors.Actor._
+import net.scage.Scage
 
-object NetClient {
+object NetClient extends NetClient(
+  server_url =  property("net.server", "localhost"),
+  port = property("net.port", 9800),
+  check_timeout = property("net.check_timeout", 60000),
+  ping_timeout = property("net.ping_timeout", property("net.check_timeout", 60000)*3/4)
+)
+
+class NetClient(
+  val server_url:String =  property("net.server", "127.0.0.1"),
+  val port:Int = property("net.port", 9800),
+  val check_timeout:Int = property("net.check_timeout", 60000),
+  val ping_timeout:Int = property("net.ping_timeout", property("net.check_timeout", 60000)*3/4)
+) {
   private val log = Logger(this.getClass.getName)
-
-  val server_url =  property("net.server", "127.0.0.1")
-  val port = property("net.port", 9800)
 
   private var is_connected = false
   def isConnected = is_connected
@@ -20,63 +31,57 @@ object NetClient {
   private var in:BufferedReader = null
 
   private def connect() {
-    log.info("start connecting to server "+server_url+" at port "+port)
-    socket = try {new Socket(server_url, port)}
-    catch {
-      case e:java.io.IOException => {
-        log.error("failed to connect to server "+server_url+" at port "+port);
-        null
-      }
-    }
-    if(socket != null) {
-      out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream, "UTF-8"))
-      in = new BufferedReader(new InputStreamReader(socket.getInputStream, "UTF-8"))
-      is_connected = true
-      last_answer_time = System.currentTimeMillis
-      log.info("connected")
-    }
+    connection_actor ! "connect"
   }
 
   private var write_error = false
-  def send(data:State) {
-    if(is_connected) {
-      log.debug("sending data to server:\n"+data)
-      out.println(data.toJsonString)
-      out.flush()
-      write_error = out.checkError()
-      if(write_error) log.warn("failed to send data to server: write error!")
-    } else log.warn("not connected to send data!")
+
+  private val connection_actor = actor {
+    loopWhile(Scage.isAppRunning) {
+      react {
+        case "connect" =>
+          log.info("start connecting to server "+server_url+" at port "+port)
+          socket = try {new Socket(server_url, port)}
+          catch {
+            case e:java.io.IOException => {
+              log.error("failed to connect to server "+server_url+" at port "+port);
+              null
+            }
+          }
+          if(socket != null) {
+            out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream, "UTF-8"))
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream, "UTF-8"))
+            is_connected = true
+            last_answer_time = System.currentTimeMillis
+            log.info("connected!")
+          }
+        case ("send", data:State) =>
+          if(is_connected) {
+            log.debug("sending data to server:\n"+data)
+            out.println(data.toJsonString)
+            out.flush()
+            write_error = out.checkError()
+            if(write_error) log.warn("failed to send data to server: write error!")
+          } else log.warn("not connected to send data!")
+        case "disconnect" =>
+          if(socket != null) socket.close()
+          is_connected = false
+          log.info("disconnected from server "+server_url+":"+port)
+      }
+    }
   }
-  /*def send(data:State) {
-    cd = data
-    send()
-  }*/
+
+  def send(data:State) {
+    connection_actor ! ("send", data)
+  }
+
   def send(data:String) {send(State(("raw" -> data)))}
 
-  /*private var sd = State()
-  private var has_new_data = false
-  def incomingData = {
-    has_new_data = false
-    sd
-  }
-  def hasNewIncomingData = has_new_data*/
-
-  /*private var cd = State()
-  def outgoingData = cd
-  def eraseOutgoingData() {cd.clear()}
-  def addOutgoingData(key:Any, data:Any) {cd += (key.toString -> data)}
-  def addOutgoingData(key:Any) {cd.add(key)}*/
-
-  val check_timeout = property("net.check_timeout", 60000)
   private var last_answer_time = System.currentTimeMillis
   def isServerOnline = is_connected && !write_error && (check_timeout == 0 || System.currentTimeMillis - last_answer_time < check_timeout)
-  
-  val ping_timeout = property("net.ping_timeout", check_timeout*3/4)
 
   def disconnect() {
-    if(socket != null) socket.close()
-    is_connected = false
-    log.info("disconnected from server "+server_url+":"+port)
+    connection_actor ! "disconnect"
   }
 
   private var is_running = false
@@ -100,7 +105,6 @@ object NetClient {
               else {
                 log.debug("received data from server:\n"+received_data)
                 onServerDataReceived(received_data)
-                /*has_new_data = true*/
               }
             } catch {
               case e:SocketException => {

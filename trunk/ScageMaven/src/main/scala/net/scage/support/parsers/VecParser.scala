@@ -12,7 +12,7 @@ class VecParser extends JavaTokenParsers {
 
   def evaluate(vec_str:String) = parseAll(vec, vec_str) match {
     case Success(result, _) =>
-      log.debug("successfully parsed Vec from string; vec="+vec_str+"; result="+result)
+      log.debug("successfully parsed "+result+" from string "+vec_str)
       Some(result)
     case x @ Failure(msg, _) =>
       log.error("failed to parse Vec from stirng "+vec_str)

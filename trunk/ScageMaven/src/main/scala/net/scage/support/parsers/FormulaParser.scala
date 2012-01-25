@@ -20,9 +20,9 @@ import collection.mutable.HashMap
  *                  "m" -> 80),
  *    userFcts  = Map("perimeter" -> { _.toDouble * 2 * Pi } ))
  *
- * println(formulaParser.evaluate("2+3*5")) // 17.0
- * println(formulaParser.evaluate("height*perimeter(radius)")) // 502.6548245743669
- * println(formulaParser.evaluate("m/sqrt(1-v^2/c^2)"))  // 80.00000000003415
+ * println(formulaParser.calculate("2+3*5")) // 17.0
+ * println(formulaParser.calculate("height*perimeter(radius)")) // 502.6548245743669
+ * println(formulaParser.calculate("m/sqrt(1-v^2/c^2)"))  // 80.00000000003415
  */
 
 class FormulaParser(val constants:HashMap[String,Double] = HashMap[String,Double](),
@@ -33,33 +33,48 @@ class FormulaParser(val constants:HashMap[String,Double] = HashMap[String,Double
 
   private val log = Logger(this.getClass.getName)
 
-  private lazy val unaryOps: Map[String,Double => Double] = Map(
-   "sqrt" -> (sqrt(_)), "abs" -> (abs(_)), "floor" -> (floor(_)), "ceil" -> (ceil(_)), "ln" -> (math.log(_)), "round" -> (round(_)), "signum" -> (signum(_))
+  private val unaryOps: Map[String,Double => Double] = Map(
+    "" -> {elem:Double => elem},
+    "sqrt" -> (sqrt(_)), 
+    "abs" -> (abs(_)), 
+    "floor" -> (floor(_)), 
+    "ceil" -> (ceil(_)), 
+    "ln" -> (math.log(_)), 
+    "round" -> (round(_)), 
+    "signum" -> (signum(_))
   )
-  private lazy val binaryOps1: Map[String,(Double,Double) => Double] = Map(
+  private val binaryOps1: Map[String,(Double,Double) => Double] = Map(
    "+" -> (_+_), "-" -> (_-_), "*" -> (_*_), "/" -> (_/_), "^" -> (pow(_,_))
   )
-  private lazy val binaryOps2: Map[String,(Double,Double) => Double] = Map(
+  private val binaryOps2: Map[String,(Double,Double) => Double] = Map(
    "max" -> (max(_,_)), "min" -> (min(_,_))
   )
   private def fold(d: Double, l: List[~[String,Double]]) = l.foldLeft(d){ case (d1,op~d2) => binaryOps1(op)(d1,d2) }
   private implicit def hashmap2Parser[V](m: HashMap[String,V]) = m.keys.map(_ ^^ (identity)).reduceLeft(_ | _)
   private implicit def map2Parser[V](m: Map[String,V]) = m.keys.map(_ ^^ (identity)).reduceLeft(_ | _)
-  private lazy val expression:  Parser[Double] = sign~term~rep(("+"|"-")~term) ^^ { case s~t~l => fold(s * t,l) }
-  private lazy val sign:        Parser[Double] = opt("+" | "-") ^^ { case None => 1; case Some("+") => 1; case Some("-") => -1 }
-  private lazy val term:        Parser[Double] = longFactor~rep(("*"|"/")~longFactor) ^^ { case d~l => fold(d,l) }
-  private lazy val longFactor:  Parser[Double] = shortFactor~rep("^"~shortFactor) ^^ { case d~l => fold(d,l) }
-  private lazy val shortFactor: Parser[Double] = fpn | sign~(constant | rnd | unaryFct | binaryFct | userFct | "("~>expression<~")") ^^ { case s~x => s * x }
-  private lazy val constant:    Parser[Double] = constants ^^ (constants(_))
-  private lazy val rnd:         Parser[Double] = "rnd"~>"("~>fpn~","~fpn<~")" ^^ { case x~_~y => require(y > x); x + (y-x) * random.nextDouble } | "rnd" ^^ { _ => random.nextDouble() }
-  private lazy val fpn:         Parser[Double] = floatingPointNumber ^^ (_.toDouble)
-  private lazy val unaryFct:    Parser[Double] = unaryOps~"("~expression~")" ^^ { case op~_~d~_ => unaryOps(op)(d) }
-  private lazy val binaryFct:   Parser[Double] = binaryOps2~"("~expression~","~expression~")" ^^ { case op~_~d1~_~d2~_ => binaryOps2(op)(d1,d2) }
-  private lazy val userFct:     Parser[Double] = userFcts~"("~(expression ^^ (_.toString) | ident)<~")" ^^ { case fct~_~x => userFcts(fct)(x) }
+  private def expression:  Parser[Double] = sign~term~rep(("+"|"-")~term) ^^ { case s~t~l => fold(s * t,l) }
+  private def sign:        Parser[Double] = opt("+" | "-") ^^ { case None => 1; case Some("+") => 1; case Some("-") => -1 }
+  private def term:        Parser[Double] = longFactor~rep(("*"|"/")~longFactor) ^^ { case d~l => fold(d,l) }
+  private def longFactor:  Parser[Double] = shortFactor~rep("^"~shortFactor) ^^ { case d~l => fold(d,l) }
+  private def shortFactor: Parser[Double] = fpn | sign~(constant | rnd | unaryFct | binaryFct | userFct | "("~>expression<~")") ^^ { case s~x => s * x }
+  private def constant:    Parser[Double] = constants ^^ (constants(_))
+  private def rnd:         Parser[Double] = "rnd"~>"("~>fpn~","~fpn<~")" ^^ { case x~_~y => require(y > x); x + (y-x) * random.nextDouble } | "rnd" ^^ { _ => random.nextDouble() }
+  private def fpn:         Parser[Double] = floatingPointNumber ^^ (_.toDouble)
+  private def unaryFct:    Parser[Double] = unaryOps~"("~expression~")" ^^ { case op~_~d~_ => unaryOps(op)(d) }
+  private def binaryFct:   Parser[Double] = binaryOps2~"("~expression~","~expression~")" ^^ { case op~_~d1~_~d2~_ => binaryOps2(op)(d1,d2) }
+  private def userFct:     Parser[Double] = userFcts~"("~(expression ^^ (_.toString) | ident)<~")" ^^ { case fct~_~x => userFcts(fct)(x) }
 
-  def evaluate(formula: String) = {
-    val result = parseAll(expression, formula).get
-    log.debug("parsed formula: "+formula+" = "+result)
-    result
+  def calculate(formula: String) = {
+    parseAll(expression, formula) match {
+      case Success(result, _) =>
+        log.debug("parsed formula: "+formula+" = "+result)
+        result
+      case x @ Failure(msg, _) => // maybe throw exceptions instead
+        log.error("failed to parse formula: "+formula+"\nincorrect syntax: "+msg)
+        0
+      case x @ Error(msg, _) =>
+        log.error("failed to parse formula: "+formula+"\nincorrect syntax: "+msg)
+        0
+    }
   }
 }

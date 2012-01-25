@@ -17,10 +17,12 @@ object Vec {
   
   private lazy val vec_parser= new VecParser()
   def fromString(vec_str:String):Option[Vec] = vec_parser.evaluate(vec_str)
-  def fromStringOrDefault(vec_str:String, default_vec:Vec = Vec()):Vec = vec_parser.evaluate(vec_str) match {
+  def fromStringOrDefault(vec_str:String, default_vec:Vec = zero):Vec = vec_parser.evaluate(vec_str) match {
     case Some(v:Vec) => v
     case None => default_vec
-  } 
+  }
+  
+  lazy val zero = Vec(0, 0)
 }
 
 class Vec(val x:Float = 0, val y:Float = 0) {

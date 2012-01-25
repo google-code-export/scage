@@ -17,6 +17,7 @@ import javax.swing.JOptionPane
 import net.scage.handlers.controller2.MultiController
 import net.scage.ScreenApp
 import net.scage.support.Vec
+import net.scage.support.ScageProperties._
 
 object ScageTest {
     def suite: Test = {
@@ -42,8 +43,9 @@ class ScageTest extends TestCase("app") {
         /*scage_log.info("starting main unit "+unit_name+"...")
         ScageProperties.properties = properties*/
 
+        val rect_color = property("rect.color", RED)
         render {
-          drawFilledRect(Vec(30, 30), 60, 20, GREEN)
+          drawFilledRect(Vec(30, 30), 60, 20, rect_color)
         }
 
         render(10) {

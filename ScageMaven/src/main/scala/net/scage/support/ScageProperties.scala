@@ -55,47 +55,69 @@ object ScageProperties {
 
   // will make it non-private on real purpose appeared
   private val formula_parser = new FormulaParser()
-
+  private def parsedProperty[A : Manifest](key:String, p:String):A = {
+    manifest[A].toString match {
+      case manifest_type @ ("Int" | "Long" | "Float" | "Double") =>
+        val result = formula_parser.calculate(p)
+        formula_parser.constants += (key -> result)
+        manifest_type match {
+          case "Int" => result.toInt.asInstanceOf[A]
+          case "Long" => result.toLong.asInstanceOf[A]
+          case "Float" => result.toFloat.asInstanceOf[A]
+          case _ => result.asInstanceOf[A]  // I believe its 'Double' here =)
+        }
+      case "Boolean" =>
+        if(p.equalsIgnoreCase("yes")  || p.equalsIgnoreCase("1") ||
+          p.equalsIgnoreCase("true") || p.equalsIgnoreCase("on")) true.asInstanceOf[A]
+        else if(p.equalsIgnoreCase("no")    || p.equalsIgnoreCase("0") ||
+          p.equalsIgnoreCase("false") || p.equalsIgnoreCase("off")) false.asInstanceOf[A]
+        else {
+          throw new Exception("supported boolean properties are: yes/no, 1/0, true/false, on/off")
+        }
+      case "net.scage.support.ScageColor" =>
+        ScageColor.fromString(p) match {
+          case Some(c) => c.asInstanceOf[A]
+          case None => throw new Exception(p+" not found among colors")
+        }
+      case "net.scage.support.Vec" =>
+        Vec.fromString(p) match {
+          case Some(v) => v.asInstanceOf[A]
+          case None =>  throw new Exception("correct vec format: [x, y]")
+        }
+      case property_type @ _ =>
+        log.warn("unknown property type: "+property_type)
+        p.asInstanceOf[A]
+    }
+  }
   def property[A : Manifest](key:String, default:A):A = {
     getProperty(key) match {
       case p:String =>
         try {
-          manifest[A].toString match {
-            case manifest_type @ ("Int" | "Long" | "Float" | "Double") =>
-              val result = formula_parser.calculate(p)
-              formula_parser.constants += (key -> result)
-              manifest_type match {
-                case "Int" => result.toInt.asInstanceOf[A]
-                case "Long" => result.toLong.asInstanceOf[A]
-                case "Float" => result.toFloat.asInstanceOf[A]
-                case _ => result.asInstanceOf[A]  // I believe its 'Double' here =)
-              }
-            case "Boolean" =>
-              if(p.equalsIgnoreCase("yes")  || p.equalsIgnoreCase("1") ||
-                 p.equalsIgnoreCase("true") || p.equalsIgnoreCase("on")) true.asInstanceOf[A]
-              else if(p.equalsIgnoreCase("no")    || p.equalsIgnoreCase("0") ||
-                      p.equalsIgnoreCase("false") || p.equalsIgnoreCase("off")) false.asInstanceOf[A]
-              else {
-                log.info("boolean property "+p+" is unsupported")
-                log.info("supported boolean properties are: yes/no, 1/0, true/false, on/off")
-                defaultValue(key, default)
-              }
-            case "net.scage.support.ScageColor" =>
-              ScageColor.fromString(p) match {
-                case Some(c) => c.asInstanceOf[A]
-                case None => defaultValue(key, default) 
-              }
-            case "net.scage.support.Vec" =>
-              Vec.fromString(p) match {
-                case Some(v) => v.asInstanceOf[A]
-                case None =>  defaultValue(key, default)
-              }
-            case _ => p.asInstanceOf[A]
-          }
+          parsedProperty(key, p)
         }
         catch {
           case e:Exception =>
-            log.warn("failed to use property ("+key+" : "+p+") as "+manifest[A])
+            log.warn("failed to use property ("+key+" : "+p+") as "+manifest[A]+": "+e)
+            defaultValue(key, default)
+        }
+      case _ => defaultValue(key, default)
+    }
+  }
+
+  def property[A : Manifest](key:String, default:A, condition:(A => (Boolean,  String))):A = {
+    getProperty(key) match {
+      case p:String =>
+        try {
+          val value = parsedProperty(key, p)
+          val (is_value_accepted, reason) = condition(value)
+          if(!is_value_accepted) {
+            log.warn("value "+value+" is unaccepted: "+reason+"; using default")
+            defaultValue(key, default)
+          } else value
+        }
+        catch {
+          case e:Exception =>
+            log.warn("failed to use property ("+key+" : "+p+") as "+manifest[A]+": "+e)
             defaultValue(key, default)
         }
       case _ => defaultValue(key, default)

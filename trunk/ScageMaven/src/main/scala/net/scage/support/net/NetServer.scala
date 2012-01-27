@@ -3,7 +3,6 @@ package net.scage.support.net
 import _root_.net.scage.support.ScageProperties._
 import java.io.{InputStreamReader, BufferedReader, OutputStreamWriter, PrintWriter}
 import com.weiglewilczek.slf4s.Logger
-import concurrent.ops._
 import actors.Actor._
 import collection.mutable.ArrayBuffer
 import actors.Actor
@@ -19,7 +18,7 @@ import java.net.{DatagramSocket, ServerSocket, SocketException, Socket}
 object NetServer extends NetServer(
   port          = property("net.port", 9800),
   max_clients   = property("net.max_clients", 20),
-  ping_timeout  = property("net.ping_timeout", 60000, {ping_timeout:Int => (ping_timeout >= 1000, "must be more 1000")})
+  ping_timeout  = property("net.ping_timeout", 60000, {ping_timeout:Int => (ping_timeout >= 1000, "must be more than 1000")})
 ) {
   private val log = Logger(this.getClass.getName)
 
@@ -83,9 +82,9 @@ class NetServer(val port:Int          = property("net.port", 9800),
           client_handlers += new_client
         case ("length", actor:Actor) =>
           actor ! client_handlers.length
-        case "receive_data" =>
+        case "receive" =>
           client_handlers.foreach(client => client.receive())
-        case "disconnect_all" =>
+        case "disconnect" =>
           if(client_handlers.length > 0) log.info("disconnecting all clients...")
           client_handlers.foreach(client => client.send(State("disconnect" -> "bye")))  // TODO: change message
           client_handlers.foreach(client => client.disconnect())
@@ -113,7 +112,7 @@ class NetServer(val port:Int          = property("net.port", 9800),
     else {
       log.info("starting net server...")
       is_running = true
-      spawn {
+      actor {
         val available_port = NetServer.nextAvailablePort(port)
         val server_socket = new ServerSocket(available_port)  // TODO: handle errors during startup (for example, port is busy)
         while(is_running) {
@@ -142,25 +141,24 @@ class NetServer(val port:Int          = property("net.port", 9800),
         server_socket.close()
       }
       
-      spawn {
+      actor {
         var last_ping_moment = System.currentTimeMillis()
         while(is_running) {
           Thread.sleep(10)  // TODO: make it an option
-          clients_actor ! "receive_data"
+          clients_actor ! "receive"
           if(System.currentTimeMillis() - last_ping_moment > ping_timeout) {
             clients_actor ! "remove_offline"
             clients_actor ! "ping"
             last_ping_moment = System.currentTimeMillis()
           }
         }
+        clients_actor ! "disconnect"
       }
     }
   }
 
   def stopServer() {
     log.info("shutting net server down...")
-    clients_actor ! "disconnect_all"
-
     is_running = false
   }
 }
@@ -200,7 +198,7 @@ class ClientHandler(socket:Socket,
                 if(received_data.contains("ping")) log.debug("received ping from client #"+id)
                 else {
                   log.debug("received data from client #"+id+":\n"+received_data)
-                  spawn {
+                  actor {
                     onClientDataReceived(this, received_data)
                   }
                 }

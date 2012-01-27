@@ -23,6 +23,7 @@ class NetClient(
 
   private var is_connected = false
   def isConnected = is_connected
+  private var onServerDataReceived:State => Any = state => {}
   private var socket:Socket = null
   private var out:PrintWriter = null
   private var in:BufferedReader = null
@@ -32,16 +33,17 @@ class NetClient(
   private val io_actor = actor {
     loopWhile(Scage.isAppRunning) {
       react {
-        case "connect" =>
+        case ("connect", new_onServerDataReceived:(State => Any))=>
           log.info("start connecting to server "+server_url+" at port "+port)
           socket = try {new Socket(server_url, port)}
           catch {
             case e:java.io.IOException => {
-              log.error("failed to connect to server "+server_url+" at port "+port);
+              log.error("failed to connect to server "+server_url+" at port "+port+": "+e);
               null
             }
           }
           if(socket != null) {
+            onServerDataReceived = new_onServerDataReceived
             out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream, "UTF-8"))
             in = new BufferedReader(new InputStreamReader(socket.getInputStream, "UTF-8"))
             is_connected = true
@@ -98,7 +100,7 @@ class NetClient(
 
   private var is_running = false
   def startClient(onServerDataReceived:(State) => Any = (state) => {}) {
-    io_actor ! "connect"
+    io_actor ! ("connect", onServerDataReceived)
     is_running = true
     actor {
       var last_ping_moment = System.currentTimeMillis()
@@ -106,7 +108,7 @@ class NetClient(
         if(!isServerOnline) { // connection checker
           Thread.sleep(1000)
           if(is_connected) io_actor ! "disconnect"
-          io_actor ! "connect"
+          io_actor ! ("connect", onServerDataReceived)
         } else {
           Thread.sleep(10)
           io_actor ! "receive"

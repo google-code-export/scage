@@ -19,7 +19,11 @@ object NetServer extends NetServer(
   port          = property("net.port", 9800),
   max_clients   = property("net.max_clients", 20),
   ping_timeout  = property("net.ping_timeout", 60000, {ping_timeout:Int => (ping_timeout >= 1000, "must be more than 1000")})
-) {
+)
+
+class NetServer(val port:Int          = property("net.port", 9800),
+                val max_clients:Int   = property("net.max_clients", 20),
+                val ping_timeout:Int  = property("net.ping_timeout", 60000, {ping_timeout:Int => (ping_timeout >= 1000, "must be more 1000")})) {
   private val log = Logger(this.getClass.getName)
 
   /**
@@ -42,7 +46,7 @@ object NetServer extends NetServer(
         if(ss != null) ss.close()
       }
       false
-    } 
+    }
     log.info("trying port "+port+"...")
     if(available(port)) {
       log.info("the port is available!")
@@ -52,12 +56,6 @@ object NetServer extends NetServer(
       nextAvailablePort(port+1)
     }
   }
-}
-
-class NetServer(val port:Int          = property("net.port", 9800),
-                val max_clients:Int   = property("net.max_clients", 20),
-                val ping_timeout:Int  = property("net.ping_timeout", 60000, {ping_timeout:Int => (ping_timeout >= 1000, "must be more 1000")})) {
-  private val log = Logger(this.getClass.getName)
 
   private val clients_actor = actor {
     var client_handlers = ArrayBuffer[ClientHandler]()

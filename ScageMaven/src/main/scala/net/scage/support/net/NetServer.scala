@@ -179,8 +179,8 @@ class ClientHandler(socket:Socket,
     loopWhile(is_running) {
       react {
         case ("send", data:State) =>
-          if(is_running) {
-            log.debug("sending data to client #"+id+":\n"+data)
+          log.debug("sending data to client #"+id+":\n"+data)
+          if(isOnline) {
             out.println(data.toJsonString)
             out.flush()
             write_error = out.checkError()
@@ -201,13 +201,13 @@ class ClientHandler(socket:Socket,
                   }
                 }
               } catch {
-                case e:SocketException => {
+                case e:Exception => {
                   log.error("error while receiving data from client #"+id+":\n"+e)
                   // disconnect maybe?
                 }
               }
             }  
-          }
+          } // else maybe?
         case "disconnect" =>
           is_running = false
           onClientDisconnected(this)

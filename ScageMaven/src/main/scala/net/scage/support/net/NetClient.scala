@@ -22,18 +22,24 @@ class NetClient(
   private val log = Logger(this.getClass.getName)
 
   private var is_connected = false
-  def isConnected = is_connected
-  private var onServerDataReceived:State => Any = state => {}
-  private var socket:Socket = null
-  private var out:PrintWriter = null
-  private var in:BufferedReader = null
-
-  private var write_error = false
+  private var write_error  = false
 
   private val io_actor = actor {
+    var onServerDataReceived:State => Any = state => {}
+    var socket:Socket = null
+    var out:PrintWriter = null
+    var in:BufferedReader = null
     loopWhile(Scage.isAppRunning) {
       react {
         case ("connect", new_onServerDataReceived:(State => Any))=>
+          if(isServerOnline) {
+            is_connected = false
+            if(socket != null) {
+              val socket_url = socket.getInetAddress.getHostAddress
+              socket.close()
+              log.info("disconnected from server "+socket_url)
+            }
+          }
           log.info("start connecting to server "+server_url+" at port "+port)
           socket = try {new Socket(server_url, port)}
           catch {
@@ -47,11 +53,12 @@ class NetClient(
             out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream, "UTF-8"))
             in = new BufferedReader(new InputStreamReader(socket.getInputStream, "UTF-8"))
             is_connected = true
+            write_error = false
             log.info("connected!")
           }
         case ("send", data:State) =>
-          if(is_connected) {
-            log.debug("sending data to server:\n"+data)
+          log.debug("sending data to server:\n"+data)
+          if(isServerOnline) {
             out.println(data.toJsonString)
             out.flush()
             write_error = out.checkError()
@@ -72,13 +79,13 @@ class NetClient(
                   }
                 }
               } catch {
-                case e:SocketException => {
+                case e:Exception => {
                   log.error("error while receiving data from server: "+e)
                   // disconnect maybe?
                 }
               }
             }
-          }
+          } // else maybe?
         case "disconnect" =>
           is_connected = false
           if(socket != null) {
@@ -100,14 +107,12 @@ class NetClient(
 
   private var is_running = false
   def startClient(onServerDataReceived:(State) => Any = (state) => {}) {
-    io_actor ! ("connect", onServerDataReceived)
     is_running = true
     actor {
       var last_ping_moment = System.currentTimeMillis()
       while(is_running) {
         if(!isServerOnline) { // connection checker
           Thread.sleep(1000)
-          if(is_connected) io_actor ! "disconnect"
           io_actor ! ("connect", onServerDataReceived)
         } else {
           Thread.sleep(10)

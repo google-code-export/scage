@@ -1,1 +1,1 @@
-java -Djava.library.path=native -jar lib/${artifactId}-${version}.jar
+java -Djava.library.path=native -Dfile.encoding=UTF-8 -jar lib/${artifactId}-${version}.jar

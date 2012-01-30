@@ -5,7 +5,6 @@ import org.newdawn.slick.util.ResourceLoader
 import com.weiglewilczek.slf4s.Logger
 import parsers.FormulaParser
 import parsers.FormulaParser._
-import collection.mutable.{HashMap, ArrayBuffer}
 
 object ScageProperties {
   private val log = Logger(this.getClass.getName)

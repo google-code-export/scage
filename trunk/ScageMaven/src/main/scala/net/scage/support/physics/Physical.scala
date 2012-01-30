@@ -3,7 +3,7 @@ package net.scage.support.physics
 import net.phys2d.math.Vector2f
 import _root_.net.scage.support.Vec
 import net.phys2d.raw.{CollisionEvent, Body, BodyList}
-import collection.mutable.{ListBuffer, ArrayBuffer}
+import collection.mutable.ListBuffer
 
 trait Physical {
   def body:Body

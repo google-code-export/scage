@@ -3,7 +3,6 @@ package net.scage
 import handlers.controller2.{ScageController, SingleController}
 import handlers.Renderer
 import com.weiglewilczek.slf4s.Logger
-import support.ScageProperties
 
 abstract class Screen(unit_name:String = "Scage Screen")
 extends Scage(unit_name) with Renderer with ScageController {

@@ -12,9 +12,9 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <scala.version>2.9.0</scala.version>
-    <lwjgl.version>2.6</lwjgl.version>
-    <scage.version>0.6.5</scage.version>
+    <scala.version>2.9.1</scala.version>
+    <lwjgl.version>2.7.1</lwjgl.version>
+    <scage.version>0.8-SNAPSHOT</scage.version>
     <src.dir>src</src.dir>
   </properties>
 
@@ -88,6 +88,7 @@
             <directory>${src.dir}/main/resources</directory>
             <includes>
             	<include>log4j.properties</include>
+                <include>logback.xml</include>
             </includes>
             <filtering>true</filtering>
         </resource>
@@ -95,6 +96,7 @@
             <directory>${src.dir}/main/resources</directory>
             <excludes>
             	<exclude>log4j.properties</exclude>
+                <exclude>logback.xml</exclude>
             </excludes>
             <filtering>false</filtering>
         </resource>

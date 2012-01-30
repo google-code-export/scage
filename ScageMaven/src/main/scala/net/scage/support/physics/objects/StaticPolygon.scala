@@ -2,7 +2,7 @@ package net.scage.support.physics.objects
 
 import _root_.net.scage.support.Vec
 import net.scage.support.physics.Physical
-import net.phys2d.math.{ROVector2f, Vector2f}
+import net.phys2d.math.Vector2f
 import net.phys2d.raw.shapes.Polygon
 import net.phys2d.raw.StaticBody
 import _root_.net.scage.support.ScageProperties._

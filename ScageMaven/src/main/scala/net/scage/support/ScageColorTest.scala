@@ -1,6 +1,6 @@
 package net.scage.support
 
-import _root_.net.scage.{ScageScreenApp, ScageScreen}
+import _root_.net.scage.ScageScreenApp
 import org.lwjgl.input.Keyboard._
 import _root_.net.scage.support.ScageColor._
 import _root_.net.scage.handlers.Renderer._

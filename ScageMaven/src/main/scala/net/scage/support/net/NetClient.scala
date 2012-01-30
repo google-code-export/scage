@@ -2,11 +2,12 @@ package net.scage.support.net
 
 import _root_.net.scage.support.ScageProperties._
 import java.io.{InputStreamReader, OutputStreamWriter, BufferedReader, PrintWriter}
-import java.net.{SocketException, Socket}
+import java.net.Socket
 import net.scage.support.State
 import com.weiglewilczek.slf4s.Logger
 import actors.Actor._
 import net.scage.Scage
+import actors.Actor
 
 object NetClient extends NetClient(
   server_url =  property("net.server", "localhost"),
@@ -31,7 +32,7 @@ class NetClient(
     var in:BufferedReader = null
     loopWhile(Scage.isAppRunning) {
       react {
-        case ("connect", new_onServerDataReceived:(State => Any))=>
+        case ("connect", new_onServerDataReceived:(State => Any), actor:Actor)=>
           if(isServerOnline) {
             is_connected = false
             if(socket != null) {
@@ -41,20 +42,20 @@ class NetClient(
             }
           }
           log.info("start connecting to server "+server_url+" at port "+port)
-          socket = try {new Socket(server_url, port)}
-          catch {
-            case e:java.io.IOException => {
-              log.error("failed to connect to server "+server_url+" at port "+port+": "+e);
-              null
-            }
-          }
-          if(socket != null) {
+          try {
+            socket = new Socket(server_url, port)
             onServerDataReceived = new_onServerDataReceived
             out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream, "UTF-8"))
             in = new BufferedReader(new InputStreamReader(socket.getInputStream, "UTF-8"))
             is_connected = true
             write_error = false
             log.info("connected!")
+            actor ! "success"
+          } catch {
+            case e:Exception => {
+              log.error("failed to connect to server "+server_url+" at port "+port+": "+e);
+              actor ! "fail"  // maybe change the message
+            }
           }
         case ("send", data:State) =>
           log.debug("sending data to server:\n"+data)
@@ -112,8 +113,13 @@ class NetClient(
       var last_ping_moment = System.currentTimeMillis()
       while(is_running) {
         if(!isServerOnline) { // connection checker
-          Thread.sleep(1000)
-          io_actor ! ("connect", onServerDataReceived)
+          io_actor ! ("connect", onServerDataReceived, self)
+          receive {
+            case "fail" =>
+              Thread.sleep(1000)
+              io_actor ! ("connect", onServerDataReceived, self)
+            case _ =>
+          }
         } else {
           Thread.sleep(10)
           io_actor ! "receive"

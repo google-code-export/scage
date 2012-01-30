@@ -8,7 +8,7 @@ import collection.mutable.ArrayBuffer
 import actors.Actor
 import net.scage.support.{ScageId, State}
 import net.scage.Scage
-import java.net.{DatagramSocket, ServerSocket, SocketException, Socket}
+import java.net.{DatagramSocket, ServerSocket, Socket}
 
 /**
  * This is a naive but very simple and reliable network server implementation, using text json messages.
@@ -111,7 +111,7 @@ class NetServer(val port:Int          = property("net.port", 9800),
       log.info("starting net server...")
       is_running = true
       actor {
-        val available_port = NetServer.nextAvailablePort(port)
+        val available_port = nextAvailablePort(port)
         val server_socket = new ServerSocket(available_port)  // TODO: handle errors during startup (for example, port is busy)
         while(is_running) {
           val clients_length = {

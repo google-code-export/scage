@@ -1,20 +1,20 @@
 package su.msk.dunno.scar
 
-import su.msk.dunno.scage.single.support.ScageProperties._
-import su.msk.dunno.scage.single.support.Vec
-import su.msk.dunno.scage.screens.handlers.Renderer._
-import su.msk.dunno.scage.single.support.ScageColors._
+import net.scage.support.ScageProperties._
+import net.scage.support.Vec
+import net.scage.handlers.Renderer._
+import net.scage.support.ScageColor._
 import Scaranoid._
-import su.msk.dunno.scage.screens.support.physics.objects.DynaBall
+import net.scage.support.physics.objects.DynaBall
 
-object PlayerBall extends DynaBall(Vec(screen_width/2, screen_height/2), property("ball.radius", 5)) {
+object PlayerBall extends DynaBall(Vec(window_width/2, window_height/2), property("ball.radius", 5)) {
   val ball_speed = property("ball.speed", 25)
 
   var ball_color = WHITE
 
   init {
     println ("me here!")
-    coord = Vec(screen_width/2, screen_height/2)
+    coord = Vec(window_width/2, window_height/2)
     velocity = new Vec(-ball_speed, -ball_speed)
   }
 
@@ -26,7 +26,7 @@ object PlayerBall extends DynaBall(Vec(screen_width/2, screen_height/2), propert
   }
 
   render {
-    color = ball_color
+    currentColor = ball_color
     drawFilledCircle(coord, radius)
   }
 }

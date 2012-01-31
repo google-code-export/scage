@@ -1,15 +1,16 @@
 package su.msk.dunno.scar
 
 import levels.LevelMap1
-import su.msk.dunno.scage.screens.ScageScreen
-import su.msk.dunno.scage.single.support.ScageColors._
-import su.msk.dunno.scage.screens.handlers.Renderer._
+import net.scage.support.ScageColor._
+import net.scage.handlers.Renderer._
 import org.lwjgl.input.Keyboard._
-import su.msk.dunno.scage.single.support.ScageProperties._
-import su.msk.dunno.scage.single.support.messages.ScageMessage._
-import su.msk.dunno.scage.screens.support.physics.ScagePhysics
+import net.scage.support.ScageProperties._
+import net.scage.support.messages.ScageMessage._
+import net.scage.support.messages.ScageXML._
+import net.scage.support.physics.ScagePhysics
+import net.scage.{ScageScreenApp, ScageScreen}
 
-object Scaranoid extends ScageScreen("Scaranoid", is_main_screen = true, "scaranoid.properties") {
+object Scaranoid extends ScageScreenApp("Scaranoid") {
   val physics = ScagePhysics(PlayerBall, PlayerPlatform)
   action {
     physics.step()
@@ -28,14 +29,14 @@ object Scaranoid extends ScageScreen("Scaranoid", is_main_screen = true, "scaran
   }
 
   interface {
-    print(count, 5, screen_height-20, WHITE)
-    print("+"+bonus, 5, screen_height-40, WHITE)
-    print(physics.world.getBodies.size(), 5, screen_height-60, WHITE)
+    print(count, 5, window_height-20, WHITE)
+    print("+"+bonus, 5, window_height-40, WHITE)
+    print(physics.world.getBodies.size(), 5, window_height-60, WHITE)
 
     if(onPause) {
-      if(Level.winCondition) print(xml("game.win"), screen_width/2, screen_height/2, WHITE)
-      else print(xml("game.lose"), screen_width/2, screen_height/2, WHITE)
-      print(xml("game.playagain"), screen_width/2, screen_height/2-20, WHITE)
+      if(Level.winCondition) print(xml("game.win"), window_width/2, window_height/2, WHITE)
+      else print(xml("game.lose"), window_width/2, window_height/2, WHITE)
+      print(xml("game.playagain"), window_width/2, window_height/2-20, WHITE)
     }
   }
 
@@ -57,11 +58,7 @@ object Scaranoid extends ScageScreen("Scaranoid", is_main_screen = true, "scaran
     key(KEY_SPACE, onKeyDown = stop())
 
     interface {
-      print(xml("helpscreen.helpmessage"), 10, screen_height-20, WHITE)
+      print(xml("helpscreen.helpmessage"), 10, window_height-20, WHITE)
     }
   }.run()
-
-  def main(args:Array[String]) {
-    run()
-  }
 }

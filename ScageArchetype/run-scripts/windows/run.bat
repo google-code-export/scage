@@ -1,1 +1,1 @@
-java -Djava.library.path=native -jar lib/${artifactId}-${version}.jar
+java -Dscage.properties=${property.file} -Djava.library.path=native -jar lib/${artifactId}-${version}.jar

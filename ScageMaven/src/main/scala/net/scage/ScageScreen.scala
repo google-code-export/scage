@@ -24,13 +24,7 @@ extends Scage(unit_name) with Renderer with ScageController {
       render()
     }
     clear()
-
-    scage_log.info(unit_name+": dispose")
-    for((dispose_id, dispose_operation) <- disposes) {
-      current_operation_id = dispose_id
-      dispose_operation()
-    }
-
+    dispose()
     log.info(unit_name+" was stopped")
   }
 }
@@ -49,13 +43,7 @@ extends ScageApp(unit_name) with Renderer with ScageController {
       render()
     }
     clear()
-
-    scage_log.info(unit_name+": dispose")
-    for((dispose_id, dispose_operation) <- disposes) {
-      current_operation_id = dispose_id
-      dispose_operation()
-    }
-
+    dispose()
     exitRender()
     scage_log.info(unit_name+" was stopped")
     System.exit(0)

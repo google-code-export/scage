@@ -1,13 +1,13 @@
 package su.msk.dunno.scar
 
-import su.msk.dunno.scage.single.support.{ScageColor, Vec}
-import su.msk.dunno.scage.screens.handlers.Renderer._
+import net.scage.support.{ScageColor, Vec}
+import net.scage.handlers.Renderer._
 import net.phys2d.math.Vector2f
 import org.lwjgl.opengl.GL11
-import su.msk.dunno.scage.single.support.ScageColors._
+import net.scage.support.ScageColor._
 import Scaranoid._
-import su.msk.dunno.scage.screens.support.physics.objects.StaticBox
-import su.msk.dunno.scage.screens.ScageScreen._
+import net.scage.support.physics.objects.StaticBox
+import net.scage.ScageScreen._
 
 class TargetBox(leftup_coord:Vec) extends StaticBox(leftup_coord, 40, 40) {
   val box_color = {

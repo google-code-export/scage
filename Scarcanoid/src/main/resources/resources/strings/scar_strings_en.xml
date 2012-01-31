@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <messages>
-    <message code="game.lose">
+    <message id="game.lose">
         You Lose!
     </message>
 
-    <message code="game.win">
+    <message id="game.win">
         You Win!
     </message>
 
-    <message code="game.playagain">
+    <message id="game.playagain">
         Play Again? (y/n)
     </message>
 
-    <message code="helpscreen.helpmessage">
+    <message id="helpscreen.helpmessage">
 Simple remake of classic Arcanoid, written in Scala.
 
 Controls: arrow keys [LEFT] and [RIGHT]

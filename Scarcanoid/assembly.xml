@@ -31,13 +31,8 @@
             <outputDirectory>lib</outputDirectory>
         </file>
         <file>
-            <source>${property.file}</source>
+            <source>${scageproperties}</source>
             <outputDirectory>/</outputDirectory>
-        </file>
-        <file>
-            <source>log4j.properties</source>
-            <outputDirectory>lib</outputDirectory>
-            <filtered>true</filtered>
         </file>
     </files>
 </assembly>

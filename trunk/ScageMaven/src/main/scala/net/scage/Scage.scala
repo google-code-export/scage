@@ -16,14 +16,7 @@ class ScageApp(val unit_name:String = "Scage App") extends ScageTrait with App {
       }
     }
     clear()
-
-    scage_log.info(unit_name+": dispose")
-    for((dispose_id, dispose_operation) <- disposes) {
-      current_operation_id = dispose_id
-      dispose_operation()
-    }
-
-    Thread.sleep(1000)  // waiting for other threads to finish correctly. Maybe move it under property
+    dispose()
     scage_log.info(unit_name+" was stopped")
     System.exit(0)
   }
@@ -280,6 +273,15 @@ trait ScageTrait {
     }
   }
 
+  // 'disposes' suppose to run after screen is completely finished. No special method exists to run them inside run-loop
+  private[scage] def dispose() {
+    scage_log.info(unit_name+": dispose")
+    for((dispose_id, dispose_operation) <- disposes) {
+      current_operation_id = dispose_id
+      dispose_operation()
+    }
+  }
+
   def run() {
     scage_log.info("starting unit "+unit_name+"...")
     init()
@@ -292,14 +294,7 @@ trait ScageTrait {
       }
     }
     clear()
-
-    // 'disposes' suppose to run after screen is completely finished. No special method exists to run them inside run-loop
-    scage_log.info(unit_name+": dispose")
-    for((dispose_id, dispose_operation) <- disposes) {
-      current_operation_id = dispose_id
-      dispose_operation()
-    }
-    
+    dispose()
     scage_log.info(unit_name+" was stopped")
   }
 

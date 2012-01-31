@@ -33,7 +33,7 @@ class ScagePhysics {
   def addPhysical(physical:Physical) = {
     if(!world.getBodies.contains(physical.body)) world.add(physical.body)
     physicals += physical
-    physical.prepare()
+    physical.clearTouches()
     log.debug("added new physical "+physical)
     physical
   }
@@ -61,7 +61,7 @@ class ScagePhysics {
   def containsPhysical(p:Physical) = physicals.contains(p)
 
   def step() {
-    physicals.foreach(_.prepare())
+    physicals.foreach(_.clearTouches())
 
     for(i <- 1 to _dt) {
       world.step()

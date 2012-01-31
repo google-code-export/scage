@@ -40,7 +40,7 @@ trait Physical {
   def isTouching = is_touching
   def isTouching(p:Physical) = touching_bodies.contains(p.body)
 
-  def prepare() {
+  def clearTouches() {
     is_touching = false
     touching_bodies.clear()
     touching_points.clear()

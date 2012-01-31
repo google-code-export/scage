@@ -42,18 +42,11 @@ object Renderer {
     }
   }
   
-  def update() {
+  def update() {  // maybe remove this method
     Display.sync(framerate)
     Display.update()
     countFPS()
   }
-
-  /*private var next_displaylist_key = 10000
-  def nextDisplayListKey = {
-    val next_key = next_displaylist_key
-    next_displaylist_key += 1
-    next_key
-  }*/
 
   val initgl = {
     Display.setDisplayMode(new DisplayMode(window_width, window_height));
@@ -437,11 +430,11 @@ trait Renderer extends ScageTrait {
     else (coord / scale) + (center - windowCenter/scale)
   }
 
-  case class RenderElement(operation_id:Int, render_func:() => Unit, position:Int = 0) extends Ordered[RenderElement] {
+  case class RenderElement(operation_id:Int, render_func:() => Any, position:Int = 0) extends Ordered[RenderElement] {
     def compare(that:RenderElement) = this.position - that.position
   }
   private val renders = SortedBuffer[RenderElement]()
-  private def addRender(render_func: => Unit, position:Int = 0) = {
+  private def addRender(render_func: => Any, position:Int = 0) = {
     initgl
     val operation_id = /*nextOperationId*/nextId
     renders +=  RenderElement(operation_id, () => render_func, position)
@@ -449,8 +442,8 @@ trait Renderer extends ScageTrait {
     operation_id
   }
 
-  def render(render_func: => Unit) = addRender(render_func)
-  def render(position:Int = 0)(render_func: => Unit) = addRender(render_func, position)
+  def render(render_func: => Any) = addRender(render_func)
+  def render(position:Int = 0)(render_func: => Any) = addRender(render_func, position)
   def delRenders(render_ids:Int*) = {
     render_ids.foldLeft(true)((overall_result, render_id) => {
       val deletion_result = renders.find(_.operation_id == render_id) match {
@@ -472,8 +465,8 @@ trait Renderer extends ScageTrait {
     log.info("deleted all render operations")
   }
 
-  private val interfaces = ArrayBuffer[(Int, () => Unit)]()
-  def interface(interface_func: => Unit):Int = {
+  private val interfaces = ArrayBuffer[(Int, () => Any)]()
+  def interface(interface_func: => Any):Int = {
     initgl
     val operation_id = /*nextOperationId*/nextId
     interfaces += (operation_id, () => interface_func)
@@ -506,7 +499,7 @@ trait Renderer extends ScageTrait {
     log.info("deleted all interface operations")
   }
 
-  def render() {
+  def render() {  // maybe rename this to differ from render functions
     if(Display.isCloseRequested) Scage.stopApp()
     else {
       clearScreen()

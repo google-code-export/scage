@@ -273,7 +273,7 @@ trait ScageTrait {
     }
   }
 
-  // 'disposes' suppose to run after screen is completely finished. No special method exists to run them inside run-loop
+  // 'disposes' suppose to run after screen is completely finished. No public method exists to run them inside run-loop
   private[scage] def dispose() {
     scage_log.info(unit_name+": dispose")
     for((dispose_id, dispose_operation) <- disposes) {

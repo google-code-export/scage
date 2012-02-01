@@ -2,7 +2,9 @@ package net.scage.support
 
 import org.lwjgl.input.Keyboard
 
-object LWJGLKeyboard {
+object LWJGLKeyboard extends LWJGLKeyboard
+
+trait LWJGLKeyboard {
   lazy val KEY_ESCAPE = Keyboard.KEY_ESCAPE
   lazy val KEY_1 = Keyboard.KEY_1
   lazy val KEY_2 = Keyboard.KEY_2

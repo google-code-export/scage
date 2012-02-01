@@ -6,7 +6,6 @@ import java.net.Socket
 import net.scage.support.State
 import com.weiglewilczek.slf4s.Logger
 import actors.Actor._
-import net.scage.Scage
 import actors.Actor
 
 object NetClient extends NetClient(
@@ -30,7 +29,18 @@ class NetClient(
     var socket:Socket = null
     var out:PrintWriter = null
     var in:BufferedReader = null
-    loopWhile(Scage.isAppRunning) {
+    
+    def send(data:State) {
+      log.debug("sending data to server:\n"+data)
+      if(isServerOnline) {
+        out.println(data.toJsonString)
+        out.flush()
+        write_error = out.checkError()
+        if(write_error) log.warn("failed to send data to server: write error!")
+      } else log.warn("not connected to send data!")
+    }
+    
+    loop {
       react {
         case ("connect", new_onServerDataReceived:(State => Any), actor:Actor)=>
           if(isServerOnline) {
@@ -50,22 +60,18 @@ class NetClient(
             is_connected = true
             write_error = false
             log.info("connected!")
-            actor ! "success"
+            actor ! "connected"
           } catch {
             case e:Exception => {
               log.error("failed to connect to server "+server_url+" at port "+port+": "+e);
               actor ! "fail"  // maybe change the message
             }
           }
-        case ("send", data:State) =>
-          log.debug("sending data to server:\n"+data)
-          if(isServerOnline) {
-            out.println(data.toJsonString)
-            out.flush()
-            write_error = out.checkError()
-            if(write_error) log.warn("failed to send data to server: write error!")
-          } else log.warn("not connected to send data!")
-        case "receive" =>
+        case ("send", data:State) => send(data)
+        case ("sendSync", data:State, actor:Actor) =>
+          send(data)
+          actor ! "finished sending"
+        case "check" =>
           if(is_connected) {
             if(in.ready) {
               try {
@@ -87,13 +93,14 @@ class NetClient(
               }
             }
           } // else maybe?
-        case "disconnect" =>
+        case ("disconnect", actor:Actor) =>
           is_connected = false
           if(socket != null) {
             val socket_url = socket.getInetAddress.getHostAddress
-            socket.close()
             log.info("disconnected from server "+socket_url)
+            socket.close()
           }
+          actor ! "disconnected"
       }
     }
   }
@@ -101,8 +108,15 @@ class NetClient(
   def send(data:State) {
     io_actor ! ("send", data)
   }
-
   def send(data:String) {send(State(("raw" -> data)))}
+
+  def sendSync(data:State) {
+    io_actor ! ("sendSync", data, self)
+    receive {
+      case "finished sending" =>
+    }
+  }
+  def sendSync(data:String) {sendSync(State(("raw" -> data)))}
 
   def isServerOnline = is_connected && !write_error
 
@@ -122,18 +136,21 @@ class NetClient(
           }
         } else {
           Thread.sleep(10)
-          io_actor ! "receive"
+          io_actor ! "check"
           if(System.currentTimeMillis() - last_ping_moment > ping_timeout) {
             io_actor ! ("send", State("ping"))
             last_ping_moment = System.currentTimeMillis()
           }
         }
       }
-      io_actor ! "disconnect"
     }
   }
 
   def stopClient() {
     is_running = false
+    io_actor ! ("disconnect", self)
+    receive {
+      case "disconnected" =>
+    }
   }
 }

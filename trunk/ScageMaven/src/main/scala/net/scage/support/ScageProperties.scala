@@ -83,7 +83,7 @@ object ScageProperties {
           case Some(v) => v.asInstanceOf[A]
           case None =>  throw new Exception("correct vec format: [x, y]")
         }
-      case _ => p.asInstanceOf[A] // assuming its simple String
+      case _ => p.asInstanceOf[A] // assuming A is String here. If not - we throw exception
     }
   }
   def property[A : Manifest](key:String, default:A):A = {

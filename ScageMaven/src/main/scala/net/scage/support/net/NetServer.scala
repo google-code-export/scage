@@ -7,7 +7,6 @@ import actors.Actor._
 import collection.mutable.ArrayBuffer
 import actors.Actor
 import net.scage.support.{ScageId, State}
-import net.scage.Scage
 import java.net.{DatagramSocket, ServerSocket, Socket}
 
 /**
@@ -21,7 +20,7 @@ object NetServer extends NetServer(
   ping_timeout  = property("net.ping_timeout", 60000, {ping_timeout:Int => (ping_timeout >= 1000, "must be more than 1000")})
 )
 
-class NetServer(val port:Int          = property("net.port", 9800),
+class NetServer(port:Int              = property("net.port", 9800),
                 val max_clients:Int   = property("net.max_clients", 20),
                 val ping_timeout:Int  = property("net.ping_timeout", 60000, {ping_timeout:Int => (ping_timeout >= 1000, "must be more 1000")})) {
   private val log = Logger(this.getClass.getName)
@@ -59,7 +58,7 @@ class NetServer(val port:Int          = property("net.port", 9800),
 
   private val clients_actor = actor {
     var client_handlers = ArrayBuffer[ClientHandler]()
-    loopWhile(Scage.isAppRunning) {
+    loop {
       react {
         case "remove_offline" =>
           val offline_clients = client_handlers.filter(client => !client.isOnline)
@@ -80,13 +79,15 @@ class NetServer(val port:Int          = property("net.port", 9800),
           client_handlers += new_client
         case ("length", actor:Actor) =>
           actor ! client_handlers.length
-        case "receive" =>
-          client_handlers.foreach(client => client.receive())
-        case "disconnect" =>
+        case "check" =>
+          client_handlers.foreach(client => client.check())
+        case ("disconnect", actor:Actor) =>
           if(client_handlers.length > 0) log.info("disconnecting all clients...")
-          client_handlers.foreach(client => client.send(State("disconnect" -> "bye")))  // TODO: change message
+          client_handlers.foreach(client => client.sendSync(State("disconnect" -> "bye")))  // TODO: change message, make it optional or remove!
           client_handlers.foreach(client => client.disconnect())
           client_handlers.clear()
+          if(server_socket != null) server_socket.close()  // null check will save our ass if somebody call stopServer() BEFORE startServer()
+          actor ! "disconnected"
       }
     }
   }
@@ -99,6 +100,10 @@ class NetServer(val port:Int          = property("net.port", 9800),
      clients_actor ! ("send_to_clients", data, client_ids.toList)
   }
 
+  private var connection_port:Int = port
+  def connectionPort = connection_port
+  private var server_socket:ServerSocket = null
+
   private var is_running = false
   def startServer(
     onNewConnection:ClientHandler => (Boolean, String) = client => (true, ""),
@@ -109,48 +114,51 @@ class NetServer(val port:Int          = property("net.port", 9800),
     if(is_running) log.warn("server is already running!")
     else {
       log.info("starting net server...")
-      is_running = true
       actor {
-        val available_port = nextAvailablePort(port)
-        val server_socket = new ServerSocket(available_port)  // TODO: handle errors during startup (for example, port is busy)
-        while(is_running) {
-          val clients_length = {
-            clients_actor ! ("length", self)
-            receive {case len:Int => len}
+        try {
+          connection_port = nextAvailablePort(port)
+          server_socket = new ServerSocket(connection_port)  // TODO: handle errors during startup (for example, port is busy)        
+          while(true) {
+            val clients_length = {
+              clients_actor ! ("length", self)
+              receive {case len:Int => len}
+            }
+            log.info("listening port "+connection_port+", "+clients_length+(if(max_clients > 0) "/"+max_clients else "unlimited")+" client(s) are connected")
+            val socket = server_socket.accept
+            log.info("incoming connection from "+socket.getInetAddress.getHostAddress)
+            val client = new ClientHandler(socket, onClientDataReceived, onClientDisconnected)
+            val (is_client_accepted, reason) = if(max_clients != 0 && clients_length >= max_clients) (false, "server is full")
+                                               else onNewConnection(client)
+            if(is_client_accepted) {
+              clients_actor ! ("add", client)
+              log.info("established connection with "+socket.getInetAddress.getHostAddress)
+              client.send(State(("accepted" -> reason)))
+              onClientAccepted(client)
+            } else {
+              log.info("refused connection from "+socket.getInetAddress.getHostAddress+": "+reason)
+              client.send(State("refused" -> reason))
+              client.disconnect()
+            }
+            Thread.sleep(10)
           }
-          log.info("listening port "+available_port+", "+clients_length+(if(max_clients > 0) "/"+max_clients else "unlimited")+" client(s) are connected")
-          val socket = server_socket.accept
-          log.info("incoming connection from "+socket.getInetAddress.getHostAddress)
-          val client = new ClientHandler(socket, onClientDataReceived, onClientDisconnected)
-          val (is_client_accepted, reason) = if(max_clients != 0 && clients_length >= max_clients) (false, "server is full")
-                                             else onNewConnection(client)
-          if(is_client_accepted) {
-            clients_actor ! ("add", client)
-            log.info("established connection with "+socket.getInetAddress.getHostAddress)
-            client.send(State(("accepted" -> reason)))
-            onClientAccepted(client)
-          } else {
-            log.info("refused connection from "+socket.getInetAddress.getHostAddress+": "+reason)
-            client.send(State("refused" -> reason))
-            client.disconnect()
-          }
-          Thread.sleep(10)
+        } catch {
+          case e:Exception => // assume server socket was closed
+            log.debug("stop listening for incoming connections: "+e)
         }
-        server_socket.close()
       }
       
       actor {
         var last_ping_moment = System.currentTimeMillis()
+        is_running = true
         while(is_running) {
           Thread.sleep(10)  // TODO: make it an option
-          clients_actor ! "receive"
+          clients_actor ! "check"
           if(System.currentTimeMillis() - last_ping_moment > ping_timeout) {
             clients_actor ! "remove_offline"
             clients_actor ! "ping"
             last_ping_moment = System.currentTimeMillis()
           }
         }
-        clients_actor ! "disconnect"
       }
     }
   }
@@ -158,6 +166,10 @@ class NetServer(val port:Int          = property("net.port", 9800),
   def stopServer() {
     log.info("shutting net server down...")
     is_running = false
+    clients_actor ! ("disconnect", self)
+    receive {
+      case "disconnected" =>
+    }
   }
 }
 
@@ -176,17 +188,23 @@ class ClientHandler(socket:Socket,
   def isOnline = is_running && !write_error
 
   private val io_actor = actor {
+    def send(data:State) {
+      log.debug("sending data to client #"+id+":\n"+data)
+      if(isOnline) {
+        out.println(data.toJsonString)
+        out.flush()
+        write_error = out.checkError()
+        if(write_error) log.warn("failed to send data to client #"+id+": write error!")
+      } else log.warn("can't send data to client #"+id+": client handler is offline!")      
+    }
+    
     loopWhile(is_running) {
       react {
-        case ("send", data:State) =>
-          log.debug("sending data to client #"+id+":\n"+data)
-          if(isOnline) {
-            out.println(data.toJsonString)
-            out.flush()
-            write_error = out.checkError()
-            if(write_error) log.warn("failed to send data to client #"+id+": write error!")
-          } else log.warn("can't send data to client #"+id+": client handler is offline!")
-        case "receive" =>
+        case ("send", data:State) => send(data)
+        case ("sendSync", data:State, actor:Actor) =>
+          send(data)
+          actor ! "finished sending"
+        case "check" =>
           if(is_running) {
             if(in.ready) {
               try {
@@ -208,17 +226,17 @@ class ClientHandler(socket:Socket,
               }
             }  
           } // else maybe?
-        case "disconnect" =>
+        case ("disconnect", actor:Actor) =>
           is_running = false
           onClientDisconnected(this)
           socket.close()
-          log.info("disconnected client #"+id)
+          actor ! "disconnected"
       }
     }
   }
   
-  def receive() {
-    io_actor ! "receive"
+  def check() {
+    io_actor ! "check"
   }
 
   def send(data:State) {
@@ -226,7 +244,18 @@ class ClientHandler(socket:Socket,
   }
   def send(data:String) {send(State(("raw" -> data)))}
 
+  def sendSync(data:State) {
+    io_actor ! ("sendSync", data, self)
+    receive {
+      case "finished sending" =>
+    }
+  }
+  def sendSync(data:String) {sendSync(State(("raw" -> data)))}
+
   def disconnect() {
-    io_actor ! "disconnect"
+    io_actor ! ("disconnect", self)
+    receive {
+      case "disconnected" => log.info("disconnected client #"+id)
+    }
   }
 }

@@ -3,6 +3,12 @@ package net.scage.support
 import _root_.net.phys2d.math.{ROVector2f, Vector2f}
 import parsers.VecParser
 
+/**
+ * I believe for now this glorious piece of code has all the needed to be the exact match to 'case Vec(x:Int, y:Int) {...}':
+ * 1. lots of apply() methods
+ * 2. one pretty cool unapply() method
+ * 3. redefined equals(), hashCode() and canEquals() methods! (- that part was hard)
+ */
 object Vec {
   def apply(x:Float, y:Float) = new Vec(x, y)
   def apply(v:Vec) = v.copy
@@ -57,8 +63,12 @@ class Vec(val x:Float = 0, val y:Float = 0) {
 
   def notZero = x != 0 || y != 0
   def isZero = x == 0 && y == 0
-  def ==(v:Vec) = x == v.x && y == v.y
-  def !=(v:Vec) = null == v || x != v.x || y != v.y
+  override def equals(other:Any):Boolean = other match {
+    case that:Vec => (that canEqual this) && this.x == that.x && this.y == that.y
+    case _ => false
+  }
+  override val hashCode:Int = (41*(41 + x) + y).toInt
+  def canEqual(other: Any) = other.isInstanceOf[Vec]
 
   def deg(v:Vec) = (180/math.Pi*math.acos(n * v.n)).toFloat
   def rad(v:Vec) = (math.acos(n * v.n)).toFloat

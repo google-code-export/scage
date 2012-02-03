@@ -1,8 +1,8 @@
 package net.scage
 
 import handlers.controller2.{ScageController, SingleController}
-import handlers.Renderer
 import com.weiglewilczek.slf4s.Logger
+import handlers.{RendererInitializer, Renderer}
 
 abstract class Screen(unit_name:String = "Scage Screen")
 extends Scage(unit_name) with Renderer with ScageController {
@@ -21,7 +21,7 @@ extends Scage(unit_name) with Renderer with ScageController {
         current_operation_id = action_id
         action_operation()
       }
-      render()
+      performRendering()
     }
     clear()
     dispose()
@@ -29,7 +29,7 @@ extends Scage(unit_name) with Renderer with ScageController {
   }
 }
 abstract class ScreenApp(unit_name:String = "Scage App")
-extends ScageApp(unit_name) with Renderer with ScageController {
+extends ScageApp(unit_name) with RendererInitializer with Renderer with ScageController {
   override def run() {
     init()
     is_running = true
@@ -40,7 +40,7 @@ extends ScageApp(unit_name) with Renderer with ScageController {
         current_operation_id = action_id
         action_operation()
       }
-      render()
+      performRendering()
     }
     clear()
     dispose()
@@ -51,14 +51,13 @@ extends ScageApp(unit_name) with Renderer with ScageController {
 
   override protected def preinit() {
     scage_log.info("starting main screen "+unit_name+"...")
-    Renderer.initgl
+    initgl()
   }
 }
 
 class ScageScreen(unit_name:String = "Scage Screen") extends Screen(unit_name) with SingleController
 
-class ScageScreenApp(unit_name:String = "Scage App")
-extends ScreenApp(unit_name) with SingleController
+class ScageScreenApp(unit_name:String = "Scage App") extends ScreenApp(unit_name) with SingleController
 
 /*class MultiControlledScreen(unit_name:String = "Scage App", is_main_unit:Boolean = false, properties:String = "")
 extends Screen(unit_name, is_main_unit, properties) with MultiController*/

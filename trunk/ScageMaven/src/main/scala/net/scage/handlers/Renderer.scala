@@ -19,117 +19,14 @@ import com.weiglewilczek.slf4s.Logger
 import net.scage.support.messages.ScageMessage
 import net.scage.{ScageTrait, Scage}
 
-object Renderer {
-  protected val log = Logger(this.getClass.getName)
-
+object Renderer extends RendererApi {
   val window_width  = property("screen.width", 800)
   val window_height = property("screen.height", 600)
   val default_window_center = Vec(window_width/2, window_height/2)
-  
   val framerate = property("screen.framerate", 100)
+}
 
-  private var _fps:Int = 0
-  def fps = _fps
-
-  private var msek = System.currentTimeMillis
-  private var frames:Int = 0
-  private def countFPS() {
-    frames += 1
-    if(System.currentTimeMillis - msek >= 1000) {
-      _fps = frames
-      frames = 0
-      msek = System.currentTimeMillis
-    }
-  }
-  
-  def update() {  // maybe remove this method
-    Display.sync(framerate)
-    Display.update()
-    countFPS()
-  }
-
-  val initgl = {
-    Display.setDisplayMode(new DisplayMode(window_width, window_height));
-    Display.setVSyncEnabled(true);
-    Display.setTitle(property("app.name", "Scage")+" - "+property("app.version", "Release"));
-    Display.create();
-
-    val (monitor_width, monitor_height) = {
-      /*val gd_arr = GraphicsEnvironment.getLocalGraphicsEnvironment.getScreenDevices
-      if(gd_arr.length > 0) {
-        val dm = {
-          val preferred_monitor_num = {
-            if(gd_arr.length > 1 && property("screen.monitor", 0) < gd_arr.length) property("screen.monitor", 0)
-            else 0
-          }
-          gd_arr(preferred_monitor_num).getDisplayMode
-        }
-        (dm.getWidth, dm.getHeight)
-      } else {*/
-        val d = Toolkit.getDefaultToolkit.getScreenSize
-        (d.width, d.height)
-      /*}*/
-    }
-
-    Display.setLocation((monitor_width - window_width)/2, (monitor_height - window_height)/2)
-
-    GL11.glEnable(GL11.GL_TEXTURE_2D);
-    GL11.glClearColor(0,0,0,0);
-    GL11.glDisable(GL11.GL_DEPTH_TEST);
-
-    GL11.glEnable(GL11.GL_BLEND);
-    GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
-    GL11.glMatrixMode(GL11.GL_PROJECTION); // Select The Projection Matrix
-    GL11.glLoadIdentity(); // Reset The Projection Matrix
-    GLU.gluOrtho2D(0, window_width, 0, window_height);
-    //GL11.glOrtho(0, width, height, 0, 1, -1);
-
-    GL11.glMatrixMode(GL11.GL_MODELVIEW);
-    GL11.glLoadIdentity();
-
-    // printing "Loading..." message. It is also necessary to properly initialize our main font (I guess)
-    GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
-    print(xmlOrDefault("renderer.loading", "Loading..."), 20, Renderer.window_height-25, GREEN)
-    update()
-    Thread.sleep(1000)
-
-    // drawing scage logo
-    if(property("screen.scagelogo", true)) {  // TODO: replace this with to different builds (under different maven profiles): with and without scagelogo
-      GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
-      val logo_texture = getTexture("resources/images/scage-logo.png")
-      drawDisplayList(image(logo_texture, window_width, window_height, 0, 0, logo_texture.getImageWidth, logo_texture.getImageHeight), Vec(window_width/2, window_height/2))
-      update()
-      Thread.sleep(1000)
-    }
-
-    // drawing app logo or welcome message
-    stringProperty("screen.splash") match {
-      case screen_splash_path if "" != screen_splash_path =>
-        try {
-          GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
-          val splash_texture = getTexture(screen_splash_path)
-          drawDisplayList(image(splash_texture, window_width, window_height, 0, 0, splash_texture.getImageWidth, splash_texture.getImageHeight), Vec(window_width/2, window_height/2))
-          update()
-          Thread.sleep(1000)  // TODO: custom pause
-        }
-        catch {
-          case e:Exception => log.error("failed to render splash image: "+e.getLocalizedMessage)
-        }
-      case _ => xmlOrDefault("app.welcome", "") match {
-        case welcome_message if "" != welcome_message => {
-          GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
-          print(welcome_message, 20, Renderer.window_height-25, GREEN) // TODO: custom color and position
-          update()
-          Thread.sleep(1000)  // TODO: custom pause
-        }
-        case _ =>
-      }
-    }
-
-    log.info("initialized opengl system")
-  }
-
+trait RendererApi {
   def backgroundColor = {
     val background_color = BufferUtils.createFloatBuffer(16)    
     GL11.glGetFloat(GL11.GL_COLOR_CLEAR_VALUE, background_color)
@@ -157,9 +54,19 @@ object Renderer {
     list_code
   }
 
-  private val CIRCLE = displayList {
+  private lazy val FILLED_CIRCLE = displayList {
+    GL11.glBegin(GL11.GL_TRIANGLE_FAN);
+    for(i <- 0 until 100) {
+      val cosine = math.cos(i*2*math.Pi/100).toFloat;
+      val sine = math.sin(i*2*math.Pi/100).toFloat;
+      GL11.glVertex2f(cosine, sine);
+    }
+    GL11.glEnd();
+  }
+
+  private lazy val CIRCLE = displayList {
     GL11.glBegin(GL11.GL_LINE_LOOP);
-      for(i <- 0 to 100) {
+      for(i <- 0 until 100) {
         val cosine = math.cos(i*2*math.Pi/100).toFloat;
         val sine = math.sin(i*2*math.Pi/100).toFloat;
         GL11.glVertex2f(cosine, sine);
@@ -177,15 +84,6 @@ object Renderer {
     GL11.glEnable(GL11.GL_TEXTURE_2D);
   }
 
-  private val FILLED_CIRCLE = displayList {
-    GL11.glBegin(GL11.GL_TRIANGLE_FAN);
-      for(i <- 0 to 100) {
-        val cosine = math.cos(i*2*math.Pi/100).toFloat;
-        val sine = math.sin(i*2*math.Pi/100).toFloat;
-        GL11.glVertex2f(cosine, sine);
-      }
-    GL11.glEnd();
-  }
   def drawFilledCircle(coord:Vec, radius:Float, color:ScageColor = DEFAULT_COLOR) {
     if(color != DEFAULT_COLOR) currentColor = color
     GL11.glDisable(GL11.GL_TEXTURE_2D);
@@ -345,8 +243,8 @@ object Renderer {
     drawLines(x_lines ::: y_lines, color)
   }
 
-  private def getTexture(format:String, in:InputStream):Texture = TextureLoader.getTexture(format, in)
-  private def getTexture(filename:String):Texture = {
+  def getTexture(format:String, in:InputStream):Texture = TextureLoader.getTexture(format, in)
+  def getTexture(filename:String):Texture = {
     val format:String = filename.substring(filename.length-3)
     getTexture(format, ResourceLoader.getResourceAsStream(filename))    // can be loaded as resource from jar, hell yeah!!
   }
@@ -410,8 +308,115 @@ object Renderer {
 
 import Renderer._
 
+trait RendererInitializer extends RendererApi {
+  this:Renderer =>
+  private val log = Logger(this.getClass.getName)
+
+  def initgl() {
+    Display.setDisplayMode(new DisplayMode(window_width, window_height));
+    Display.setVSyncEnabled(true);
+    Display.setTitle(property("app.name", "Scage")+" - "+property("app.version", "Release"));
+    Display.create();
+
+    val (monitor_width, monitor_height) = {
+      /*val gd_arr = GraphicsEnvironment.getLocalGraphicsEnvironment.getScreenDevices
+      if(gd_arr.length > 0) {
+        val dm = {
+          val preferred_monitor_num = {
+            if(gd_arr.length > 1 && property("screen.monitor", 0) < gd_arr.length) property("screen.monitor", 0)
+            else 0
+          }
+          gd_arr(preferred_monitor_num).getDisplayMode
+        }
+        (dm.getWidth, dm.getHeight)
+      } else {*/
+      val d = Toolkit.getDefaultToolkit.getScreenSize
+      (d.width, d.height)
+      /*}*/
+    }
+
+    Display.setLocation((monitor_width - window_width)/2, (monitor_height - window_height)/2)
+
+    GL11.glEnable(GL11.GL_TEXTURE_2D);
+    GL11.glClearColor(0,0,0,0);
+    GL11.glDisable(GL11.GL_DEPTH_TEST);
+
+    GL11.glEnable(GL11.GL_BLEND);
+    GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+    GL11.glMatrixMode(GL11.GL_PROJECTION); // Select The Projection Matrix
+    GL11.glLoadIdentity(); // Reset The Projection Matrix
+    GLU.gluOrtho2D(0, window_width, 0, window_height);
+    //GL11.glOrtho(0, width, height, 0, 1, -1);
+
+    GL11.glMatrixMode(GL11.GL_MODELVIEW);
+    GL11.glLoadIdentity();
+
+    // printing "Loading..." message. It is also necessary to properly initialize our main font (I guess)
+    GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
+    print(xmlOrDefault("renderer.loading", "Loading..."), 20, window_height-25, GREEN)
+    Display.update()
+    Thread.sleep(1000)
+
+    // drawing scage logo
+    if(property("screen.scagelogo", true)) {  // TODO: replace this with to different builds (under different maven profiles): with and without scagelogo
+      GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
+      val logo_texture = getTexture("resources/images/scage-logo.png")
+      drawDisplayList(image(logo_texture, window_width, window_height, 0, 0, logo_texture.getImageWidth, logo_texture.getImageHeight), Vec(window_width/2, window_height/2))
+      Display.update()
+      Thread.sleep(1000)
+    }
+
+    // drawing app logo or welcome message
+    stringProperty("screen.splash") match {
+      case screen_splash_path if "" != screen_splash_path =>
+        try {
+          GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
+          val splash_texture = getTexture(screen_splash_path)
+          drawDisplayList(image(splash_texture, window_width, window_height, 0, 0, splash_texture.getImageWidth, splash_texture.getImageHeight), Vec(window_width/2, window_height/2))
+          Display.update()
+          Thread.sleep(1000)  // TODO: custom pause
+        }
+        catch {
+          case e:Exception => log.error("failed to render splash image: "+e.getLocalizedMessage)
+        }
+      case _ => xmlOrDefault("app.welcome", "") match {
+        case welcome_message if "" != welcome_message => {
+          GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
+          print(welcome_message, 20, window_height-25, GREEN) // TODO: custom color and position
+          Display.update()
+          Thread.sleep(1000)  // TODO: custom pause
+        }
+        case _ =>
+      }
+    }
+
+    log.info("initialized opengl system")
+  }
+}
+
 trait Renderer extends ScageTrait {
   private val log = Logger(this.getClass.getName)
+
+  private var _fps:Int = 0
+  def fps = _fps
+
+  private var msek = System.currentTimeMillis
+  private var frames:Int = 0
+  private def countFPS() {
+    frames += 1
+    if(System.currentTimeMillis - msek >= 1000) {
+      _fps = frames
+      frames = 0
+      msek = System.currentTimeMillis
+    }
+  }
+
+  private def update() {  // maybe remove this method
+    Display.sync(framerate)
+    Display.update()
+    countFPS()
+  }
 
   private var _scale:Float = 1.0f
   def scale = _scale
@@ -435,7 +440,6 @@ trait Renderer extends ScageTrait {
   }
   private val renders = SortedBuffer[RenderElement]()
   private def addRender(render_func: => Any, position:Int = 0) = {
-    initgl
     val operation_id = /*nextOperationId*/nextId
     renders +=  RenderElement(operation_id, () => render_func, position)
     operations_mapping += operation_id -> RenderOperations.Render
@@ -467,7 +471,6 @@ trait Renderer extends ScageTrait {
 
   private val interfaces = ArrayBuffer[(Int, () => Any)]()
   def interface(interface_func: => Any):Int = {
-    initgl
     val operation_id = /*nextOperationId*/nextId
     interfaces += (operation_id, () => interface_func)
     operations_mapping += operation_id -> RenderOperations.Interface
@@ -499,7 +502,7 @@ trait Renderer extends ScageTrait {
     log.info("deleted all interface operations")
   }
 
-  def render() {  // maybe rename this to differ from render functions
+  def performRendering() {
     if(Display.isCloseRequested) Scage.stopApp()
     else {
       clearScreen()

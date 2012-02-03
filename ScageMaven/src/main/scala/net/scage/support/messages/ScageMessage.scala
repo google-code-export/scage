@@ -17,11 +17,11 @@ class ScageMessage(
 ) {
   private val log = Logger(this.getClass.getName)
 
-  private val font = try {
+  private lazy val font = try {
     new UnicodeFont(fonts_base+font_file, max_font_size, glyph_from, glyph_to)
   } catch {
     case e:Exception => {
-      log.error("failed to create font:\n"+e.getLocalizedMessage)
+      log.error("failed to create font: "+e.getLocalizedMessage)
       log.error("please provide the path to some unicode ttf font")
       System.exit(1)
       null

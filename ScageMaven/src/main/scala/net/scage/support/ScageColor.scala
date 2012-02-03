@@ -11,17 +11,19 @@ class ScageColor(val name:String, r:Float, g:Float, b:Float) {
   val green:Float = if(g >= 0 && g <= 1) g else if(g > 1 && g < 256) g/256 else -1
   val blue:Float  = if(b >= 0 && b <= 1) b else if(b > 1 && b < 256) b/256 else -1
 
-  def ==(other_color:ScageColor) =
-    red   == other_color.red &&
-      green == other_color.green &&
-      blue  == other_color.blue
+  override def equals(other:Any):Boolean = other match {
+    case that:ScageColor => (that canEqual this) && this.red == that.red && this.green == that.green && this.blue == that.blue
+    case _ => false
+  }
+  override val hashCode:Int = (41*(41*(41 + red) + green) + blue).toInt
+  def canEqual(other: Any) = other.isInstanceOf[ScageColor]
 
   def toSlickColor = new org.newdawn.slick.Color(r, g, b)
 
   override def toString = name+"(red="+red+" green="+green+" blue="+blue+")"
 }
 
-object ScageColor {
+object ScageColor extends ScageColorTrait {
   private val log = Logger(this.getClass.getName)
   
   def apply(name:String, r:Float, g:Float, b:Float) = new ScageColor(name, r, g, b)
@@ -32,6 +34,9 @@ object ScageColor {
     case _ => None
   }
 
+}
+
+trait ScageColorTrait {
   val DEFAULT_COLOR = new ScageColor("Default_Color", -1, -1, -1)
 
   val RED: ScageColor = new ScageColor("Red", 1, 0, 0)
@@ -133,8 +138,8 @@ object ScageColor {
   val BLUE_VIOLET: ScageColor = new ScageColor("Blue_Violet", 0x8A, 0x2B, 0xE2)
   val PURPLE: ScageColor = new ScageColor("Purple", 0xA0, 0x20, 0xF0)
 
-  private val colors = new HashMap[String, ScageColor]()
-  ScageColor.getClass.getDeclaredFields.foreach(field => {
+  private lazy val colors = new HashMap[String, ScageColor]()
+  this.getClass.getDeclaredFields.foreach(field => {
     field.setAccessible(true)
     val color = try{field.get(ScageColor).asInstanceOf[ScageColor]}
     catch {

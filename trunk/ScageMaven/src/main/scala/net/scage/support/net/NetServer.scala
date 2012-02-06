@@ -14,15 +14,9 @@ import java.net.{DatagramSocket, ServerSocket, Socket}
  * It starting one thread for new connections listening and two threads for every new connection (one for sending and one for receiveing)
  * It should be replaced with Netty Server in future releases
  */
-object NetServer extends NetServer(
-  port          = property("net.port", 9800),
-  max_clients   = property("net.max_clients", 20),
-  ping_timeout  = property("net.ping_timeout", 60000, {ping_timeout:Int => (ping_timeout >= 1000, "must be more than 1000")})
-)
+object NetServer extends NetServer
 
-class NetServer(port:Int              = property("net.port", 9800),
-                val max_clients:Int   = property("net.max_clients", 20),
-                val ping_timeout:Int  = property("net.ping_timeout", 60000, {ping_timeout:Int => (ping_timeout >= 1000, "must be more 1000")})) {
+class NetServer {
   private val log = Logger(this.getClass.getName)
 
   /**
@@ -56,7 +50,7 @@ class NetServer(port:Int              = property("net.port", 9800),
     }
   }
 
-  private val clients_actor = actor {
+  private lazy val clients_actor = actor {
     var client_handlers = ArrayBuffer[ClientHandler]()
     loop {
       react {
@@ -65,14 +59,31 @@ class NetServer(port:Int              = property("net.port", 9800),
           offline_clients.foreach(client => client.disconnect())
           client_handlers --= offline_clients
         case ("send_to_all", data:State) =>
-          client_handlers.foreach(_.send(data))
+          if(is_running) client_handlers.foreach(_.send(data))
+          else log.warn("cannot send data: server is not running!")
+        case ("send_to_all_sync", data:State, actor:Actor) =>
+          if(is_running) client_handlers.foreach(_.sendSync(data))
+          else log.warn("cannot send data: server is not running!")
+          actor ! "finished sending"
         case ("send_to_clients", data:State, client_ids:List[Int]) =>
-          for(client_id <- client_ids) {
-            client_handlers.find(_.id == client_id) match {
-              case Some(client) => client.send(data)
-              case None =>
+          if(is_running) {
+            for(client_id <- client_ids) {
+              client_handlers.find(_.id == client_id) match {
+                case Some(client) => client.send(data)
+                case None =>
+              }
             }
-          }
+          } else log.warn("cannot send data: server is not running!")
+        case ("send_to_clients_sync", data:State, client_ids:List[Int], actor:Actor) =>
+          if(is_running) {
+            for(client_id <- client_ids) {
+              client_handlers.find(_.id == client_id) match {
+                case Some(client) => client.send(data)
+                case None =>
+              }
+            }
+          } else log.warn("cannot send data: server is not running!")
+          actor ! "finished sending"
         case "ping" =>
           client_handlers.foreach(_.send(State("ping")))
         case ("add", new_client:ClientHandler) =>
@@ -96,16 +107,39 @@ class NetServer(port:Int              = property("net.port", 9800),
     clients_actor ! ("send_to_all", data)
   }
   def sendToAll(data:String) {sendToAll(State("raw" -> data))}
+
+  def sendToAllSync(data:State) {
+    clients_actor ! ("send_to_all_sync", data, self)
+    receive {
+      case "finished sending" =>
+    }
+  }
+  def sendToAllSync(data:String) {sendToAllSync(State("raw" -> data))}
+
   def sendToClients(data:State, client_ids:Int*) {
      clients_actor ! ("send_to_clients", data, client_ids.toList)
   }
+  def sendToClients(data:String, client_ids:Int*) {sendToClients(State("raw" -> data), client_ids:_*)}
 
-  private var connection_port:Int = port
-  def connectionPort = connection_port
+  def sendToClientsSync(data:State, client_ids:Int*) {
+     clients_actor ! ("send_to_clients_sync", data, client_ids.toList, self)
+    receive {
+      case "finished sending" =>
+    }
+  }
+  def sendToClientsSync(data:String, client_ids:Int*) {sendToClientsSync(State("raw" -> data), client_ids:_*)}
+
+  private var connection_port:Int = 0
+  def connectionPort:Int = connection_port
   private var server_socket:ServerSocket = null
 
   private var is_running = false
+  def isRunning = is_running  // maybe rename this
+
   def startServer(
+    port:Int              = property("net.port", 9800),
+    max_clients:Int   = property("net.max_clients", 20),
+    ping_timeout:Int  = property("net.ping_timeout", 60000, {ping_timeout:Int => (ping_timeout >= 1000, "must be more 1000")}),
     onNewConnection:ClientHandler => (Boolean, String) = client => (true, ""),
     onClientAccepted:ClientHandler => Any = client => {},
     onClientDataReceived:(ClientHandler, State) => Any = (client:ClientHandler, data:State) => {},

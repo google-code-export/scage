@@ -14,6 +14,8 @@ import javax.swing.JOptionPane
 import net.scage.handlers.controller2.MultiController
 import net.scage.ScreenApp
 import net.scage.support.Vec
+import net.scage.support.State
+import net.scage.support.net.{NetClient, NetServer}
 
 object ScageTest {
     def suite: Test = {
@@ -167,19 +169,46 @@ class ScageTest extends TestCase("app") {
         mouseWheelDown(onWheelDown = m => if(scale > 1) scale -= 1)
         center = if(scale > 1) trace.location else windowCenter
 
-        // test network features: simple echo server
-        /*startServer()
-        action {
-          clients.foreach(client => {
-            if(client.hasNewIncomingData) {
-              if(client.incomingData.has("quit")) stop()
-              else client.send(client.incomingData)
+        // test network features: server and client in one app. Client send 2d vectors to server and server sends back normalized vector
+        NetServer.startServer(
+          onNewConnection = {
+            client => client.send(State(("hello" -> "send me vec and I send you back its n!")))
+            (true, "")
+          },
+          onClientDataReceived = {
+            (client, received_data) => received_data.neededKeys {
+              case ("vec", vec:Vec) => client.send(State(("n" -> vec.n)))
             }
-          })
+          }
+        )
+
+        action {
+          if(NetServer.connectionPort != 0) {
+            NetClient.startClient(
+              server_url = "localhost",
+              port = NetServer.connectionPort,
+              onServerDataReceived = {
+                received_data => received_data.neededKeys {
+                  case ("hello", hello_msg) =>
+                    val random_vec = Vec((math.random*100).toInt, (math.random*100).toInt)
+                    NetClient.send(State(("vec" -> random_vec)))
+                  case ("n", n:Vec) =>
+                    println("received n: "+n)
+                    println("waiting 5 sec...")
+                    Thread.sleep(5000)
+                    val random_vec = Vec((math.random*100).toInt, (math.random*100).toInt)
+                    NetClient.send(State(("vec" -> random_vec)))
+                }
+              }
+            )
+            deleteSelf()
+          }
         }
-        clear {
-          stopServer()
-        }*/
+
+        dispose {
+          NetServer.stopServer()
+          NetClient.stopClient()
+        }
       }.main(Array[String]())
       assertTrue(true)
     };

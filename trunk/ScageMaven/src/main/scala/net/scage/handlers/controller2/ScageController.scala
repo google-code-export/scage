@@ -1,7 +1,7 @@
 package net.scage.handlers.controller2
 
 import net.scage.support.Vec
-import net.scage.ScageTrait
+import net.scage.Scage
 import collection.mutable.HashMap
 
 case class KeyPress(key_code:Int, var was_pressed:Boolean, var last_pressed_time:Long)
@@ -12,7 +12,7 @@ object ScageController {
   private val mouse_button_presses = HashMap[Int, MouseButtonPress]()
 }
 
-trait ScageController extends ScageTrait {
+trait ScageController extends Scage {
   protected def keyPress(key_code:Int):KeyPress = {
     ScageController.key_presses.get(key_code) match {
       case Some(kp:KeyPress) => kp

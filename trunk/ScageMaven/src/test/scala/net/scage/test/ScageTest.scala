@@ -1,14 +1,12 @@
 package net.scage.test
 
-import _root_.net.scage.handlers.Renderer._
-import _root_.net.scage.support.LWJGLKeyboard._
-import _root_.net.scage.support.messages.ScageXML._
+import net.scage.ScageLib._
+import net.scage.support.messages.ScageMessage
 import concurrent.ops._
 
 import junit.framework._
 import Assert._
 import net.scage.support.physics.ScagePhysics
-import _root_.net.scage.support.messages.ScageMessage
 import net.scage.support.tracer3.{Trace, CoordTracer}
 import net.scage.support.physics.objects.{StaticPolygon, DynaBall}
 import collection.mutable.ListBuffer
@@ -16,8 +14,6 @@ import javax.swing.JOptionPane
 import net.scage.handlers.controller2.MultiController
 import net.scage.ScreenApp
 import net.scage.support.Vec
-import net.scage.support.ScageColor._
-import net.scage.support.ScageProperties._
 
 object ScageTest {
     def suite: Test = {
@@ -97,13 +93,13 @@ class ScageTest extends TestCase("app") {
         }
 
         private var target_point = trace.location
-        def scaledCoord(coord:Vec, scale:Float, center:Vec) = {
+        /*def scaledCoord(coord:Vec, scale:Float, center:Vec) = {
           if(scale == 1) coord
           else (coord / scale) + (center - Vec(window_width / scale / 2, window_height / scale / 2))
-        }  
+        }*/
         mouseMotion {   // test mouse motion event
           mouse_coord =>
-            target_point = (scaledCoord(mouse_coord, scale, trace.location) - trace.location).n * 20
+            target_point = (scaledCoord(mouse_coord) - trace.location).n * 20
         }
         private var x = 0.0f
         def period = {
@@ -134,7 +130,7 @@ class ScageTest extends TestCase("app") {
         })
 
         backgroundColor = fromStringOrDefault("BLACK", BLACK)    // test method to obtain color by name
-        val another_font = new ScageMessage(max_font_size = 12) // test using two different fonts in one app
+        val another_font = new ScageMessage(max_font_size = 15, font_file = "comic.ttf") // test using two different fonts in one app
         interface {
           another_font.print(xml("hello.world"), window_width/2, window_height/2+20, WHITE)
         }
@@ -169,7 +165,7 @@ class ScageTest extends TestCase("app") {
         // scaling test
         mouseWheelUp(onWheelUp = m => scale += 1)
         mouseWheelDown(onWheelDown = m => if(scale > 1) scale -= 1)
-        center = if(scale > 1) trace.location else default_window_center
+        center = if(scale > 1) trace.location else windowCenter
 
         // test network features: simple echo server
         /*startServer()

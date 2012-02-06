@@ -7,9 +7,9 @@ import net.scage.support.physics.Physical
 import _root_.net.scage.support.ScageProperties._
 import java.lang.Float
 
-class DynaBall(init_coord:Vec, val radius:Int, mass:Float = 1) extends Physical {
+class DynaBall(init_coord:Vec, val radius:Int, mass:Float = 1, restitution:Boolean = property("physics.restitution", false)) extends Physical {
   val body = new Body(new Circle(radius), mass)
-  if(property("physics.restitution", false)) body.setRestitution(1.0f)
+  if(restitution) body.setRestitution(1.0f)
   body.setPosition(init_coord.x, init_coord.y)
 
   def points = Array(coord)

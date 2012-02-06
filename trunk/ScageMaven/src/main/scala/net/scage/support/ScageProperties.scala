@@ -4,9 +4,22 @@ import java.util.Properties
 import org.newdawn.slick.util.ResourceLoader
 import com.weiglewilczek.slf4s.Logger
 import parsers.FormulaParser
-import parsers.FormulaParser._
 
-object ScageProperties {
+trait ScagePropertiesTrait {
+  def property[A : Manifest](key:String, default:A):A
+  def stringProperty(key:String) = property(key, "")
+  def intProperty(key:String) = property(key, 0)
+  def floatProperty(key:String) = property(key, 0.0f)
+  def booleanProperty(key:String) = property(key, false)
+
+  def property[A : Manifest](key:String, default:A, condition:(A => (Boolean,  String))):A
+  def stringProperty(key:String, condition:(String => (Boolean,  String))) = property(key, "", (value:String) => (true, ""))
+  def intProperty(key:String, condition:(Int => (Boolean,  String))) = property(key, 0, (value:Int) => (true, ""))
+  def floatProperty(key:String, condition:(Float => (Boolean,  String))) = property(key, 0.0f, (value:Float) => (true, ""))
+  def booleanProperty(key:String, condition:(Boolean => (Boolean,  String))) = property(key, false, (value:Boolean) => (true, ""))
+}
+
+object ScageProperties extends ScagePropertiesTrait {
   private val log = Logger(this.getClass.getName)
 
   val properties:String = {
@@ -120,9 +133,4 @@ object ScageProperties {
       case _ => defaultValue(key, default)
     }
   }
-
-  def stringProperty(key:String) = property(key, "")
-  def intProperty(key:String) = property(key, 0)
-  def floatProperty(key:String) = property(key, 0.0f)
-  def booleanProperty(key:String) = property(key, false)
 }

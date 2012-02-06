@@ -1,10 +1,7 @@
 package net.scage.support
 
 import _root_.net.scage.ScageScreenApp
-import org.lwjgl.input.Keyboard._
-import _root_.net.scage.support.ScageColor._
-import _root_.net.scage.handlers.Renderer._
-import messages.ScageMessage._
+import _root_.net.scage.ScageLib._
 
 object ScageColorTest extends ScageScreenApp("Color Test") {
   val fields = ScageColor.getClass.getDeclaredFields

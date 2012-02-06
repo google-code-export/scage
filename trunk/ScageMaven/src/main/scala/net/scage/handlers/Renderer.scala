@@ -16,17 +16,10 @@ import java.awt.Toolkit
 import net.scage.support.{SortedBuffer, ScageColor, Vec}
 import collection.mutable.ArrayBuffer
 import com.weiglewilczek.slf4s.Logger
-import net.scage.support.messages.ScageMessage
 import net.scage.{ScageTrait, Scage}
+import net.scage.support.messages.{ScageXML, ScageMessage}
 
-object Renderer extends RendererApi {
-  val window_width  = property("screen.width", 800)
-  val window_height = property("screen.height", 600)
-  val default_window_center = Vec(window_width/2, window_height/2)
-  val framerate = property("screen.framerate", 100)
-}
-
-trait RendererApi {
+trait RendererLib {
   def backgroundColor = {
     val background_color = BufferUtils.createFloatBuffer(16)    
     GL11.glGetFloat(GL11.GL_COLOR_CLEAR_VALUE, background_color)
@@ -304,21 +297,34 @@ trait RendererApi {
       animations(animation_id) = (frames, next_frame)
     }
   }*/
+  
+  def windowSize = {
+    Vec(Display.getDisplayMode.getWidth, Display.getDisplayMode.getHeight)
+  }
 }
 
-import Renderer._
+object RendererLib extends RendererLib
 
-trait RendererInitializer extends RendererApi {
-  this:Renderer =>
+trait RendererInitializer {
+  this:RendererLib =>
   private val log = Logger(this.getClass.getName)
+
+  def window_width:Int
+  def window_height:Int
+  def title:String
 
   def initgl() {
     Display.setDisplayMode(new DisplayMode(window_width, window_height));
     Display.setVSyncEnabled(true);
-    Display.setTitle(property("app.name", "Scage")+" - "+property("app.version", "Release"));
+    Display.setTitle(title);
     Display.create();
 
     val (monitor_width, monitor_height) = {
+      val d = Toolkit.getDefaultToolkit.getScreenSize
+      (d.width, d.height)
+    }
+    
+    /*val (monitor_width, monitor_height) = {
       /*val gd_arr = GraphicsEnvironment.getLocalGraphicsEnvironment.getScreenDevices
       if(gd_arr.length > 0) {
         val dm = {
@@ -333,7 +339,7 @@ trait RendererInitializer extends RendererApi {
       val d = Toolkit.getDefaultToolkit.getScreenSize
       (d.width, d.height)
       /*}*/
-    }
+    }*/
 
     Display.setLocation((monitor_width - window_width)/2, (monitor_height - window_height)/2)
 
@@ -368,7 +374,7 @@ trait RendererInitializer extends RendererApi {
     }
 
     // drawing app logo or welcome message
-    stringProperty("screen.splash") match {
+    stringProperty("screen.splash") match { // TODO: change this to custom init sequence (any graphical routines here, default is the one splash screen with logo)
       case screen_splash_path if "" != screen_splash_path =>
         try {
           GL11.glClear(GL11.GL_COLOR_BUFFER_BIT/* | GL11.GL_DEPTH_BUFFER_BIT*/);
@@ -393,9 +399,19 @@ trait RendererInitializer extends RendererApi {
 
     log.info("initialized opengl system")
   }
+
+  private[scage] def exitRender() {
+    backgroundColor = BLACK
+    clearScreen()
+    print(xmlOrDefault("renderer.exiting", "Exiting..."), 20, window_height-25, GREEN)
+    Display.update()
+
+    Thread.sleep(1000)
+    Display.destroy()
+  }
 }
 
-trait Renderer extends ScageTrait {
+trait Renderer extends ScageTrait with RendererLib {
   private val log = Logger(this.getClass.getName)
 
   private var _fps:Int = 0
@@ -413,7 +429,7 @@ trait Renderer extends ScageTrait {
   }
 
   private def update() {  // maybe remove this method
-    Display.sync(framerate)
+    Display.sync(100) // let it be just 100! 100 is a pretty cool number. Why force users to decide - let's decide for them!
     Display.update()
     countFPS()
   }
@@ -422,11 +438,11 @@ trait Renderer extends ScageTrait {
   def scale = _scale
   def scale_= (value:Float) {_scale = value}
 
-  private var window_center = () => Renderer.default_window_center
-  def windowCenter = window_center()
+  private var window_center:() => Vec = () => /*RendererInitializer.default_window_center*//*Vec(windowWidth/2, windowHeight/2)*/ windowSize/2
+  def windowCenter:Vec = window_center()
   def windowCenter_= (coord: => Vec) {window_center = () => coord}
   
-  private var central_coord = window_center
+  private var central_coord:() => Vec = window_center
   def center = central_coord()
   def center_= (coord: => Vec) {central_coord = () => coord}
 
@@ -478,7 +494,7 @@ trait Renderer extends ScageTrait {
   }
   def interfaceFromXml(interface_id:String, parameters: => Array[Any] = Array[Any]()):Int = {
     interface {
-      ScageMessage.printInterface(interface_id, parameters:_*)
+      ScageMessage.printInterface(ScageXML.xmlInterface(interface_id, parameters:_*))
     }
   }
   def delInterfaces(interface_ids:Int*) = {
@@ -523,16 +539,6 @@ trait Renderer extends ScageTrait {
 
       update()
     }
-  }
-
-  private[scage] def exitRender() {
-    backgroundColor = BLACK
-    clearScreen()
-    print(xmlOrDefault("renderer.exiting", "Exiting..."), 20, window_height-25, GREEN)
-    update()
-
-    Thread.sleep(1000)
-    Display.destroy()
   }
 
   object RenderOperations extends Enumeration {

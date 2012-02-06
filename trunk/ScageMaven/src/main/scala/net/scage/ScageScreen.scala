@@ -29,11 +29,11 @@ abstract class Screen(unit_name:String = "Scage Screen") extends ScageUnit(unit_
   }
 }
 abstract class ScreenApp(
-  unit_name:String = "Scage App",
+  val unit_name:String = "Scage App",
   val window_width:Int  = property("screen.width", 800),
   val window_height:Int = property("screen.height", 600),
   val title:String = property("app.name", "Scage App")
-) extends ScageApp(unit_name) with Renderer with RendererInitializer with ScageController {
+) extends ScageMain with Renderer with RendererInitializer with ScageController {
 
   override def run() {
     preinit()

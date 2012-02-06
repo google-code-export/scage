@@ -4,7 +4,17 @@ import com.weiglewilczek.slf4s.Logger
 import collection.mutable.{HashMap, ArrayBuffer}
 import support.ScageId._
 
-class ScageApp(val unit_name:String = "Scage App") extends Scage with App {
+class ScageApp(val unit_name:String = "Scage App") extends ScageMain {
+  override def main(args:Array[String]) {
+    scage_log.info("starting main unit "+unit_name+"...")
+    super.main(args)
+    run()
+    scage_log.info(unit_name+" was stopped")
+    System.exit(0)
+  }
+}
+
+trait ScageMain extends Scage with App {
   override def run() {
     preinit()
     init()
@@ -23,14 +33,6 @@ class ScageApp(val unit_name:String = "Scage App") extends Scage with App {
   override def stop() {
     is_running = false
     Scage.stopApp()
-  }
-
-  override def main(args:Array[String]) {
-    super.main(args)
-    scage_log.info("starting main unit "+unit_name+"...")
-    run()
-    scage_log.info(unit_name+" was stopped")
-    System.exit(0)
   }
 }
 

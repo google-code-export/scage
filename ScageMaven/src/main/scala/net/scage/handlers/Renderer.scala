@@ -16,7 +16,7 @@ import java.awt.Toolkit
 import net.scage.support.{SortedBuffer, ScageColor, Vec}
 import collection.mutable.ArrayBuffer
 import com.weiglewilczek.slf4s.Logger
-import net.scage.{ScageTrait, Scage}
+import net.scage.Scage
 import net.scage.support.messages.{ScageXML, ScageMessage}
 
 trait RendererLib {
@@ -411,7 +411,7 @@ trait RendererInitializer {
   }
 }
 
-trait Renderer extends ScageTrait with RendererLib {
+trait Renderer extends Scage with RendererLib {
   private val log = Logger(this.getClass.getName)
 
   private var _fps:Int = 0

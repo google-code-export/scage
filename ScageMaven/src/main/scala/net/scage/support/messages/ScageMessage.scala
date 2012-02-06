@@ -47,6 +47,7 @@ class ScageMessage(
   private val log = Logger(this.getClass.getName)
 
   private lazy val font = try {
+    log.debug("loading font "+fonts_base+font_file+"...")
     new UnicodeFont(fonts_base+font_file, max_font_size, glyph_from, glyph_to)
   } catch {
     case e:Exception => {

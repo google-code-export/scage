@@ -8,23 +8,15 @@ import com.weiglewilczek.slf4s.Logger
 import actors.Actor._
 import actors.Actor
 
-object NetClient extends NetClient(
-  server_url =  property("net.server", "localhost"),
-  port = property("net.port", 9800),
-  ping_timeout = property("net.ping_timeout", 60000, {ping_timeout:Int => (ping_timeout >= 1000, "must be more than 1000")})
-)
+object NetClient extends NetClient
 
-class NetClient(
-  val server_url:String =  property("net.server", "127.0.0.1"),
-  val port:Int = property("net.port", 9800),
-  val ping_timeout:Int = property("net.ping_timeout", 60000, {ping_timeout:Int => (ping_timeout >= 1000, "must be more than 1000")})
-) {
+class NetClient {
   private val log = Logger(this.getClass.getName)
 
   private var is_connected = false
   private var write_error  = false
 
-  private val io_actor = actor {
+  private lazy val io_actor = actor {
     var onServerDataReceived:State => Any = state => {}
     var socket:Socket = null
     var out:PrintWriter = null
@@ -32,7 +24,7 @@ class NetClient(
     
     def send(data:State) {
       log.debug("sending data to server:\n"+data)
-      if(isServerOnline) {
+      if(isOnline) {
         out.println(data.toJsonString)
         out.flush()
         write_error = out.checkError()
@@ -42,8 +34,8 @@ class NetClient(
     
     loop {
       react {
-        case ("connect", new_onServerDataReceived:(State => Any), actor:Actor)=>
-          if(isServerOnline) {
+        case ("connect", server_url:String, port:Int, new_onServerDataReceived:(State => Any), actor:Actor)=>
+          if(isOnline) {
             is_connected = false
             if(socket != null) {
               val socket_url = socket.getInetAddress.getHostAddress
@@ -118,16 +110,21 @@ class NetClient(
   }
   def sendSync(data:String) {sendSync(State(("raw" -> data)))}
 
-  def isServerOnline = is_connected && !write_error
+  def isOnline = is_connected && !write_error // maybe rename this and check is_running too
 
   private var is_running = false
-  def startClient(onServerDataReceived:(State) => Any = (state) => {}) {
+  def startClient(
+    server_url:String =  property("net.server", "localhost"),
+    port:Int = property("net.port", 9800),
+    ping_timeout:Int = property("net.ping_timeout", 60000, {ping_timeout:Int => (ping_timeout >= 1000, "must be more than 1000")}),
+    onServerDataReceived:(State) => Any = (state) => {}
+  ) {
     is_running = true
     actor {
       var last_ping_moment = System.currentTimeMillis()
       while(is_running) {
-        if(!isServerOnline) { // connection checker
-          io_actor ! ("connect", onServerDataReceived, self)
+        if(!isOnline) { // connection checker
+          io_actor ! ("connect", server_url, port, onServerDataReceived, self)
           receive {
             case "fail" =>
               Thread.sleep(1000)

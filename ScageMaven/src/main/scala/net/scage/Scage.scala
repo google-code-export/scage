@@ -4,8 +4,9 @@ import com.weiglewilczek.slf4s.Logger
 import collection.mutable.{HashMap, ArrayBuffer}
 import support.ScageId._
 
-class ScageApp(val unit_name:String = "Scage App") extends ScageTrait with App {
+class ScageApp(val unit_name:String = "Scage App") extends Scage with App {
   override def run() {
+    preinit()
     init()
     is_running = true
     scage_log.info(unit_name+": run")
@@ -17,29 +18,25 @@ class ScageApp(val unit_name:String = "Scage App") extends ScageTrait with App {
     }
     clear()
     dispose()
-    scage_log.info(unit_name+" was stopped")
-    System.exit(0)
   }
-  
+
   override def stop() {
     is_running = false
     Scage.stopApp()
   }
 
-  protected def preinit() {
-    scage_log.info("starting main unit "+unit_name+"...")
-  }
-  
   override def main(args:Array[String]) {
-    preinit()
     super.main(args)
+    scage_log.info("starting main unit "+unit_name+"...")
     run()
+    scage_log.info(unit_name+" was stopped")
+    System.exit(0)
   }
 }
 
-class Scage(val unit_name:String = "Scage") extends ScageTrait
+class ScageUnit(val unit_name:String = "Scage Unit") extends Scage
 
-trait ScageTrait {
+trait Scage {
   def unit_name:String
 
   protected val scage_log = Logger(this.getClass.getName)
@@ -48,7 +45,7 @@ trait ScageTrait {
   def currentOperation = current_operation_id
 
   object ScageOperations extends Enumeration {
-    val Init, Action, Clear, Dispose = Value
+    val Preinit, Init, Action, Clear, Dispose = Value
   }
 
   private[scage] val operations_mapping = HashMap[Int, Any]()
@@ -88,6 +85,43 @@ trait ScageTrait {
     delAllDisposes()
   }*/
 
+  // don't know exactly if I need this preinits, but I keep them for symmetry (because I already have disposes and I do need them - to stop NetServer/NetClient for example)
+  private[scage] var preinits = ArrayBuffer[(Int, () => Any)]()
+  def preinit(preinit_func: => Any) = {
+    val operation_id = nextId
+    preinits += (operation_id, () => preinit_func)
+    operations_mapping += operation_id -> ScageOperations.Preinit
+    operation_id
+  }
+  // 'preinits' suppose to run only once during unit's first run(). No public method exists to run them inside run-loop
+  private[scage] def preinit() {
+    scage_log.info(unit_name+": preinit")
+    for((preinit_id, preinit_operation) <- preinits) {
+      current_operation_id = preinit_id
+      preinit_operation()
+    }
+  }
+  def delPreinits(operation_ids:Int*) = {
+    operation_ids.foldLeft(true)((overall_result, operation_id) => {
+      val deletion_result = preinits.find(_._1 == operation_id) match {
+        case Some(p) => {
+          preinits -= p
+          scage_log.debug("deleted preinit operation with id "+operation_id)
+          true
+        }
+        case None => {
+          scage_log.warn("operation with id "+operation_id+" not found among preinits so wasn't deleted")
+          false
+        }
+      }
+      overall_result && deletion_result
+    })
+  }
+  def delAllPreinits() {
+    preinits.clear()
+    scage_log.info("deleted all preinit operations")
+  }
+
   private[scage] val inits = ArrayBuffer[(Int, () => Any)]()
   def init(init_func: => Any) = {
     val operation_id = nextId
@@ -95,6 +129,13 @@ trait ScageTrait {
     operations_mapping += operation_id -> ScageOperations.Init
     if(is_running) init_func
     operation_id
+  }
+  def init() {
+    scage_log.info(unit_name+": init")
+    for((init_id, init_operation) <- inits) {
+      current_operation_id = init_id
+      init_operation()
+    }
   }
   def delInits(operation_ids:Int*) = {
     operation_ids.foldLeft(true)((overall_result, operation_id) => {
@@ -200,6 +241,13 @@ trait ScageTrait {
     operations_mapping += operation_id -> ScageOperations.Clear
     operation_id
   }
+  def clear() {
+    scage_log.info(unit_name+": clear")
+    for((clear_id, clear_operation) <- clears) {
+      current_operation_id = clear_id
+      clear_operation()
+    }
+  }
   def delClears(operation_ids:Int*) = {
     operation_ids.foldLeft(true)((overall_result, operation_id) => {
       val deletion_result = clears.find(_._1 == operation_id) match {
@@ -227,6 +275,14 @@ trait ScageTrait {
     disposes += (operation_id, () => dispose_func)
     operations_mapping += operation_id -> ScageOperations.Dispose
     operation_id
+  }
+  // 'disposes' suppose to run after unit is completely finished. No public method exists to run them inside run-loop
+  private[scage] def dispose() {
+    scage_log.info(unit_name+": dispose")
+    for((dispose_id, dispose_operation) <- disposes) {
+      current_operation_id = dispose_id
+      dispose_operation()
+    }
   }
   def delDisposes(operation_ids:Int*) = {
     operation_ids.foldLeft(true)((overall_result, operation_id) => {
@@ -258,32 +314,9 @@ trait ScageTrait {
 
   protected var is_running = false
   def isRunning = is_running
-  def init() {
-    scage_log.info(unit_name+": init")
-    for((init_id, init_operation) <- inits) {
-      current_operation_id = init_id
-      init_operation()
-    }
-  }
-  def clear() {
-    scage_log.info(unit_name+": clear")
-    for((clear_id, clear_operation) <- clears) {
-      current_operation_id = clear_id
-      clear_operation()
-    }
-  }
-
-  // 'disposes' suppose to run after screen is completely finished. No public method exists to run them inside run-loop
-  private[scage] def dispose() {
-    scage_log.info(unit_name+": dispose")
-    for((dispose_id, dispose_operation) <- disposes) {
-      current_operation_id = dispose_id
-      dispose_operation()
-    }
-  }
-
   def run() {
     scage_log.info("starting unit "+unit_name+"...")
+    preinit()
     init()
     is_running = true
     scage_log.info(unit_name+": run")

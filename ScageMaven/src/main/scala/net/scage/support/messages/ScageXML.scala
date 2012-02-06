@@ -13,10 +13,17 @@ case class InterfaceData(interface_id:String, x:Int = -1, y:Int = -1, xinterval:
 case class RowData(message_id:String, x:Int = -1, y:Int = -1, placeholders_before:Int = 0, placeholders_in_row:Int = 0, color:ScageColor = DEFAULT_COLOR)
 case class MessageData(message:String, x:Int = -1, y:Int = -1, color:ScageColor = DEFAULT_COLOR)
 
+trait ScageXMLTrait {
+  def xml(message_id:String, parameters:Any*):String
+  def xmlOrDefault(message_id:String, parameters:Any*):String
+  def xmlInterface(interface_id:String, parameters:Any*):Array[MessageData]
+  def xmlInterfaceStrings(interface_id:String, parameters:Any*):Array[String]
+}
+
 class ScageXML(val lang:String          = property("xml.lang", "en"),
                val messages_base:String = property("xml.strings.base", "resources/strings/" +stringProperty("app.name").toLowerCase+"_strings"),
                val interfaces_base:String = property("xml.interfaces.base", "resources/interfaces/"+stringProperty("app.name").toLowerCase+"_interfaces")
-) {
+) extends ScageXMLTrait {
   private val log = Logger(this.getClass.getName)
   
   lazy val messages_file = messages_base + "_" + lang + ".xml"

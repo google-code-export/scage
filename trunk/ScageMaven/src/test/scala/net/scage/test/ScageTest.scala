@@ -42,18 +42,7 @@ class ScageTest extends TestCase("app") {
         ScageProperties.properties = properties*/
 
         val rect_color = property("rect.color", RED)
-        render {
-          drawFilledRect(Vec(30, 30), 60, 20, rect_color)
-        }
-
-        render(10) {
-          drawFilledRect(Vec(100, 30), 60, 20, YELLOW)
-        }
-
         val tracer = CoordTracer()
-        render(-10) {
-          drawTraceGrid(tracer, DARK_GRAY)
-        }
 
         val trace = tracer.addTrace(Vec(window_width/2, window_height/2))
         val another_trace = tracer.addTrace(Vec(window_width/4, window_height/2))
@@ -66,12 +55,26 @@ class ScageTest extends TestCase("app") {
 
         anykey(onKeyDown = println("any key pressed =)"))   // test special method to obtain "press any key" event
 
-        key(KEY_W, 10, onKeyDown = moveIfFreeLocation(trace, Vec(0,1)))
-        key(KEY_W, onKeyDown = println("also, W was pressed :3"))   // test for multiple functions on one key
+        private var wanna_go_up = false
+        key(KEY_W, onKeyDown = wanna_go_up = true, onKeyUp = wanna_go_up = false)
+        private var wanna_go_left = false
+        key(KEY_A, onKeyDown = wanna_go_left = true, onKeyUp = wanna_go_left = false)
+        private var wanna_go_down = false
+        key(KEY_S, onKeyDown = wanna_go_down = true, onKeyUp = wanna_go_down = false)
+        private var wanna_go_right = false
+        key(KEY_D, onKeyDown = wanna_go_right = true, onKeyUp = wanna_go_right = false)
 
-        key(KEY_A, 10, onKeyDown = moveIfFreeLocation(trace, Vec(-1,0)))
-        key(KEY_S, 10, onKeyDown = moveIfFreeLocation(trace, Vec(0,-1)))
-        key(KEY_D, 10, onKeyDown = moveIfFreeLocation(trace, Vec(1,0)))
+        var dir = Vec.zero
+        action {
+          dir = Vec.zero
+          if(wanna_go_up) dir += Vec(0, 1)
+          if(wanna_go_down) dir += Vec(0, -1)
+          if(wanna_go_right) dir += Vec(1, 0)
+          if(wanna_go_left) dir += Vec(-1, 0)
+          moveIfFreeLocation(trace, dir.n)
+        }
+
+        key(KEY_W, onKeyDown = println("also, W was pressed :3"))   // test for multiple functions on one key
 
         private var input_text = ""
         key(KEY_F1, onKeyDown = spawn {
@@ -125,9 +128,9 @@ class ScageTest extends TestCase("app") {
             }
 
             velocity = (target_point).n*10
-            render {
-              if(physics.containsPhysical(this)) drawFilledCircle(coord, 2, YELLOW)
-            }
+            /*render {
+              /*if(physics.containsPhysical(this)) */drawFilledCircle(coord, 2, YELLOW)
+            }*/
           })
         })
 
@@ -138,15 +141,6 @@ class ScageTest extends TestCase("app") {
         }
 
         interfaceFromXml("scagetest.help", Array(trace.location, tracer.point(trace.location), fps, input_text))
-
-        render {
-          drawDisplayList(stars)
-          drawFilledCircle(trace.location, 10, RED)
-          drawLine(trace.location, trace.location + target_point)
-          drawCircle(another_trace.location, 10, GREEN)
-
-          drawDisplayList(poly_render)
-        }
 
         private var touches:ListBuffer[(Vec, Long)] = ListBuffer()    // test obtaining touching points for physical objects
         action {
@@ -160,8 +154,60 @@ class ScageTest extends TestCase("app") {
             if System.currentTimeMillis - t._2 > 5000
           } touches -= t
         }
+
         render {
-          for((point, _) <- touches) drawFilledCircle(point, 3, RED)
+          def pew(v:Vec) {
+            drawFilledRect(Vec(30, 30)+v, 60, 20, rect_color)
+            drawDisplayList(stars,v)
+            drawFilledCircle(trace.location+v, 10, RED)
+            drawLine(trace.location+v, trace.location+v + target_point+v)
+            drawCircle(another_trace.location+v, 10, GREEN)
+            drawDisplayList(poly_render, v)
+            physics.physicals.foreach(p => drawFilledCircle(p.coord+v, 2, YELLOW))
+            for((point, _) <- touches) drawFilledCircle(point+v, 3, RED)
+          }
+          pew(Vec.zero)
+          if(scale > 1) {
+            pew(Vec(0, window_height - 40))
+            pew(Vec(0, -window_height + 40))
+            pew(Vec(window_width - 80, 0))
+            pew(Vec(-window_width + 80, 0))
+
+            pew(Vec(window_width - 80, window_height - 40))
+            pew(Vec(window_width - 80, -window_height + 40))
+            pew(Vec(-window_width + 80, window_height - 40))
+            pew(Vec(-window_width + 80, -window_height + 40))
+          }
+        }
+        render(10) {
+          def pew(v:Vec) {drawFilledRect(Vec(100, 30)+v, 60, 20, YELLOW)}
+          pew(Vec.zero)
+          if(scale > 1) {
+            pew(Vec(0, window_height - 40))
+            pew(Vec(0, -window_height + 40))
+            pew(Vec(window_width - 80, 0))
+            pew(Vec(-window_width + 80, 0))
+
+            pew(Vec(window_width - 80, window_height - 40))
+            pew(Vec(window_width - 80, -window_height + 40))
+            pew(Vec(-window_width + 80, window_height - 40))
+            pew(Vec(-window_width + 80, -window_height + 40))
+          }
+        }
+        render(-10) {
+          def pew(v:Vec) {drawLines(tracer.traceGrid.map(_ + v), DARK_GRAY)}
+          pew(Vec.zero)
+          if(scale > 1) {
+            pew(Vec(0, window_height - 40))
+            pew(Vec(0, -window_height + 40))
+            pew(Vec(window_width - 80, 0))
+            pew(Vec(-window_width + 80, 0))
+
+            pew(Vec(window_width - 80, window_height - 40))
+            pew(Vec(window_width - 80, -window_height + 40))
+            pew(Vec(-window_width + 80, window_height - 40))
+            pew(Vec(-window_width + 80, -window_height + 40))
+          }
         }
         
         // scaling test

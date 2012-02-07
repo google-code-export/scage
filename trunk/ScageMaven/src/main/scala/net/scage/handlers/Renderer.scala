@@ -400,12 +400,14 @@ trait RendererInitializer {
     log.info("initialized opengl system")
   }
 
-  private[scage] def exitRender() {
+  def renderExitMessage() {
     backgroundColor = BLACK
     clearScreen()
     print(xmlOrDefault("renderer.exiting", "Exiting..."), 20, window_height-25, GREEN)
     Display.update()
+  }
 
+  def destroygl() {
     Thread.sleep(1000)
     Display.destroy()
   }
@@ -426,12 +428,6 @@ trait Renderer extends Scage with RendererLib {
       frames = 0
       msek = System.currentTimeMillis
     }
-  }
-
-  private def update() {  // maybe remove this method
-    Display.sync(100) // let it be just 100! 100 is a pretty cool number. Why force users to decide - let's decide for them!
-    Display.update()
-    countFPS()
   }
 
   private var _scale:Float = 1.0f
@@ -518,6 +514,31 @@ trait Renderer extends Scage with RendererLib {
     log.info("deleted all interface operations")
   }
 
+  val TICKS_PER_SECOND = 60
+  val SKIP_TICKS = 1000 / TICKS_PER_SECOND
+  val MAX_FRAMESKIP = 5
+  private var loops = 0
+
+  private var next_game_tick = System.currentTimeMillis()
+  def prepareRender() {
+    next_game_tick = System.currentTimeMillis()
+  }
+
+  private var _interpolation:Float = 0
+  def interpolation = _interpolation
+  override private[scage] def action() {
+    loops = 0
+    while(System.currentTimeMillis() > next_game_tick && loops < MAX_FRAMESKIP) {
+      for((action_id, action_operation) <- actions) {
+        current_operation_id = action_id
+        action_operation()
+      }
+      next_game_tick += SKIP_TICKS
+      loops += 1
+    }
+    _interpolation = (System.currentTimeMillis() + SKIP_TICKS - next_game_tick).toFloat/SKIP_TICKS
+  }
+
   def performRendering() {
     if(Display.isCloseRequested) Scage.stopApp()
     else {
@@ -537,7 +558,9 @@ trait Renderer extends Scage with RendererLib {
         interface_operation()
       }
 
-      update()
+      //Display.sync(4) // let it be just 100! 100 is a pretty cool number. Why force users to decide - let's decide for them!
+      Display.update()
+      countFPS()
     }
   }
 

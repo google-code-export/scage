@@ -29,10 +29,11 @@ class ScagePhysics {
   val world = new World(new Vector2f(gravity.x, gravity.y), 10, new QuadSpaceStrategy(20,10));
   world.enableRestingBodyDetection(0.01f, 0.000001f, 0.01f)
   
-  private var physicals = Set[Physical]()
+  private val _physicals = Set[Physical]()
+  def physicals = _physicals.toList
   def addPhysical(physical:Physical) = {
     if(!world.getBodies.contains(physical.body)) world.add(physical.body)
-    physicals += physical
+    _physicals += physical
     physical.clearTouches()
     log.debug("added new physical "+physical)
     physical
@@ -45,27 +46,27 @@ class ScagePhysics {
   // TODO: И метод, принимающий условие в качестве параметра. И все такое
   def removePhysicals(physicals_to_delete:Physical*) {
     for(p <- physicals_to_delete) {
-      if(physicals.contains(p)) {
+      if(_physicals.contains(p)) {
         world.remove(p.body)
-        physicals -= p
+        _physicals -= p
         log.debug("removed physical "+p)
       } else log.warn("physical "+p+" not found")
     }
   }
   def removeAll() {
     world.clear()
-    physicals.clear()
+    _physicals.clear()
     log.info("deleted all physical objects")
   }
 
-  def containsPhysical(p:Physical) = physicals.contains(p)
+  def containsPhysical(p:Physical) = _physicals.contains(p)
 
   def step() {
-    physicals.foreach(_.clearTouches())
+    _physicals.foreach(_.clearTouches())
 
     for(i <- 1 to _dt) {
       world.step()
-      for(p <- physicals) {
+      for(p <- _physicals) {
         p.updateCollisions(world.getContacts(p.body))
       }
     }

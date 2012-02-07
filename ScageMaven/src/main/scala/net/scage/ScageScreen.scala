@@ -17,10 +17,7 @@ abstract class Screen(unit_name:String = "Scage Screen") extends ScageUnit(unit_
     log.info(unit_name+": run")
     while(is_running && Scage.isAppRunning) {
       checkControls()
-      for((action_id, action_operation) <- actions) {
-        current_operation_id = action_id
-        action_operation()
-      }
+      action()
       performRendering()
     }
     clear()
@@ -34,20 +31,18 @@ abstract class ScreenApp(
   val window_height:Int = property("screen.height", 600),
   val title:String = property("app.name", "Scage App")
 ) extends ScageMain with Renderer with RendererInitializer with ScageController {
-
   override def run() {
     preinit()
     init()
     is_running = true
+    prepareRender()
     scage_log.info(unit_name+": run")
     while(is_running && Scage.isAppRunning) {
       checkControls()
-      for((action_id, action_operation) <- actions) {
-        current_operation_id = action_id
-        action_operation()
-      }
+      action()
       performRendering()
     }
+    renderExitMessage()
     clear()
     dispose()
   }
@@ -57,7 +52,7 @@ abstract class ScreenApp(
     initgl()
     super.main(args)
     run()
-    exitRender()
+    destroygl()
     scage_log.info(unit_name+" was stopped")
     System.exit(0)
   }

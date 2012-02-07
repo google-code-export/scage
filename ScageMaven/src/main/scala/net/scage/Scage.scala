@@ -132,7 +132,7 @@ trait Scage {
     if(is_running) init_func
     operation_id
   }
-  def init() {
+  private[scage] def init() {
     scage_log.info(unit_name+": init")
     for((init_id, init_operation) <- inits) {
       current_operation_id = init_id
@@ -215,6 +215,13 @@ trait Scage {
   }
   private[this] class ActionWaiterStatic(val period:Long, action_func: => Unit) extends ActionWaiter(action_func)
 
+  private[scage] def action() { // assuming to run in cycle, so we leave off any log messages
+    for((action_id, action_operation) <- actions) {
+      current_operation_id = action_id
+      action_operation()
+    }
+  }
+
   def delActions(operation_ids:Int*) = {
     operation_ids.foldLeft(true)((overall_result, operation_id) => {
       val deletion_result = actions.find(_._1 == operation_id) match {
@@ -243,7 +250,7 @@ trait Scage {
     operations_mapping += operation_id -> ScageOperations.Clear
     operation_id
   }
-  def clear() {
+  private[scage] def clear() {
     scage_log.info(unit_name+": clear")
     for((clear_id, clear_operation) <- clears) {
       current_operation_id = clear_id
@@ -323,10 +330,7 @@ trait Scage {
     is_running = true
     scage_log.info(unit_name+": run")
     while(is_running && Scage.isAppRunning) {
-      for((action_id, action_operation) <- actions) {
-        current_operation_id = action_id
-        action_operation()
-      }
+      action()
     }
     clear()
     dispose()

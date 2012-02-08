@@ -18,6 +18,7 @@ import collection.mutable.ArrayBuffer
 import com.weiglewilczek.slf4s.Logger
 import net.scage.Scage
 import net.scage.support.messages.{ScageXML, ScageMessage}
+import net.scage.support.tracer3.ScageTracer
 
 trait RendererLib {
   def backgroundColor = {
@@ -225,11 +226,7 @@ trait RendererLib {
   }
 
   // ugly structural typing, but I don't know what to do with tracer's generic type
-  def drawTraceGrid(tracer:{
-    def field_from_x:Int; def field_to_x:Int;
-    def field_from_y:Int; def field_to_y:Int;
-    def h_x:Int; def h_y:Int
-  }, color:ScageColor = DEFAULT_COLOR) {
+  def drawTraceGrid(tracer:ScageTracer[_], color:ScageColor = DEFAULT_COLOR) {
     import tracer._
     val x_lines = (field_from_x to field_to_x by h_x).foldLeft(List[Vec]())((lines, x) => Vec(x, field_from_y) :: Vec(x, field_to_y) :: lines)
     val y_lines = (field_from_y to field_to_y by h_y).foldLeft(List[Vec]())((lines, y) => Vec(field_from_x, y) :: Vec(field_to_x, y) :: lines)
@@ -305,8 +302,9 @@ trait RendererLib {
 
 object RendererLib extends RendererLib
 
+import RendererLib._
+
 trait RendererInitializer {
-  this:RendererLib =>
   private val log = Logger(this.getClass.getName)
 
   def window_width:Int
@@ -413,7 +411,7 @@ trait RendererInitializer {
   }
 }
 
-trait Renderer extends Scage with RendererLib {
+trait Renderer extends Scage {
   private val log = Logger(this.getClass.getName)
 
   private var _fps:Int = 0
@@ -568,7 +566,7 @@ trait Renderer extends Scage with RendererLib {
     val Render, Interface = Value
   }
 
-  override def delOperation(operation_id:Int) = {
+  override def delOperation(operation_id:Int) = { // as I understand Scala - other possible 'delOperation's from other Scage's children will be stackable via inheritance
     operations_mapping.get(operation_id) match {
       case Some(operation_type) => {
         operation_type match {

@@ -4,7 +4,19 @@ import com.weiglewilczek.slf4s.Logger
 import collection.mutable.{HashMap, ArrayBuffer}
 import support.ScageId._
 
-class ScageApp(val unit_name:String = "Scage App") extends ScageMain {
+class ScageApp(val unit_name:String = "Scage App") extends Scage with ScageMain with App {
+  override def run() {
+    preinit()
+    init()
+    is_running = true
+    scage_log.info(unit_name+": run")
+    while(is_running && Scage.isAppRunning) {
+      action()
+    }
+    clear()
+    dispose()
+  }
+  
   override def main(args:Array[String]) {
     scage_log.info("starting main unit "+unit_name+"...")
     super.main(args)
@@ -14,25 +26,10 @@ class ScageApp(val unit_name:String = "Scage App") extends ScageMain {
   }
 }
 
-trait ScageMain extends Scage with App {
-  override def run() {
-    preinit()
-    init()
-    is_running = true
-    scage_log.info(unit_name+": run")
-    while(is_running && Scage.isAppRunning) {
-      for((action_id, action_operation) <- actions) {
-        current_operation_id = action_id
-        action_operation()
-      }
-    }
-    clear()
-    dispose()
-  }
-
+trait ScageMain extends Scage {
   override def stop() {
-    is_running = false
     Scage.stopApp()
+    super.stop()
   }
 }
 

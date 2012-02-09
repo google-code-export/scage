@@ -14,6 +14,7 @@ abstract class Screen(unit_name:String = "Scage Screen") extends ScageUnit(unit_
     preinit()
     init()
     is_running = true
+    prepareRender()
     log.info(unit_name+": run")
     while(is_running && Scage.isAppRunning) {
       checkControls()
@@ -30,7 +31,7 @@ abstract class ScreenApp(
   val window_width:Int  = property("screen.width", 800),
   val window_height:Int = property("screen.height", 600),
   val title:String = property("app.name", "Scage App")
-) extends ScageMain with Renderer with RendererInitializer with ScageController {
+) extends Scage with ScageMain with Renderer with RendererInitializer with ScageController with App {
   override def run() {
     preinit()
     init()

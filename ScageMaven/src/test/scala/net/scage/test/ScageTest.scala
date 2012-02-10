@@ -3,7 +3,6 @@ package net.scage.test
 import net.scage.ScageLib._
 import net.scage.support.messages.ScageMessage
 import concurrent.ops._
-
 import junit.framework._
 import Assert._
 import net.scage.support.physics.ScagePhysics
@@ -216,6 +215,8 @@ class ScageTest extends TestCase("app") {
         center = if(scale > 1) trace.location else windowCenter
 
         // test network features: server and client in one app. Client send 2d vectors to server and server sends back normalized vector
+        NetServer.sendToAll()
+
         NetServer.startServer(
           onNewConnection = {
             client => client.send(State(("hello" -> "send me vec and I send you back its n!")))
@@ -223,7 +224,9 @@ class ScageTest extends TestCase("app") {
           },
           onClientDataReceived = {
             (client, received_data) => received_data.neededKeys {
-              case ("vec", vec:Vec) => client.send(State(("n" -> vec.n)))
+              case ("vec", vec:Vec) => {
+                client.send(State(("n" -> vec.n)))
+              }
             }
           }
         )

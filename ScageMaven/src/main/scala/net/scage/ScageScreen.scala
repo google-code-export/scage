@@ -6,7 +6,7 @@ import handlers.{RendererInitializer, Renderer}
 import support.ScageProperties._
 
 // abstract classes instead of traits to make it easy to use with MultiController
-abstract class Screen(unit_name:String = "Scage Screen") extends ScageUnit(unit_name) with Renderer with ScageController {
+abstract class Screen(val unit_name:String = "Scage Screen") extends Scage with Renderer with ScageController {
   private val log = Logger(this.getClass.getName)
 
   override def run() {

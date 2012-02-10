@@ -524,7 +524,7 @@ trait Renderer extends Scage {
 
   private var _interpolation:Float = 0
   def interpolation = _interpolation
-  override private[scage] def action() {
+  override private[scage] def action() {  // maybe rename it to not confuse clients
     loops = 0
     while(System.currentTimeMillis() > next_game_tick && loops < MAX_FRAMESKIP) {
       for((action_id, action_operation) <- actions) {
@@ -556,7 +556,6 @@ trait Renderer extends Scage {
         interface_operation()
       }
 
-      //Display.sync(4) // let it be just 100! 100 is a pretty cool number. Why force users to decide - let's decide for them!
       Display.update()
       countFPS()
     }

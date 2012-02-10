@@ -5,18 +5,6 @@ import collection.mutable.{HashMap, ArrayBuffer}
 import support.ScageId._
 
 class ScageApp(val unit_name:String = "Scage App") extends Scage with ScageMain with App {
-  override def run() {
-    preinit()
-    init()
-    is_running = true
-    scage_log.info(unit_name+": run")
-    while(is_running && Scage.isAppRunning) {
-      action()
-    }
-    clear()
-    dispose()
-  }
-  
   override def main(args:Array[String]) {
     scage_log.info("starting main unit "+unit_name+"...")
     super.main(args)
@@ -28,12 +16,18 @@ class ScageApp(val unit_name:String = "Scage App") extends Scage with ScageMain 
 
 trait ScageMain extends Scage {
   override def stop() {
-    Scage.stopApp()
     super.stop()
+    Scage.stopApp()
   }
 }
 
-class ScageUnit(val unit_name:String = "Scage Unit") extends Scage
+class ScageUnit(val unit_name:String = "Scage Unit") extends Scage {
+  override def run() {
+    scage_log.info("starting unit "+unit_name+"...")
+    super.run()
+    scage_log.info(unit_name+" was stopped")
+  }
+}
 
 trait Scage {
   def unit_name:String
@@ -321,7 +315,6 @@ trait Scage {
   protected var is_running = false
   def isRunning = is_running
   def run() {
-    scage_log.info("starting unit "+unit_name+"...")
     preinit()
     init()
     is_running = true
@@ -331,7 +324,6 @@ trait Scage {
     }
     clear()
     dispose()
-    scage_log.info(unit_name+" was stopped")
   }
 
   def stop() {

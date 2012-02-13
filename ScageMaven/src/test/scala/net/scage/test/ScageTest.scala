@@ -214,9 +214,7 @@ class ScageTest extends TestCase("app") {
         mouseWheelDown(onWheelDown = m => if(scale > 1) scale -= 1)
         center = if(scale > 1) trace.location else windowCenter
 
-        // test network features: server and client in one app. Client send 2d vectors to server and server sends back normalized vector
-        NetServer.sendToAll()
-
+        // test network features: server and client in one app. Client sends 2d vectors to server and server sends back normalized vector
         NetServer.startServer(
           onNewConnection = {
             client => client.send(State(("hello" -> "send me vec and I send you back its n!")))

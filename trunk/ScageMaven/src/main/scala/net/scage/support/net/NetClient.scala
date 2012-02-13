@@ -6,13 +6,14 @@ import java.net.Socket
 import net.scage.support.State
 import com.weiglewilczek.slf4s.Logger
 import actors.Actor._
+import actors.Actor
 
 object NetClient extends NetClient
 
 class NetClient {
   private val log = Logger(this.getClass.getName)
 
-  private val io_actor = actor {
+  private lazy val io_actor:Actor = actor {
     var is_connected = false
 
     var socket:Socket = null
@@ -32,33 +33,9 @@ class NetClient {
         val write_error = out.checkError()
         if(write_error) {
           log.warn("failed to send data to server: write error!")
-          connector()
+          actor{Thread.sleep(1000); io_actor ! ("connect", server_url, port, ping_timeout, onServerDataReceived)}
         }
       } else log.warn("not connected to send data!")
-    }
-
-    def connector() {
-      val this_actor = self
-      actor {
-        Thread.sleep(1000)
-        this_actor ! ("connect", server_url, port, ping_timeout, onServerDataReceived)
-      }
-    }
-
-    def checker() {
-      val this_actor = self
-      actor {
-        Thread.sleep(10)
-        this_actor ! "check"
-      }
-    }
-
-    def pinger() {
-      val this_actor = self
-      actor {
-        Thread.sleep(ping_timeout)
-        this_actor ! "ping"
-      }
     }
 
     loop {
@@ -83,12 +60,12 @@ class NetClient {
             in = new BufferedReader(new InputStreamReader(socket.getInputStream, "UTF-8"))
             is_connected = true
             log.info("connected!")
-            checker()
-            pinger()
+            actor{Thread.sleep(10); io_actor ! "check"}
+            actor{Thread.sleep(ping_timeout); io_actor ! "ping"}
           } catch {
             case e:Exception => {
               log.error("failed to connect to server "+server_url+" at port "+port+": "+e);
-              connector()
+              actor{Thread.sleep(1000); io_actor ! ("connect", server_url, port, ping_timeout, onServerDataReceived)}
             }
           }
         case ("send", data:State) => performSend(data)
@@ -116,12 +93,12 @@ class NetClient {
                 }
               }
             }
-            checker()
+            actor{Thread.sleep(10); io_actor ! "check"}
           } // will stop checking otherwise
         case "ping" =>
           if(is_connected) {
             performSend(State("ping"))
-            pinger()
+            actor{Thread.sleep(ping_timeout); io_actor ! "ping"}
           } // will stop pinging otherwise
         case ("disconnect") =>
           is_connected = false

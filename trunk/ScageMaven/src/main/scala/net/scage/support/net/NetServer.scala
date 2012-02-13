@@ -65,31 +65,16 @@ class NetServer {
     }
   }
 
-  private lazy val clients_actor = actor {
+  private lazy val clients_actor:Actor = actor {
     var client_handlers = ArrayBuffer[ClientHandler]()
-    def checker() {
-      val this_actor = self
-      actor {
-        Thread.sleep(10)
-        this_actor ! "check"
-      }
-    }
-
-    def pinger() {
-      val this_actor = self
-      actor {
-        Thread.sleep(ping_timeout)
-        this_actor ! "ping"
-      }      
-    }
     loop {
       react {
         case ("add", new_client:ClientHandler) =>
           val is_first_client = client_handlers.isEmpty
           client_handlers += new_client
           if(is_first_client) {
-            checker()
-            pinger()
+            actor {Thread.sleep(10); clients_actor ! "check"}
+            actor {Thread.sleep(ping_timeout); clients_actor ! "ping"}
           }
         case ("send_to_all", data:State) =>
           client_handlers.foreach(_.send(data))
@@ -107,14 +92,14 @@ class NetServer {
             val offline_clients = client_handlers.filter(client => !client.isOnline)
             offline_clients.foreach(client => client.disconnect())
             client_handlers --= offline_clients
-            pinger()
+            actor {Thread.sleep(ping_timeout); clients_actor ! "ping"}
           }
         case "length" =>
           reply(client_handlers.length)
         case "check" =>
           if(!client_handlers.isEmpty) {
             client_handlers.foreach(client => client.check())
-            checker()
+            actor {Thread.sleep(10); clients_actor ! "check"}
           }
         case "disconnect" =>
           log.info("shutting net server down...")

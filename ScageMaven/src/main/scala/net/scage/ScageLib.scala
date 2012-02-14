@@ -3,6 +3,7 @@ package net.scage
 import handlers.RendererLib
 import support._
 import support.messages._
+import org.lwjgl.opengl.GL11
 
 trait ScageLib extends ScagePropertiesTrait with ScageMessageTrait with ScageXMLTrait with RendererLib with LWJGLKeyboard with ScageColorTrait {
   def property[A : Manifest](key:String, default:A):A = ScageProperties.property(key, default)

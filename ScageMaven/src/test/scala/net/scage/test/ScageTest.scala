@@ -166,7 +166,7 @@ class ScageTest extends TestCase("app") {
             for((point, _) <- touches) drawFilledCircle(point+v, 3, RED)
           }
           pew(Vec.zero)
-          if(scale > 1) {
+          if(globalScale > 1) {
             pew(Vec(0, window_height - 40))
             pew(Vec(0, -window_height + 40))
             pew(Vec(window_width - 80, 0))
@@ -181,7 +181,7 @@ class ScageTest extends TestCase("app") {
         render(10) {
           def pew(v:Vec) {drawFilledRect(Vec(100, 30)+v, 60, 20, YELLOW)}
           pew(Vec.zero)
-          if(scale > 1) {
+          if(globalScale > 1) {
             pew(Vec(0, window_height - 40))
             pew(Vec(0, -window_height + 40))
             pew(Vec(window_width - 80, 0))
@@ -196,7 +196,7 @@ class ScageTest extends TestCase("app") {
         render(-10) {
           def pew(v:Vec) {drawLines(tracer.traceGrid.map(_ + v), DARK_GRAY)}
           pew(Vec.zero)
-          if(scale > 1) {
+          if(globalScale > 1) {
             pew(Vec(0, window_height - 40))
             pew(Vec(0, -window_height + 40))
             pew(Vec(window_width - 80, 0))
@@ -210,9 +210,9 @@ class ScageTest extends TestCase("app") {
         }
         
         // scaling test
-        mouseWheelUp(onWheelUp = m => scale += 1)
-        mouseWheelDown(onWheelDown = m => if(scale > 1) scale -= 1)
-        center = if(scale > 1) trace.location else windowCenter
+        mouseWheelUp(onWheelUp = m => globalScale += 1)
+        mouseWheelDown(onWheelDown = m => if(globalScale > 1) globalScale -= 1)
+        center = if(globalScale > 1) trace.location else windowCenter
 
         // test network features: server and client in one app. Client sends 2d vectors to server and server sends back normalized vector
         NetServer.startServer(

@@ -48,6 +48,10 @@ trait RendererLib {
     list_code
   }
 
+  def move(vec:Vec) {GL11.glTranslatef(vec.x, vec.y, 0)}
+  def rotate(ang:Float) {GL11.glRotatef(ang, 0, 0, 1)}
+  def scale(scale_factor:Float) {GL11.glScalef(scale_factor, scale_factor, 1)}
+
   private lazy val FILLED_CIRCLE = displayList {
     GL11.glBegin(GL11.GL_TRIANGLE_FAN);
     for(i <- 0 until 100) {
@@ -217,7 +221,7 @@ trait RendererLib {
   }
 
   // white color by default for display lists to draw in natural colors
-  def drawDisplayList(list_code:Int, coord:Vec = Vec(0,0), color:ScageColor = WHITE) {
+  def drawDisplayList(list_code:Int, coord:Vec = Vec.zero, color:ScageColor = WHITE) {
     if(color != DEFAULT_COLOR) currentColor = color
     GL11.glPushMatrix();
 	  GL11.glTranslatef(coord.x, coord.y, 0.0f);
@@ -428,9 +432,9 @@ trait Renderer extends Scage {
     }
   }
 
-  private var _scale:Float = 1.0f
-  def scale = _scale
-  def scale_= (value:Float) {_scale = value}
+  private var _global_scale:Float = 1.0f
+  def globalScale = _global_scale
+  def globalScale_= (new_global_scale:Float) {_global_scale = new_global_scale}
 
   private var window_center:() => Vec = () => /*RendererInitializer.default_window_center*//*Vec(windowWidth/2, windowHeight/2)*/ windowSize/2
   def windowCenter:Vec = window_center()
@@ -441,8 +445,8 @@ trait Renderer extends Scage {
   def center_= (coord: => Vec) {central_coord = () => coord}
 
   def scaledCoord(coord:Vec) = {
-    if(scale == 1) coord
-    else (coord / scale) + (center - windowCenter/scale)
+    if(globalScale == 1) coord
+    else (coord / globalScale) + (center - windowCenter/globalScale)
   }
 
   case class RenderElement(operation_id:Int, render_func:() => Any, position:Int = 0) extends Ordered[RenderElement] {
@@ -524,7 +528,7 @@ trait Renderer extends Scage {
 
   private var _interpolation:Float = 0
   def interpolation = _interpolation
-  override private[scage] def action() {  // maybe rename it to not confuse clients
+  override private[scage] def executeActions() {  // maybe rename it to not confuse clients
     loops = 0
     while(System.currentTimeMillis() > next_game_tick && loops < MAX_FRAMESKIP) {
       for((action_id, action_operation) <- actions) {
@@ -542,12 +546,14 @@ trait Renderer extends Scage {
     else {
       clearScreen()
       GL11.glPushMatrix()
-        val coord = window_center() - central_coord()*_scale
+        val coord = window_center() - central_coord()*_global_scale
         GL11.glTranslatef(coord.x , coord.y, 0.0f)
-        GL11.glScalef(_scale, _scale, 1)
+        GL11.glScalef(_global_scale, _global_scale, 1)
         for(RenderElement(render_id, render_operation, _) <- renders) {
           current_operation_id = render_id
+          GL11.glPushMatrix()
           render_operation()
+          GL11.glPopMatrix()
         }
       GL11.glPopMatrix()
 

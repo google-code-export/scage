@@ -18,7 +18,7 @@ abstract class Screen(val unit_name:String = "Scage Screen") extends Scage with 
     log.info(unit_name+": run")
     while(is_running && Scage.isAppRunning) {
       checkControls()
-      action()
+      executeActions()
       performRendering()
     }
     clear()
@@ -40,7 +40,7 @@ abstract class ScreenApp(
     scage_log.info(unit_name+": run")
     while(is_running && Scage.isAppRunning) {
       checkControls()
-      action()
+      executeActions()
       performRendering()
     }
     renderExitMessage()

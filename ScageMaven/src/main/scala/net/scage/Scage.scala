@@ -206,7 +206,7 @@ trait Scage {
   }
   private[this] class ActionWaiterStatic(val period:Long, action_func: => Unit) extends ActionWaiter(action_func)
 
-  private[scage] def action() { // assuming to run in cycle, so we leave off any log messages
+  private[scage] def executeActions() { // assuming to run in cycle, so we leave off any log messages
     for((action_id, action_operation) <- actions) {
       current_operation_id = action_id
       action_operation()
@@ -320,7 +320,7 @@ trait Scage {
     is_running = true
     scage_log.info(unit_name+": run")
     while(is_running && Scage.isAppRunning) {
-      action()
+      executeActions()
     }
     clear()
     dispose()

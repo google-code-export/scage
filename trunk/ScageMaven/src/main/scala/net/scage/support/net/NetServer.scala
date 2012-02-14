@@ -11,9 +11,8 @@ import java.net.{DatagramSocket, ServerSocket, Socket}
 import concurrent.ops._
 
 /**
- * This is a naive but very simple and reliable network server implementation, using text json messages.
- * It starting one thread for new connections listening and two threads for every new connection (one for sending and one for receiveing)
- * It should be replaced with Netty Server in future releases
+ * Network server implementation, using text json messages.
+ * It starting one thread for new connections listening, one actor for connection listening and one actor for every new connection
  */
 object NetServer extends NetServer
 

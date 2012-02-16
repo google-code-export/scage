@@ -140,7 +140,7 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
   val SAME_LOCATION    = 1
   val OUT_OF_AREA      = 2
   val TRACE_NOT_FOUND  = 3
-  def updateLocation(trace_id:Int, new_point:Vec):Int = { // TODO: maybe return tuple (new_location, operation_status)
+  def updateLocation(trace_id:Int, new_point:Vec):Int = { // TODO: maybe return tuple (new_location, operation_status), maybe rename
     traces_by_ids.get(trace_id) match {
       case Some(updateable_trace) => {
         val old_point = updateable_trace.location
@@ -166,9 +166,9 @@ class ScageTracer[T <: Trace](val field_from_x:Int        = property("field.from
       }
     }
   }
-  def updateLocation(trace:T, new_point:Vec):Int = updateLocation(trace.id, new_point)
+  def updateLocation(trace:T, new_point:Vec):Int = updateLocation(trace.id, new_point)  // TODO: maybe rename
 
-  def move(trace:T, delta:Vec) = {
+  def moveTrace(trace:T, delta:Vec) = {
     updateLocation(trace.id, trace.location + delta)
   }
 

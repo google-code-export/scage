@@ -54,6 +54,7 @@ trait RendererLib {
     GL11.glPopMatrix()
   }
 
+  // TODO: maybe rename from such common words as 'move', 'rotate' and 'scale'
   def move(vec:Vec) {GL11.glTranslatef(vec.x, vec.y, 0)}
   def move(move_func: => Unit) {localTransformation(move_func)}
 

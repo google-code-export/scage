@@ -127,9 +127,9 @@ class ScageTest extends TestCase("app") {
             }
 
             velocity = (target_point).n*10
-            /*render {
+            render {
               /*if(physics.containsPhysical(this)) */drawFilledCircle(coord, 2, YELLOW)
-            }*/
+            }
           })
         })
 
@@ -162,7 +162,7 @@ class ScageTest extends TestCase("app") {
             drawLine(trace.location+v, trace.location+v + target_point+v)
             drawCircle(another_trace.location+v, 10, GREEN)
             drawDisplayList(poly_render, v)
-            physics.physicals.foreach(p => drawFilledCircle(p.coord+v, 2, YELLOW))
+            //physics.physicals.foreach(p => drawFilledCircle(p.coord+v, 2, YELLOW))
             for((point, _) <- touches) drawFilledCircle(point+v, 3, RED)
           }
           pew(Vec.zero)
@@ -255,6 +255,17 @@ class ScageTest extends TestCase("app") {
         dispose {
           NetServer.stopServer()
           NetClient.stopClient()
+        }
+
+        private var ang = 0f
+          actionStaticPeriod(100) {
+          ang += 5
+        }
+
+        render {
+          move(windowCenter)
+          rotate(ang)
+          drawFilledPolygon(Array(Vec(-20, -5), Vec(20, -5), Vec(0, 20)), GREEN)
         }
       }.main(Array[String]())
       assertTrue(true)

@@ -48,9 +48,20 @@ trait RendererLib {
     list_code
   }
 
+  def localTransformation(transform: => Unit) {
+    GL11.glPushMatrix()
+    transform
+    GL11.glPopMatrix()
+  }
+
   def move(vec:Vec) {GL11.glTranslatef(vec.x, vec.y, 0)}
+  def move(move_func: => Unit) {localTransformation(move_func)}
+
   def rotate(ang:Float) {GL11.glRotatef(ang, 0, 0, 1)}
+  def rotate(rotate_func: => Unit) {localTransformation(rotate_func)}
+
   def scale(scale_factor:Float) {GL11.glScalef(scale_factor, scale_factor, 1)}
+  def scale(scale_func: => Unit) {localTransformation(scale_func)}
 
   private lazy val FILLED_CIRCLE = displayList {
     GL11.glBegin(GL11.GL_TRIANGLE_FAN);

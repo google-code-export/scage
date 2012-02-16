@@ -48,21 +48,20 @@ trait RendererLib {
     list_code
   }
 
-  def localTransformation(transform: => Unit) {
+  def localOpenglTransform(transform: => Unit) {
     GL11.glPushMatrix()
     transform
     GL11.glPopMatrix()
   }
 
-  // TODO: maybe rename from such common words as 'move', 'rotate' and 'scale'
-  def move(vec:Vec) {GL11.glTranslatef(vec.x, vec.y, 0)}
-  def move(move_func: => Unit) {localTransformation(move_func)}
+  def openglMove(vec:Vec) {GL11.glTranslatef(vec.x, vec.y, 0)}
+  def openglLocalMove(move_func: => Unit) {localOpenglTransform(move_func)}
 
-  def rotate(ang:Float) {GL11.glRotatef(ang, 0, 0, 1)}
-  def rotate(rotate_func: => Unit) {localTransformation(rotate_func)}
+  def openglRotate(ang:Float) {GL11.glRotatef(ang, 0, 0, 1)}
+  def openglLocalRotate(rotate_func: => Unit) {localOpenglTransform(rotate_func)}
 
-  def scale(scale_factor:Float) {GL11.glScalef(scale_factor, scale_factor, 1)}
-  def scale(scale_func: => Unit) {localTransformation(scale_func)}
+  def openglScale(scale_factor:Float) {GL11.glScalef(scale_factor, scale_factor, 1)}
+  def openglLocalScale(scale_func: => Unit) {localOpenglTransform(scale_func)}
 
   private lazy val FILLED_CIRCLE = displayList {
     GL11.glBegin(GL11.GL_TRIANGLE_FAN);

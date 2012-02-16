@@ -97,10 +97,6 @@ class ScageTest extends TestCase("app") {
         }
 
         private var target_point = trace.location
-        /*def scaledCoord(coord:Vec, scale:Float, center:Vec) = {
-          if(scale == 1) coord
-          else (coord / scale) + (center - Vec(window_width / scale / 2, window_height / scale / 2))
-        }*/
         mouseMotion {   // test mouse motion event
           mouse_coord =>
             target_point = (scaledCoord(mouse_coord) - trace.location).n * 20
@@ -263,8 +259,8 @@ class ScageTest extends TestCase("app") {
         }
 
         render {
-          move(windowCenter)
-          rotate(ang)
+          openglMove(windowCenter)
+          openglRotate(ang)
           drawFilledPolygon(Array(Vec(-20, -5), Vec(20, -5), Vec(0, 20)), GREEN)
         }
       }.main(Array[String]())

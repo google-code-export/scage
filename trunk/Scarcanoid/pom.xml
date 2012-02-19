@@ -202,7 +202,7 @@
             <version>2.7.2</version>
             <configuration>
                 <argLine>
-                    -Djava.library.path=${project.build.directory}/native/${os.type} -DLWJGL_DISABLE_XRANDR=true
+                    -Dscage.properties=scaranoid.properties -Djava.library.path=${project.build.directory}/native/${os.type} -DLWJGL_DISABLE_XRANDR=true
                 </argLine>
             </configuration>
       </plugin>

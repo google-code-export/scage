@@ -1,12 +1,9 @@
 package su.msk.dunno.scar
 
 import net.scage.support.Vec
-import net.scage.handlers.Renderer._
 import Scaranoid._
-import org.lwjgl.input.Keyboard._
 import net.phys2d.math.Vector2f
 import org.lwjgl.opengl.GL11
-import net.scage.support.ScageColor._
 import net.scage.support.physics.objects.StaticBox
 
 object PlayerPlatform extends StaticBox(Vec(window_width/2,25), 50, 10) {

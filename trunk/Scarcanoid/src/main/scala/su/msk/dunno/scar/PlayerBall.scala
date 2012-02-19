@@ -1,9 +1,6 @@
 package su.msk.dunno.scar
 
-import net.scage.support.ScageProperties._
 import net.scage.support.Vec
-import net.scage.handlers.Renderer._
-import net.scage.support.ScageColor._
 import Scaranoid._
 import net.scage.support.physics.objects.DynaBall
 

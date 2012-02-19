@@ -1,9 +1,8 @@
 package su.msk.dunno.scar.levels
 
-import su.msk.dunno.scar.{TargetBox, Scaranoid}
+import su.msk.dunno.scar.TargetBox
 import su.msk.dunno.scar.Scaranoid._
 import net.scage.support.Vec
-import net.scage.handlers.Renderer._
 
 trait LevelMap {
   val rows = 4

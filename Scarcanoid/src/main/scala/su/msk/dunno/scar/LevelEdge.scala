@@ -3,8 +3,6 @@ package su.msk.dunno.scar
 import net.scage.support.Vec
 import Scaranoid._
 import net.phys2d.math.Vector2f
-import net.scage.handlers.Renderer._
-import net.scage.support.ScageColor._
 import net.scage.support.physics.objects.StaticLine
 
 class LevelEdge (from:Vec, to:Vec) extends StaticLine(from, to) {

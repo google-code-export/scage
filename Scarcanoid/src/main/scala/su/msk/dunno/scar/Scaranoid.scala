@@ -1,16 +1,10 @@
 package su.msk.dunno.scar
 
 import levels.LevelMap1
-import net.scage.support.ScageColor._
-import net.scage.handlers.Renderer._
-import org.lwjgl.input.Keyboard._
-import net.scage.support.ScageProperties._
-import net.scage.support.messages.ScageMessage._
-import net.scage.support.messages.ScageXML._
 import net.scage.support.physics.ScagePhysics
-import net.scage.{ScageScreenApp, ScageScreen}
+import net.scage.{ScageLib, ScageScreenApp, ScageScreen}
 
-object Scaranoid extends ScageScreenApp("Scaranoid") {
+object Scaranoid extends ScageScreenApp("Scaranoid") with ScageLib {
   val physics = ScagePhysics(PlayerBall, PlayerPlatform)
   action {
     physics.step()

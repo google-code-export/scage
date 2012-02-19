@@ -2,14 +2,11 @@ package su.msk.dunno.scar
 
 import levels.{LevelMap1, LevelMap}
 import net.scage.support.Vec
-import net.scage.handlers.Renderer._
 import Scaranoid._
-import net.scage.support.ScageColor._
 import net.phys2d.math.Vector2f
 import org.lwjgl.opengl.GL11
 import net.scage.support.physics.Physical
 import net.scage.support.physics.objects.StaticBox
-import net.scage.support.ScageProperties._
 
 object Level {
   private var boxes:List[Physical] = Nil

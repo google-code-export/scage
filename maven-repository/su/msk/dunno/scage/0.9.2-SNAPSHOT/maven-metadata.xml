@@ -29,8 +29,8 @@
       <snapshotVersion>
         <classifier>test-sources</classifier>
         <extension>jar</extension>
-        <value>0.9.2-20130110.193546-1</value>
-        <updated>20130110193546</updated>
+        <value>0.9.2-20130316.125623-2</value>
+        <updated>20130316125623</updated>
       </snapshotVersion>
     </snapshotVersions>
   </versioning>
